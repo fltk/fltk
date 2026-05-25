@@ -251,25 +251,25 @@ void codeview_toggle_visibility() {
     }
 }
 
-Fl_Double_Window *codeview_panel=(Fl_Double_Window *)0;
+Fl_Double_Window* codeview_panel = (Fl_Double_Window*)nullptr;
 
-Fl_Tabs *cv_tab=(Fl_Tabs *)0;
+Fl_Tabs* cv_tab = (Fl_Tabs*)nullptr;
 
-Fl_Group *cv_source_tab=(Fl_Group *)0;
+Fl_Group* cv_source_tab = (Fl_Group*)nullptr;
 
-fld::widget::Code_Viewer *cv_source=(fld::widget::Code_Viewer *)0;
+fld::widget::Code_Viewer* cv_source = (fld::widget::Code_Viewer*)nullptr;
 
-fld::widget::Code_Viewer *cv_header=(fld::widget::Code_Viewer *)0;
+fld::widget::Code_Viewer* cv_header = (fld::widget::Code_Viewer*)nullptr;
 
-fld::widget::Text_Viewer *cv_strings=(fld::widget::Text_Viewer *)0;
+fld::widget::Text_Viewer* cv_strings = (fld::widget::Text_Viewer*)nullptr;
 
-fld::widget::Text_Viewer *cv_project=(fld::widget::Text_Viewer *)0;
+fld::widget::Text_Viewer* cv_project = (fld::widget::Text_Viewer*)nullptr;
 
-Fl_Group *cv_find_row=(Fl_Group *)0;
+Fl_Group* cv_find_row = (Fl_Group*)nullptr;
 
-Fl_Button *cv_find_text_case=(Fl_Button *)0;
+Fl_Button* cv_find_text_case = (Fl_Button*)nullptr;
 
-Fl_Input *cv_find_text=(Fl_Input *)0;
+Fl_Input* cv_find_text = (Fl_Input*)nullptr;
 
 static void cb_cv_find_text(Fl_Input* o, void*) {
   Fl_Text_Display *e = nullptr;
@@ -360,13 +360,13 @@ static void cb_Reveal(Fl_Button*, void*) {
   }
 }
 
-Fl_Group *cv_settings_row=(Fl_Group *)0;
+Fl_Group* cv_settings_row = (Fl_Group*)nullptr;
 
-Fl_Light_Button *cv_autorefresh=(Fl_Light_Button *)0;
+Fl_Light_Button* cv_autorefresh = (Fl_Light_Button*)nullptr;
 
-Fl_Light_Button *cv_autoposition=(Fl_Light_Button *)0;
+Fl_Light_Button* cv_autoposition = (Fl_Light_Button*)nullptr;
 
-Fl_Choice *cv_code_choice_w=(Fl_Choice *)0;
+Fl_Choice* cv_code_choice_w = (Fl_Choice*)nullptr;
 
 static void cb_cv_code_choice_w(Fl_Choice* o, void*) {
   cv_code_choice = (int)o->mvalue()->argument();
@@ -374,12 +374,12 @@ static void cb_cv_code_choice_w(Fl_Choice* o, void*) {
 }
 
 Fl_Menu_Item menu_cv_code_choice_w[] = {
- {"prolog", 0,  0, (void*)(0), 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"static", 0,  0, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"code", 0,  0, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"code 1", 0,  0, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"code 2", 0,  0, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+ {"prolog", 0,  nullptr, (void*)(0), 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"static", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"code", 0,  nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"code 1", 0,  nullptr, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"code 2", 0,  nullptr, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
 Fl_Double_Window* make_codeview() {

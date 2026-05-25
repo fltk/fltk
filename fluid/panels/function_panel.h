@@ -21,7 +21,7 @@
 #include <FL/Fl.H>
 void type_make_cb(Fl_Widget*,void*d);
 #include <FL/Fl_Window.H>
-extern Fl_Window *widgetbin_panel;
+extern Fl_Window* widgetbin_panel;
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 Fl_Window* make_widgetbin();

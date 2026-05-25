@@ -333,7 +333,7 @@ void Function_Node::write_code1(fld::io::Code_Writer& f) {
     f.write_c("\n");
   if (ismain()) {
     if (havechildren)
-      f.write_c("int main(int argc, char **argv) {\n");
+      f.write_c("int main(int argc, char** argv) {\n");
   } else {
     std::string rtype = return_type();
     std::string star = "";
@@ -993,8 +993,8 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       f.write_c("\n");
       write_comment_c(f);
       if (output_format_ == 1) {
-        f.write_h("%sstatic const char *%s;\n", f.indent(1), c);
-        f.write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn.c_str());
+        f.write_h("%sstatic const char* %s;\n", f.indent(1), c);
+        f.write_c("const char* %s::%s = /* text inlined from %s */\n", class_name(1), c, fn.c_str());
       } else {
         f.write_h_once("#include <string>");
         f.write_h("%sstatic const std::string %s;\n", f.indent(1), c);
@@ -1042,8 +1042,8 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
           f.write_c("\n");
           write_comment_c(f);
           if (output_format_ == 1) {
-            f.write_h("extern const char *%s;\n", c);
-            f.write_c("const char *%s = /* text inlined from %s */\n", c, fn.c_str());
+            f.write_h("extern const char* %s;\n", c);
+            f.write_c("const char* %s = /* text inlined from %s */\n", c, fn.c_str());
           } else {
             f.write_h_once("#include <string>");
             f.write_h("extern const std::string %s;\n", c);
@@ -1087,7 +1087,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
         write_comment_h(f);
         f.write_h("#error Unsupported declaration loading inline data %s\n", fn.c_str());
         if (output_format_ == 1)
-          f.write_h("const char *%s = \"abc...\";\n", c);
+          f.write_h("const char* %s = \"abc...\";\n", c);
         else
           f.write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
@@ -1097,7 +1097,7 @@ void Data_Node::write_code1(fld::io::Code_Writer& f) {
       if ((output_format_ == 1) || (output_format_ == 4)) {
         if (output_format_ == 1) {
           if (static_) f.write_c("static ");
-          f.write_c("const char *%s = /* text inlined from %s */\n", c, fn.c_str());
+          f.write_c("const char* %s = /* text inlined from %s */\n", c, fn.c_str());
         } else {
           f.write_c_once("#include <string>");
           if (static_) f.write_c("static ");

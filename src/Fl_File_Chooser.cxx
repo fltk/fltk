@@ -61,8 +61,8 @@ void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
 static const unsigned char idata_new[] =
 {0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
 128,1,128,1,128,255,255,0,0};
-static Fl_Image *image_new() {
-  static Fl_Image *image = NULL;
+static Fl_Image* image_new() {
+  static Fl_Image* image = nullptr;
   if (!image)
     image = new Fl_Bitmap(idata_new, 32, 16, 16);
   return image;

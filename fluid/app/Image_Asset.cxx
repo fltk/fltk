@@ -192,7 +192,7 @@ void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
     // Write Pixmap data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Pixmap.H>\n");
-    f.write_c("static const char *%s[] = {\n", idata_name);
+    f.write_c("static const char* %s[] = {\n", idata_name);
     f.write_cstring(image_->data()[0], (int)strlen(image_->data()[0]));
 
     int i;
@@ -322,10 +322,10 @@ void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
 void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_class, const char *format, ...) {
   va_list ap;
   va_start(ap, format);
-  f.write_c("static Fl_Image *%s() {\n", initializer_function_.c_str());
+  f.write_c("static Fl_Image* %s() {\n", initializer_function_.c_str());
   if (is_animated_gif_)
     f.write_c("%sFl_GIF_Image::animate = true;\n", f.indent(1));
-  f.write_c("%sstatic Fl_Image *image = 0L;\n", f.indent(1));
+  f.write_c("%sstatic Fl_Image* image = nullptr;\n", f.indent(1));
   f.write_c("%sif (!image)\n", f.indent(1));
   f.write_c("%simage = new %s(", f.indent(2), image_class);
   f.vwrite_c(format, ap);

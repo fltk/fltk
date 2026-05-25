@@ -23,7 +23,7 @@
 #include <time.h>
 #include <FL/Fl_Double_Window.H>
 #include "../src/flstring.h"
-extern Fl_Double_Window *about_panel;
+extern Fl_Double_Window* about_panel;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>

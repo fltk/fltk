@@ -18,7 +18,7 @@
 
 #include "about_panel.h"
 
-Fl_Double_Window *about_panel=(Fl_Double_Window *)0;
+Fl_Double_Window* about_panel = (Fl_Double_Window*)nullptr;
 
 #include <FL/Fl_Anim_GIF_Image.H>
 
@@ -137,9 +137,9 @@ static const unsigned char idata_fluid[] =
 215,191,39,177,156,197,110,73,96,231,235,117,71,189,190,167,124,240,162,74,186,
 229,149,46,246,215,249,176,251,185,160,247,56,85,177,37,67,81,188,17,231,220,17,
 99,199,176,225,186,61,16,35,74,220,19,2,0,59};
-static Fl_Image *image_fluid() {
+static Fl_Image* image_fluid() {
   Fl_GIF_Image::animate = true;
-  static Fl_Image *image = 0L;
+  static Fl_Image* image = nullptr;
   if (!image)
     image = new Fl_Anim_GIF_Image("fluid.animated.gif", idata_fluid, 2545);
   return image;

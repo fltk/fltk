@@ -432,9 +432,13 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     int thislevel = q->level; if (q->can_have_children()) thislevel++;
     int nextlevel =
       (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : t->level+1;
-    while (thislevel > nextlevel) {f.write_c(" {0,0,0,0,0,0,0,0,0},\n"); thislevel--;}
+    while (thislevel > nextlevel) {
+      // text, shortcut, callback, user_data, flags, labeltype, labelfont, labelsize, labelcolor
+      f.write_c(" { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 },\n");
+      thislevel--;
+    }
   }
-  f.write_c(" {0,0,0,0,0,0,0,0,0}\n};\n");
+  f.write_c(" { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }\n};\n");
 
   if (k) {
     // Write menu item variables...
@@ -486,8 +490,11 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
     "FL_IMAGE_LABEL"
   };
 
+  // Start of Fl_Menu_Item array member
   write_comment_inline_c(f, " ");
   f.write_c(" {");
+
+  // Label, can not be nullptr which has a special meaning here
   if (label() && label()[0])
     switch (Fluid.proj.i18n.type) {
       case fld::I18n_Type::GNU:
@@ -503,6 +510,8 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
     }
   else
     f.write_c("\"\"");
+
+  // Shortcut, try to write it in a human readable form, else write it as hex
   if (((Fl_Button*)o)->shortcut()) {
     int s = ((Fl_Button*)o)->shortcut();
     f.write_c(", ");
@@ -518,12 +527,15 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
     if ((s < 127) && isprint(s))
       f.write_c("'%c', ", s);
     else
-      f.write_c("0x%x, ", s);
+      f.write_c("0x%08x, ", s);
   } else {
     f.write_c(", 0, ");
   }
+
+  // Write callback or nullptr
   if (callback()) {
     if (callback()[0] == '[') {
+      // Write lambda expressions inline, allow mergeback
       f.write_c("\n");
       f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
       f.write_c_indented(callback(), 1, 0);
@@ -531,6 +543,7 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
       f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
       f.write_c("%s, ", f.indent_plus(1));
     } else {
+      // Write named callback, try to qualify it with the class name if possible
       const char* k = is_name(callback()) ? nullptr : class_name(1);
       if (k) {
         f.write_c(" (Fl_Callback*)%s::%s,", k, callback_name(f));
@@ -539,12 +552,16 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
       }
     }
   } else
-    f.write_c(" 0,");
+    f.write_c(" nullptr,");
+
+  // Write user_data or nullptr
   if (!user_data().empty())
     f.write_c(" (void*)(%s),", user_data().c_str());
   else
-    f.write_c(" 0,");
-  f.write_c(" %d, (uchar)%s, %d, %d, %d", flags(),
+    f.write_c(" nullptr,");
+
+  // Write flags, labeltype, labelfont, labelsize, and labelcolor
+  f.write_c(" %d, (uchar)%s, %d, %d, %d ", flags(),
           labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
   f.write_c("},\n");
 }
@@ -573,12 +590,12 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   if (c) {
     if (class_name(1)) {
       f.write_public(public_);
-      f.write_h("%sstatic Fl_Menu_Item *%s;\n", f.indent(1), c);
+      f.write_h("%sstatic Fl_Menu_Item* %s;\n", f.indent(1), c);
     } else {
       if (c==name())
         f.write_h("#define %s (%s+%d)\n", c, mname, i);
       else
-        f.write_h("extern Fl_Menu_Item *%s;\n", c);
+        f.write_h("extern Fl_Menu_Item* %s;\n", c);
     }
   }
 
@@ -600,7 +617,7 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   if (image) {
     start_menu_initialiser(f, menuItemInitialized, mname, i);
     if (label() && label()[0]) {
-      f.write_c("%sFl_Multi_Label *ml = new Fl_Multi_Label;\n", f.indent());
+      f.write_c("%sFl_Multi_Label* ml = new Fl_Multi_Label;\n", f.indent());
       f.write_c("%sml->labela = (char*)", f.indent());
       image->write_inline(f);
       f.write_c(";\n");
@@ -867,9 +884,9 @@ void Menu_Bar_Node::write_static(fld::io::Code_Writer& f) {
       f.write_c_once( // must be less than 1024 bytes!
                      "\nclass %s: public %s {\n"
                      "public:\n"
-                     "  %s(int x, int y, int w, int h, const char *l=0L)\n"
+                     "  %s(int x, int y, int w, int h, const char* l=nullptr)\n"
                      "  : %s(x, y, w, h, l) { }\n"
-                     "  void *_parent_class;\n"
+                     "  void* _parent_class;\n"
                      "};\n",
                      sys_menubar_proxy_name(), sys_menubar_name().c_str(),
                      sys_menubar_proxy_name(), sys_menubar_name().c_str()
