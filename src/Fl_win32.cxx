@@ -1309,13 +1309,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
             /*fprintf(stderr, "WM_DPICHANGED calls SetWindowPos %dx%d %gx%g\n", lParam_rect->left,
              lParam_rect->top, window->w() * scale + 2 * bx, window->h() * scale + bt + 2 * by);*/
-            wd->x((lParam_rect->left + bx) / scale); // inform FLTK of new top-left window position
-            wd->y((lParam_rect->top + by + bt) / scale);
-            SetWindowPos(hWnd, NULL, lParam_rect->left, lParam_rect->top,
-                         window->w() * scale + 2 * bx, window->h() * scale + bt + 2 * by,
-                         SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOCOPYBITS
-                         );
-            EnumChildWindows(hWnd, child_window_cb, (LPARAM)&scale);
+            wd->is_a_rescale(1);
+            window->position((lParam_rect->left + bx) / scale, (lParam_rect->top + by + bt) / scale);
+            wd->is_a_rescale(0);
             if (Fl::modal() && Fl::modal()->menu_window()) { // is a menu window active?
               Fl::e_x_root = 1000000;
               Fl::modal()->handle(FL_PUSH); // simulate a distant click to close menus
