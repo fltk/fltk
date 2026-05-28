@@ -153,4 +153,11 @@ int e_x_down { 0 };
 int e_y_down { 0 };
 }; // namespace Private
 }; // namespace Fl
+
+namespace Fl {
+namespace Pen {
+Driver default_driver;
+Driver& driver = default_driver;
+} // namespace Pen
+} // namespace Fl
 #endif
