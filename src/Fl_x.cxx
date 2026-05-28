@@ -159,6 +159,16 @@ static void convert_crlf(unsigned char *string, long& len) {
 
 ////////////////////////////////////////////////////////////////
 
+#if defined(FLTK_HAVE_PEN_SUPPORT)
+namespace Fl {
+namespace Private {
+// Global mouse position at mouse down event
+int e_x_down { 0 };
+int e_y_down { 0 };
+}; // namespace Private
+}; // namespace Fl
+#endif
+
 Display *fl_display;
 Display *fl_x11_display() { return fl_display; }
 Window fl_message_window = 0;
