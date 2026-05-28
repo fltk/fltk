@@ -146,12 +146,11 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 }
 
 #if defined(FLTK_HAVE_PEN_SUPPORT)
-
 namespace Fl {
-namespace Pen {
-Driver default_driver;
-Driver& driver = default_driver;
-} // namespace Pen
-} // namespace Fl
-
-#endif // FLTK_HAVE_PEN_SUPPORT
+namespace Private {
+// Global mouse position at mouse down event
+int e_x_down { 0 };
+int e_y_down { 0 };
+}; // namespace Private
+}; // namespace Fl
+#endif
