@@ -2998,14 +2998,14 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
   int offset = r.left < 0 ? -r.left : 0;
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
   if (htop && r.right - r.left > offset) {
-    top = dr->read_win_rectangle_unscaled(r.left+offset, r.top, r.right - r.left-offset, htop, 0);
+    top = dr->read_win_rectangle_unscaled(r.left+offset, r.top, r.right - r.left-offset, htop, 0, true);
     if (scaling != 1 && top)
       top->scale(ww, int(htop / scaling), 0, 1);
   }
   if (wsides) {
-    left = dr->read_win_rectangle_unscaled(r.left + offset, r.top + htop, wsides, int(h() * scaling), 0);
-    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, int(h() * scaling), 0);
-    bottom = dr->read_win_rectangle_unscaled(r.left+offset, r.bottom - hbottom, ww, hbottom, 0);
+    left = dr->read_win_rectangle_unscaled(r.left + offset, r.top + htop, wsides, int(h() * scaling), 0, true);
+    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, int(h() * scaling), 0, true);
+    bottom = dr->read_win_rectangle_unscaled(r.left+offset, r.bottom - hbottom, ww, hbottom, 0, true);
     if (scaling != 1) {
       if (left) left->scale(wsides, h(), 0, 1);
       if (right) right->scale(wsides, h(), 0, 1);

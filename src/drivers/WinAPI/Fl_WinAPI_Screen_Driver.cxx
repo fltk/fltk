@@ -372,11 +372,15 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
   }
-  return read_win_rectangle_unscaled(Fl_Scalable_Graphics_Driver::floor(X, s), Fl_Scalable_Graphics_Driver::floor(Y, s), ws, hs, win);
+  return read_win_rectangle_unscaled(Fl_Scalable_Graphics_Driver::floor(X, s), Fl_Scalable_Graphics_Driver::floor(Y, s), ws, hs, win, false);
 }
 
-Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
+Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h,
+                                                                   Fl_Window *win, bool screen_capture)
 {
+  // When screen_capture is true, win is NULL and we read from the screen independently from any window.
+  // Otherwise win can be a window inside which to read or NULL to read from current offscreen.
+
   // Depth of image is always 3 here
 
   // Grab all of the pixels in the image...
@@ -390,15 +394,17 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
   int shift_x = 0; // X target shift if X modified
   int shift_y = 0; // Y target shift if X modified
 
-  if (X < 0) {
-    shift_x = -X;
-    w += X;
-    X = 0;
-  }
-  if (Y < 0) {
-    shift_y = -Y;
-    h += Y;
-    Y = 0;
+  if (!screen_capture) {
+    if (X < 0) {
+      shift_x = -X;
+      w += X;
+      X = 0;
+    }
+    if (Y < 0) {
+      shift_y = -Y;
+      h += Y;
+      Y = 0;
+    }
   }
 
   if (h < 1 || w < 1) return 0;            // nothing to copy
