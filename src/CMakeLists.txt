@@ -308,6 +308,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Posix/Fl_Posix_Printer_Driver.cxx
     drivers/Unix/Fl_Unix_Screen_Driver.cxx
+    drivers/Wayland/Fl_Wayland_Pen_Events.cxx
     drivers/Wayland/Fl_Wayland_Screen_Driver.cxx
     drivers/Wayland/Fl_Wayland_Window_Driver.cxx
     drivers/Unix/Fl_Unix_System_Driver.cxx
