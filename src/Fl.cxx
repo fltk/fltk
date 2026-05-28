@@ -2271,6 +2271,23 @@ int Fl::use_high_res_GL() {
   return Private::use_high_res_GL_;
 }
 
+/**  sets whether GL windows should be drawn at high resolution on Apple
+  computers with retina displays
+  \version 1.3.4
+ */
+void Fl::use_high_res_VK(int val) {
+  Private::use_high_res_GL_ = val;
+}
+
+/**  returns whether GL windows should be drawn at high resolution on Apple
+  computers with retina displays.
+  Default is no.
+  \version 1.3.4
+ */
+int Fl::use_high_res_VK() {
+  return Private::use_high_res_GL_;
+}
+
 int Fl::Private::draw_GL_text_with_textures_ = 1;
 
 /**  sets whether OpenGL uses textures to draw all text.
