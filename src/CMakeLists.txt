@@ -869,7 +869,7 @@ if(UNIX AND FLTK_USE_WAYLAND)
     add_custom_command(
       OUTPUT tablet-protocol.c # tablet-client-protocol.h
       COMMAND wayland-scanner private-code  ${INFILE} tablet-protocol.c
-#     COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
+      COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
       DEPENDS ${INFILE}
       VERBATIM
     )
