@@ -43,6 +43,7 @@ public:
   float dpi[MAX_SCREENS][2];
   enum APP_SCALING_CAPABILITY scaling_capability;
   void update_scaling_capability();
+  void screen_count_set(int count) { num_screens = count; }
   Fl_WinAPI_Screen_Driver();
   // --- display management
   int visual(int flags) FL_OVERRIDE;

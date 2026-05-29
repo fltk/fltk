@@ -568,7 +568,7 @@ void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
     dpi[ns][0] = float(dpiX);
     dpi[ns][1] = float(dpiY);
     scale(ns, dpiX / 96.f);
-    // fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
+    // fprintf(stderr, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
   }
   update_scaling_capability();
 }
@@ -1879,7 +1879,10 @@ content  key    keyboard layout
         return 1;
 
       case WM_DISPLAYCHANGE: {// when screen configuration (number, size, position) changes
+        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+        sd->screen_count_set(-1);
         Fl::call_screen_init();
+        sd->desktop_scale_factor();
         Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
         return 0;
       }
