@@ -58,8 +58,8 @@ void Fl_Window::_Fl_Window() {
   minw_ = maxw_ = minh_ = maxh_ = 0;
   no_fullscreen_x = 0;
   no_fullscreen_y = 0;
-  no_fullscreen_w = w();
-  no_fullscreen_h = h();
+  no_fullscreen_w = 0;
+  no_fullscreen_h = 0;
   fullscreen_screen_top = -1;
   fullscreen_screen_bottom = -1;
   fullscreen_screen_left = -1;
