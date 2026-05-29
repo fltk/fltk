@@ -1237,6 +1237,7 @@ static BOOL CALLBACK child_window_cb(HWND child_xid, LPARAM data) {
   return TRUE;
 }
 
+static bool sizing_window = false;
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
@@ -1274,7 +1275,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             Fl::screen_driver()->scale(ns, f);
             Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
             sd->update_scaling_capability();
-          } else {
+          } else if (!sizing_window) {
             // Move window to screen with other DPI with mouse or with Windows+Shift+L|R-arrow
             Fl_WinAPI_Window_Driver *wd = (Fl_WinAPI_Window_Driver*)Fl_Window_Driver::driver(window);
             int olds = window->screen_num();
@@ -1316,6 +1317,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
               Fl::e_x_root = 1000000;
               Fl::modal()->handle(FL_PUSH); // simulate a distant click to close menus
             }
+          } else { // when resizing a window with the mouse
+            Fl_Window_Driver::driver(window)->screen_num(ns); // Assign window its new new screen (ns)
+            window->redraw();
           }
         }
         return 0;
@@ -1771,6 +1775,10 @@ content  key    keyboard layout
         Fl_WinAPI_Window_Driver::driver(window)->set_minmax((LPMINMAXINFO)lParam);
         break;
 
+      case WM_SIZING: // sent to toplevel windows when resized with the mouse
+        sizing_window = true;
+        return 1;
+
       case WM_SIZE:
         if (!window->parent()) {
           Fl_Window_Driver::driver(window)->is_maximized(wParam == SIZE_MAXIMIZED);
@@ -1791,6 +1799,7 @@ content  key    keyboard layout
             }
           }
         }
+        sizing_window = false;
         return 0;
 
       case WM_MOVING: // sent only to bordered toplevel windows
