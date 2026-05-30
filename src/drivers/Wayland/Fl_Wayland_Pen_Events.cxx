@@ -689,6 +689,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
         }
       }
     }
+    receiver = below_pen_ ? below_pen_->widget() : nullptr;
   }
 
   if (!receiver) {
