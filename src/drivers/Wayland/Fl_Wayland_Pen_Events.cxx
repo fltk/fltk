@@ -641,34 +641,6 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   bool event_data_copied = false;
   Fl_Widget *receiver    = nullptr;
   bool       is_pushed   = false;
-
-  // ── 4. Receiver selection & below_pen ENTER/LEAVE ────────────────────────
-  if (pushed_ && pushed_->widget() && Fl::pushed() == pushed_->widget()) {
-    // An earlier tip-down fixed this tool's receiver until the tip lifts.
-    receiver  = pushed_->widget();
-    is_pushed = true;
-  } else {
-    auto bpen_widget = below_pen_ ? below_pen_->widget() : nullptr;
-    auto bpen_old    = (Fl::belowmouse() == bpen_widget) ? bpen_widget : nullptr;
-    auto bpen_now    = find_below_pen(eventWindow, tool->ev.x, tool->ev.y);
-
-    if (bpen_now != bpen_old) {
-      if (bpen_old)
-        pen_send(tool, bpen_old, Fl::Pen::LEAVE, (State)0,
-                 event_data_copied);
-      below_pen_ = nullptr;
-      if (bpen_now) {
-        State hover_state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER)
-          ? State::ERASER_HOVERS : State::TIP_HOVERS;
-        if (pen_send(tool, bpen_now, Fl::Pen::ENTER, hover_state,
-                     event_data_copied)) {
-          below_pen_ = subscriber_list_[bpen_now];
-          Fl::belowmouse(bpen_now);
-        }
-      }
-    }
-    receiver = below_pen_ ? below_pen_->widget() : nullptr;
-  }
   
   // ── 4. Receiver selection & below_pen ENTER/LEAVE ────────────────────────
 
@@ -758,82 +730,6 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
     pen_handled |= handled;
     if (!handled)
       mouse_fallback(false, false, true);
-  }
-  
-  if (!receiver) {
-    Fl::e_x      = (int)tool->ev.x;
-    Fl::e_y      = (int)tool->ev.y;
-    Fl::e_x_root = (int)tool->ev.rx;
-    Fl::e_y_root = (int)tool->ev.ry;
-
-    if (tool->frame_down) {
-        Fl::e_state  |= FL_BUTTON1;
-        Fl::e_keysym  = FL_Button + 1;
-        Fl::e_is_click = 1;
-        Fl::handle(FL_PUSH, eventWindow);
-    } else if (tool->frame_up) {
-        Fl::e_state  &= ~FL_BUTTON1;
-        Fl::e_keysym  = FL_Button + 1;
-        Fl::handle(FL_RELEASE, eventWindow);
-    } else if (tool->frame_motion) {
-        int ev = (Fl::pushed() ? FL_DRAG : FL_MOVE);
-        Fl::handle(ev, eventWindow);
-    }
-    tablet_tool_reset_frame(tool);
-    tool->prev_state = tool->ev.state;
-    return;
-  }
-
-  // ── 5. Tip down → TOUCH ──────────────────────────────────────────────────
-  if (tool->frame_down) {
-    if (!is_pushed) {
-      pushed_ = subscriber_list_[receiver];
-      Fl::pushed(receiver);
-    }
-    Fl::e_is_click = 1;
-    Fl::Private::e_x_down = (int)tool->ev.x;
-    Fl::Private::e_y_down = (int)tool->ev.y;
-    // Wayland does not provide a click-count for stylus; reset to 0
-    // (apps that need double-tap must implement their own timing).
-    Fl::e_clicks = 0;
-    pen_send(tool, receiver, Fl::Pen::TOUCH,
-             tool->ev.state & (State::TIP_DOWN|State::ERASER_DOWN),
-             event_data_copied);
-  }
-
-  // ── 6. Tip up → LIFT ─────────────────────────────────────────────────────
-  if (tool->frame_up) {
-    if ((tool->ev.state & State::ANY_DOWN) == (State)0) {
-      Fl::pushed(nullptr);
-      pushed_ = nullptr;
-    }
-    State trigger = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER)
-      ? State::ERASER_HOVERS : State::TIP_HOVERS;
-    pen_send(tool, receiver, Fl::Pen::LIFT, trigger, event_data_copied);
-  }
-
-  // ── 7. Barrel button events ───────────────────────────────────────────────
-  // Dispatch BUTTON_PUSH for each button that went down this frame, then
-  // BUTTON_RELEASE for each button that went up.  Both can happen if the user
-  // clicks a button very quickly between two frames (uncommon but possible).
-  for (State bit : kButtonBits) {
-    if ((uint32_t)(tool->frame_buttons_pressed) & (uint32_t)bit)
-      pen_send(tool, receiver, Fl::Pen::BUTTON_PUSH, bit, event_data_copied);
-    if ((uint32_t)(tool->frame_buttons_released) & (uint32_t)bit)
-      pen_send(tool, receiver, Fl::Pen::BUTTON_RELEASE, bit,
-               event_data_copied);
-  }
-
-  // ── 8. Motion → DRAW or HOVER ────────────────────────────────────────────
-  if (tool->frame_motion) {
-    if (Fl::e_is_click &&
-        (std::fabs(tool->ev.x - Fl::Private::e_x_down) > 5.0 ||
-         std::fabs(tool->ev.y - Fl::Private::e_y_down) > 5.0))
-      Fl::e_is_click = 0;
-
-    pen_send(tool, receiver,
-             is_pushed ? Fl::Pen::DRAW : Fl::Pen::HOVER,
-             (State)0, event_data_copied);
   }
 
   // ── 9. Reset per-frame flags ──────────────────────────────────────────────
