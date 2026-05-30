@@ -667,6 +667,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
           Fl::belowmouse(bpen_now);
         }
       }
+    }
 
   // Extract the mouse fallback block into a lambda to avoid duplication.
   auto mouse_fallback = [&](bool frame_down, bool frame_up, bool frame_motion) {
