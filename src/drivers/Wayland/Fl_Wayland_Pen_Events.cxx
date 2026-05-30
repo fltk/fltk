@@ -643,6 +643,29 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   bool       is_pushed   = false;
   
   // ── 4. Receiver selection & below_pen ENTER/LEAVE ────────────────────────
+  if (pushed_ && pushed_->widget() && Fl::pushed() == pushed_->widget()) {
+    // An earlier tip-down fixed this tool's receiver until the tip lifts.
+    receiver  = pushed_->widget();
+    is_pushed = true;
+  } else {
+    auto bpen_widget = below_pen_ ? below_pen_->widget() : nullptr;
+    auto bpen_old    = (Fl::belowmouse() == bpen_widget) ? bpen_widget : nullptr;
+    auto bpen_now    = find_below_pen(eventWindow, tool->ev.x, tool->ev.y);
+
+    if (bpen_now != bpen_old) {
+      if (bpen_old)
+        pen_send(tool, bpen_old, Fl::Pen::LEAVE, (State)0,
+                 event_data_copied);
+      below_pen_ = nullptr;
+      if (bpen_now) {
+        State hover_state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER)
+          ? State::ERASER_HOVERS : State::TIP_HOVERS;
+        if (pen_send(tool, bpen_now, Fl::Pen::ENTER, hover_state,
+                     event_data_copied)) {
+          below_pen_ = subscriber_list_[bpen_now];
+          Fl::belowmouse(bpen_now);
+        }
+      }
 
   // Extract the mouse fallback block into a lambda to avoid duplication.
   auto mouse_fallback = [&](bool frame_down, bool frame_up, bool frame_motion) {
