@@ -2,6 +2,7 @@
 // Implementation of Wayland Tablet/Pen event driver for FLTK.
 //
 // Copyright 2025-2026 by Bill Spitzak and others.
+// Original Implementation by ClaudeAI.  Bug fixing by Grok.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
