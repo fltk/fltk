@@ -642,6 +642,27 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   bool event_data_copied = false;
   Fl_Widget *receiver    = nullptr;
   bool       is_pushed   = false;
+
+  // Extract the mouse fallback block into a lambda to avoid duplication.
+  auto mouse_fallback = [&](bool frame_down, bool frame_up, bool frame_motion) {
+    Fl::e_x      = (int)tool->ev.x;
+    Fl::e_y      = (int)tool->ev.y;
+    Fl::e_x_root = (int)tool->ev.rx;
+    Fl::e_y_root = (int)tool->ev.ry;
+    if (frame_down) {
+      Fl::e_state  |= FL_BUTTON1;
+      Fl::e_keysym  = FL_Button + 1;
+      Fl::e_is_click = 1;
+      Fl::handle(FL_PUSH, eventWindow);
+    } else if (frame_up) {
+      Fl::e_state  &= ~FL_BUTTON1;
+      Fl::e_keysym  = FL_Button + 1;
+      Fl::handle(FL_RELEASE, eventWindow);
+    } else if (frame_motion) {
+      Fl::handle(Fl::pushed() ? FL_DRAG : FL_MOVE, eventWindow);
+    }
+  };
+
   
   // ── 4. Receiver selection & below_pen ENTER/LEAVE ────────────────────────
   if (pushed_ && pushed_->widget() && Fl::pushed() == pushed_->widget()) {
@@ -668,26 +689,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
         }
       }
     }
-
-  // Extract the mouse fallback block into a lambda to avoid duplication.
-  auto mouse_fallback = [&](bool frame_down, bool frame_up, bool frame_motion) {
-    Fl::e_x      = (int)tool->ev.x;
-    Fl::e_y      = (int)tool->ev.y;
-    Fl::e_x_root = (int)tool->ev.rx;
-    Fl::e_y_root = (int)tool->ev.ry;
-    if (frame_down) {
-      Fl::e_state  |= FL_BUTTON1;
-      Fl::e_keysym  = FL_Button + 1;
-      Fl::e_is_click = 1;
-      Fl::handle(FL_PUSH, eventWindow);
-    } else if (frame_up) {
-      Fl::e_state  &= ~FL_BUTTON1;
-      Fl::e_keysym  = FL_Button + 1;
-      Fl::handle(FL_RELEASE, eventWindow);
-    } else if (frame_motion) {
-      Fl::handle(Fl::pushed() ? FL_DRAG : FL_MOVE, eventWindow);
-    }
-  };
+  }
 
   if (!receiver) {
     mouse_fallback(tool->frame_down, tool->frame_up, tool->frame_motion);
@@ -798,7 +800,7 @@ static const struct zwp_tablet_tool_v2_listener tablet_tool_listener = {
 // and destroyed but its properties (name, VID/PID, device path) are unused.
 
 static void tablet_cb_name(void * /*data*/, struct zwp_tablet_v2 *,
-                            const char * /*name*/) {}
+                           const char * /*name*/) {}
 static void tablet_cb_id(void * /*data*/, struct zwp_tablet_v2 *,
                           uint32_t /*vid*/, uint32_t /*pid*/) {}
 static void tablet_cb_path(void * /*data*/, struct zwp_tablet_v2 *,
