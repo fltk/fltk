@@ -160,7 +160,10 @@ void CanvasInterface::cv_draw()
   // Preset values for overlay
   int r = 10;
   if (overlay_ == PEN_DRAW)
+  {
     r = static_cast<int>(32.0 * Fl::Pen::event_pressure());
+    if (r < 1) r = 1;
+  }
   fl_color(FL_BLACK);
   switch (overlay_) {
     case NONE: break;

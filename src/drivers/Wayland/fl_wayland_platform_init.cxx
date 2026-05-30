@@ -21,7 +21,9 @@
 #include "../Unix/Fl_Unix_System_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
-#include "../Base/Fl_Base_Pen_Events.H"
+#if defined(FLTK_HAVE_PEN_SUPPORT)
+#  include "../Base/Fl_Base_Pen_Events.H"
+#endif
 #ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
 #  include "../Cairo/Fl_X11_Cairo_Graphics_Driver.H"

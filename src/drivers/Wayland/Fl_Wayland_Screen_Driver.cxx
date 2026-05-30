@@ -1123,11 +1123,6 @@ static void seat_capabilities(void *data, struct wl_seat *wl_seat, uint32_t capa
           seat->wl_keyboard = NULL;
   }
   scr_driver->enable_im();
-
-#if HAVE_CURSOR_SHAPE
-  // Initialize tablet
-  fl_wayland_tablet_init_seat(seat->wl_seat);
-#endif
 }
 
 
@@ -1400,13 +1395,14 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
   } else if (strcmp(interface, wp_cursor_shape_manager_v1_interface.name) == 0) {
     scr_driver->wp_cursor_shape_manager = (struct wp_cursor_shape_manager_v1 *)
       wl_registry_bind(wl_registry, id, &wp_cursor_shape_manager_v1_interface, 1);
-  }
-  else if (strcmp(interface, zwp_tablet_manager_v2_interface.name) == 0) {
+#endif // HAVE_CURSOR_SHAPE
+#if defined(FLTK_HAVE_PEN_SUPPORT)
+  } else if (strcmp(interface, zwp_tablet_manager_v2_interface.name) == 0) {
       struct zwp_tablet_manager_v2 *tm =
           (struct zwp_tablet_manager_v2*)wl_registry_bind(
               wl_registry, id, &zwp_tablet_manager_v2_interface, 1);
       fl_wayland_tablet_set_manager(tm);
-#endif // HAVE_CURSOR_SHAPE
+#endif
   }
 }
 
@@ -1623,7 +1619,7 @@ void Fl_Wayland_Screen_Driver::close_display() {
   wl_data_device_destroy(seat->data_device); seat->data_device = NULL;
   wl_data_device_manager_destroy(seat->data_device_manager);
   seat->data_device_manager = NULL;
-#if HAVE_CURSOR_SHAPE
+#if defined(FLTK_HAVE_PEN_SUPPORT)
   fl_wayland_tablet_cleanup();
 #endif
   wl_seat_destroy(seat->wl_seat); seat->wl_seat = NULL;

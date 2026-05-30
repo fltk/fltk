@@ -21,7 +21,7 @@
  fl_cocoa_tablet_handler() reads everything from that one object and
  dispatches immediately.
 
- The Wayland zwp_tablet_unstable_v2 protocol splits the same information
+ The Wayland zwp_tablet_stable_v2 protocol splits the same information
  across a burst of per-tool callbacks (motion, pressure, tilt, down, …)
  that are bracketed by a "frame" event.  Only when frame() fires is the
  accumulated data coherent and ready to dispatch.  This file follows the
@@ -101,6 +101,10 @@ extern int e_y_down;
 
 using namespace Fl::Pen;
 
+// C+11 Safe defined
+static const State kButtonBits[] = {
+    State::BUTTON0, State::BUTTON1, State::BUTTON2, State::BUTTON3
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Per-tool state
@@ -169,6 +173,7 @@ namespace Pen {
 class Wayland_Driver : public Driver {
 public:
   Wayland_Driver() = default;
+  void subscribe(Fl_Widget* widget) override;
   Trait traits()            override;
   Trait pen_traits(int id)  override;
 };
@@ -177,6 +182,19 @@ static Wayland_Driver wayland_driver_instance;
 // Define the extern Driver& declared in Fl_Base_Pen_Events.H.
 Driver& driver = wayland_driver_instance;
 
+void Wayland_Driver::subscribe(Fl_Widget* widget)
+{
+    if (subscriber_list_.size() == 0)
+    {
+        Fl_Wayland_Screen_Driver* scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+        if (scr_driver)
+        {
+            fl_wayland_tablet_init_seat(scr_driver->get_wl_seat());
+        }
+    }
+    Driver::subscribe(widget);
+}
+    
 Trait Wayland_Driver::traits() {
   if (!g_tablet_seat) return Trait::NONE;
   // Aggregate across all known tools; a connected tablet can do at least this.
@@ -491,7 +509,7 @@ static void tool_cb_tilt(void *data, struct zwp_tablet_tool_v2 *,
   // NSEvent's tilt range.  tilt_x is negated to match the Cocoa driver's
   // convention (ev.tilt_x = -tilt.x).
   tool->ev.tilt_x = -wl_fixed_to_double(tilt_x) / 90.0;
-  tool->ev.tilt_y =  wl_fixed_to_double(tilt_y) / 90.0;
+  tool->ev.tilt_y = -wl_fixed_to_double(tilt_y) / 90.0;
 }
 
 static void tool_cb_rotation(void *data, struct zwp_tablet_tool_v2 *,
@@ -651,8 +669,116 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
     }
     receiver = below_pen_ ? below_pen_->widget() : nullptr;
   }
+  
+  // ── 4. Receiver selection & below_pen ENTER/LEAVE ────────────────────────
+
+  // Extract the mouse fallback block into a lambda to avoid duplication.
+  auto mouse_fallback = [&](bool frame_down, bool frame_up, bool frame_motion) {
+    Fl::e_x      = (int)tool->ev.x;
+    Fl::e_y      = (int)tool->ev.y;
+    Fl::e_x_root = (int)tool->ev.rx;
+    Fl::e_y_root = (int)tool->ev.ry;
+    if (frame_down) {
+      Fl::e_state  |= FL_BUTTON1;
+      Fl::e_keysym  = FL_Button + 1;
+      Fl::e_is_click = 1;
+      Fl::handle(FL_PUSH, eventWindow);
+    } else if (frame_up) {
+      Fl::e_state  &= ~FL_BUTTON1;
+      Fl::e_keysym  = FL_Button + 1;
+      Fl::handle(FL_RELEASE, eventWindow);
+    } else if (frame_motion) {
+      Fl::handle(Fl::pushed() ? FL_DRAG : FL_MOVE, eventWindow);
+    }
+  };
 
   if (!receiver) {
+    mouse_fallback(tool->frame_down, tool->frame_up, tool->frame_motion);
+    tablet_tool_reset_frame(tool);
+    tool->prev_state = tool->ev.state;
+    return;
+  }
+
+  bool pen_handled = false;
+
+  // ── 5. Tip down → TOUCH ──────────────────────────────────────────────────
+  if (tool->frame_down) {
+    if (!is_pushed) {
+      pushed_ = subscriber_list_[receiver];
+      Fl::pushed(receiver);
+    }
+    Fl::e_is_click = 1;
+    Fl::Private::e_x_down = (int)tool->ev.x;
+    Fl::Private::e_y_down = (int)tool->ev.y;
+    Fl::e_clicks = 0;
+    pen_handled |= pen_send(tool, receiver, Fl::Pen::TOUCH,
+                            tool->ev.state & (State::TIP_DOWN|State::ERASER_DOWN),
+                            event_data_copied);
+    if (!pen_handled)
+      mouse_fallback(true, false, false);
+  }
+
+  // ── 6. Tip up → LIFT ─────────────────────────────────────────────────────
+  if (tool->frame_up) {
+    if ((tool->ev.state & State::ANY_DOWN) == (State)0) {
+      Fl::pushed(nullptr);
+      pushed_ = nullptr;
+    }
+    State trigger = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER)
+      ? State::ERASER_HOVERS : State::TIP_HOVERS;
+    bool handled = pen_send(tool, receiver, Fl::Pen::LIFT, trigger,
+                            event_data_copied);
+    pen_handled |= handled;
+    if (!handled)
+      mouse_fallback(false, true, false);
+  }
+
+  // ── 7. Barrel button events ───────────────────────────────────────────────
+  for (State bit : kButtonBits) {
+    if ((uint32_t)(tool->frame_buttons_pressed) & (uint32_t)bit)
+      pen_handled |= pen_send(tool, receiver, Fl::Pen::BUTTON_PUSH, bit,
+                              event_data_copied);
+    if ((uint32_t)(tool->frame_buttons_released) & (uint32_t)bit)
+      pen_handled |= pen_send(tool, receiver, Fl::Pen::BUTTON_RELEASE, bit,
+                              event_data_copied);
+    // No mouse fallback for barrel buttons — there's no standard mouse
+    // equivalent, and the widget already ignored the pen event.
+  }
+
+  // ── 8. Motion → DRAW or HOVER ────────────────────────────────────────────
+  if (tool->frame_motion) {
+    if (Fl::e_is_click &&
+        (std::fabs(tool->ev.x - Fl::Private::e_x_down) > 5.0 ||
+         std::fabs(tool->ev.y - Fl::Private::e_y_down) > 5.0))
+      Fl::e_is_click = 0;
+
+    bool handled = pen_send(tool, receiver,
+                            is_pushed ? Fl::Pen::DRAW : Fl::Pen::HOVER,
+                            (State)0, event_data_copied);
+    pen_handled |= handled;
+    if (!handled)
+      mouse_fallback(false, false, true);
+  }
+  
+  if (!receiver) {
+    Fl::e_x      = (int)tool->ev.x;
+    Fl::e_y      = (int)tool->ev.y;
+    Fl::e_x_root = (int)tool->ev.rx;
+    Fl::e_y_root = (int)tool->ev.ry;
+
+    if (tool->frame_down) {
+        Fl::e_state  |= FL_BUTTON1;
+        Fl::e_keysym  = FL_Button + 1;
+        Fl::e_is_click = 1;
+        Fl::handle(FL_PUSH, eventWindow);
+    } else if (tool->frame_up) {
+        Fl::e_state  &= ~FL_BUTTON1;
+        Fl::e_keysym  = FL_Button + 1;
+        Fl::handle(FL_RELEASE, eventWindow);
+    } else if (tool->frame_motion) {
+        int ev = (Fl::pushed() ? FL_DRAG : FL_MOVE);
+        Fl::handle(ev, eventWindow);
+    }
     tablet_tool_reset_frame(tool);
     tool->prev_state = tool->ev.state;
     return;
@@ -690,9 +816,6 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   // Dispatch BUTTON_PUSH for each button that went down this frame, then
   // BUTTON_RELEASE for each button that went up.  Both can happen if the user
   // clicks a button very quickly between two frames (uncommon but possible).
-  static const State kButtonBits[] = {
-    State::BUTTON0, State::BUTTON1, State::BUTTON2, State::BUTTON3
-  };
   for (State bit : kButtonBits) {
     if ((uint32_t)(tool->frame_buttons_pressed) & (uint32_t)bit)
       pen_send(tool, receiver, Fl::Pen::BUTTON_PUSH, bit, event_data_copied);
@@ -842,12 +965,11 @@ static void tablet_try_init() {
 
 void fl_wayland_tablet_set_manager(struct zwp_tablet_manager_v2 *manager) {
   g_tablet_manager = manager;
-  tablet_try_init();
+  tablet_try_init(); // no-op if seat not yet available; seat-first path in subscribe()
 }
 
 void fl_wayland_tablet_init_seat(struct wl_seat *wl_seat) {
-  // seat_capabilities() can fire multiple times; only init once.
-  if (g_wl_seat) return;
+  if (!wl_seat || g_wl_seat) return;  // guard against null and double-init
   g_wl_seat = wl_seat;
   tablet_try_init();
 }
