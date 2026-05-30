@@ -1775,9 +1775,18 @@ content  key    keyboard layout
         Fl_WinAPI_Window_Driver::driver(window)->set_minmax((LPMINMAXINFO)lParam);
         break;
 
-      case WM_SIZING: // sent to toplevel windows when resized with the mouse
+      case WM_SIZING: { // sent to toplevel windows when resized with the mouse
         sizing_window = true;
+        RECT *r = (RECT*)lParam;
+        int ctrX = (r->left + r->right)/2, ctrY = (r->top + r->bottom)/2;
+        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
+        int ns = sd->screen_num_unscaled(ctrX, ctrY); // screen number after size change
+        int olds = window->screen_num(); // screen number before size change
+        if (ns != olds && sd->dpi[ns][0] == sd->dpi[olds][0]) { // When both screens have same DPI,
+          Fl_Window_Driver::driver(window)->screen_num(ns);     // assign window to new screen here.
+        }
         return 1;
+      }
 
       case WM_SIZE:
         if (!window->parent()) {
