@@ -24,8 +24,7 @@ jobs:
     - name: Install prerequisites
       run: |
         sudo apt-get update -y
-        sudo apt-get install -y libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libpango1.0-dev libgtk-3-dev
-        sudo apt-get install -y doxygen
+        sudo apt-get install -y libpango1.0-dev
         sudo apt-get install -y doxygen-latex
         sudo apt-get install -y xvfb
         sudo apt-get install -y x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps
@@ -53,6 +52,7 @@ jobs:
           -D CMAKE_CXX_EXTENSIONS=OFF \
           -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" \
           -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override" \
+          -D FLTK_BACKEND_WAYLAND:BOOL=OFF \
           -D FLTK_BUILD_FLTK_OPTIONS=OFF \
           -D FLTK_BUILD_FLUID=ON \
           -D FLTK_BUILD_GL=OFF \
@@ -68,14 +68,14 @@ jobs:
         cmake --build . --config Debug --target fluid_docs
         cmake --build . --config Debug --target fluid_pdf
     - name: Store html docs as an artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: fluid-html
         path: build/fluid/documentation/html
         retention-days: 3
         overwrite: true
     - name: Store pdf docs as an artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: fluid-pdf
         path: build/fluid/documentation/fluid.pdf
