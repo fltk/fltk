@@ -1,7 +1,7 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,6 +27,10 @@
 #include <FL/Fl.H> // for Fl_Timeout_Handler
 #include <FL/Fl_Text_Editor.H>
 
+namespace Fl {
+// Initialize screen driver and details of available screens.
+extern void init_screens();     // recompute screen number and dimensions
+} // namespace Fl
 
 // TODO: add text composition?
 // TODO: add Fl::display

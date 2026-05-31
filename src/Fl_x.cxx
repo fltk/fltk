@@ -1222,7 +1222,7 @@ static void react_to_screen_reconfiguration() {
     scales[screen] = Fl::screen_scale(screen);
   }
 #endif // USE_XFT || FLTK_USE_CAIRO
-  Fl::call_screen_init(); // compute new screen sizes
+  Fl::init_screens(); // compute new screen sizes
 #if USE_XFT || FLTK_USE_CAIRO
   // detect whether screen sizes were unchanged
   bool nochange = (old_count == Fl::screen_count());

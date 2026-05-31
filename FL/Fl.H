@@ -1,7 +1,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -96,7 +96,6 @@ FL_EXPORT extern Fl_Widget* selection_owner_;
 FL_EXPORT extern Fl_Window* modal_;
 FL_EXPORT extern Fl_Window* grab_;
 FL_EXPORT extern int compose_state; // used for dead keys (Windows) or marked text (MacOS)
-FL_EXPORT extern void call_screen_init(); // recompute screen number and dimensions
 #endif // FL_DOXYGEN
 
 

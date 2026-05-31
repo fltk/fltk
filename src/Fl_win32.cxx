@@ -1899,7 +1899,7 @@ content  key    keyboard layout
       case WM_DISPLAYCHANGE: {// when screen configuration (number, size, position) changes
         Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
         sd->screen_count_set(-1);
-        Fl::call_screen_init();
+        Fl::init_screens();
         sd->desktop_scale_factor();
         Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
         return 0;

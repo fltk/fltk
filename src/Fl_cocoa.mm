@@ -1528,7 +1528,7 @@ static void attempt_close_all_windows() {
 { // react to changes in screen numbers and positions
   fl_lock_function();
   main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
-  Fl::call_screen_init();
+  Fl::init_screens();
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
   fl_unlock_function();
 }
