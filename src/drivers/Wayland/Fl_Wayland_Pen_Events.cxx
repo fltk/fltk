@@ -194,7 +194,7 @@ void Wayland_Driver::subscribe(Fl_Widget* widget)
             wl_seat* seat = scr_driver->get_wl_seat();
             if (!seat)
             {
-                Fl::error("No screen to wl_seat init tablet");
+                Fl::warning("No screen to wl_seat init tablet");
             }
             else
             {
@@ -203,7 +203,7 @@ void Wayland_Driver::subscribe(Fl_Widget* widget)
         }
         else
         {
-            Fl::error("No screen driver to init tablet");
+            Fl::warning("No screen driver to init tablet");
         }
     }
     Driver::subscribe(widget);
