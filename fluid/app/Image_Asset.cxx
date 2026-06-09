@@ -1,7 +1,7 @@
 //
 // Image Helper code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -391,8 +391,8 @@ void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
  \param iname The filename of the image asset to find.
  \returns The image asset, or nullptr if it cannot be loaded.
  */
-Image_Asset* Image_Asset::find(const char *iname) {
-  if (!iname || !*iname) return nullptr;
+Image_Asset* Image_Asset::find(const std::string& iname) {
+  if (iname.empty()) return nullptr;
 
   // First search to see if it exists already. If it does, return it.
   auto result = image_asset_map.find(iname);
@@ -401,12 +401,12 @@ Image_Asset* Image_Asset::find(const char *iname) {
 
   // Check if a file by that name exists.
   Fluid.proj.enter_project_dir();
-  FILE *f = fl_fopen(iname,"rb");
+  FILE *f = fl_fopen(iname.c_str(),"rb");
   if (!f) {
     if (Fluid.batch_mode)
-      fprintf(stderr, "Can't open image file:\n%s\n%s",iname,strerror(errno));
+      fprintf(stderr, "Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
     else
-      fl_message("Can't open image file:\n%s\n%s",iname,strerror(errno));
+      fl_message("Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
     Fluid.proj.leave_project_dir();
     return nullptr;
   }
@@ -417,9 +417,9 @@ Image_Asset* Image_Asset::find(const char *iname) {
   if (!asset->image_ || !asset->image_->w() || !asset->image_->h()) {
     delete asset;
     if (Fluid.batch_mode)
-      fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format",iname);
+      fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format", iname.c_str());
     else
-      fl_message("Can't read image file:\n%s\nunrecognized image format",iname);
+      fl_message("Can't read image file:\n%s\nunrecognized image format", iname.c_str());
     Fluid.proj.leave_project_dir();
     return nullptr;
   }
@@ -442,14 +442,14 @@ Image_Asset* Image_Asset::find(const char *iname) {
 
  \param iname The name of the image file in the project directory.
 */
-Image_Asset::Image_Asset(const char *iname)
+Image_Asset::Image_Asset(const std::string& iname)
 {
   filename_ = iname;
-  image_ = Fl_Shared_Image::get(iname);
-  if (image_ && iname) {
-    const char *ext = fl_filename_ext(iname);
-    if (fl_ascii_strcasecmp(ext, ".gif")==0) {
-      int fc = Fl_Anim_GIF_Image::frame_count(iname);
+  image_.reset(Fl_Shared_Image::get(iname.c_str()));
+  if (image_ && !iname.empty()) {
+    std::string ext = fl_filename_ext_str(iname);
+    if (fl_ascii_strcasecmp(ext.c_str(), ".gif")==0) {
+      int fc = Fl_Anim_GIF_Image::frame_count(iname.c_str());
       if (fc > 0) is_animated_gif_ = true;
     }
   }
@@ -491,7 +491,6 @@ void Image_Asset::dec_ref() {
 */
 Image_Asset::~Image_Asset() {
   image_asset_map.erase(filename_);
-  if (image_) image_->release();
 }
 
 ////////////////////////////////////////////////////////////////

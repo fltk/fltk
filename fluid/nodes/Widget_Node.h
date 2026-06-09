@@ -21,7 +21,7 @@
 
 #include <string>
 
-#define NUM_EXTRA_CODE 4
+static constexpr int NUM_EXTRA_CODE = 4;
 
 class Widget_Node;
 class Image_Asset;
@@ -78,7 +78,7 @@ protected:
   void write_color(fld::io::Code_Writer& f, const char*, Fl_Color);
 
   /// Pointer to widget representing this node in live mode.
-  Fl_Widget* live_widget;
+  Fl_Widget* live_widget = nullptr;
 
 public:
 

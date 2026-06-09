@@ -837,9 +837,6 @@ Fl_Menu_Item fontmenu_w_default[] = {
 };
 
 
-
-extern const char* ui_find_image_name;
-
 Fl_Menu_Item labeltypemenu[] = {
   {"NORMAL_LABEL",0,nullptr,(void*)nullptr},
   {"SHADOW_LABEL",0,nullptr,(void*)FL_SHADOW_LABEL},
