@@ -565,7 +565,7 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
     tool->ev.state              |= bit;
     tool->frame_buttons_pressed |= bit;
   } else {
-      int state = static_cast<int>(tool->ev.state) & ~(static_cast<int>(bit));
+    int state = static_cast<int>(tool->ev.state) & ~(static_cast<int>(bit));
     tool->ev.state = static_cast<Fl::Pen::State>(state);
     tool->frame_buttons_released |= bit;
   }
