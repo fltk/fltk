@@ -30,6 +30,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Menu_Bar.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_message.H>
@@ -278,26 +279,48 @@ int popup_app_menu() {
   return 1;
 }
 
+void delete_cb(Fl_Widget*, Fl_Widget* cv)
+{
+    if (cv1) { cv1->top_window()->redraw(); delete cv1; cv1 = nullptr; }
+}
+
+void subscribe_cb(Fl_Widget*, void* d)
+{
+    Fl::Pen::subscribe((Fl_Widget*)d);
+}
+
+void unsubscribe_cb(Fl_Widget*, void* d)
+{
+    Fl::Pen::unsubscribe((Fl_Widget*)d);
+}
+
 //
 // Main app entry point
 //
 int main(int argc, char **argv)
 {
   // Create our main app window
-  auto window = new Fl_Window(100, 100, 640, 220, "FLTK Pen/Stylus/Tablet test, Ctrl-Tap for menu");
+  auto window = new Fl_Window(100, 100, 640, 220, "FLTK Pen/Stylus/Tablet test, Ctrl-Tap for menu");      
+
+  auto menu_bar = new Fl_Menu_Bar(0, 0, 640, 20);
+  menu_bar->add("Middle canvas/unsubscribe", 0, unsubscribe_cb, cv1);
+  menu_bar->add("Middle canvas/subscribe", 0, subscribe_cb, cv1);
+  menu_bar->add("Middle canvas/delete", 0, (Fl_Callback*)delete_cb, cv1);
+  menu_bar->menu_end();
+  
 
   // One testing canvas is just a regular child widget of the window
-  auto canvas_widget_0 = new CanvasWidget( 10, 10, 200, 200, "CV0");
+  auto canvas_widget_0 = new CanvasWidget( 10, 20, 200, 200, "CV0");
 
   // The second canvas is inside a group
   auto cv1_group = new Fl_Group(215, 5, 210, 210);
   cv1_group->box(FL_FRAME_BOX);
-  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 10, 200, 200, "CV1");
+  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 20, 200, 200, "CV1");
   cv1_group->end();
 
   // The third canvas is a window inside a window, so we can verify
   // that pen coordinates are calculated correctly.
-  auto canvas_widget_2 = new CanvasWindow(430, 10, 200, 200, "CV2");
+  auto canvas_widget_2 = new CanvasWindow(430, 20, 200, 200, "CV2");
   canvas_widget_2->end();
 
   window->end();
