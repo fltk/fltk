@@ -2092,7 +2092,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
  Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
  ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
- The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window) and returns always YES.
+ The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window) and generally returns YES;
+ it returns NO for some keyboard layouts.
  The keyDown: method calls [[myview inputContext] handleEvent:theEvent], and triggers system processing of keyboard events.
  Three sorts of messages are then sent back by the system to myview: doCommandBySelector:, setMarkedText: and insertText:.
  All 3 messages eventually produce Fl::handle(FL_KEYBOARD, win) calls.
@@ -2343,10 +2344,17 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     if ( (mods & NSEventModifierFlagControl) && (mods & NSEventModifierFlagCommand) &&
         !(mods & (NSEventModifierFlagShift|NSEventModifierFlagOption)) && [pure isEqualToString:@" "] ) {
       [NSApp orderFrontCharacterPalette:self];
+      handled = YES;
+    } else if ([theEvent keyCode] != 24 || ![s isEqualToString:@"="]) {
+      // It seems difficult to predict what [theEvent characters] returns for keyboard layouts
+      // where character '+' is in uppercase and the keystroke is Cmd-Shift-+.
+      // Some layouts return '+': French, Vietnamese, Russian, Greek, Arabic, Serbian;
+      // other layouts return '=': US, Korean, Thai. For them, this Kludge is necessary.
+      handled = YES;
     }
   }
   fl_unlock_function();
-  return YES;
+  return (handled ? YES : [super performKeyEquivalent:theEvent]);
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {
