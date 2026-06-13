@@ -79,6 +79,36 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
+  build-wayland-arm64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install prerequisites
+      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libcairo2-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev ninja-build
+
+    - name: Create Build Environment
+      # Some projects don't allow in-source building, so create a separate build directory
+      # We'll use this as our working directory for all subsequent commands
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source
+      # and build directories, but this is only available with CMake 3.13 and higher.
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --config $BUILD_TYPE
+
   build-macos:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
@@ -107,36 +137,6 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE -G Ninja -D CMAKE_BUILD_TYPE=$BUILD_TYPE -DFLTK_BUILD_SHARED_LIBS:BOOL=ON -D FLTK_BUILD_FORMS=ON -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE
-
-  build-wayland-arm64:
-    runs-on: ubuntu-24.04-arm
-
-    steps:
-    - uses: actions/checkout@v6
-
-    - name: Install prerequisites
-      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libcairo2-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev ninja-build
-
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
