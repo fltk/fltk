@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: install prerequisites
-      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglew-dev libglu1-mesa-dev libcairo2-dev libx11-dev libxcursor-dev libxft-dev libxinerama-dev
+      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglew-dev libglu1-mesa-dev libcairo2-dev libx11-dev libxcursor-dev libxft-dev libxinerama-dev ninja-build
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -36,7 +36,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D FLTK_BACKEND_WAYLAND=OFF -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
+      run: cmake $GITHUB_WORKSPACE -G Ninja -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D FLTK_BACKEND_WAYLAND=OFF -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -49,7 +49,6 @@ jobs:
       shell: bash
       run: ./bin/test/unittests --core
 
-
   build-wayland:
     runs-on: ubuntu-latest
 
@@ -57,7 +56,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Install prerequisites
-      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libcairo2-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev
+      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libcairo2-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev ninja-build
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -72,7 +71,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
+      run: cmake $GITHUB_WORKSPACE -G Ninja -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -90,6 +89,10 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Install prerequisites
+      run: |
+        brew install ninja
+        
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
@@ -103,7 +106,37 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -DFLTK_BUILD_SHARED_LIBS:BOOL=ON -D FLTK_BUILD_FORMS=ON -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
+      run: cmake $GITHUB_WORKSPACE -G Ninja -D CMAKE_BUILD_TYPE=$BUILD_TYPE -DFLTK_BUILD_SHARED_LIBS:BOOL=ON -D FLTK_BUILD_FORMS=ON -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --config $BUILD_TYPE
+
+  build-wayland-arm64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install prerequisites
+      run: sudo apt-get update -y && sudo apt-get install -y libasound2-dev libglu1-mesa-dev libcairo2-dev libwayland-dev wayland-protocols libdbus-1-dev libxkbcommon-dev libegl-dev libopengl-dev libpango1.0-dev libdecor-0-dev libxfixes-dev libxcursor-dev libxinerama-dev ninja-build
+
+    - name: Create Build Environment
+      # Some projects don't allow in-source building, so create a separate build directory
+      # We'll use this as our working directory for all subsequent commands
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source
+      # and build directories, but this is only available with CMake 3.13 and higher.
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: cmake $GITHUB_WORKSPACE -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D CMAKE_CXX_STANDARD=11 -D CMAKE_CXX_EXTENSIONS=OFF -D FLTK_BUILD_FORMS=ON -D FLTK_OPTION_CAIRO_WINDOW=ON -D CMAKE_C_FLAGS_INIT="-Wall -Wunused" -D CMAKE_CXX_FLAGS_INIT="-Wall -Wunused -Wsuggest-override"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -130,8 +163,33 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
-      run: cmake -D FLTK_USE_SYSTEM_LIBJPEG:BOOL=OFF -D FLTK_USE_SYSTEM_LIBPNG:BOOL=OFF -D FLTK_USE_SYSTEM_ZLIB:BOOL=OFF -D FLTK_BUILD_FORMS=ON -DFLTK_BUILD_SHARED_LIBS:BOOL=ON ..
+      run: cmake -G Ninja -D FLTK_USE_SYSTEM_LIBJPEG:BOOL=OFF -D FLTK_USE_SYSTEM_LIBPNG:BOOL=OFF -D FLTK_USE_SYSTEM_ZLIB:BOOL=OFF -D FLTK_BUILD_FORMS=ON -DFLTK_BUILD_SHARED_LIBS:BOOL=ON ..
 
     - name: Build
       working-directory: ${{github.workspace}}/build
       run: cmake --build . --config Release
+
+  build-windows-11-arm:
+    # This build config has been minimized. Please see other configs for further advice.
+    # We don't use the "bash" shell (defaults to PowerShell) and avoid using environment
+    # variables as far as possible and useful.
+    #
+    # Note:
+    # We *must* disable system image libs to make sure we don't find incompatible ones on
+    # GitHub Actions runners "windows-11-arm (since Nov. 22, 2022, version: 20221120.1).
+    runs-on: windows-11-arm
+
+    steps:
+    - uses: actions/checkout@v6
+      
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/build
+      run: cmake -G Ninja -D FLTK_USE_SYSTEM_LIBJPEG:BOOL=OFF -D FLTK_USE_SYSTEM_LIBPNG:BOOL=OFF -D FLTK_USE_SYSTEM_ZLIB:BOOL=OFF -D FLTK_BUILD_FORMS=ON -DFLTK_BUILD_SHARED_LIBS:BOOL=ON ..
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: cmake --build . --config Release
+
