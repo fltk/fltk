@@ -738,6 +738,7 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
     if (!item->label()) return;
     if (item->user_data() == win) {
       item->label(win->iconlabel() ? win->iconlabel() : win->label());
+      if (!item->label()) item->label("");
       bar->update();
       return;
     }
