@@ -22,30 +22,13 @@
 #ifndef APP_IMAGE_ASSET_H
 #define APP_IMAGE_ASSET_H
 
+#include "app/Image_Asset_Map.h"
 #include "io/Code_Writer.h"
 
 #include <FL/Fl_Shared_Image.H>
 
-#include <map>
 #include <memory>
 #include <string>
-
-
-class Image_Asset;
-
-/**
- \brief Cache of all active Image_Asset objects, keyed by filename.
-
- Holds weak references so assets are released automatically when no
- Widget_Node holds a shared_ptr to them anymore.
- */
-class Image_Asset_Map {
-  std::map<std::string, std::weak_ptr<Image_Asset>> map_;
-public:
-  std::shared_ptr<Image_Asset> find(const std::string& name) const;
-  void insert(const std::string& name, std::shared_ptr<Image_Asset> asset);
-  void erase(const std::string& name);
-};
 
 
 class Image_Asset

@@ -56,13 +56,6 @@ void Image_Asset_Map::erase(const std::string& name) {
   map_.erase(name);
 }
 
-/**
- \brief Cache of all active image assets.
- \todo This is a global variable, but should be associated
-    with a project instead.
- */
-static Image_Asset_Map image_asset_map;
-
 
 /**
  \brief Write the contents of the image file as binary source code.
@@ -409,7 +402,7 @@ std::shared_ptr<Image_Asset> Image_Asset::find(const std::string& iname) {
   if (iname.empty()) return nullptr;
 
   // First search to see if it exists already. If it does, return it.
-  auto existing = image_asset_map.find(iname);
+  auto existing = Fluid.proj.image_assets.find(iname);
   if (existing) return existing;
 
   // Check if a file by that name exists.
@@ -437,7 +430,7 @@ std::shared_ptr<Image_Asset> Image_Asset::find(const std::string& iname) {
   }
 
   // Add the new asset to our image asset map and return it to the caller.
-  image_asset_map.insert(iname, asset);
+  Fluid.proj.image_assets.insert(iname, asset);
   Fluid.proj.leave_project_dir();
   return asset;
 }
@@ -469,7 +462,7 @@ Image_Asset::Image_Asset(const std::string& iname)
  when the object is destroyed.
 */
 Image_Asset::~Image_Asset() {
-  image_asset_map.erase(filename_);
+  Fluid.proj.image_assets.erase(filename_);
 }
 
 ////////////////////////////////////////////////////////////////
