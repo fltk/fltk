@@ -19,7 +19,7 @@
 #include "widget_panel.h"
 #include "Fluid.h"
 #include "app/Snap_Action.h"
-#include "app/Image_Asset.h"
+#include "proj/Image_Asset.h"
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
@@ -52,7 +52,7 @@ extern int haderror;
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code ------=-~--==~-~=----=-- ▼ ﬂ//
+//ﬂ ▼ ------------------------ code --~-~=-=~=~-~~--~-~--=~= ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~~-~=---~-------------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
 }

@@ -18,7 +18,7 @@
 #define FLUID_NODES_WIDGET_NODE_H
 
 #include "nodes/Node.h"
-#include "app/Image_Asset.h"
+#include "proj/Image_Asset.h"
 
 #include <memory>
 #include <string>

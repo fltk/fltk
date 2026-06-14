@@ -22,7 +22,7 @@
 #ifndef APP_IMAGE_ASSET_H
 #define APP_IMAGE_ASSET_H
 
-#include "app/Image_Asset_Map.h"
+#include "proj/Image_Asset_Map.h"
 #include "io/Code_Writer.h"
 
 #include <FL/Fl_Shared_Image.H>

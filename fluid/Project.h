@@ -18,7 +18,7 @@
 #ifndef FLUID_PROJECT_H
 #define FLUID_PROJECT_H
 
-#include "app/Image_Asset_Map.h"
+#include "proj/Image_Asset_Map.h"
 #include "proj/undo.h"
 #include "proj/i18n.h"
 #include "nodes/Tree.h"
