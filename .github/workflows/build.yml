@@ -240,6 +240,11 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Setup environment (ARM64 native)
+      uses: TheMrMilchmann/setup-msvc-dev@v4
+      with:
+        arch: amd64
+          
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
 
@@ -272,6 +277,11 @@ jobs:
     steps:
     - uses: actions/checkout@v6
       
+    - name: Setup environment (ARM64 native)
+      uses: TheMrMilchmann/setup-msvc-dev@v4
+      with:
+        arch: arm64
+        
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
 
