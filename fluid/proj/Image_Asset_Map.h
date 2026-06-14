@@ -17,7 +17,7 @@
 #ifndef APP_IMAGE_ASSET_MAP_H
 #define APP_IMAGE_ASSET_MAP_H
 
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <string>
 

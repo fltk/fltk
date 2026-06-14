@@ -985,13 +985,15 @@ int Window_Node::handle(int event) {
           // printf("DND image = %s\n", fn);
           if (Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R)) {
           //if (Fl::event_alt()) { // TODO: X11/Wayland does not set the e_state on DND events
-            tgt->inactive_name(rel);
-            tgt->compress_deimage_ = 1;
-            tgt->bind_deimage_ = 0;
+            tgt->inactive_image.set(rel, tgt->is_a(Type::Window) ? nullptr : tgt->o, true);
+            if (!tgt->is_a(Type::Window)) tgt->redraw();
+            tgt->inactive_image.compress = 1;
+            tgt->inactive_image.bind = 0;
           } else {
-            tgt->image_name(rel);
-            tgt->compress_image_ = 1;
-            tgt->bind_image_ = 0;
+            tgt->active_image.set(rel, tgt->is_a(Type::Window) ? nullptr : tgt->o, false);
+            if (!tgt->is_a(Type::Window)) tgt->redraw();
+            tgt->active_image.compress = 1;
+            tgt->active_image.bind = 0;
           }
           select_only(tgt);
           tgt->open();

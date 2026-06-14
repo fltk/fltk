@@ -318,7 +318,7 @@ const char* Menu_Item_Node::menu_name(fld::io::Code_Writer& f, int& i) {
 }
 
 void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
-  if (image && label() && label()[0]) {
+  if (active_image.asset && label() && label()[0]) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
@@ -411,10 +411,7 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
       }
     }
   }
-  if (image) {
-    if (!f.c_contains(image.get()))
-      image->write_static(f, compress_image_);
-  }
+  active_image.write_static(f);
   if (next && next->is_a(Type::Menu_Item)) return;
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
@@ -474,7 +471,7 @@ int Menu_Item_Node::flags() {
       i |= FL_SUBMENU_POINTER;
   }
   if (hotspot()) i |= FL_MENU_DIVIDER;
-  if (menu_headline()) i |= FL_MENU_HEADLINE;
+  if (headline()) i |= FL_MENU_HEADLINE;
   return i;
 }
 
@@ -614,12 +611,12 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   if (name() && strchr(name(), '[')) {
     f.write_c("%s%s = &%s[%d];\n", f.indent_plus(1), name(), mname, i);
   }
-  if (image) {
+  if (active_image.asset) {
     start_menu_initialiser(f, menuItemInitialized, mname, i);
     if (label() && label()[0]) {
       f.write_c("%sFl_Multi_Label* ml = new Fl_Multi_Label;\n", f.indent());
       f.write_c("%sml->labela = (char*)", f.indent());
-      image->write_inline(f);
+      active_image.asset->write_inline(f);
       f.write_c(";\n");
       if (Fluid.proj.i18n.type==fld::I18n_Type::NONE) {
         f.write_c("%sml->labelb = o->label();\n", f.indent());
@@ -636,12 +633,12 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
       f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
       f.write_c("%sml->label(o);\n", f.indent());
     } else {
-      image->write_code(f, 0, "o");
+      active_image.asset->write_code(f, 0, "o");
     }
   }
   if ((Fluid.proj.i18n.type != fld::I18n_Type::NONE) && label() && label()[0]) {
     Fl_Labeltype t = o->labeltype();
-    if (image) {
+    if (active_image.asset) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {

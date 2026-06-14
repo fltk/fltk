@@ -450,7 +450,7 @@ void Grid_Tab::cb_Gap1(fld::widget::Formula_Input* o, void* v) {
   ((Grid_Tab*)(o->parent()->parent()->parent()))->cb_Gap1_i(o,v);
 }
 
-Grid_Tab::Grid_Tab(int X, int Y, int W, int H, const char *L) :
+Grid_Tab::Grid_Tab(int X, int Y, int W, int H, const char* L) :
   Fl_Group(0, 0, 400, 330, L)
 {
   this->labelsize(11);

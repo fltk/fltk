@@ -23,6 +23,7 @@
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
+#include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
@@ -52,7 +53,7 @@ extern int haderror;
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code --~-~=-=~=~-~~--~-~--=~= ▼ ﬂ//
+//ﬂ ▼ ------------------------ code --~-~~~=-=~~~==-=~---=-- ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~~-~=---~-------------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
 }
@@ -128,19 +129,19 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ---==-=~~~~~-~-=~=-~~- ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
-        o->value(current_widget->scale_image_w_);
+        o->value(current_widget->active_image.scale_w);
       }
     } else {
       int mod = 0;
       for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Widget_Node* wt = ((Widget_Node*)t);
-          wt->scale_image_w_ = o->value();
+          wt->active_image.scale_w = o->value();
           Fl_Image *img = wt->o->image();
           if (img) {
-            int iw = wt->scale_image_w_;
+            int iw = wt->active_image.scale_w;
             if (iw<=0) iw = img->data_w();
-            int ih = wt->scale_image_h_;
+            int ih = wt->active_image.scale_h;
             if (ih<=0) ih = img->data_w();
             img->scale(iw, ih, 0, 1);
             wt->o->redraw();
@@ -151,7 +152,7 @@ static void cb_image_panel_imagew(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~==~=~-~~=~~----------~-~-=-=~~-~=~~-~=~~-~- ▲ ﬂ//
+//ﬂ ▲ ----------~==~=~-~~=~~------------=-~-=-=~~-~==-=~~-~= ▲ ﬂ//
 }
 
 fld::widget::Formula_Input* image_panel_imageh = (fld::widget::Formula_Input*)nullptr;
@@ -160,19 +161,19 @@ static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~~~=----~=~-~=~~--=~~- ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
-        o->value(current_widget->scale_image_h_);
+        o->value(current_widget->active_image.scale_h);
       }
     } else {
       int mod = 0;
       for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Widget_Node* wt = ((Widget_Node*)t);
-          wt->scale_image_h_ = o->value();
+          wt->active_image.scale_h = o->value();
           Fl_Image *img = wt->o->image();
           if (img) {
-            int iw = wt->scale_image_w_;
+            int iw = wt->active_image.scale_w;
             if (iw<=0) iw = img->data_w();
-            int ih = wt->scale_image_h_;
+            int ih = wt->active_image.scale_h;
             if (ih<=0) ih = img->data_w();
             img->scale(iw, ih, 0, 1);
             wt->o->redraw();
@@ -183,7 +184,7 @@ static void cb_image_panel_imageh(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------=~~=~~-~~=~=----------~~-==-=-=~-=~=~---=~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~=~~-~~=~=----------~--==~---~-~-=~-~--==~ ▲ ﬂ//
 }
 
 static void cb_Reset(Fl_Button*, void* v) {
@@ -202,19 +203,19 @@ static void cb_convert(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(!current_widget->compress_image_);
+      o->value(!current_widget->active_image.compress);
     } else {
       o->deactivate();
     }
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->compress_image_ = !o->value();
+      q->active_image.compress = !o->value();
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=---=~-~==~------------~~=~~~=~~=-~~==-=-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=---=~-~==~----------~--~=--==-~---=~=--==- ▲ ﬂ//
 }
 
 static void cb_bind(Fl_Check_Button* o, void* v) {
@@ -222,19 +223,19 @@ static void cb_bind(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(current_widget->bind_image_);
+      o->value(current_widget->active_image.bind);
     } else {
       o->deactivate();
     }
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->bind_image_ = o->value();
+      q->active_image.bind = o->value();
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~=-~~--=~~-------------==-~=~~=~=~----~~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~=-~~--=~~----------~~-=~-~=---~-~~--~=-~- ▲ ﬂ//
 }
 
 Fl_Group* image_panel_deimagegroup = (Fl_Group*)nullptr;
@@ -268,19 +269,19 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback ---=~~~~~=-=-~=~~=--=~ ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
-        o->value(current_widget->scale_deimage_w_);
+        o->value(current_widget->inactive_image.scale_w);
       }
     } else {
       int mod = 0;
       for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Widget_Node* wt = ((Widget_Node*)t);
-          wt->scale_deimage_w_ = o->value();
+          wt->inactive_image.scale_w = o->value();
           Fl_Image *img = wt->o->deimage();
           if (img) {
-            int iw = wt->scale_deimage_w_;
+            int iw = wt->inactive_image.scale_w;
             if (iw<=0) iw = img->data_w();
-            int ih = wt->scale_deimage_h_;
+            int ih = wt->inactive_image.scale_h;
             if (ih<=0) ih = img->data_w();
             img->scale(iw, ih, 0, 1);
             wt->o->redraw();
@@ -291,7 +292,7 @@ static void cb_image_panel_deimagew(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------~=-~--=-=~=~----------~-~-~~--~~-=-==~~==-~= ▲ ﬂ//
+//ﬂ ▲ ----------~=-~--=-=~=~----------~-=-~=--=-~-~---~-~=~- ▲ ﬂ//
 }
 
 fld::widget::Formula_Input* image_panel_deimageh = (fld::widget::Formula_Input*)nullptr;
@@ -300,19 +301,19 @@ static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback -----==-~==~=-=~=--~-= ▼ ﬂ//
   if (v == LOAD) {
       if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
-        o->value(current_widget->scale_deimage_h_);
+        o->value(current_widget->inactive_image.scale_h);
       }
     } else {
       int mod = 0;
       for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
         if (t->selected && t->is_widget()) {
           Widget_Node* wt = ((Widget_Node*)t);
-          wt->scale_deimage_h_ = o->value();
+          wt->inactive_image.scale_h = o->value();
           Fl_Image *img = wt->o->deimage();
           if (img) {
-            int iw = wt->scale_deimage_w_;
+            int iw = wt->inactive_image.scale_w;
             if (iw<=0) iw = img->data_w();
-            int ih = wt->scale_deimage_h_;
+            int ih = wt->inactive_image.scale_h;
             if (ih<=0) ih = img->data_w();
             img->scale(iw, ih, 0, 1);
             wt->o->redraw();
@@ -323,7 +324,7 @@ static void cb_image_panel_deimageh(fld::widget::Formula_Input* o, void* v) {
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
-//ﬂ ▲ ----------=~-=~~~~---=-----------~~~~==~~~~=~~=-=~-=~- ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~~~~---=----------~~-=-~-~~-=--~=---=-~- ▲ ﬂ//
 }
 
 static void cb_Reset1(Fl_Button*, void* v) {
@@ -342,19 +343,19 @@ static void cb_convert1(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(!current_widget->compress_deimage_);
+      o->value(!current_widget->inactive_image.compress);
     } else {
       o->deactivate();
     }
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->compress_deimage_ = !o->value();
+      q->inactive_image.compress = !o->value();
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=--~==-~~~=----------~------~~~-~-=~~--~-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=--~==-~~~=------------~-~-~-=--==---~=-~=~ ▲ ﬂ//
 }
 
 static void cb_bind1(Fl_Check_Button* o, void* v) {
@@ -362,19 +363,19 @@ static void cb_bind1(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(current_widget->bind_deimage_);
+      o->value(current_widget->inactive_image.bind);
     } else {
       o->deactivate();
     }
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->bind_deimage_ = o->value();
+      q->inactive_image.bind = o->value();
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-=~-~~-~~-----------~--==~--=~-=~~-~=~---= ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~-~~-~~-----------~--=~=-~~=-=-~=~~-~~-= ▲ ﬂ//
 }
 
 Fl_Button* image_panel_close = (Fl_Button*)nullptr;
@@ -629,17 +630,18 @@ static void cb_widget_image_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(((Widget_Node*)current_widget)->image_name().c_str());
+      o->value(current_widget->active_image.name.c_str());
     } else o->deactivate();
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->image_name(o->value());
+      q->active_image.set(o->value(), q->is_a(Type::Window) ? nullptr : q->o, false);
+      q->redraw();
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-==-=~=-~~----------~~=-~==~~~-=-=~---=-=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-==-=~=-~~-----------------~=~~=~=-=~==~-- ▲ ﬂ//
 }
 
 static void cb_Browse(Fl_Button* o, void* v) {
@@ -655,13 +657,14 @@ static void cb_Browse(Fl_Button* o, void* v) {
     if (image_asset) {
       widget_image_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-        q->image_name(image_asset->filename());
+        q->active_image.set(image_asset->filename(), q->is_a(Type::Window) ? nullptr : q->o, false);
+        q->redraw();
         mod = 1;
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-=~==~~=-=-----------~~~~-=-~=-~=~~~=~-~-~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~==~~=-=----------~--~---~~-=~=--=-=--~- ▲ ﬂ//
 }
 
 static void cb_(Fl_Button*, void* v) {
@@ -679,17 +682,18 @@ static void cb_widget_deimage_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
       o->activate();
-      o->value(((Widget_Node*)current_widget)->inactive_name().c_str());
+      o->value(current_widget->inactive_image.name.c_str());
     } else o->deactivate();
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->inactive_name(o->value());
+      q->inactive_image.set(o->value(), q->is_a(Type::Window) ? nullptr : q->o, true);
+      q->redraw();
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~---=-~=~-=--------------~~~-~---~-~~=--=-- ▲ ﬂ//
+//ﬂ ▲ ----------=~---=-~=~-=----------~-~--~~~~-~---~-=--~~= ▲ ﬂ//
 }
 
 static void cb_Browse1(Fl_Button* o, void* v) {
@@ -705,13 +709,14 @@ static void cb_Browse1(Fl_Button* o, void* v) {
     if (image_asset) {
       widget_deimage_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-        q->inactive_name(image_asset->filename());
+        q->inactive_image.set(image_asset->filename(), q->is_a(Type::Window) ? nullptr : q->o, true);
+        q->redraw();
         mod = 1;
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~---==---=~-------------~-==~=~=~--~-~~-==- ▲ ﬂ//
+//ﬂ ▲ ----------=~---==---=~----------~~=~=~=--~~--~~----=~= ▲ ﬂ//
 }
 
 Fl_Group* wp_gui_alignment = (Fl_Group*)nullptr;
@@ -1646,24 +1651,26 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
       o->hide();
       return;
     }
+    auto nd = dynamic_cast<Menu_Item_Node*>(current_widget);
     o->show();
-    o->value(current_widget->menu_headline());
+    o->value(nd ? nd->headline() : 0);
   } else {
     int mod = 0;
     int n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       if (q->is_a(Type::Menu_Item)) {
+        auto nd = dynamic_cast<Menu_Item_Node*>(q);
         if (!mod) {
           mod = 1;
           Fluid.proj.undo.checkpoint();
         }
-        q->menu_headline(n);
+        if (nd) nd->headline(n);
         q->redraw();
       }
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~-~~-=-=-----------~~~~=~=~~-=~=~~=--=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~~-~~-=-=------------~=~~=--=~=~-==--~-~-= ▲ ﬂ//
 }
 
 static void cb_Hotspot(Fl_Light_Button* o, void* v) {
