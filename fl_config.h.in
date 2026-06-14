@@ -166,7 +166,7 @@
  * See CMake option FLTK_OPTION_PEN_SUPPORT, but note that a build test
  * (try_compile()) is performed to test if the option is available
  *
- * We use #cmakedefine01 instead of #cmakedefine as we may want to
+ * We use cmakedefine01 instead of cmakedefine as we may want to
  * override it from the command-line.
  * For example, to avoid fluid to be compiled with pen support.
  *
