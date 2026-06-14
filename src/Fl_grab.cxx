@@ -28,7 +28,7 @@
 
 void Fl::grab(Fl_Window *win)
 {
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+#if FLTK_HAVE_PEN_SUPPORT
   Fl::Pen::release();
 #endif
   screen_driver()->grab(win);
