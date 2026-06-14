@@ -1725,7 +1725,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
   }
   auto nd = dynamic_cast<Menu_Item_Node*>(current_widget);
   o->show();
-  o->value(nd ? nd->menu_headline() : 0);
+  o->value(nd ? nd->headline() : 0);
 } else {
   int mod = 0;
   int n = o->value();
@@ -1736,7 +1736,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
         mod = 1;
         Fluid.proj.undo.checkpoint();
       }
-      if (nd) nd->menu_headline(n);
+      if (nd) nd->headline(n);
       q->redraw();
     }
   }

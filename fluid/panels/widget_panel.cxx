@@ -1670,7 +1670,7 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~-~~-=-=------------~------~-=~=-=~~-=~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~-~~-=-=------------~=~~=--=~=~-==--~-~-= ▲ ﬂ//
 }
 
 static void cb_Hotspot(Fl_Light_Button* o, void* v) {
