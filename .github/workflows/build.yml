@@ -240,6 +240,8 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    # This places cl.exe for the architecture you want.
+    # It is well maintained and supports both arm64 and amd64.
     - name: Setup environment
       uses: TheMrMilchmann/setup-msvc-dev@v4
       with:
@@ -276,7 +278,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-      
+
+    # This places cl.exe for the architecture you want.
+    # It is well maintained and supports both arm64 and amd64.
     - name: Setup environment (ARM64 native)
       uses: TheMrMilchmann/setup-msvc-dev@v4
       with:
