@@ -43,6 +43,8 @@ private:  // member variables
 
 private: // methods
   Image_Asset(const std::string& name, Image_Asset_Map& map); // constructed by Image_Asset_Map
+  Image_Asset(const Image_Asset&) = delete;
+  Image_Asset& operator=(const Image_Asset&) = delete;
 
   size_t write_static_binary(fld::io::Code_Writer& f, const char* fmt);
   size_t write_static_text(fld::io::Code_Writer& f, const char* fmt);
@@ -51,7 +53,9 @@ private: // methods
 public: // methods
   ~Image_Asset();
 
+  /// Return the loaded Fl_Shared_Image, or nullptr if loading failed.
   Fl_Shared_Image *image() const { return image_.get(); }
+  /// Return the image filename relative to the project directory.
   const char *filename() const { return filename_.c_str(); }
 
   void write_static(fld::io::Code_Writer& f, int compressed);

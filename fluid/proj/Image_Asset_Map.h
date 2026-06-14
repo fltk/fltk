@@ -36,21 +36,25 @@ class Image_Asset_Map {
   friend class Image_Asset;
 
   fld::Project& proj_;
-  std::map<std::string, std::weak_ptr<Image_Asset>> map_;
-
-public:
-  Image_Asset_Map(fld::Project& proj) : proj_(proj) {}
-
-  fld::Project& project() const { return proj_; }
-
-  /// Look up an asset by filename. Returns nullptr if not cached.
-  std::shared_ptr<Image_Asset> find(const std::string& name) const;
-
-  /// Return the cached asset for \p name, or load and cache it from disk.
-  std::shared_ptr<Image_Asset> find_or_create(const std::string& name);
+  mutable std::unordered_map<std::string, std::weak_ptr<Image_Asset>> map_;
 
   void insert(const std::string& name, std::shared_ptr<Image_Asset> asset);
   void erase(const std::string& name);
+
+public:
+  /// Construct the map and bind it to \p proj for directory and error access.
+  Image_Asset_Map(fld::Project& proj) : proj_(proj) {}
+  Image_Asset_Map(const Image_Asset_Map&) = delete;
+  Image_Asset_Map& operator=(const Image_Asset_Map&) = delete;
+
+  /// Return the project that owns this map.
+  fld::Project& project() const { return proj_; }
+
+  /// Look up an asset by filename. Returns nullptr if not cached or expired.
+  std::shared_ptr<Image_Asset> find(const std::string& name) const;
+
+  /// Return the cached asset for \p name, or load it from disk and cache it.
+  std::shared_ptr<Image_Asset> find_or_create(const std::string& name);
 };
 
 #endif // APP_IMAGE_ASSET_MAP_H

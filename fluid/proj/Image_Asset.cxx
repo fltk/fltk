@@ -44,16 +44,15 @@
 
 
 /**
- \brief Write the contents of the image file as binary source code.
+ \brief Write the contents of the image file as a binary data array.
 
- Write the contents of the image file as C++ code, so the image is available in
- the target app in the original binary format, for example:
- ```
- { 1, 2, 3, ...}
- ```
- \param f Write code to this C++ source code file
- \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read
+ Emits the raw bytes of the image file as a C++ initializer list, so the
+ image is embedded in the target application in its original compressed
+ format (e.g. GIF, BMP, JPEG, PNG, SVGZ).
+
+ \param f   Code writer to emit the data into.
+ \param fmt Short image type name used in the error message (e.g. "GIF", "PNG").
+ \return Number of bytes written, or 0 if the file could not be opened or read.
  */
 size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
@@ -80,14 +79,15 @@ size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt
 
 
 /**
- \brief Write the contents of the image file as text with escaped special characters.
+ \brief Write the contents of the image file as an escaped C string literal.
 
- This function is only useful for writing out image formats that are ASCII text
- based, like svg and pixmaps. Other formats should use write_static_binary().
+ Intended for text-based image formats (SVG, XPM). The file content is written
+ as a C string with special characters escaped, rather than as raw binary.
+ Use write_static_binary() for binary formats.
 
- \param f Write code to this C++ source code file
- \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read
+ \param f   Code writer to emit the string into.
+ \param fmt Short image type name used in the error message (e.g. "SVG").
+ \return Number of bytes written, or 0 if the file could not be opened or read.
  */
 size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
@@ -114,17 +114,18 @@ size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) 
 
 
 /**
- \brief Write the contents of the image file as uncompressed RGB.
+ \brief Write the image's decoded pixel data as an uncompressed RGB array.
 
- Write source code that generates the uncompressed RGB image data at compile
- time, and an initializer that creates the image at run time.
+ Emits a static byte array containing the raw pixel data already held in
+ memory by the Fl_Shared_Image, then calls write_initializer() to emit an
+ Fl_RGB_Image constructor that references it. This avoids the need to link
+ an image-format reader in the target application at the cost of larger code.
 
- \todo If the ld() value is not 0 and not d()*w(), the image data is not
- written correctly. There is no check if the data is actually in RGB format.
+ \todo If ld() is non-zero and differs from w()*d(), the row stride is not
+ handled correctly. There is also no check that the data is truly in RGB format.
 
- \param f Write code to this C++ source code file
- \param fmt short name of file contents for error message
- \return 0 if the file could not be opened or read
+ \param f          Code writer to emit the array and initializer into.
+ \param idata_name Variable name to use for the generated static data array.
  */
 void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
   // Write image data...
@@ -139,18 +140,19 @@ void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_na
 
 
 /**
- \brief Write the static image data into the source file.
+ \brief Write static image data and its runtime initializer into the source file.
 
- Write source code that generates the image data at compile time, and an
- initializer that creates the image at run time.
+ Chooses the appropriate output strategy based on the image type and the
+ \p compressed flag:
+ - If \p compressed is set, the image is written in its original file format
+   (GIF, BMP, JPEG, PNG, SVG/SVGZ), which produces compact code but requires
+   the matching FLTK image reader to be linked into the target application.
+ - If \p compressed is not set, the decoded pixel data is written as a raw RGB
+   array via write_static_rgb(), which needs no reader but uses more memory.
+ Pixmap and Bitmap images always use their native in-memory representation.
 
- If \p compressed is set, write the original image format, which requires
- linking the matching image reader at runtime, or if we want to store the raw
- uncompressed pixels, which makes images fast, needs no reader, but takes a
- lot of memory (current default for PNG)
-
- \param f Write code to this C++ source code file
- \param compressed write data in the original compressed file format
+ \param f          Code writer to emit the data and initializer into.
+ \param compressed If non-zero, embed the original compressed file bytes.
  */
 void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
   if (!image_) return;
@@ -276,14 +278,15 @@ void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
 
 
 /**
- \brief Write a warning message to the generated code file that the image asset
- can't be read.
+ \brief Write a \c \#warning and a path comment into the generated source file.
 
- This writes a #warning directive to the generated code file which contains the
- filename of the image asset and the error message as returned by strerror(errno).
- The current working directory is also printed for debugging purposes.
- \param f The C++ source code file to write the warning message to.
- \param fmt The format string for the image file type.
+ Emits a compiler warning directive containing the filename and the system
+ error string (strerror(errno)), so build failures are visible at compile
+ time. Also writes a comment with the current working directory to help
+ diagnose path resolution problems.
+
+ \param f   Code writer to emit the diagnostic lines into.
+ \param fmt Short image type name shown in the warning (e.g. "GIF", "PNG").
  */
 void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
   f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, filename(), strerror(errno));
@@ -294,24 +297,29 @@ void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
 
 
 /**
- \brief Outputs code that loads and returns an Fl_Image.
+ \brief Emit a static loader function that constructs the image on first call.
 
- The generated code loads the image if it hasn't been loaded yet, and then
- returns a pointer to the image.
+ Writes a file-scoped function named \c initializer_function_ that lazily
+ constructs the image the first time it is called and caches it in a local
+ static variable. The generated pattern is:
 
  \code
-  static Fl_Image *'initializer_function_'() {
-    static Fl_Image *image = 0L;
+  static Fl_Image* <initializer_function_>() {
+    static Fl_Image* image = nullptr;
     if (!image)
-      image = new 'type_name'('product of format and remaining args');
+      image = new <image_class>(<format args>);
     return image;
   }
  \endcode
 
- \param f Write the C++ code to this file.
- \param image_class Name of the Fl_Image class, for example Fl_GIF_Image.
- \param format Format string for additional parameters for the constructor.
-  */
+ \p initializer_function_ must have been set by write_static() before this
+ method is called.
+
+ \param f           Code writer to emit the function into.
+ \param image_class FLTK image class name (e.g. "Fl_GIF_Image", "Fl_RGB_Image").
+ \param format      printf-style format string for the constructor arguments,
+                    followed by the matching variadic arguments.
+ */
 void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_class, const char *format, ...) {
   va_list ap;
   va_start(ap, format);
@@ -358,13 +366,14 @@ void Image_Asset::write_code(fld::io::Code_Writer& f, int bind, const char *var,
 
 
 /**
- \brief Outputs code that calls the image initializer function.
+ \brief Emit a bare call expression for the image initializer function.
 
- The generated code calls the image initializer function, loading an image and
- assigning it to a Fl_Menu_Item.
+ Writes the initializer function name followed by `()` with no statement
+ terminator, so the call can be placed inline inside a larger expression —
+ for example as the image field of an Fl_Menu_Item initializer list.
 
- \param f Write the C++ code to this file.
- \param inactive Unused.
+ \param f        Code writer to emit the expression into.
+ \param inactive Unused; present for API symmetry with write_code().
  */
 void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
   (void)inactive;
@@ -384,9 +393,8 @@ void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
  \param map   The owning map; stored for use by the destructor and write methods.
 */
 Image_Asset::Image_Asset(const std::string& iname, Image_Asset_Map& map)
-  : map_(&map)
+  : filename_(iname), map_(&map)
 {
-  filename_ = iname;
   image_.reset(Fl_Shared_Image::get(iname.c_str()));
   if (image_ && !iname.empty()) {
     std::string ext = fl_filename_ext_str(iname);
@@ -407,12 +415,16 @@ Image_Asset::~Image_Asset() {
 ////////////////////////////////////////////////////////////////
 
 /**
- \brief Displays a file chooser and returns a valid image selected by the user.
+ \brief Show a file chooser and return the image asset selected by the user.
 
- \param proj    The project whose directory is searched and whose asset cache is used.
- \param oldname Default filename shown in the chooser.
- \return The selected asset, or nullptr on cancel or error.
-*/
+ Opens the file chooser in the current project's directory (Fluid.proj).
+ If the user picks a file, it is loaded via the project's image asset cache;
+ an existing cached asset is reused rather than reloaded.
+
+ \param oldname Filename pre-filled in the chooser, or nullptr for none.
+ \return The selected asset, or nullptr if the user cancelled or the file
+         could not be loaded.
+ */
 std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
   Fluid.proj.enter_project_dir();
   fl_file_chooser_ok_label("Use Image");

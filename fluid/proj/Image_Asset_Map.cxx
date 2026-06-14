@@ -28,9 +28,23 @@
 #include <string.h>
 
 
+/**
+ \brief Look up an asset by filename in the cache.
+
+ Returns the live asset if one is cached under \p name. If a stale entry
+ is found (the weak_ptr has expired but the destructor did not erase it),
+ the entry is pruned and nullptr is returned.
+
+ \param name Filename key, relative to the project directory.
+ \return The cached asset, or nullptr if not found or already released.
+ */
 std::shared_ptr<Image_Asset> Image_Asset_Map::find(const std::string& name) const {
   auto it = map_.find(name);
-  if (it != map_.end()) return it->second.lock();
+  if (it != map_.end()) {
+    auto locked = it->second.lock();
+    if (locked) return locked;
+    map_.erase(it);  // stale entry — destructor must not have run cleanly
+  }
   return nullptr;
 }
 
@@ -80,10 +94,28 @@ std::shared_ptr<Image_Asset> Image_Asset_Map::find_or_create(const std::string& 
   return asset;
 }
 
+/**
+ \brief Store an asset in the cache under the given filename.
+
+ Saves a weak_ptr so the cache does not prevent the asset from being
+ released when all external shared_ptr holders are gone. Called only
+ by find_or_create() immediately after a new asset is successfully loaded.
+
+ \param name  Filename key, relative to the project directory.
+ \param asset Newly created asset to cache.
+ */
 void Image_Asset_Map::insert(const std::string& name, std::shared_ptr<Image_Asset> asset) {
   map_[name] = asset;
 }
 
+/**
+ \brief Remove the cache entry for the given filename.
+
+ Called automatically by Image_Asset::~Image_Asset() when the last
+ shared_ptr to an asset is released, keeping the cache free of dead entries.
+
+ \param name Filename key to remove.
+ */
 void Image_Asset_Map::erase(const std::string& name) {
   map_.erase(name);
 }
