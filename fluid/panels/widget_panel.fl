@@ -45,7 +45,7 @@ decl {\#include "Fluid.h"} {uid 2ade private global
 decl {\#include "app/Snap_Action.h"} {uid 7410 private global
 }
 
-decl {\#include "app/Image_Asset.h"} {uid dfe6 private global
+decl {\#include "proj/Image_Asset.h"} {uid dfe6 private global
 }
 
 decl {\#include "proj/undo.h"} {uid 8760 private global
@@ -584,7 +584,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
     o->deactivate();
 } else {
   int mod = 0;
-  Image_Asset *image_asset = ui_find_image(widget_image_input->value());
+  auto image_asset = ui_find_image(widget_image_input->value());
   if (image_asset) {
     widget_image_input->value(image_asset->filename());
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
@@ -600,7 +600,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               label {...}
               callback {if (v != LOAD) {
   run_image_panel();
-}}
+}} selected
               tooltip {more image options} bind_image 1 xywh {384 65 20 20}
             }
           }
@@ -634,7 +634,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
     o->deactivate();
 } else {
   int mod = 0;
-  Image_Asset *image_asset = ui_find_image(widget_deimage_input->value());
+  auto image_asset = ui_find_image(widget_deimage_input->value());
   if (image_asset) {
     widget_deimage_input->value(image_asset->filename());
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
@@ -1601,7 +1601,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
   Fluid.proj.undo.checkpoint();
   ((Fl_Window*)(current_widget->o))->border(o->value());
   Fluid.proj.set_modflag(1);
-}} selected
+}}
               tooltip {Add a border around the window.} xywh {195 235 60 20} selection_color 1 labelsize 11
             }
             Fl_Light_Button {} {uid 457d

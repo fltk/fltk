@@ -18,13 +18,14 @@
 #define FLUID_NODES_WIDGET_NODE_H
 
 #include "nodes/Node.h"
+#include "proj/Image_Asset.h"
 
+#include <memory>
 #include <string>
 
-#define NUM_EXTRA_CODE 4
+static constexpr int NUM_EXTRA_CODE = 4;
 
 class Widget_Node;
-class Image_Asset;
 
 extern void* const LOAD;
 extern Node* current_node; // one of the selected ones
@@ -78,7 +79,7 @@ protected:
   void write_color(fld::io::Code_Writer& f, const char*, Fl_Color);
 
   /// Pointer to widget representing this node in live mode.
-  Fl_Widget* live_widget;
+  Fl_Widget* live_widget = nullptr;
 
 public:
 
@@ -96,7 +97,7 @@ public:
   /// Scale the active image, great for hires screens
   int scale_image_w_ = 0, scale_image_h_ = 0;
   /// Pointer to the shared image data of the active image
-  Image_Asset* image = nullptr;
+  std::shared_ptr<Image_Asset> image;
 
   /// Set the bind image flag for the inactive image
   int bind_deimage_ = 0;
@@ -105,13 +106,13 @@ public:
   /// Scale the inactive image
   int scale_deimage_w_ = 0, scale_deimage_h_ = 0;
   /// Pointer to the shared image data of the inactive image
-  Image_Asset* inactive = nullptr;
+  std::shared_ptr<Image_Asset> inactive;
 
-  void setimage(Image_Asset *);
+  void setimage(std::shared_ptr<Image_Asset>);
   std::string image_name() const { return image_name_; }
   void image_name(const std::string& name);
 
-  void setinactive(Image_Asset *);
+  void setinactive(std::shared_ptr<Image_Asset>);
   std::string inactive_name() const { return inactive_name_; }
   void inactive_name(const std::string& name);
 

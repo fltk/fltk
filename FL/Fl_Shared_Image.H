@@ -1,7 +1,7 @@
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -124,6 +124,25 @@ protected:
   Fl_Shared_Image *copy_(int W, int H) const;
 
 public:
+
+  /**
+   Custom deleter for std::unique_ptr<>.
+   Fl_Shared_Image does not follow the standard new/delete memory lifecycle.
+   To implement RAII, use std::unique_ptr with this custom deleter to ensure
+   proper release of the image resource.
+   \code{.cpp}
+      std::unique_ptr<Fl_Shared_Image, Fl_Shared_Image::Deleter> img;
+      img = Fl_Shared_Image::get("image.png");
+      // image will be automatically released when 'img' goes out of scope
+   \endcode
+  */
+  class Deleter {
+    public:
+      void operator()(Fl_Shared_Image* img) const {
+        if (img) img->release();
+      }
+  };
+
 #ifdef SHIM_DEBUG
   static void print_pool();
 #endif

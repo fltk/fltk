@@ -19,7 +19,7 @@
 #include "widget_panel.h"
 #include "Fluid.h"
 #include "app/Snap_Action.h"
-#include "app/Image_Asset.h"
+#include "proj/Image_Asset.h"
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
@@ -52,7 +52,7 @@ extern int haderror;
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code ------=-~--==~-~=----=-- ▼ ﬂ//
+//ﬂ ▼ ------------------------ code --~-~=-=~=~-~~--~-~--=~= ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~~-~=---~-------------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
 }
@@ -651,7 +651,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
       o->deactivate();
   } else {
     int mod = 0;
-    Image_Asset *image_asset = ui_find_image(widget_image_input->value());
+    auto image_asset = ui_find_image(widget_image_input->value());
     if (image_asset) {
       widget_image_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
@@ -661,7 +661,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-=~==~~=-=------------~=~=~==~-~--~~=-=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~==~~=-=-----------~~~~-=-~=-~=~~~=~-~-~ ▲ ﬂ//
 }
 
 static void cb_(Fl_Button*, void* v) {
@@ -701,7 +701,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       o->deactivate();
   } else {
     int mod = 0;
-    Image_Asset *image_asset = ui_find_image(widget_deimage_input->value());
+    auto image_asset = ui_find_image(widget_deimage_input->value());
     if (image_asset) {
       widget_deimage_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
@@ -711,7 +711,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~---==---=~-----------~~~-~-~~=-=~==-~--~-- ▲ ﬂ//
+//ﬂ ▲ ----------=~---==---=~-------------~-==~=~=~--~-~~-==- ▲ ﬂ//
 }
 
 Fl_Group* wp_gui_alignment = (Fl_Group*)nullptr;

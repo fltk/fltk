@@ -18,7 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
-#include "app/Image_Asset.h"
+#include "proj/Image_Asset.h"
 #include "proj/mergeback.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
@@ -412,7 +412,7 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     }
   }
   if (image) {
-    if (!f.c_contains(image))
+    if (!f.c_contains(image.get()))
       image->write_static(f, compress_image_);
   }
   if (next && next->is_a(Type::Menu_Item)) return;
