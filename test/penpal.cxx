@@ -30,6 +30,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Menu_Bar.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_message.H>
@@ -49,6 +50,8 @@ class CanvasInterface {
   Fl_Widget *widget_ { nullptr };
   bool in_window_ { false };
   bool first_draw_ { true };
+  bool pen_handle_  { false };  //<- Variable needed on Windows to not trigger
+                                //   on FL_PUSH.
   Fl_Offscreen offscreen_ { 0 };
   Fl_Color color_ { 1 };
   enum { NONE, HOVER, DRAW, PEN_HOVER, PEN_DRAW } overlay_ { NONE };
@@ -81,6 +84,7 @@ int CanvasInterface::cv_handle(int event)
       if (color_ > 6) color_ = 1;
       /* fall through */
     case Fl::Pen::HOVER:
+      pen_handle_ = false;
       // Pen move over the surface without touching it.
       overlay_ = PEN_HOVER;
       ov_x_ = Fl::event_x();
@@ -98,12 +102,15 @@ int CanvasInterface::cv_handle(int event)
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
       cv_pen_paint();
+      pen_handle_ = true;
       widget_->redraw();
       return 1;
     case Fl::Pen::LIFT:
+      pen_handle_ = false;
       // Pen was just lifted from the surface and is now hovering
       return 1;
     case Fl::Pen::LEAVE:
+      pen_handle_ = false;
       // The pen left the drawing area.
       overlay_ = NONE;
       widget_->redraw();
@@ -125,6 +132,7 @@ int CanvasInterface::cv_handle(int event)
         return popup_app_menu();
       /* fall through */
     case FL_DRAG:
+      if (pen_handle_) return 1;
       overlay_ = DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -134,6 +142,7 @@ int CanvasInterface::cv_handle(int event)
     case FL_RELEASE:
       return 1;
     case FL_LEAVE:
+      pen_handle_ = false;
       overlay_ = NONE;
       widget_->redraw();
       return 1;
@@ -160,7 +169,12 @@ void CanvasInterface::cv_draw()
   // Preset values for overlay
   int r = 10;
   if (overlay_ == PEN_DRAW)
-    r = static_cast<int>(32.0 * Fl::Pen::event_pressure());
+  {
+    float pressure = Fl::Pen::event_pressure();
+    r = static_cast<int>(32.0 * pressure);
+    if (r < 1) r = 1;
+    printf("pressure=%f radius=%d\n", pressure, r);
+  }
   fl_color(FL_BLACK);
   switch (overlay_) {
     case NONE: break;
@@ -201,7 +215,10 @@ void CanvasInterface::cv_paint() {
 void CanvasInterface::cv_pen_paint() {
   if (!offscreen_)
     return;
-  int r = static_cast<int>(32.0 * (Fl::Pen::event_pressure()*Fl::Pen::event_pressure()));
+  float pressure = Fl::Pen::event_pressure();
+  int r = static_cast<int>(32.0 * pressure);
+  if (r < 1) r = 1;
+  printf("pressure=%f radius=%d\n", pressure, r);
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
   fl_begin_offscreen(offscreen_);
@@ -274,6 +291,21 @@ int popup_app_menu() {
   return 1;
 }
 
+void delete_cb(Fl_Widget*, Fl_Widget* cv)
+{
+    if (cv1) { cv1->top_window()->redraw(); delete cv1; cv1 = nullptr; }
+}
+
+void subscribe_cb(Fl_Widget*, void* d)
+{
+    Fl::Pen::subscribe((Fl_Widget*)d);
+}
+
+void unsubscribe_cb(Fl_Widget*, void* d)
+{
+    Fl::Pen::unsubscribe((Fl_Widget*)d);
+}
+
 //
 // Main app entry point
 //
@@ -282,18 +314,24 @@ int main(int argc, char **argv)
   // Create our main app window
   auto window = new Fl_Window(100, 100, 640, 220, "FLTK Pen/Stylus/Tablet test, Ctrl-Tap for menu");
 
+  auto menu_bar = new Fl_Menu_Bar(0, 0, 640, 20);
+  menu_bar->add("Middle canvas/unsubscribe", 0, unsubscribe_cb, cv1);
+  menu_bar->add("Middle canvas/subscribe", 0, subscribe_cb, cv1);
+  menu_bar->add("Middle canvas/delete", 0, (Fl_Callback*)delete_cb, cv1);
+  menu_bar->menu_end();
+
   // One testing canvas is just a regular child widget of the window
-  auto canvas_widget_0 = new CanvasWidget( 10, 10, 200, 200, "CV0");
+  auto canvas_widget_0 = new CanvasWidget( 10, 20, 200, 200, "CV0");
 
   // The second canvas is inside a group
   auto cv1_group = new Fl_Group(215, 5, 210, 210);
   cv1_group->box(FL_FRAME_BOX);
-  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 10, 200, 200, "CV1");
+  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 20, 200, 200, "CV1");
   cv1_group->end();
 
   // The third canvas is a window inside a window, so we can verify
   // that pen coordinates are calculated correctly.
-  auto canvas_widget_2 = new CanvasWindow(430, 10, 200, 200, "CV2");
+  auto canvas_widget_2 = new CanvasWindow(430, 20, 200, 200, "CV2");
   canvas_widget_2->end();
 
   window->end();

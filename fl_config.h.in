@@ -159,4 +159,15 @@
 #cmakedefine01 FLTK_USE_SVG
 
 
+/*
+ * FLTK_HAVE_PEN_SUPPORT
+ *
+ * Do we have pen/tablet support for the current platform?
+ * See CMake option FLTK_OPTION_PEN_SUPPORT, but note that a build test
+ * (try_compile()) is performed to test if the option is available
+ *
+ */
+
+#cmakedefine FLTK_HAVE_PEN_SUPPORT 1
+
 #endif /* _FL_fl_config_h_ */

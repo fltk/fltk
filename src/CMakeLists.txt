@@ -348,7 +348,18 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/Fl_Wayland_Copy_Surface_Driver.H
     drivers/Wayland/Fl_Wayland_Image_Surface_Driver.H
     drivers/Unix/Fl_Unix_System_Driver.H
-  )
+)
+
+  if(UNIX AND FLTK_USE_WAYLAND)
+      if(FLTK_HAVE_PEN_SUPPORT)
+	  list(APPEND DRIVER_FILES
+	      drivers/Wayland/Fl_Wayland_Pen_Events.cxx
+	  )
+	  list(APPEND DRIVER_HEADER_FILES
+	      drivers/Wayland/Fl_Wayland_Pen_Events.H
+	  )
+      endif(FLTK_HAVE_PEN_SUPPORT)
+  endif(UNIX AND FLTK_USE_WAYLAND)
 
 elseif(APPLE)
 
@@ -423,7 +434,10 @@ else()
 
   if(FLTK_HAVE_PEN_SUPPORT)
     list(APPEND DRIVER_FILES
-      drivers/WinAPI/Fl_WinAPI_Pen_Driver.cxx
+      drivers/WinAPI/Fl_WinAPI_Pen_Events.cxx
+    )
+    list(APPEND DRIVER_HEADER_FILES
+      drivers/WinAPI/Fl_WinAPI_Pen_Events.H
     )
   endif(FLTK_HAVE_PEN_SUPPORT)
 
@@ -869,7 +883,7 @@ if(UNIX AND FLTK_USE_WAYLAND)
     add_custom_command(
       OUTPUT tablet-protocol.c # tablet-client-protocol.h
       COMMAND wayland-scanner private-code  ${INFILE} tablet-protocol.c
-#     COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
+      COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
       DEPENDS ${INFILE}
       VERBATIM
     )

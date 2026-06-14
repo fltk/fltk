@@ -231,6 +231,9 @@ source_group(
 add_library(fluid-lib OBJECT EXCLUDE_FROM_ALL)
 target_sources(fluid-lib PRIVATE ${CPPFILES} ${HEADERFILES})
 target_include_directories(fluid-lib PUBLIC .)
+if (WIN32 AND (CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64|ARM64"))
+    target_compile_definitions(fluid-lib PRIVATE FLTK_HAVE_PEN_SUPPORT=0)
+endif()
 target_link_libraries(fluid-lib PUBLIC fltk::images)
 
 # Build targets
@@ -243,6 +246,11 @@ make_target(fluid TRUE "${MAIN_FILES}" fluid-lib fluid TRUE)
 if(WIN32)
   make_target(fluid-cmd FALSE "${MAIN_FILES}" fluid-lib fluid-cmd TRUE)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
+
+  # Workaround for ARM64 pen driver crash in console tool# Workaround for pen driver crash on Windows ARM64 in console tool (fluid-cmd)
+  if (WIN32 AND (CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64|ARM64"))
+      target_compile_definitions(fluid-cmd PRIVATE FLTK_HAVE_PEN_SUPPORT=0)
+  endif()
 else()
   set(FLTK_FLUID_EXECUTABLE fltk::fluid)
 endif()

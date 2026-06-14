@@ -75,11 +75,20 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
   return new Fl_Xlib_Image_Surface_Driver(w, h, high_res, off);
 }
 
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+// This defines e_x_down and e_y_down for X11 when Wayland is not being built.
+#if FLTK_HAVE_PEN_SUPPORT && !defined(FLTK_USE_WAYLAND)
+namespace Fl {
+namespace Private {
+// Global mouse position at mouse down event
+int e_x_down { 0 };
+int e_y_down { 0 };
+}; // namespace Private
+}; // namespace Fl
+
 namespace Fl {
 namespace Pen {
 Driver default_driver;
 Driver& driver = default_driver;
 } // namespace Pen
 } // namespace Fl
-#endif // FLTK_HAVE_PEN_SUPPORT
+#endif

@@ -253,8 +253,12 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
    Destroys the widget, taking care of throwing focus before if any.
    Destruction removes the widget from any parent group! And groups when
    destroyed destroy all their children. This is convenient and fast.
+   Also removes the widget from the Pen API list.
 */
 Fl_Widget::~Fl_Widget() {
+#if FLTK_HAVE_PEN_SUPPORT
+  Fl::Pen::unsubscribe(this);
+#endif
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
