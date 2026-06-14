@@ -179,42 +179,6 @@ Node* Widget_Node::make(Strategy strategy) {
   return t;
 }
 
-void Widget_Node::setimage(std::shared_ptr<Image_Asset> i) {
-  if (i == image || is_a(Type::Window))
-    return;
-  image = i;
-  if (i) {
-    o->image(i->image());
-    if (o->image() && (scale_image_w_ || scale_image_h_)) {
-      int iw = scale_image_w_>0 ? scale_image_w_ : o->image()->data_w();
-      int ih = scale_image_h_>0 ? scale_image_h_ : o->image()->data_h();
-      o->image()->scale(iw, ih, 0, 1);
-    }
-  } else {
-    o->image(nullptr);
-    //scale_image_w_ = scale_image_h_ = 0;
-  }
-  redraw();
-}
-
-void Widget_Node::setinactive(std::shared_ptr<Image_Asset> i) {
-  if (i == inactive || is_a(Type::Window))
-    return;
-  inactive = i;
-  if (i) {
-    o->deimage(i->image());
-    if (o->deimage()) {
-      int iw = scale_deimage_w_>0 ? scale_deimage_w_ : o->deimage()->data_w();
-      int ih = scale_deimage_h_>0 ? scale_deimage_h_ : o->deimage()->data_h();
-      o->deimage()->scale(iw, ih, 0, 1);
-    }
-  } else {
-    o->deimage(nullptr);
-    //scale_deimage_w_ = scale_deimage_h_ = 0;
-  }
-  redraw();
-}
-
 void Widget_Node::setlabel(const char* n) {
   o->label(n);
   redraw();
@@ -245,16 +209,6 @@ void Widget_Node::tooltip(const std::string& text) {
   } else {
     o->copy_tooltip(text.c_str());
   }
-}
-
-void Widget_Node::image_name(const std::string& name) {
-  setimage(Fluid.proj.image_assets.find_or_create(name));
-  storestring(name, image_name_);
-}
-
-void Widget_Node::inactive_name(const std::string& name) {
-  setinactive(Fluid.proj.image_assets.find_or_create(name));
-  storestring(name, inactive_name_);
 }
 
 void Widget_Node::redraw() {
@@ -1575,14 +1529,8 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
       f.write_c("))->%s_i(o,v);\n}\n", cn);
     }
   }
-  if (image) {
-    if (!f.c_contains(image.get()))
-      image->write_static(f, compress_image_);
-  }
-  if (inactive) {
-    if (!f.c_contains(inactive.get()))
-      inactive->write_static(f, compress_deimage_);
-  }
+  active_image.write_static(f);
+  inactive_image.write_static(f);
 }
 
 void Widget_Node::write_code1(fld::io::Code_Writer& f) {
@@ -1827,34 +1775,8 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
     write_color(f, "color", o->color());
   if (o->selection_color() != tplate->selection_color() || !subclass().empty())
     write_color(f, "selection_color", o->selection_color());
-  if (image) {
-    image->write_code(f, bind_image_, var);
-    if (scale_image_w_ || scale_image_h_) {
-      f.write_c("%s%s->image()->scale(", f.indent(), var);
-      if (scale_image_w_>0)
-        f.write_c("%d, ", scale_image_w_);
-      else
-        f.write_c("%s->image()->data_w(), ", var);
-      if (scale_image_h_>0)
-        f.write_c("%d, 0, 1);\n", scale_image_h_);
-      else
-        f.write_c("%s->image()->data_h(), 0, 1);\n", var);
-    }
-  }
-  if (inactive) {
-    inactive->write_code(f, bind_deimage_, var, 1);
-    if (scale_deimage_w_ || scale_deimage_h_) {
-      f.write_c("%s%s->deimage()->scale(", f.indent(), var);
-      if (scale_deimage_w_>0)
-        f.write_c("%d, ", scale_deimage_w_);
-      else
-        f.write_c("%s->deimage()->data_w(), ", var);
-      if (scale_deimage_h_>0)
-        f.write_c("%d, 0, 1);\n", scale_deimage_h_);
-      else
-        f.write_c("%s->deimage()->data_h(), 0, 1);\n", var);
-    }
-  }
+  active_image.write_code(f, var, false);
+  inactive_image.write_code(f, var, true);
   if (o->labeltype() != tplate->labeltype() || !subclass().empty())
     f.write_c("%s%s->labeltype(FL_%s);\n", f.indent(), var,
             item_name(labeltypemenu, o->labeltype()));
@@ -1988,22 +1910,8 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("tooltip");
     f.write_word(tooltip());
   }
-  if (!image_name().empty()) {
-    if (scale_image_w_ || scale_image_h_)
-      f.write_string("scale_image {%d %d}", scale_image_w_, scale_image_h_);
-    f.write_string("image");
-    f.write_word(image_name());
-    f.write_string("compress_image %d", compress_image_);
-  }
-  if (bind_image_) f.write_string("bind_image 1");
-  if (!inactive_name().empty()) {
-    if (scale_deimage_w_ || scale_deimage_h_)
-      f.write_string("scale_deimage {%d %d}", scale_deimage_w_, scale_deimage_h_);
-    f.write_string("deimage");
-    f.write_word(inactive_name());
-    f.write_string("compress_deimage %d", compress_deimage_);
-  }
-  if (bind_deimage_) f.write_string("bind_deimage 1");
+  active_image.write_properties(f, false);
+  inactive_image.write_properties(f, true);
   f.write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Widget_Node*)factory)->o;
   if (is_a(Type::Spinner) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
@@ -2131,42 +2039,44 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char* c) {
     tooltip(f.read_word());
   } else if (!strcmp(c,"scale_image")) {
     if (sscanf(f.read_word(),"%d %d",&w,&h) == 2) {
-      scale_image_w_ = w;
-      scale_image_h_ = h;
+      active_image.scale_w = w;
+      active_image.scale_h = h;
     }
   } else if (!strcmp(c,"image")) {
-    image_name(f.read_word());
+    active_image.set(f.read_word(), is_a(Type::Window) ? nullptr : o, false);
+    if (!is_a(Type::Window)) redraw();
     // starting in 2023, `image` is always followed by `compress_image`
     // the code below is for compatibility with older .fl files
-    std::string ext = fl_filename_ext_str(image_name());
+    std::string ext = fl_filename_ext_str(active_image.name);
     if (   (ext != ".jpg")
         && (ext != ".png")
         && (ext != ".svg")
         && (ext != ".svgz"))
-      compress_image_ = 0; // if it is neither of those, default to uncompressed
+      active_image.compress = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_image")) {
-    bind_image_ = (int)atol(f.read_word());
+    active_image.bind = (int)atol(f.read_word());
   } else if (!strcmp(c,"compress_image")) {
-    compress_image_ = (int)atol(f.read_word());
+    active_image.compress = (int)atol(f.read_word());
   } else if (!strcmp(c,"scale_deimage")) {
     if (sscanf(f.read_word(),"%d %d",&w,&h) == 2) {
-      scale_deimage_w_ = w;
-      scale_deimage_h_ = h;
+      inactive_image.scale_w = w;
+      inactive_image.scale_h = h;
     }
   } else if (!strcmp(c,"deimage")) {
-    inactive_name(f.read_word());
+    inactive_image.set(f.read_word(), is_a(Type::Window) ? nullptr : o, true);
+    if (!is_a(Type::Window)) redraw();
     // starting in 2023, `deimage` is always followed by `compress_deimage`
     // the code below is for compatibility with older .fl files
-    std::string ext = fl_filename_ext_str(inactive_name());
+    std::string ext = fl_filename_ext_str(inactive_image.name);
     if (   (ext != ".jpg")
         && (ext != ".png")
         && (ext != ".svg")
         && (ext != ".svgz"))
-      compress_deimage_ = 0; // if it is neither of those, default to uncompressed
+      inactive_image.compress = 0; // if it is neither of those, default to uncompressed
   } else if (!strcmp(c,"bind_deimage")) {
-    bind_deimage_ = (int)atol(f.read_word());
+    inactive_image.bind = (int)atol(f.read_word());
   } else if (!strcmp(c,"compress_deimage")) {
-    compress_deimage_ = (int)atol(f.read_word());
+    inactive_image.compress = (int)atol(f.read_word());
   } else if (!strcmp(c,"type")) {
     if (is_a(Type::Spinner))
       ((Fl_Spinner*)o)->type(item_number(subtypes(), f.read_word()));
@@ -2218,10 +2128,10 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"labeltype")) {
     c = f.read_word();
     if (!strcmp(c,"image")) {
-      auto i = Fluid.proj.image_assets.find_or_create(label());
-      if (!i) f.read_error("Image file '%s' not found", label());
-      else setimage(i);
-      image_name(label());
+      if (!Fluid.proj.image_assets.find_or_create(label()))
+        f.read_error("Image file '%s' not found", label());
+      active_image.set(label(), is_a(Type::Window) ? nullptr : o, false);
+      if (!is_a(Type::Window)) redraw();
       label("");
     } else {
       o->labeltype((Fl_Labeltype)item_number(labeltypemenu,c));

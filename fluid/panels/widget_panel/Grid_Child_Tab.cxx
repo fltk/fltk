@@ -120,11 +120,11 @@ void Grid_Child_Tab::cb_Horizontal(Fl_Choice* o, void* v) {
 }
 
 Fl_Menu_Item Grid_Child_Tab::menu_Horizontal[] = {
- {"GRID_LEFT", 0,  0, (void*)((fl_intptr_t)FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_RIGHT", 0,  0, (void*)((fl_intptr_t)FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+ {"GRID_LEFT", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"GRID_CENTER", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"GRID_RIGHT", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"GRID_FILL", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_HORIZONTAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 Fl_Menu_Item* Grid_Child_Tab::GRID_LEFT = Grid_Child_Tab::menu_Horizontal + 0;
 
@@ -167,11 +167,11 @@ void Grid_Child_Tab::cb_Vertical(Fl_Choice* o, void* v) {
 }
 
 Fl_Menu_Item Grid_Child_Tab::menu_Vertical[] = {
- {"GRID_TOP", 0,  0, (void*)((fl_intptr_t)FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_CENTER", 0,  0, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_BOTTOM", 0,  0, (void*)((fl_intptr_t)FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"GRID_FILL", 0,  0, (void*)((fl_intptr_t)FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {0,0,0,0,0,0,0,0,0}
+ {"GRID_TOP", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"GRID_CENTER", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"GRID_BOTTOM", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"GRID_FILL", 0,  nullptr, (void*)((fl_intptr_t)FL_GRID_VERTICAL), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
 void Grid_Child_Tab::cb_Width_i(fld::widget::Formula_Input* o, void* v) {
@@ -244,7 +244,7 @@ void Grid_Child_Tab::cb_7(Fl_Button* o, void* v) {
   ((Grid_Child_Tab*)(o->parent()->parent()->parent()))->cb_7_i(o,v);
 }
 
-Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char *L) :
+Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
   Fl_Group(0, 0, 400, 330, L)
 {
   this->labelsize(11);

@@ -129,6 +129,7 @@ set(CPPFILES
   nodes/Group_Node.cxx
   nodes/Menu_Node.cxx
   nodes/Node.cxx
+  nodes/Widget_Image.cxx
   nodes/Widget_Node.cxx
   nodes/Window_Node.cxx
   nodes/callbacks.cxx
@@ -184,6 +185,7 @@ set(HEADERFILES
   nodes/Group_Node.h
   nodes/Menu_Node.h
   nodes/Node.h
+  nodes/Widget_Image.h
   nodes/Widget_Node.h
   nodes/Window_Node.h
   nodes/callbacks.h

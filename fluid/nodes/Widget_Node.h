@@ -18,9 +18,8 @@
 #define FLUID_NODES_WIDGET_NODE_H
 
 #include "nodes/Node.h"
-#include "proj/Image_Asset.h"
+#include "nodes/Widget_Image.h"
 
-#include <memory>
 #include <string>
 
 static constexpr int NUM_EXTRA_CODE = 4;
@@ -53,10 +52,6 @@ class Widget_Node : public Node
   std::string subclass_;
   /// Keep a copy the tooltip here, also always updates the widget's tooltip
   std::string tooltip_;
-  /// Image name or file name.
-  std::string image_name_;
-  /// Name or file name of deactivated image
-  std::string inactive_name_;
   /// Set's a widget's hotspot, or adds a divider to a menu item
   uchar hotspot_ = 0;
   /// On menu items, set the "headline" flag
@@ -90,31 +85,10 @@ public:
 
   // ---- Image stuff
 
-  /// Set the bind image flag for the active image
-  int bind_image_ = 0;
-  /// Compress the active image when inlining into source code
-  int compress_image_ = 1;
-  /// Scale the active image, great for hires screens
-  int scale_image_w_ = 0, scale_image_h_ = 0;
-  /// Pointer to the shared image data of the active image
-  std::shared_ptr<Image_Asset> image;
-
-  /// Set the bind image flag for the inactive image
-  int bind_deimage_ = 0;
-  /// Compress the inactive image when inlining into source code
-  int compress_deimage_ = 1;
-  /// Scale the inactive image
-  int scale_deimage_w_ = 0, scale_deimage_h_ = 0;
-  /// Pointer to the shared image data of the inactive image
-  std::shared_ptr<Image_Asset> inactive;
-
-  void setimage(std::shared_ptr<Image_Asset>);
-  std::string image_name() const { return image_name_; }
-  void image_name(const std::string& name);
-
-  void setinactive(std::shared_ptr<Image_Asset>);
-  std::string inactive_name() const { return inactive_name_; }
-  void inactive_name(const std::string& name);
+  /// Active (normal state) image data and display options.
+  Widget_Image active_image;
+  /// Inactive (deactivated state) image data and display options.
+  Widget_Image inactive_image;
 
   Widget_Node() = default;
   ~Widget_Node() override;
