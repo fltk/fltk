@@ -126,10 +126,16 @@ protected:
 public:
 
   /**
-   This calls is provide for use with std::unique_ptr as the deleter for Fl_Shared_Image objects.
-   \example
-     std::unique_ptr<Fl_Shared_Image, Fl_Shared_Image::Deleter> img(Fl_Shared_Image::get("image.png"));
-   */
+   Custom deleter for std::unique_ptr<>.
+   Fl_Shared_Image does not follow the standard new/delete memory lifecycle.
+   To implement RAII, use std::unique_ptr with this custom deleter to ensure
+   proper release of the image resource.
+   \code{.cpp}
+      std::unique_ptr<Fl_Shared_Image, Fl_Shared_Image::Deleter> img;
+      img = Fl_Shared_Image::get("image.png");
+      // image will be automatically released when 'img' goes out of scope
+   \endcode
+  */
   class Deleter {
     public:
       void operator()(Fl_Shared_Image* img) const {
