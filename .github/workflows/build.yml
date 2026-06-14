@@ -240,7 +240,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Setup environment (ARM64 native)
+    - name: Setup environment
       uses: TheMrMilchmann/setup-msvc-dev@v4
       with:
         arch: amd64
