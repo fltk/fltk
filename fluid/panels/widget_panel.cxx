@@ -23,6 +23,7 @@
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
+#include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
@@ -52,7 +53,7 @@ extern int haderror;
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code --~-~=-=~=~-~~--~-~--=~= ▼ ﬂ//
+//ﬂ ▼ ------------------------ code --~-~~~=-=~~~==-=~---=-- ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~~-~=---~-------------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
 }
@@ -1650,24 +1651,26 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
       o->hide();
       return;
     }
+    auto nd = dynamic_cast<Menu_Item_Node*>(current_widget);
     o->show();
-    o->value(current_widget->menu_headline());
+    o->value(nd ? nd->headline() : 0);
   } else {
     int mod = 0;
     int n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       if (q->is_a(Type::Menu_Item)) {
+        auto nd = dynamic_cast<Menu_Item_Node*>(q);
         if (!mod) {
           mod = 1;
           Fluid.proj.undo.checkpoint();
         }
-        q->menu_headline(n);
+        if (nd) nd->headline(n);
         q->redraw();
       }
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=~~-~~-=-=-----------~~~~=~=~~-=~=~~=--=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~~-~~-=-=------------~------~-=~=-=~~-=~-= ▲ ﬂ//
 }
 
 static void cb_Hotspot(Fl_Light_Button* o, void* v) {

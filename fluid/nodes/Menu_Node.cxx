@@ -471,7 +471,7 @@ int Menu_Item_Node::flags() {
       i |= FL_SUBMENU_POINTER;
   }
   if (hotspot()) i |= FL_MENU_DIVIDER;
-  if (menu_headline()) i |= FL_MENU_HEADLINE;
+  if (headline()) i |= FL_MENU_HEADLINE;
   return i;
 }
 

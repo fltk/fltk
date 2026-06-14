@@ -54,8 +54,6 @@ class Widget_Node : public Node
   std::string tooltip_;
   /// Set's a widget's hotspot, or adds a divider to a menu item
   uchar hotspot_ = 0;
-  /// On menu items, set the "headline" flag
-  bool menu_headline_ = false;
 
 protected:
 
@@ -107,9 +105,6 @@ public:
   void hotspot(uchar v) { hotspot_ = v; }
   uchar resizable() const;
   void resizable(uchar v);
-
-  bool menu_headline() const { return menu_headline_; }
-  void menu_headline(bool v) { menu_headline_ = v; }
 
   virtual int textstuff(int what, Fl_Font &, int &, Fl_Color &);
   virtual Fl_Menu_Item* subtypes();

@@ -51,6 +51,11 @@ class Menu_Item_Node : public Button_Node
 public:
   typedef Button_Node super;
   static Menu_Item_Node prototype;
+
+private:
+  /// On menu items, set the "headline" flag
+  bool headline_ = false;
+
 public:
   Fl_Menu_Item* subtypes() override {return menu_item_type_menu;}
   const char* type_name() override {return "MenuItem";}
@@ -69,6 +74,9 @@ public:
   int is_true_widget() const override { return 0; }
   Type type() const override { return Type::Menu_Item; }
   bool is_a(Type inType) const override { return (inType==Type::Menu_Item) ? true : super::is_a(inType); }
+
+  bool headline() const { return headline_; }
+  void headline(bool v) { headline_ = v; }
 };
 
 /**
