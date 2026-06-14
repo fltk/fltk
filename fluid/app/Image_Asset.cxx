@@ -42,12 +42,26 @@
 #include <string>
 
 
+std::shared_ptr<Image_Asset> Image_Asset_Map::find(const std::string& name) const {
+  auto it = map_.find(name);
+  if (it != map_.end()) return it->second.lock();
+  return nullptr;
+}
+
+void Image_Asset_Map::insert(const std::string& name, std::shared_ptr<Image_Asset> asset) {
+  map_[name] = asset;
+}
+
+void Image_Asset_Map::erase(const std::string& name) {
+  map_.erase(name);
+}
+
 /**
- \brief A map of all image assets.
+ \brief Cache of all active image assets.
  \todo This is a global variable, but should be associated
     with a project instead.
  */
-static std::map<std::string, Image_Asset*> image_asset_map;
+static Image_Asset_Map image_asset_map;
 
 
 /**
@@ -391,13 +405,12 @@ void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
  \param iname The filename of the image asset to find.
  \returns The image asset, or nullptr if it cannot be loaded.
  */
-Image_Asset* Image_Asset::find(const std::string& iname) {
+std::shared_ptr<Image_Asset> Image_Asset::find(const std::string& iname) {
   if (iname.empty()) return nullptr;
 
   // First search to see if it exists already. If it does, return it.
-  auto result = image_asset_map.find(iname);
-  if (result != image_asset_map.end())
-    return result->second;
+  auto existing = image_asset_map.find(iname);
+  if (existing) return existing;
 
   // Check if a file by that name exists.
   Fluid.proj.enter_project_dir();
@@ -413,9 +426,8 @@ Image_Asset* Image_Asset::find(const std::string& iname) {
   fclose(f);
 
   // We found the file. Create the asset.
-  Image_Asset *asset = new Image_Asset(iname);
+  std::shared_ptr<Image_Asset> asset(new Image_Asset(iname));
   if (!asset->image_ || !asset->image_->w() || !asset->image_->h()) {
-    delete asset;
     if (Fluid.batch_mode)
       fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format", iname.c_str());
     else
@@ -425,21 +437,13 @@ Image_Asset* Image_Asset::find(const std::string& iname) {
   }
 
   // Add the new asset to our image asset map and return it to the caller.
-  image_asset_map[iname] = asset;
+  image_asset_map.insert(iname, asset);
   Fluid.proj.leave_project_dir();
   return asset;
 }
 
 /**
  \brief Construct an image asset from a file in the project directory.
-
- This constructor creates an image asset from a file in the project
- directory. The image file is loaded and stored in the map of image
- assets. The image asset is given a reference count of 1, which means
- that it will be destroyed when all references to it have been released.
- The constructor also sets the flag to indicate if the image is an
- animated GIF. This information is used when generating code for the
- image asset.
 
  \param iname The name of the image file in the project directory.
 */
@@ -454,32 +458,6 @@ Image_Asset::Image_Asset(const std::string& iname)
       if (fc > 0) is_animated_gif_ = true;
     }
   }
-}
-
-/**
- \brief Increments the reference count of the image asset.
-
- This method increments the reference count of the image asset. The
- reference count is used to keep track of how many times the image asset
- is referenced in the user interface. When the reference count reaches zero,
- the image asset is destroyed.
-*/
-void Image_Asset::inc_ref() {
-  ++refcount_;
-}
-
-/**
- \brief Decrements the reference count of the image asset.
-
- This method decrements the reference count of the image asset. The
- reference count is used to keep track of how many times the image asset
- is referenced in the user interface. If the reference count reaches zero,
- the image asset is destroyed.
-*/
-void Image_Asset::dec_ref() {
-  --refcount_;
-  if (refcount_ > 0) return;
-  delete this;
 }
 
 /**
@@ -514,7 +492,7 @@ Image_Asset::~Image_Asset() {
  that does not exist. The asset is automaticly added to the global image
  asset map.
 */
-Image_Asset *ui_find_image(const char *oldname) {
+std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
   Fluid.proj.enter_project_dir();
   fl_file_chooser_ok_label("Use Image");
   const char *name = fl_file_chooser("Image?",
@@ -525,7 +503,7 @@ Image_Asset *ui_find_image(const char *oldname) {
                                      "})",
             oldname,1);
   fl_file_chooser_ok_label(nullptr);
-  Image_Asset *ret = (name && *name) ? Image_Asset::find(name) : nullptr;
+  std::shared_ptr<Image_Asset> ret = (name && *name) ? Image_Asset::find(name) : nullptr;
   Fluid.proj.leave_project_dir();
   return ret;
 }

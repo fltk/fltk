@@ -179,13 +179,9 @@ Node* Widget_Node::make(Strategy strategy) {
   return t;
 }
 
-void Widget_Node::setimage(Image_Asset* i) {
+void Widget_Node::setimage(std::shared_ptr<Image_Asset> i) {
   if (i == image || is_a(Type::Window))
     return;
-  if (image)
-    image->dec_ref();
-  if (i)
-    i->inc_ref();
   image = i;
   if (i) {
     o->image(i->image());
@@ -201,13 +197,9 @@ void Widget_Node::setimage(Image_Asset* i) {
   redraw();
 }
 
-void Widget_Node::setinactive(Image_Asset* i) {
+void Widget_Node::setinactive(std::shared_ptr<Image_Asset> i) {
   if (i == inactive || is_a(Type::Window))
     return;
-  if (inactive)
-    inactive->dec_ref();
-  if (i)
-    i->inc_ref();
   inactive = i;
   if (i) {
     o->deimage(i->image());
@@ -235,10 +227,6 @@ Widget_Node::~Widget_Node() {
     if (win)
       win->redraw();
   }
-  if (image)
-    image->dec_ref();
-  if (inactive)
-    inactive->dec_ref();
 }
 
 void Widget_Node::extra_code(int m, const std::string& n) {
@@ -1588,11 +1576,11 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
     }
   }
   if (image) {
-    if (!f.c_contains(image))
+    if (!f.c_contains(image.get()))
       image->write_static(f, compress_image_);
   }
   if (inactive) {
-    if (!f.c_contains(inactive))
+    if (!f.c_contains(inactive.get()))
       inactive->write_static(f, compress_deimage_);
   }
 }
@@ -2230,7 +2218,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"labeltype")) {
     c = f.read_word();
     if (!strcmp(c,"image")) {
-      Image_Asset* i = Image_Asset::find(label());
+      auto i = Image_Asset::find(label());
       if (!i) f.read_error("Image file '%s' not found", label());
       else setimage(i);
       image_name(label());

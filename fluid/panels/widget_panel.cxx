@@ -651,7 +651,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
       o->deactivate();
   } else {
     int mod = 0;
-    Image_Asset *image_asset = ui_find_image(widget_image_input->value());
+    auto image_asset = ui_find_image(widget_image_input->value());
     if (image_asset) {
       widget_image_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
@@ -661,7 +661,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-=~==~~=-=------------~=~=~==~-~--~~=-=~=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~==~~=-=-----------~~~~-=-~=-~=~~~=~-~-~ ▲ ﬂ//
 }
 
 static void cb_(Fl_Button*, void* v) {
@@ -701,7 +701,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       o->deactivate();
   } else {
     int mod = 0;
-    Image_Asset *image_asset = ui_find_image(widget_deimage_input->value());
+    auto image_asset = ui_find_image(widget_deimage_input->value());
     if (image_asset) {
       widget_deimage_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
@@ -711,7 +711,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~---==---=~-----------~~~-~-~~=-=~==-~--~-- ▲ ﬂ//
+//ﬂ ▲ ----------=~---==---=~-------------~-==~=~=~--~-~~-==- ▲ ﬂ//
 }
 
 Fl_Group* wp_gui_alignment = (Fl_Group*)nullptr;
