@@ -426,6 +426,7 @@ Image_Asset* Image_Asset::find(const std::string& iname) {
 
   // Add the new asset to our image asset map and return it to the caller.
   image_asset_map[iname] = asset;
+  Fluid.proj.leave_project_dir();
   return asset;
 }
 
