@@ -57,9 +57,9 @@
  */
 size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
-  Fluid.proj.enter_project_dir();
+  map_->project().enter_project_dir();
   FILE *in = fl_fopen(filename(), "rb");
-  Fluid.proj.leave_project_dir();
+  map_->project().leave_project_dir();
   if (!in) {
     write_file_error(f, fmt);
     return 0;
@@ -91,9 +91,9 @@ size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt
  */
 size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
-  Fluid.proj.enter_project_dir();
+  map_->project().enter_project_dir();
   FILE *in = fl_fopen(filename(), "rb");
-  Fluid.proj.leave_project_dir();
+  map_->project().leave_project_dir();
   if (!in) {
     write_file_error(f, fmt);
     return 0;
@@ -287,9 +287,9 @@ void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
  */
 void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
   f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, filename(), strerror(errno));
-  Fluid.proj.enter_project_dir();
+  map_->project().enter_project_dir();
   f.write_c("// Searching in path \"%s\"\n", fl_getcwd(nullptr, FL_PATH_MAX));
-  Fluid.proj.leave_project_dir();
+  map_->project().leave_project_dir();
 }
 
 
@@ -375,58 +375,16 @@ void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
 
 
 /**
- \brief Finds an image asset by filename.
-
- If the image asset has already been loaded, it is returned from the cache.
- If the image asset has not been loaded, it is loaded from the file system.
- If the image asset cannot be loaded, nullptr is returned.
-
- \param iname The filename of the image asset to find.
- \returns The image asset, or nullptr if it cannot be loaded.
- */
-std::shared_ptr<Image_Asset> Image_Asset::find(const std::string& iname) {
-  if (iname.empty()) return nullptr;
-
-  // First search to see if it exists already. If it does, return it.
-  auto existing = Fluid.proj.image_assets.find(iname);
-  if (existing) return existing;
-
-  // Check if a file by that name exists.
-  Fluid.proj.enter_project_dir();
-  FILE *f = fl_fopen(iname.c_str(),"rb");
-  if (!f) {
-    if (Fluid.batch_mode)
-      fprintf(stderr, "Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
-    else
-      fl_message("Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
-    Fluid.proj.leave_project_dir();
-    return nullptr;
-  }
-  fclose(f);
-
-  // We found the file. Create the asset.
-  std::shared_ptr<Image_Asset> asset(new Image_Asset(iname));
-  if (!asset->image_ || !asset->image_->w() || !asset->image_->h()) {
-    if (Fluid.batch_mode)
-      fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format", iname.c_str());
-    else
-      fl_message("Can't read image file:\n%s\nunrecognized image format", iname.c_str());
-    Fluid.proj.leave_project_dir();
-    return nullptr;
-  }
-
-  // Add the new asset to our image asset map and return it to the caller.
-  Fluid.proj.image_assets.insert(iname, asset);
-  Fluid.proj.leave_project_dir();
-  return asset;
-}
-
-/**
  \brief Construct an image asset from a file in the project directory.
 
+ The caller (Image_Asset_Map::find_or_create) must have entered the project
+ directory before constructing, so Fl_Shared_Image::get resolves the path.
+
  \param iname The name of the image file in the project directory.
+ \param map   The owning map; stored for use by the destructor and write methods.
 */
-Image_Asset::Image_Asset(const std::string& iname)
+Image_Asset::Image_Asset(const std::string& iname, Image_Asset_Map& map)
+  : map_(&map)
 {
   filename_ = iname;
   image_.reset(Fl_Shared_Image::get(iname.c_str()));
@@ -440,36 +398,20 @@ Image_Asset::Image_Asset(const std::string& iname)
 }
 
 /**
- \brief Destructor for the Image_Asset class.
-
- This destructor removes the image asset from the global image asset map
- and releases the associated shared image if it exists. It ensures that
- any resources associated with the Image_Asset are properly cleaned up
- when the object is destroyed.
+ \brief Destructor: removes this asset from its owning map.
 */
 Image_Asset::~Image_Asset() {
-  Fluid.proj.image_assets.erase(filename_);
+  map_->erase(filename_);
 }
 
 ////////////////////////////////////////////////////////////////
 
 /**
- \brief Displays a file chooser for the user to select an image file.
+ \brief Displays a file chooser and returns a valid image selected by the user.
 
- This function displays a file chooser dialog with the title "Image?" and
- the current working directory set to the project directory. The file
- chooser displays files with the extensions .bm, .bmp, .gif, .jpg, .pbm,
- .pgm, .png, .ppm, .xbm, .xpm, and .svg (and .svgz if zlib support is
- enabled). The function returns a pointer to an Image_Asset object that
- references the selected image. If the user cancels the file chooser or
- selects a file that does not exist, the function returns nullptr.
-
- \param oldname The default filename to display in the file chooser.
-
- \return A pointer to an Image_Asset object that references the selected
- image, or nullptr if the user cancels the file chooser or selects a file
- that does not exist. The asset is automaticly added to the global image
- asset map.
+ \param proj    The project whose directory is searched and whose asset cache is used.
+ \param oldname Default filename shown in the chooser.
+ \return The selected asset, or nullptr on cancel or error.
 */
 std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
   Fluid.proj.enter_project_dir();
@@ -482,7 +424,7 @@ std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
                                      "})",
             oldname,1);
   fl_file_chooser_ok_label(nullptr);
-  std::shared_ptr<Image_Asset> ret = (name && *name) ? Image_Asset::find(name) : nullptr;
+  std::shared_ptr<Image_Asset> ret = (name && *name) ? Fluid.proj.image_assets.find_or_create(name) : nullptr;
   Fluid.proj.leave_project_dir();
   return ret;
 }

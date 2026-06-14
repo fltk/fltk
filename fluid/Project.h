@@ -44,7 +44,7 @@ public: // Member Variables
   // Cache of image assets for this project. Must be declared before tree so
   // that tree (and the Widget_Nodes it holds) is destroyed first, releasing
   // all shared_ptr<Image_Asset> references before this map is torn down.
-  Image_Asset_Map image_assets;
+  Image_Asset_Map image_assets { *this };
 
   // Undo actions for this Project.
   proj::Undo undo { *this };

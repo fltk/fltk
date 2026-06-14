@@ -30,17 +30,19 @@
 #include <memory>
 #include <string>
 
-
 class Image_Asset
 {
+  friend class Image_Asset_Map;
+
 private:  // member variables
   std::string filename_;                  ///< Relative path to the image file
   std::string initializer_function_;      ///< The name of the initializer function
   std::unique_ptr<Fl_Shared_Image, Fl_Shared_Image::Deleter> image_; ///< The actual image as managed by FLTK
   bool is_animated_gif_ = false;          ///< It's an animated gif.
+  Image_Asset_Map* map_;                  ///< The owning map; used by destructor and write methods.
 
 private: // methods
-  Image_Asset(const std::string& name); // use find() to obtain instances
+  Image_Asset(const std::string& name, Image_Asset_Map& map); // constructed by Image_Asset_Map
 
   size_t write_static_binary(fld::io::Code_Writer& f, const char* fmt);
   size_t write_static_text(fld::io::Code_Writer& f, const char* fmt);
@@ -49,7 +51,6 @@ private: // methods
 public: // methods
   ~Image_Asset();
 
-  static std::shared_ptr<Image_Asset> find(const std::string&);
   Fl_Shared_Image *image() const { return image_.get(); }
   const char *filename() const { return filename_.c_str(); }
 
@@ -60,8 +61,8 @@ public: // methods
   void write_file_error(fld::io::Code_Writer& f, const char *fmt);
 };
 
-// pop up file chooser and return a legal image selected by user,
-// or nullptr for any errors:
-std::shared_ptr<Image_Asset> ui_find_image(const char *);
+// Pop up a file chooser and return a valid image selected by the user,
+// or nullptr on cancel or error.
+std::shared_ptr<Image_Asset> ui_find_image(const char *oldname);
 
 #endif // APP_IMAGE_ASSET_H

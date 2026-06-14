@@ -248,12 +248,12 @@ void Widget_Node::tooltip(const std::string& text) {
 }
 
 void Widget_Node::image_name(const std::string& name) {
-  setimage(Image_Asset::find(name.c_str()));
+  setimage(Fluid.proj.image_assets.find_or_create(name));
   storestring(name, image_name_);
 }
 
 void Widget_Node::inactive_name(const std::string& name) {
-  setinactive(Image_Asset::find(name.c_str()));
+  setinactive(Fluid.proj.image_assets.find_or_create(name));
   storestring(name, inactive_name_);
 }
 
@@ -2218,7 +2218,7 @@ void Widget_Node::read_property(fld::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"labeltype")) {
     c = f.read_word();
     if (!strcmp(c,"image")) {
-      auto i = Image_Asset::find(label());
+      auto i = Fluid.proj.image_assets.find_or_create(label());
       if (!i) f.read_error("Image file '%s' not found", label());
       else setimage(i);
       image_name(label());
