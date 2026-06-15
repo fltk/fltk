@@ -321,10 +321,12 @@ if(UNIX)
     if(EXISTS ${PROTOCOLS}/staging/cursor-shape/cursor-shape-v1.xml AND
         EXISTS ${PROTOCOLS}/stable/tablet/tablet-v2.xml)
       set(HAVE_CURSOR_SHAPE 1)
+      set(HAVE_TABLET 1)
       message(STATUS "Found dev files for Wayland protocols 'Cursor shape' and 'Tablet'")
       message(STATUS "  ==> option FLTK_USE_DBUS can be turned OFF if 'Cursor shape'-enabled wayland compositor is used.")
     else()
       set(HAVE_CURSOR_SHAPE 0)
+      set(HAVE_TABLET 0)
     endif()
     if(FLTK_BACKEND_X11)
       include(FindX11)
@@ -501,6 +503,7 @@ endif()
 #  - FLTK_HAVE_PEN_SUPPORT  : final result for building Pen/Tablet support,
 #                             also used to set config variable in config.h
 
+set(FLTK_HAVE_PEN_SUPPORT 0)
 if(FLTK_OPTION_PEN_SUPPORT)
   if(WIN32)
     try_compile(PEN_DRIVER_SUPPORTED

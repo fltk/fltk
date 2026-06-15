@@ -357,7 +357,6 @@
 
 #cmakedefine01 HAVE_CURSOR_SHAPE
 
-
 /*
  * FLTK_HAVE_PEN_SUPPORT
  *
@@ -370,4 +369,3 @@
  *
  */
 
-#cmakedefine FLTK_HAVE_PEN_SUPPORT 1

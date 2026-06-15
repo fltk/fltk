@@ -78,7 +78,7 @@ extern int fl_send_system_handlers(void *e);
 // converting cr lf converter function
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+#if FLTK_HAVE_PEN_SUPPORT
 static bool cocoaTabletHandler(NSEvent *theEvent, bool lock);
 extern bool fl_cocoa_tablet_handler(NSEvent*, Fl_Window*);
 #endif
@@ -598,7 +598,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)draggingSession:(NSDraggingSession *)session
            endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation;
 - (BOOL)did_view_resolution_change;
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+#if FLTK_HAVE_PEN_SUPPORT
 - (void)tabletProximity:(NSEvent *)theEvent;
 - (void)tabletPoint:(NSEvent *)theEvent;
 #endif
@@ -1004,7 +1004,7 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
   fl_unlock_function();
 }
 
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+#if FLTK_HAVE_PEN_SUPPORT
 
 static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
 {
@@ -1034,7 +1034,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 
   fl_lock_function();
 
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+#if FLTK_HAVE_PEN_SUPPORT
   // Handle tablet proximity and point subevents
   if (   ([theEvent type] != NSEventTypeMouseEntered)  // does not have a subtype
       && ([theEvent type] != NSEventTypeMouseExited) ) // does not have a subtype
@@ -2400,7 +2400,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 - (void)mouseExited:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
 }
-#if defined(FLTK_HAVE_PEN_SUPPORT)
+#if FLTK_HAVE_PEN_SUPPORT
 - (void)tabletProximity:(NSEvent *)theEvent {
   cocoaTabletHandler(theEvent, true);
 }

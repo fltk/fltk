@@ -11,7 +11,7 @@
 //
 // Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/bugs.php
+//     https://www.fltk.org/bugs.phps
 //
 
 
@@ -83,3 +83,12 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
   return new Fl_GDI_Image_Surface_Driver(w, h, high_res, off);
 }
 
+#if FLTK_HAVE_PEN_SUPPORT
+namespace Fl {
+namespace Private {
+// Global mouse position at mouse down event
+int e_x_down { 0 };
+int e_y_down { 0 };
+}; // namespace Private
+}; // namespace Fl
+#endif
