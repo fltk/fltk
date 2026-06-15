@@ -170,10 +170,14 @@ void CanvasInterface::cv_draw()
   int r = 10;
   if (overlay_ == PEN_DRAW)
   {
-    float pressure = Fl::Pen::event_pressure();
-    r = static_cast<int>(32.0 * pressure);
-    if (r < 1) r = 1;
-    printf("pressure=%f radius=%d\n", pressure, r);
+      int state = static_cast<int>(Fl::Pen::event_state());
+      float pressure = Fl::Pen::event_pressure();
+      float tilt_x = Fl::Pen::event_tilt_x();
+      float tilt_y = Fl::Pen::event_tilt_y();
+      int r = static_cast<int>(32.0 * pressure);
+      if (r < 1) r = 1;
+      printf("X=%d Y=%d pressure=%f tilt_x=%f, tilt_y=%f, radius=%d state=%d\n",
+             Fl::event_x(), Fl::event_y(), pressure, tilt_x, tilt_y, r, state);
   }
   fl_color(FL_BLACK);
   switch (overlay_) {
@@ -215,10 +219,14 @@ void CanvasInterface::cv_paint() {
 void CanvasInterface::cv_pen_paint() {
   if (!offscreen_)
     return;
+  int state = static_cast<int>(Fl::Pen::event_state());
   float pressure = Fl::Pen::event_pressure();
+  float tilt_x = Fl::Pen::event_tilt_x();
+  float tilt_y = Fl::Pen::event_tilt_y();
   int r = static_cast<int>(32.0 * pressure);
   if (r < 1) r = 1;
-  printf("pressure=%f radius=%d\n", pressure, r);
+  printf("X=%d Y=%d pressure=%f tilt_x=%f, tilt_y=%f, radius=%d state=%d\n",
+         Fl::event_x(), Fl::event_y(), pressure, tilt_x, tilt_y, r, state);
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
   fl_begin_offscreen(offscreen_);
