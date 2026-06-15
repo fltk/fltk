@@ -174,7 +174,7 @@ void CanvasInterface::cv_draw()
       float pressure = Fl::Pen::event_pressure();
       float tilt_x = Fl::Pen::event_tilt_x();
       float tilt_y = Fl::Pen::event_tilt_y();
-      int r = static_cast<int>(32.0 * pressure);
+      r = static_cast<int>(32.0 * pressure);
       if (r < 1) r = 1;
       printf("X=%d Y=%d pressure=%f tilt_x=%f, tilt_y=%f, radius=%d state=%d\n",
              Fl::event_x(), Fl::event_y(), pressure, tilt_x, tilt_y, r, state);
@@ -191,11 +191,18 @@ void CanvasInterface::cv_draw()
       break;
     case PEN_DRAW:
       fl_color(FL_RED);
+      // Tilt indicator
+      fl_arc(ov_x_-r/2-40*Fl::Pen::event_tilt_x(),
+              ov_y_-r/2-40*Fl::Pen::event_tilt_y(), r, r, 0, 360);
+      // Eraser indicator
+      if (Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN)) {
+        fl_line(ov_x_-r, ov_y_-r, ov_x_+r, ov_y_+r);
+        fl_line(ov_x_-r, ov_y_+r, ov_x_+r, ov_y_-r);
+      }
       /* fall through */
     case DRAW:
+      // Draw a circle at the mouse or pan position
       fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
-      fl_arc(ov_x_-r/2-40*Fl::Pen::event_tilt_x(),
-             ov_y_-r/2-40*Fl::Pen::event_tilt_y(), r, r, 0, 360);
       break;
   }
 }
@@ -267,26 +274,53 @@ public:
   void draw() override { return cv_draw(); }
 };
 
+// -- menu callbacks --
+
+void modal_window_cb(Fl_Widget*, void*) {
+  fl_message("None of the canvas areas should receive\n"
+             "pen events while this window is open.");
+}
+
+void non_modal_window_cb(Fl_Widget*, void*) {
+  auto win = new Fl_Window(200, 200, 300, 100, "Non-modal window");
+  auto box = new Fl_Box(20, 20, 260, 60, "Pen events should still be delivered to the canvases.");
+  box->align(FL_ALIGN_WRAP | FL_ALIGN_CENTER);
+  win->end();
+  win->set_non_modal();
+  win->show();
+  win->callback([](Fl_Widget* w, void*) { w->hide(); delete w; });
+}
+
+void subscribe_cb(Fl_Widget*, void*) {
+  if (cv1)
+    Fl::Pen::subscribe(cv1);
+}
+
+void unsubscribe_cb(Fl_Widget*, void*) {
+  if (cv1)
+    Fl::Pen::unsubscribe(cv1);
+}
+
+void delete_cb(Fl_Widget*, void*) {
+    if (cv1) {
+      cv1->top_window()->redraw();
+      delete cv1;
+      cv1 = nullptr;
+    }
+}
+
+void quit_cb(Fl_Widget*, void*) {
+  exit(0);
+}
+
+
 // A popup menu with a few test tasks.
 Fl_Menu_Item app_menu[] = {
-  { "with modal window", 0, [](Fl_Widget*, void*) {
-    fl_message("None of the canvas areas should receive\n"
-            "pen events while this window is open.");
-  } },
-  { "with non-modal window", 0, [](Fl_Widget*, void*) {
-    auto w = new Fl_Window(400, 32, "Toolbox");
-    w->set_non_modal();
-    w->show();
-  } },
-  { "unsubscribe middle canvas", 0, [](Fl_Widget*, void*) {
-    if (cv1) Fl::Pen::unsubscribe(cv1);
-  } },
-  { "resubscribe middle canvas", 0, [](Fl_Widget*, void*) {
-    if (cv1) Fl::Pen::subscribe(cv1);
-  } },
-  { "delete middle canvas", 0, [](Fl_Widget*, void*) {
-    if (cv1) { cv1->top_window()->redraw(); delete cv1; cv1 = nullptr; }
-  } },
+  { "with modal window", 0, modal_window_cb },
+  { "with non-modal window", 0, non_modal_window_cb },
+  { "unsubscribe middle canvas", 0, unsubscribe_cb },
+  { "resubscribe middle canvas", 0, subscribe_cb },
+  { "delete middle canvas", 0, delete_cb },
   { nullptr }
 };
 
@@ -299,47 +333,35 @@ int popup_app_menu() {
   return 1;
 }
 
-void delete_cb(Fl_Widget*, Fl_Widget* cv)
-{
-    if (cv1) { cv1->top_window()->redraw(); delete cv1; cv1 = nullptr; }
-}
-
-void subscribe_cb(Fl_Widget*, void* d)
-{
-    Fl::Pen::subscribe((Fl_Widget*)d);
-}
-
-void unsubscribe_cb(Fl_Widget*, void* d)
-{
-    Fl::Pen::unsubscribe((Fl_Widget*)d);
-}
-
 //
 // Main app entry point
 //
 int main(int argc, char **argv)
 {
   // Create our main app window
-  auto window = new Fl_Window(100, 100, 640, 220, "FLTK Pen/Stylus/Tablet test, Ctrl-Tap for menu");
+  auto window = new Fl_Window(100, 100, 640, 245, "FLTK Pen/Stylus/Tablet test, Ctrl-Tap for menu");
 
-  auto menu_bar = new Fl_Menu_Bar(0, 0, 640, 20);
-  menu_bar->add("Middle canvas/unsubscribe", 0, unsubscribe_cb, cv1);
-  menu_bar->add("Middle canvas/subscribe", 0, subscribe_cb, cv1);
-  menu_bar->add("Middle canvas/delete", 0, (Fl_Callback*)delete_cb, cv1);
+  auto menu_bar = new Fl_Menu_Bar(0, 0, 640, 25);
+  menu_bar->add("PenPal/With Modal Window", 0, modal_window_cb);
+  menu_bar->add("PenPal/With Non-Modal Window", 0, non_modal_window_cb, nullptr, FL_MENU_DIVIDER);
+  menu_bar->add("PenPal/Unsubscribe Middle Canvas", 0, unsubscribe_cb);
+  menu_bar->add("PenPal/Subscribe Middle Canvas", 0, subscribe_cb);
+  menu_bar->add("PenPal/Delete Middle Canvas", 0, delete_cb, nullptr, FL_MENU_DIVIDER);
+  menu_bar->add("PenPal/Quit", FL_COMMAND + 'Q', quit_cb);
   menu_bar->menu_end();
 
   // One testing canvas is just a regular child widget of the window
-  auto canvas_widget_0 = new CanvasWidget( 10, 20, 200, 200, "CV0");
+  auto canvas_widget_0 = new CanvasWidget( 10, 35, 200, 200, "CV0");
 
   // The second canvas is inside a group
-  auto cv1_group = new Fl_Group(215, 5, 210, 210);
+  auto cv1_group = new Fl_Group(215, 30, 210, 210);
   cv1_group->box(FL_FRAME_BOX);
-  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 20, 200, 200, "CV1");
+  auto canvas_widget_1 = cv1 = new CanvasWidget(220, 35, 200, 200, "CV1");
   cv1_group->end();
 
   // The third canvas is a window inside a window, so we can verify
   // that pen coordinates are calculated correctly.
-  auto canvas_widget_2 = new CanvasWindow(430, 20, 200, 200, "CV2");
+  auto canvas_widget_2 = new CanvasWindow(430, 35, 200, 200, "CV2");
   canvas_widget_2->end();
 
   window->end();
