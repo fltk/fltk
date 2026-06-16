@@ -256,9 +256,6 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
    Also removes the widget from the Pen API list.
 */
 Fl_Widget::~Fl_Widget() {
-#if FLTK_HAVE_PEN_SUPPORT
-  Fl::Pen::unsubscribe(this);
-#endif
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
@@ -504,4 +501,3 @@ void Fl_Widget::user_data(Fl_Callback_User_Data* v, bool auto_free) {
   if (auto_free)
     set_flag(AUTO_DELETE_USER_DATA);
 }
-

@@ -21,8 +21,15 @@
 // in.  Search other files for "_WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
-#include <iostream>
-
+#if FLTK_HAVE_PEN_SUPPORT
+// Change the baseline in Fl_win32.cxx from 0x0500 to at least 0x0602 if you want Pen API support
+# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0602)
+#  ifdef _WIN32_WINNT
+#   undef _WIN32_WINNT
+#  endif
+#  define _WIN32_WINNT 0x0602
+# endif
+#else
 /* We require Windows 2000 features (e.g. VK definitions) */
 # if !defined(WINVER) || (WINVER < 0x0500)
 #  ifdef WINVER
@@ -36,6 +43,7 @@
 #  endif
 #  define _WIN32_WINNT 0x0500
 # endif
+#endif
 
 // recent versions of MinGW warn: "Please include winsock2.h before windows.h"
 #if !defined(__CYGWIN__)

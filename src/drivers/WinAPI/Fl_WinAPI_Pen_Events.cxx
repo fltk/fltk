@@ -82,7 +82,6 @@
 #include <cmath>
 #include <cstdint>
 #include <map>
-#include <iostream>
 
 // fl_xmousewin tracks which window last received pointer/pen events.
 extern Fl_Window *fl_xmousewin;
@@ -142,8 +141,10 @@ static int g_next_pen_id { 1 };
 namespace Fl {
 namespace Pen {
 
+// Statically allocated instance with a trivial constructor
 static WinAPI_Driver winapi_driver_instance;
-// Define the extern Driver& declared in Fl_Base_Pen_Events.H.
+
+// Constant-initialized global reference (perfectly safe for other static initializers)
 Driver& driver = winapi_driver_instance;
 
 Trait WinAPI_Driver::traits() {
@@ -152,7 +153,7 @@ Trait WinAPI_Driver::traits() {
   // driver itself is always considered available.
   Trait t = Trait::DRIVER_AVAILABLE | Trait::PEN_ID | Trait::ERASER |
             Trait::PRESSURE | Trait::TILT_X | Trait::TILT_Y | Trait::TWIST;
-  if (!g_devices.empty())
+  if (g_next_pen_id > 1)
     t |= Trait::DETECTED;
   // Note: BARREL_PRESSURE (tangential/slider pressure) and PROXIMITY (hover
   // distance) are not reported by POINTER_PEN_INFO and are therefore not
@@ -450,7 +451,7 @@ static void handle_proximity_in(PenDevice *dev, HWND hwnd,
   } else {
     pen_send_all(dev, Fl::Pen::IN_RANGE, (State)0);
   }
-  
+
   g_current_tool   = dev;
   dev->prev_state  = dev->ev.state;
 }
@@ -483,7 +484,7 @@ static void handle_leave(PenDevice *dev, WPARAM wParam) {
       pushed_ = nullptr;
       ReleaseCapture();
     }
-    
+
     if (g_current_tool == dev) g_current_tool = nullptr;
     dev->in_proximity = false;
     dev->focus_win    = nullptr;
@@ -497,7 +498,7 @@ static void handle_leave(PenDevice *dev, WPARAM wParam) {
     bool copied = false;
     pen_send(dev, below_pen_->widget(), Fl::Pen::LEAVE, (State)0, copied);
     below_pen_ = nullptr;
-    Fl::belowmouse(nullptr);   
+    Fl::belowmouse(nullptr);
   }
   // If pushed_ is set (an active tip-down drag) and the window called
   // SetCapture() in handle_update() below, WM_POINTERUPDATE messages will
@@ -549,14 +550,14 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
                            const POINTER_PEN_INFO &pi) {
   EventData prev_ev  = dev->ev;
   State     old_state = dev->prev_state;
-  
-  update_position(dev, hwnd, pi.pointerInfo);  
+
+  update_position(dev, hwnd, pi.pointerInfo);
   update_axes(dev, pi);
   dev->ev.pen_id = dev->pen_id;
 
   State new_state = compute_pen_state(pi);
   dev->ev.state   = new_state;
-  
+
   bool frame_down   = !is_down_state(old_state) && is_down_state(new_state);
   bool frame_up     =  is_down_state(old_state) && !is_down_state(new_state);
   bool frame_motion = (dev->ev.x != prev_ev.x) || (dev->ev.y != prev_ev.y) ||
@@ -566,7 +567,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     dev->prev_state = new_state;
     return;
   }
-  
+
   Fl_Window *eventWindow = dev->focus_win;
   bool is_menu_window = eventWindow->menu_window();
 
@@ -590,7 +591,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
 
   // ── 2. Receiver selection & below_pen ENTER/LEAVE ─────────────────────────
   if (pushed_ && pushed_->widget() && Fl::pushed() == pushed_->widget()) {
-      
+
     // An earlier tip-down fixed this device's receiver until the tip lifts.
     receiver  = pushed_->widget();
     is_pushed = true;
@@ -599,7 +600,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     auto bpen_old    = (Fl::belowmouse() == bpen_widget) ? bpen_widget : nullptr;
     auto bpen_now    = find_below_pen(eventWindow, dev->ev.x, dev->ev.y);
 
-    if (bpen_now != bpen_old) { 
+    if (bpen_now != bpen_old) {
       if (bpen_old) {
         pen_send(dev, bpen_old, Fl::Pen::LEAVE, (State)0, event_data_copied);
       }
@@ -631,13 +632,13 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
   // ── 3. Tip/eraser down -> TOUCH ───────────────────────────────────────────
   if (frame_down) {
     if (!is_pushed) {
-      pushed_ = subscriber_list_[receiver];  
+      pushed_ = subscriber_list_[receiver];
       Fl::pushed(receiver);
       // Capture pointer input so a drag that leaves hwnd's bounds keeps
       // generating WM_POINTERUPDATE for this pen.
       SetCapture(hwnd);
     }
-    
+
     Fl::e_is_click        = 1;
     Fl::Private::e_x_down = (int)dev->ev.x;
     Fl::Private::e_y_down = (int)dev->ev.y;
@@ -651,10 +652,10 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
   if (frame_up) {
     if ((new_state & State::ANY_DOWN) == (State)0) {
       Fl::pushed(nullptr);
-      pushed_ = nullptr;  
+      pushed_ = nullptr;
       ReleaseCapture();
     }
-    
+
     State trigger = is_eraser_state(new_state)
       ? State::ERASER_HOVERS : State::TIP_HOVERS;
     pen_handled |= pen_send(dev, receiver, Fl::Pen::LIFT, trigger,
@@ -666,12 +667,12 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     if (newly_set_bits(old_state, new_state, bit) != (State)0)
       pen_handled |= pen_send(dev, receiver, Fl::Pen::BUTTON_PUSH, bit,
                                event_data_copied);
-    
+
     if (newly_set_bits(new_state, old_state, bit) != (State)0)
     {
       pen_handled |= pen_send(dev, receiver, Fl::Pen::BUTTON_RELEASE, bit,
                                event_data_copied);
-      
+
     }
   }
 
@@ -686,7 +687,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
                              (State)0, event_data_copied);
   }
 
-    
+
   (void)pen_handled;
   dev->prev_state = new_state;
 }
@@ -696,7 +697,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
 // Public entry point — called from the WinAPI WndProc
 // ─────────────────────────────────────────────────────────────────────────────
 
-FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM /*lParam*/) {
+bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
   switch (msg) {
     case WM_POINTERENTER:
     case WM_POINTERLEAVE:
@@ -709,28 +710,28 @@ FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM /
       return false;
   }
 
-  
+
   if (subscriber_list_.empty()) {
     // No widget cares about pen events right now; let normal mouse handling
     // take over without doing any bookkeeping that would need to be undone
     // later if a subscription appears.
     return false;
   }
-  
-  
+
+
   UINT32 pointer_id = GET_POINTERID_WPARAM(wParam);
 
-  
+
   POINTER_INPUT_TYPE ptype;
   if (!GetPointerType(pointer_id, &ptype) || ptype != PT_PEN)
     return false; // touch, mouse-emulated pointer, etc -- not ours.
 
-  
+
   POINTER_PEN_INFO pi;
   if (!GetPointerPenInfo(pointer_id, &pi))
     return false;
 
-  
+
   PenDevice *dev = get_or_create_device(pi.pointerInfo.sourceDevice);
   if (!dev) return false;
 

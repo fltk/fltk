@@ -18,7 +18,6 @@
 #define FL_WINAPI_PEN_DRIVER_H
 
 #include <config.h>
-#include <FL/platform.H>
 
 #include "src/drivers/Base/Fl_Base_Pen_Events.H"
 
@@ -28,13 +27,16 @@
 // translation unit. If FL/Fl.H or another FLTK header pulls in <windows.h>
 // first with a lower target, raise the project-wide _WIN32_WINNT instead
 // (e.g. in fl_config.h) and remove the guard below.
+// These MUST come first, before any include that might pull in <windows.h>
 #ifndef _WIN32_WINNT
 #  define _WIN32_WINNT 0x0602
 #endif
 #ifndef WINVER
 #  define WINVER _WIN32_WINNT
 #endif
-#include <windows.h>
+
+#include <config.h>
+#include <FL/platform.H>
 
 namespace Fl {
 
@@ -88,8 +90,8 @@ public:
   filtering must be added to the existing mouse-message handling in
   Fl_WinAPI_Window_Driver.cxx; it is outside the scope of this driver.
 */
-FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam,
-                                    LPARAM lParam);
+bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam,
+                          LPARAM lParam);
 
 
 #endif // FL_WINAPI_PEN_EVENTS_H
