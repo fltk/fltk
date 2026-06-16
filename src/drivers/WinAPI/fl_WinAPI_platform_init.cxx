@@ -11,7 +11,7 @@
 //
 // Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/bugs.phps
+//     https://www.fltk.org/bugs.php
 //
 
 
