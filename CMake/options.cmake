@@ -516,7 +516,12 @@ if(FLTK_OPTION_PEN_SUPPORT)
     else()
       set(FLTK_HAVE_PEN_SUPPORT 0)
     endif()
-  else(WIN32) # all other platforms
+  elseif(FLTK_USE_WAYLAND)
+    pkg_get_variable(PROTOCOLS wayland-protocols pkgdatadir)
+    if(EXISTS ${PROTOCOLS}/stable/tablet/tablet-v2.xml)
+      set(FLTK_HAVE_PEN_SUPPORT 1)
+    endif()
+  else() # all other platforms
     set(FLTK_HAVE_PEN_SUPPORT 1)
   endif(WIN32)
 
