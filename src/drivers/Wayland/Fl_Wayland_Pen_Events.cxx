@@ -712,6 +712,9 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
               if (xid->kind != Fl_Wayland_Window_Driver::DECORATED ||
                   !xid->frame)
                   continue;
+              if (xid->frame == tool->focus_frame)
+                  break;
+          }
 
           if (dwin) {
               float f  = Fl::screen_scale(dwin->screen_num());
@@ -725,86 +728,60 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
               // ── Resize edges (check before title-bar actions) ──────
               if (sy > top) {
                   // Below content area: resize edge
-                  // if (tool->down_serial) {
-                  //     bool l = sx < left;
-                  //     bool r = sx > total_decor_w - left;
-                  //     bool b = sy > total_decor_h - left;
-                      // uint32_t edge = LIBDECOR_RESIZE_EDGE_NONE;
-                      // if (l && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_LEFT;
-                      // else if (r && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_RIGHT;
-                      // else if (l)  edge = LIBDECOR_RESIZE_EDGE_LEFT;
-                      // else if (r)  edge = LIBDECOR_RESIZE_EDGE_RIGHT;
-                      // else if (b)  edge = LIBDECOR_RESIZE_EDGE_BOTTOM;
-                      // if (edge != LIBDECOR_RESIZE_EDGE_NONE)
-                      //     libdecor_frame_resize(tool->focus_frame, g_wl_seat,
-                      //                           tool->down_serial,
-                      //   //                         static_cast<libdecor_resize_edge>(edge));
-                  // }
+                  if (tool->down_serial) {
+                      bool l = sx < left;
+                      bool r = sx > total_decor_w - left;
+                      bool b = sy > total_decor_h - left;
+                      uint32_t edge = LIBDECOR_RESIZE_EDGE_NONE;
+                      if (l && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_LEFT;
+                      else if (r && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_RIGHT;
+                      else if (l)  edge = LIBDECOR_RESIZE_EDGE_LEFT;
+                      else if (r)  edge = LIBDECOR_RESIZE_EDGE_RIGHT;
+                      else if (b)  edge = LIBDECOR_RESIZE_EDGE_BOTTOM;
+                      if (edge != LIBDECOR_RESIZE_EDGE_NONE)
+                          libdecor_frame_resize(tool->focus_frame, g_wl_seat,
+                                                tool->down_serial,
+                                                static_cast<libdecor_resize_edge>(edge));
+                  }
 
                // ── Title bar (sy < top) ───────────────────────────────
               } else if (sy >= 0 && sy < top) {
 
-                  // ── GTK plugin path: use gtk_surface1_titlebar_gesture ──
-                  Fl_Wayland_Screen_Driver *scr =
-                      static_cast<Fl_Wayland_Screen_Driver *>(Fl::screen_driver());
-#if USE_GTK
-                  if (scr->seat->gtk_shell && gtk_shell_surface == tool->focus_surface) {
-                      // Button-zone heuristic for GNOME/Adwaita: ~36 px per button, right-aligned.
-                      constexpr double kBtnW   = 36.0;
-                      constexpr double kBtnPad =  6.0;
-                      constexpr double kRPad   =  6.0;
-                      double x_from_right = total_decor_w - sx;
+                  // For FLTK's own bundled plugin, FLTK knows the button
+                  // layout.
+                  // For the fallback plugin, the button layout is similar to
+                  // Adwaita.
 
-                      struct gtk_surface1 *gsurf =
-                          gtk_shell1_get_gtk_surface(scr->seat->gtk_shell, tool->focus_surface);
-                      if (x_from_right < kRPad + kBtnW) {
-                          // Close button
-                          gtk_surface1_titlebar_gesture(gsurf, tool->down_serial, g_wl_seat,
-                                                        GTK_SURFACE1_GESTURE_CLOSE);
-                      } else if (x_from_right < kRPad + kBtnW + kBtnPad + kBtnW) {
-                          // Maximize button
-                          gtk_surface1_titlebar_gesture(gsurf, tool->down_serial, g_wl_seat,
-                                                        GTK_SURFACE1_GESTURE_MAXIMIZE);
-                      } else if (tool->down_serial) {
-                          // Title bar drag → move
-                          libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->down_serial);
-                      }
-                      gtk_surface1_release(gsurf);
+                  // fallback plugin buttons are smaller
+                  constexpr double kBtnW   = 24.0;
+                  constexpr double kBtnPad =  4.0;
+                  constexpr double kRPad   =  6.0;
+                  double x_from_right = total_decor_w - sx;
 
-                      // ── Non-GTK path: use libdecor_frame_* API directly ───
-                  } else
-#endif
-                  {
+                  constexpr double kCloseBtn = kRPad + kBtnW;
+                  constexpr double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
+                  constexpr double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
 
-                      // For FLTK's own bundled plugin, FLTK knows the button layout.
-                      // For the fallback plugin, the button layout is similar to Adwaita.
-                      constexpr double kBtnW   = 24.0;   // fallback plugin buttons are smaller
-                      constexpr double kBtnPad =  4.0;
-                      constexpr double kRPad   =  6.0;
-                      double x_from_right = total_decor_w - sx;
+                  if (x_from_right < kCloseBtn) {
+                      // Close button
+                      dwin->hide();
+                  } else if (x_from_right < kMaximizeBtn) {
+                      // Maximize / restore
+                      if (dwin->maximize_active())
+                          dwin->un_maximize();
+                      else
+                          dwin->maximize();
+                  } else if (x_from_right < kMinimizeBtn) {
+                      // Minimize (works)
+                      dwin->iconize();
+                } else if (tool->down_serial) {
+                      // Title bar drag → move (works)
+                      libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->down_serial);
+                }
+            } // else if (sy >= 0
+        } // if (dwin)
+    } // over_decoration
 
-                      if (x_from_right < kRPad + kBtnW) {
-                          // Close button
-                          libdecor_frame_close(tool->focus_frame);
-                      } else if (x_from_right < kRPad + kBtnW + kBtnPad + kBtnW) {
-                          // Maximize / restore
-                          if (libdecor_frame_is_floating(tool->focus_frame))
-                              libdecor_frame_set_maximized(tool->focus_frame);
-                          else
-                              libdecor_frame_unset_maximized(tool->focus_frame);
-                      } else if (tool->down_serial) {
-                          // Title bar drag → move
-                          libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->down_serial);
-                      }
-                  }
-              }
-          } // if (dwin)
-       } // over_decoration
-
-  tablet_tool_reset_frame(tool);
-  tool->prev_state = tool->ev.state;
-  return;
-}
     tablet_tool_reset_frame(tool);
     tool->prev_state = tool->ev.state;
     return;
