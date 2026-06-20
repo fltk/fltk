@@ -41,7 +41,7 @@ public:
         XftFont* font;
 #    endif
   int angle;
-  FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle);
+  FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle, int weight, int style, bool legacy);
 #  else
   XUtf8FontStruct* font;        // X UTF-8 font information
   FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname);

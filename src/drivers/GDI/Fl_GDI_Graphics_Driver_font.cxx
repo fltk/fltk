@@ -54,32 +54,49 @@
 # include <wchar.h>
 #endif
 
-// Bug: older versions calculated the value for *ap as a side effect of
-// making the name, and then forgot about it. To avoid having to change
-// the header files I decided to store this value in the last character
-// of the font name array.
-#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
-
 // turn a stored font name into a pretty name:
 const char* Fl_GDI_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     const char* p = f->name;
     if (!p || !*p) {if (ap) *ap = 0; return "";}
-    int type;
-    switch (*p) {
-    case 'B': type = FL_BOLD; break;
-    case 'I': type = FL_ITALIC; break;
-    case 'P': type = FL_BOLD | FL_ITALIC; break;
-    default:  type = 0; break;
+    if (f->legacy) {
+      switch (*p) {
+        case 'B':
+        case 'I':
+        case 'P':
+        case ' ':
+          p++;
+          break;
+      }
     }
-    strlcpy(f->fontname, p+1, ENDOFBUFFER);
-    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
-    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
-    f->fontname[ENDOFBUFFER] = (char)type;
+    strlcpy(f->fontname, p, sizeof(f->fontname));
   }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
+
+  if (ap) {
+    *ap = 0;
+
+    if (f->weight == FL_WEIGHT_BOLD)
+      *ap |= FL_BOLD;
+    if (f->style == FL_STYLE_ITALIC)
+      *ap |= FL_ITALIC;
+  }
+
   return f->fontname;
+}
+
+const char* Fl_GDI_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  const char* p = f->name;
+  if (!p || !*p) {
+    if (weight) *weight = 0;
+    if (style) *style = 0;
+    return "";
+  }
+
+  if (weight) *weight = f->weight;
+  if (style) *style = f->style;
+  return p;
 }
 
 static int fl_free_font = FL_FREE_FONT;
@@ -192,8 +209,21 @@ int Fl_GDI_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 //  int l = fl_utf_nb_char((unsigned char*)s->name+1, strlen(s->name+1));
 //  unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
 //  fl_utf2unicode((unsigned char*)s->name+1, l, (wchar_t*)b);
-  const char *nm = (const char*)s->name+1;
-  size_t len = strlen(s->name+1);
+  const char* p = s->name;
+
+  if (s->legacy) {
+    switch (*p) {
+      case 'B':
+      case 'I':
+      case 'P':
+      case ' ':
+        p++;
+        break;
+    }
+  }
+
+  const char *nm = p;
+  size_t len = strlen(p);
   unsigned l = fl_utf8toUtf16(nm, (unsigned) len, NULL, 0); // Pass NULL to query length required
   unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
   l = fl_utf8toUtf16(nm, (unsigned) len, b, (l+1)); // Now do the conversion
@@ -209,9 +239,11 @@ const char *Fl_GDI_Graphics_Driver::font_name(int num) {
   return fl_fonts[num].name;
 }
 
-void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
+void Fl_GDI_Graphics_Driver::font_name(int num, const char *name, int weight, int style, bool legacy) {
   Fl_Fontdesc *s = fl_fonts + num;
   if (s->name) {
+    s->weight = weight;
+    s->style = style;
     if (!strcmp(s->name, name)) {s->name = name; return;}
     for (Fl_Font_Descriptor* f = s->first; f;) {
       Fl_Font_Descriptor* n = f->next; delete f; f = n;
@@ -220,6 +252,9 @@ void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
   }
   s->name = name;
   s->fontname[0] = 0;
+  s->weight = weight;
+  s->style = style;
+  s->legacy = legacy;
   s->first = 0;
 }
 
@@ -230,15 +265,15 @@ static unsigned short *wstr = NULL;
 static int wstr_len    = 0;
 
 #ifndef FL_DOXYGEN
-Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsize) : Fl_Font_Descriptor(name,fsize) {
-  int weight = FW_NORMAL;
-  int italic = 0;
-  switch (*name++) {
-  case 'I': italic = 1; break;
-  case 'P': italic = 1;
-  case 'B': weight = FW_BOLD; break;
-  case ' ': break;
-  default: name--;
+Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsize, int weight, int style, bool legacy) : Fl_Font_Descriptor(name,fsize, weight, style) {
+  if (legacy) {
+    switch (*name) {
+      case 'I':
+      case 'P':
+      case 'B':
+      case ' ':
+        name++;
+    }
   }
   int wn = fl_utf8toUtf16(name, (unsigned int)strlen(name), wstr, wstr_len);
   if (wn >= wstr_len) {
@@ -253,7 +288,7 @@ Fl_GDI_Font_Descriptor::Fl_GDI_Font_Descriptor(const char* name, Fl_Fontsize fsi
     fl_angle_*10,                   // angle of escapement
     fl_angle_*10,                   // base-line orientation angle
     weight,
-    italic,
+    style != FL_STYLE_NORMAL ? TRUE : FALSE,
     FALSE,              // underline attribute flag
     FALSE,              // strikeout attribute flag
     DEFAULT_CHARSET,    // character set identifier
@@ -323,7 +358,7 @@ static Fl_GDI_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, int angle) {
   Fl_GDI_Font_Descriptor* f;
   for (f = (Fl_GDI_Font_Descriptor*)s->first; f; f = (Fl_GDI_Font_Descriptor*)f->next)
     if (f->size == size && f->angle == angle) return f;
-  f = new Fl_GDI_Font_Descriptor(s->name, size);
+  f = new Fl_GDI_Font_Descriptor(s->name, size, s->weight, s->style, s->legacy);
   f->next = s->first;
   s->first = f;
   return f;

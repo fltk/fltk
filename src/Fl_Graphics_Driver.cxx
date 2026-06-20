@@ -740,6 +740,9 @@ float Fl_Graphics_Driver::scale_bitmap_for_PostScript() { return 2; }
 /** Support for Fl::get_font_name() */
 const char* Fl_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {return NULL;}
 
+/** Support for Fl::get_font_name2() */
+const char* Fl_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {return NULL;}
+
 /** Support for Fl::get_font_sizes() */
 int Fl_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {return 0;}
 
@@ -753,7 +756,7 @@ Fl_Fontdesc* Fl_Graphics_Driver::calc_fl_fonts(void) {return NULL;}
 const char *Fl_Graphics_Driver::font_name(int num) {return NULL;}
 
 /** Support for Fl::set_font() */
-void Fl_Graphics_Driver::font_name(int num, const char *name) {}
+void Fl_Graphics_Driver::font_name(int num, const char *name, int weight, int style, bool legacy) {}
 
 /** Support function for fl_overlay_rect() and scaled GUI.*/
 void Fl_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
@@ -789,7 +792,7 @@ int Fl_Graphics_Driver::antialias() {
 
 #ifndef FL_DOXYGEN
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size, int weight, int style) {
   next = 0;
 #  if HAVE_GL
   listbase = 0;
