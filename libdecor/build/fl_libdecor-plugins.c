@@ -16,7 +16,7 @@
 
 /* Support of interactions between FLTK and libdecor plugins, either dynamically
  loaded by dlopen() or built-in FLTK.
- 
+
  Under USE_SYSTEM_LIBDECOR, the plugin can only be dynamically loaded.
  Under ! USE_SYSTEM_LIBDECOR, it can be dynamically loaded from a directory
  given in environment variable LIBDECOR_PLUGIN_DIR, or the built-in one is used.
@@ -24,6 +24,7 @@
 
 #include <dlfcn.h>
 #include <string.h>
+#include <stdlib.h>
 #include "fl_libdecor.h"
 #include <pango/pangocairo.h>
 #include <dlfcn.h>
@@ -226,14 +227,14 @@ static unsigned char *cairo_titlebar_buffer(struct libdecor_frame *frame,
  LIBDECOR_EXPORT const struct libdecor_plugin_description libdecor_plugin_description;
  these plugins are dlopen()'ed in libdecor.c without the RTLD_GLOBAL flag.
  Consequently their symbols are not discovered by dlsym(RTLD_DEFAULT, "symbol-name").
- 
+
  Under USE_SYSTEM_LIBDECOR, we repeat the dlopen() for the same plugin
  then dlsym() will report the address of libdecor_plugin_description.
- 
+
  Under !USE_SYSTEM_LIBDECOR, we compile fl_libdecor.c which modifies the dlopen()
  to call dlsym(ld, "libdecor_plugin_description") just after the dlopen and memorizes
  this address.
- 
+
  A plugin is loaded also if SSD.
  KWin has its own size limit, similar to that of GDK plugin
  */
@@ -308,4 +309,28 @@ bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdeco
   if (!*using_GTK) return false;
   struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
   return (frame_gtk->headerbar.wl_surface == surface);
+}
+
+/* A simple linked list mapping decoration surface → frame.
+   Populated by the plugin when it creates decoration surfaces. */
+struct fl_decor_surface_entry {
+  struct wl_surface     *surface;
+  struct libdecor_frame *frame;
+  struct fl_decor_surface_entry *next;
+};
+static struct fl_decor_surface_entry *fl_decor_surface_list = NULL;
+
+void fl_wayland_register_decor_surface(struct wl_surface *s, struct libdecor_frame *f) {
+  struct fl_decor_surface_entry *e = malloc(sizeof *e);
+  e->surface = s; e->frame = f; e->next = fl_decor_surface_list;
+  fl_decor_surface_list = e;
+}
+void fl_wayland_unregister_decor_surface(struct wl_surface *s) {
+  struct fl_decor_surface_entry **p = &fl_decor_surface_list;
+  while (*p) { if ((*p)->surface == s) { struct fl_decor_surface_entry *t = *p; *p = t->next; free(t); return; } p = &(*p)->next; }
+}
+bool fl_wayland_is_decor_surface(struct wl_surface *s, struct libdecor_frame *f) {
+  for (struct fl_decor_surface_entry *e = fl_decor_surface_list; e; e = e->next)
+    if (e->surface == s && e->frame == f) return true;
+  return false;
 }

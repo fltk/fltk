@@ -725,10 +725,10 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
               // ── Resize edges (check before title-bar actions) ──────
               if (sy > top) {
                   // Below content area: resize edge
-                  if (tool->down_serial) {
-                      bool l = sx < left;
-                      bool r = sx > total_decor_w - left;
-                      bool b = sy > total_decor_h - left;
+                  // if (tool->down_serial) {
+                  //     bool l = sx < left;
+                  //     bool r = sx > total_decor_w - left;
+                  //     bool b = sy > total_decor_h - left;
                       // uint32_t edge = LIBDECOR_RESIZE_EDGE_NONE;
                       // if (l && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_LEFT;
                       // else if (r && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_RIGHT;
@@ -738,8 +738,8 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                       // if (edge != LIBDECOR_RESIZE_EDGE_NONE)
                       //     libdecor_frame_resize(tool->focus_frame, g_wl_seat,
                       //                           tool->down_serial,
-                      //                           static_cast<libdecor_resize_edge>(edge));
-                  }
+                      //   //                         static_cast<libdecor_resize_edge>(edge));
+                  // }
 
                // ── Title bar (sy < top) ───────────────────────────────
               } else if (sy >= 0 && sy < top) {
