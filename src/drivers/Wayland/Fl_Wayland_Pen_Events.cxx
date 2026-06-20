@@ -73,17 +73,18 @@
 
 #include "tablet-client-protocol.h"
 
-#define USE_GTK 0
-
 extern "C" {
-# include "../../../libdecor/build/fl_libdecor.h"
-    void fl_wayland_register_decor_surface(struct wl_surface *s, struct libdecor_frame *f);
-    void fl_wayland_unregister_decor_surface(struct wl_surface *s);
-    bool fl_wayland_is_decor_surface(struct wl_surface *s, struct libdecor_frame *f);
+#include "../../../libdecor/build/fl_libdecor.h"
+#include "../../../libdecor/build/fl_libdecor-plugins.h"
 }
 #include <cmath>
 #include <cstring>
 #include <cstdint>
+
+// Whether libdecor uses GTK
+#ifndef HAVE_GTK
+#  define HAVE_GTK 0
+#endif
 
 // Physical stylus button codes from linux/input-event-codes.h.
 // Defined locally so we don't depend on the kernel header directly.
@@ -152,6 +153,7 @@ struct TabletTool {
 
   struct wl_list link;            // node in g_tool_list
 };
+
 
 // Convenience: reset all per-frame flags at the end of frame processing.
 static inline void tablet_tool_reset_frame(TabletTool *t) {
@@ -485,30 +487,29 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     tool->over_decoration = true;
     bool found = false;
 
+    enum plugin_kind plugin = get_plugin_kind(tool->focus_frame);
+
     Fl_Window* win;
     for (win = Fl::first_window(); win && !found; win = Fl::next_window(win)) {
         wld_window* xid = fl_wl_xid(win);
-        if (xid->kind != Fl_Wayland_Window_Driver::DECORATED || !xid->frame)
+        if ((xid && xid->kind != Fl_Wayland_Window_Driver::DECORATED) || !xid->frame)
           continue;
-      // ── Path A: GTK plugin (existing helper) ─────────────────────────────
-      // bool using_GTK = false;
-      // if (fl_is_surface_from_GTK_titlebar(surface, xid->frame, &using_GTK) && using_GTK) {
-      //   tool->focus_frame = xid->frame;
-      //   found = true;
-      //   break;
-      // }
 
-      // ── Path B: FLTK's bundled plugin (decoration surface registry) ───────
-      // fl_wayland_is_decor_surface() is a small function you add to
-      // fl_libdecor.c (see below).  Returns true if `surface` belongs to
-      // the decoration of `frame`.
-#if !USE_SYSTEM_LIBDECOR
-      if (fl_wayland_is_decor_surface(surface, xid->frame)) {
+      // ── Path A: GTK3 plugin ───────────────────────────────────────────────
+      if (plugin == GTK3) {
+        fprintf(stderr, "GTK3 plugin\n");
         tool->focus_frame = xid->frame;
         found = true;
         break;
       }
-#endif
+
+      // ── Path B: cairo plugin ─────────────────────────────────────────────
+      if (plugin == CAIRO)
+      {
+        tool->focus_frame = xid->frame;
+        found = true;
+        break;
+      }
     }
 
     // ── Path C: fallback — use the keyboard-focused window ─────────────────

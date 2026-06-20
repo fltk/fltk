@@ -26,14 +26,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include "fl_libdecor.h"
+#include "fl_libdecor-plugins.h"
 #include <pango/pangocairo.h>
-#include <dlfcn.h>
 
 #ifndef HAVE_GTK
 #  define HAVE_GTK 0
 #endif
 
-enum plugin_kind { UNKNOWN, SSD, CAIRO, GTK3 };
 
 #if USE_SYSTEM_LIBDECOR
 #  include "../src/libdecor-plugin.h"
@@ -263,7 +262,7 @@ static const char *get_libdecor_plugin_description() {
 }
 
 
-static enum plugin_kind get_plugin_kind(struct libdecor_frame *frame) {
+enum plugin_kind get_plugin_kind(struct libdecor_frame *frame) {
   static enum plugin_kind kind = UNKNOWN;
   if (kind == UNKNOWN) {
     if (frame) {
@@ -309,28 +308,4 @@ bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdeco
   if (!*using_GTK) return false;
   struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
   return (frame_gtk->headerbar.wl_surface == surface);
-}
-
-/* A simple linked list mapping decoration surface → frame.
-   Populated by the plugin when it creates decoration surfaces. */
-struct fl_decor_surface_entry {
-  struct wl_surface     *surface;
-  struct libdecor_frame *frame;
-  struct fl_decor_surface_entry *next;
-};
-static struct fl_decor_surface_entry *fl_decor_surface_list = NULL;
-
-void fl_wayland_register_decor_surface(struct wl_surface *s, struct libdecor_frame *f) {
-  struct fl_decor_surface_entry *e = malloc(sizeof *e);
-  e->surface = s; e->frame = f; e->next = fl_decor_surface_list;
-  fl_decor_surface_list = e;
-}
-void fl_wayland_unregister_decor_surface(struct wl_surface *s) {
-  struct fl_decor_surface_entry **p = &fl_decor_surface_list;
-  while (*p) { if ((*p)->surface == s) { struct fl_decor_surface_entry *t = *p; *p = t->next; free(t); return; } p = &(*p)->next; }
-}
-bool fl_wayland_is_decor_surface(struct wl_surface *s, struct libdecor_frame *f) {
-  for (struct fl_decor_surface_entry *e = fl_decor_surface_list; e; e = e->next)
-    if (e->surface == s && e->frame == f) return true;
-  return false;
 }
