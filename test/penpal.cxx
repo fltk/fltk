@@ -1,7 +1,7 @@
 //
 // Penpal pen/stylus/tablet test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -63,6 +63,7 @@ public:
   }
   int cv_handle(int event);
   void cv_draw();
+  void cv_draw_buttons();
   void cv_paint();
   void cv_pen_paint();
 };
@@ -83,6 +84,8 @@ int CanvasInterface::cv_handle(int event)
       /* fall through */
     case Fl::Pen::HOVER:
       // Pen move over the surface without touching it.
+      if (Fl::event_state(FL_CTRL) || Fl::Pen::event_state(Fl::Pen::State::BUTTON1))
+        return popup_app_menu();
       overlay_ = PEN_HOVER;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -90,8 +93,6 @@ int CanvasInterface::cv_handle(int event)
       return 1;
     case Fl::Pen::TOUCH:
       // Pen tip or eraser just touched the surface.
-      if (Fl::event_state(FL_CTRL) || Fl::Pen::event_state(Fl::Pen::State::BUTTON0))
-        return popup_app_menu();
       /* fall through */
     case Fl::Pen::DRAW:
       // Pen is dragged over the surface, or hovers with a button pressed.
@@ -177,6 +178,7 @@ void CanvasInterface::cv_draw()
     case NONE: break;
     case PEN_HOVER:
       fl_color(FL_RED);
+      cv_draw_buttons();
       /* fall through */
     case HOVER:
       fl_xyline(ov_x_-10, ov_y_, ov_x_+10);
@@ -194,12 +196,27 @@ void CanvasInterface::cv_draw()
         fl_line(ov_x_-r, ov_y_-r, ov_x_+r, ov_y_+r);
         fl_line(ov_x_-r, ov_y_+r, ov_x_+r, ov_y_-r);
       }
+      cv_draw_buttons();
       /* fall through */
     case DRAW:
       // Draw a circle at the mouse or pan position
       fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
       break;
   }
+}
+
+void CanvasInterface::cv_draw_buttons()
+{
+  // Button indicators
+  fl_rect(ov_x_-16, ov_y_-20, 32, 10);
+  if (Fl::Pen::event_state(Fl::Pen::State::BUTTON0))
+    fl_rectf(ov_x_-16, ov_y_-20, 8, 10);
+  if (Fl::Pen::event_state(Fl::Pen::State::BUTTON1))
+    fl_rectf(ov_x_-8, ov_y_-20, 8, 10);
+  if (Fl::Pen::event_state(Fl::Pen::State::BUTTON2))
+    fl_rectf(ov_x_-0, ov_y_-20, 8, 10);
+  if (Fl::Pen::event_state(Fl::Pen::State::BUTTON3))
+    fl_rectf(ov_x_+8, ov_y_-20, 8, 10);
 }
 
 //

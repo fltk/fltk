@@ -50,6 +50,7 @@
 #include <errno.h>
 #include <string.h> // for strerror()
 #include <map>
+
 extern "C" {
   bool libdecor_get_cursor_settings(char **theme, int *size);
   bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,

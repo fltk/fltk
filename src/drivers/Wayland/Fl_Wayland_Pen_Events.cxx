@@ -552,8 +552,8 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
   // Map physical button codes to State bits.
   State bit = (State)0;
   switch (button) {
-    case BTN_STYLUS:  bit = State::BUTTON0; break;
-    case BTN_STYLUS2: bit = State::BUTTON1; break;
+    case BTN_STYLUS:  bit = State::BUTTON1; break; // upper barell button
+    case BTN_STYLUS2: bit = State::BUTTON0; break; // lower barrel button, closer to the pen tip
     case BTN_STYLUS3: bit = State::BUTTON2; break;
     default: break;
   }
