@@ -764,7 +764,8 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
 
                   if (x_from_right < kCloseBtn) {
                       // Close button
-                      dwin->hide();
+                      //dwin->hide(); <-- do not use this.  Crashes on Vulkan
+                      libdecor_frame_close(tool->focus_frame);
                   } else if (x_from_right < kMaximizeBtn) {
                       // Maximize / restore
                       if (dwin->maximize_active())
@@ -778,7 +779,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                       // Title bar drag → move (works)
                       libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->down_serial);
                 }
-            } // else if (sy >= 0
+            } // else if (sy >= 0 && sy < top)
         } // if (dwin)
     } // over_decoration
 
