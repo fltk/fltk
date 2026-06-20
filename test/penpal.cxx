@@ -50,8 +50,6 @@ class CanvasInterface {
   Fl_Widget *widget_ { nullptr };
   bool in_window_ { false };
   bool first_draw_ { true };
-  bool pen_handle_  { false };  //<- Variable needed on Windows to not trigger
-                                //   on FL_PUSH.
   Fl_Offscreen offscreen_ { 0 };
   Fl_Color color_ { 1 };
   enum { NONE, HOVER, DRAW, PEN_HOVER, PEN_DRAW } overlay_ { NONE };
@@ -84,7 +82,6 @@ int CanvasInterface::cv_handle(int event)
       if (color_ > 6) color_ = 1;
       /* fall through */
     case Fl::Pen::HOVER:
-      pen_handle_ = false;
       // Pen move over the surface without touching it.
       overlay_ = PEN_HOVER;
       ov_x_ = Fl::event_x();
@@ -102,15 +99,12 @@ int CanvasInterface::cv_handle(int event)
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
       cv_pen_paint();
-      pen_handle_ = true;
       widget_->redraw();
       return 1;
     case Fl::Pen::LIFT:
-      pen_handle_ = false;
       // Pen was just lifted from the surface and is now hovering
       return 1;
     case Fl::Pen::LEAVE:
-      pen_handle_ = false;
       // The pen left the drawing area.
       overlay_ = NONE;
       widget_->redraw();
@@ -132,7 +126,6 @@ int CanvasInterface::cv_handle(int event)
         return popup_app_menu();
       /* fall through */
     case FL_DRAG:
-      if (pen_handle_) return 1;
       overlay_ = DRAW;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
@@ -142,7 +135,6 @@ int CanvasInterface::cv_handle(int event)
     case FL_RELEASE:
       return 1;
     case FL_LEAVE:
-      pen_handle_ = false;
       overlay_ = NONE;
       widget_->redraw();
       return 1;
@@ -168,6 +160,7 @@ void CanvasInterface::cv_draw()
 
   // Preset values for overlay
   int r = 10;
+#if 0 // debugging output
   if (overlay_ == PEN_DRAW)
   {
       int state = static_cast<int>(Fl::Pen::event_state());
@@ -175,10 +168,10 @@ void CanvasInterface::cv_draw()
       float tilt_x = Fl::Pen::event_tilt_x();
       float tilt_y = Fl::Pen::event_tilt_y();
       r = static_cast<int>(32.0 * pressure);
-      if (r < 1) r = 1;
       printf("X=%d Y=%d pressure=%f tilt_x=%f, tilt_y=%f, radius=%d state=%d\n",
              Fl::event_x(), Fl::event_y(), pressure, tilt_x, tilt_y, r, state);
   }
+#endif
   fl_color(FL_BLACK);
   switch (overlay_) {
     case NONE: break;
@@ -190,6 +183,8 @@ void CanvasInterface::cv_draw()
       fl_yxline(ov_x_, ov_y_-10, ov_y_+10);
       break;
     case PEN_DRAW:
+      r = static_cast<int>(32.0 * Fl::Pen::event_pressure() * Fl::Pen::event_pressure());
+      if (r < 1) r = 1;
       fl_color(FL_RED);
       // Tilt indicator
       fl_arc(ov_x_-r/2-40*Fl::Pen::event_tilt_x(),
@@ -226,14 +221,16 @@ void CanvasInterface::cv_paint() {
 void CanvasInterface::cv_pen_paint() {
   if (!offscreen_)
     return;
-  int state = static_cast<int>(Fl::Pen::event_state());
   float pressure = Fl::Pen::event_pressure();
+  int r = static_cast<int>(32.0 * pressure * pressure); // squared to make pressure more visible
+#if 0
+  int state = static_cast<int>(Fl::Pen::event_state());
   float tilt_x = Fl::Pen::event_tilt_x();
   float tilt_y = Fl::Pen::event_tilt_y();
-  int r = static_cast<int>(32.0 * pressure);
-  if (r < 1) r = 1;
   printf("X=%d Y=%d pressure=%f tilt_x=%f, tilt_y=%f, radius=%d state=%d\n",
          Fl::event_x(), Fl::event_y(), pressure, tilt_x, tilt_y, r, state);
+#endif
+  if (r < 1) r = 1;
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
   fl_begin_offscreen(offscreen_);
@@ -304,6 +301,10 @@ void unsubscribe_cb(Fl_Widget*, void*) {
 void delete_cb(Fl_Widget*, void*) {
     if (cv1) {
       cv1->top_window()->redraw();
+      // User *must* unsubscribe before deleting the widget, otherwise the pen driver
+      // will keep a dangling pointer to the deleted widget and will crash when trying
+      //to send events to it.
+      Fl::Pen::unsubscribe(cv1);
       delete cv1;
       cv1 = nullptr;
     }
@@ -347,7 +348,7 @@ int main(int argc, char **argv)
   menu_bar->add("PenPal/Unsubscribe Middle Canvas", 0, unsubscribe_cb);
   menu_bar->add("PenPal/Subscribe Middle Canvas", 0, subscribe_cb);
   menu_bar->add("PenPal/Delete Middle Canvas", 0, delete_cb, nullptr, FL_MENU_DIVIDER);
-  menu_bar->add("PenPal/Quit", FL_COMMAND + 'Q', quit_cb);
+  menu_bar->add("PenPal/Quit", FL_COMMAND + 'q', quit_cb);
   menu_bar->menu_end();
 
   // One testing canvas is just a regular child widget of the window
