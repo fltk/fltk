@@ -73,6 +73,14 @@
 
 #include "tablet-client-protocol.h"
 
+#define USE_GTK 0
+
+extern "C" {
+# include "../../../libdecor/build/fl_libdecor.h"
+    void fl_wayland_register_decor_surface(struct wl_surface *s, struct libdecor_frame *f);
+    void fl_wayland_unregister_decor_surface(struct wl_surface *s);
+    bool fl_wayland_is_decor_surface(struct wl_surface *s, struct libdecor_frame *f);
+}
 #include <cmath>
 #include <cstring>
 #include <cstdint>
@@ -114,6 +122,13 @@ static const State kButtonBits[] = {
 struct TabletTool {
   struct zwp_tablet_tool_v2      *wl_tool;
   enum zwp_tablet_tool_v2_type    type;
+
+  uint32_t       down_serial { 0 };   // serial from tool_cb_down, needed for frame_move/resize
+  double         decor_sx { 0 };      // surface-local x when over a decoration surface
+  double         decor_sy { 0 };      // surface-local y when over a decoration surface
+  struct libdecor_frame *focus_frame { nullptr }; // owning frame when over a decoration
+  bool           over_decoration { false };
+
   uint64_t                        hardware_serial;
   int                             pen_id;       // int-sized pen identity
   Trait                           capabilities; // reported by capability events
@@ -458,10 +473,57 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
                                   struct wl_surface *surface) {
   TabletTool *tool = static_cast<TabletTool *>(data);
   tool->focus_surface      = surface;
-  tool->focus_win          =
-    Fl_Wayland_Window_Driver::surface_to_window(surface);
+  tool->focus_frame        = nullptr;
+  tool->over_decoration    = false;
+  tool->focus_win          = Fl_Wayland_Window_Driver::surface_to_window(surface);
   tool->in_proximity       = true;
   tool->frame_proximity_in = true;
+
+  if (!tool->focus_win)
+  {
+    // Surface is not an FLTK content surface — it is a libdecor decoration.
+    tool->over_decoration = true;
+    bool found = false;
+
+    Fl_Window* win;
+    for (win = Fl::first_window(); win && !found; win = Fl::next_window(win)) {
+        wld_window* xid = fl_wl_xid(win);
+        if (xid->kind != Fl_Wayland_Window_Driver::DECORATED || !xid->frame)
+          continue;
+      // ── Path A: GTK plugin (existing helper) ─────────────────────────────
+      // bool using_GTK = false;
+      // if (fl_is_surface_from_GTK_titlebar(surface, xid->frame, &using_GTK) && using_GTK) {
+      //   tool->focus_frame = xid->frame;
+      //   found = true;
+      //   break;
+      // }
+
+      // ── Path B: FLTK's bundled plugin (decoration surface registry) ───────
+      // fl_wayland_is_decor_surface() is a small function you add to
+      // fl_libdecor.c (see below).  Returns true if `surface` belongs to
+      // the decoration of `frame`.
+#if !USE_SYSTEM_LIBDECOR
+      if (fl_wayland_is_decor_surface(surface, xid->frame)) {
+        tool->focus_frame = xid->frame;
+        found = true;
+        break;
+      }
+#endif
+    }
+
+    // ── Path C: fallback — use the keyboard-focused window ─────────────────
+    // Works when only one decorated window is on screen, or when the user
+    // was recently typing in the window whose titlebar they are now touching.
+    if (!found) {
+      Fl_Window *focused = Fl::focus() ? Fl::focus()->top_window() : nullptr;
+      if (focused) {
+        auto *xid = fl_wl_xid(focused);
+        if (xid && xid->kind == Fl_Wayland_Window_Driver::DECORATED && xid->frame)
+          tool->focus_frame = xid->frame;
+      }
+    }
+  }
+
   // Set hover state immediately so ev.state is valid even without a tip-down.
   State btn_bits = tool->ev.state &
     (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
@@ -476,8 +538,9 @@ static void tool_cb_proximity_out(void *data, struct zwp_tablet_tool_v2 *) {
 }
 
 static void tool_cb_down(void *data, struct zwp_tablet_tool_v2 *,
-                          uint32_t /*serial*/) {
+                          uint32_t serial) {
   TabletTool *tool = static_cast<TabletTool *>(data);
+  tool->down_serial = serial;
   // Tip contact; preserve any side-button bits already present.
   State btn_bits = tool->ev.state &
     (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
@@ -498,6 +561,8 @@ static void tool_cb_up(void *data, struct zwp_tablet_tool_v2 *) {
 static void tool_cb_motion(void *data, struct zwp_tablet_tool_v2 *,
                             wl_fixed_t x, wl_fixed_t y) {
   TabletTool *tool = static_cast<TabletTool *>(data);
+  tool->decor_sx = wl_fixed_to_double(x);
+  tool->decor_sy = wl_fixed_to_double(y);
   coords_from_surface(tool, x, y);
   tool->frame_motion = true;
 }
@@ -628,6 +693,118 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
 
   // No subscribers or no focus window → nothing more to do.
   if (!tool->focus_win || subscriber_list_.empty()) {
+
+      // ── Decoration bridge ─────────────────────────────────────────────────
+      if (tool->over_decoration && tool->focus_frame && tool->frame_down) {
+
+          // ── Determine total decoration surface width ─────────────────────
+          // libdecor_frame_translate_coordinate(frame, 0, 0, &left, &top) gives the
+          // content origin within the decoration frame.  top == titlebar height.
+          int left = 0, top = 0;
+          libdecor_frame_translate_coordinate(tool->focus_frame, 0, 0,
+                                              &left, &top);
+
+          // Find the Fl_Window that owns this frame.
+          Fl_Window* dwin = nullptr;
+          for (dwin = Fl::first_window(); dwin;
+               dwin = Fl::next_window(dwin)) {
+              wld_window* xid = fl_wl_xid(dwin);
+              if (xid->kind != Fl_Wayland_Window_Driver::DECORATED ||
+                  !xid->frame)
+                  continue;
+
+          if (dwin) {
+              float f  = Fl::screen_scale(dwin->screen_num());
+              // Total decoration surface dimensions in surface-local pixels:
+              double total_decor_w = dwin->w() * f + 2 * left;
+              double total_decor_h = dwin->h() * f + top;  // bottom border ≈ left
+
+              double sx = tool->decor_sx;
+              double sy = tool->decor_sy;
+
+              // ── Resize edges (check before title-bar actions) ──────
+              if (sy > top) {
+                  // Below content area: resize edge
+                  if (tool->down_serial) {
+                      bool l = sx < left;
+                      bool r = sx > total_decor_w - left;
+                      bool b = sy > total_decor_h - left;
+                      // uint32_t edge = LIBDECOR_RESIZE_EDGE_NONE;
+                      // if (l && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_LEFT;
+                      // else if (r && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_RIGHT;
+                      // else if (l)  edge = LIBDECOR_RESIZE_EDGE_LEFT;
+                      // else if (r)  edge = LIBDECOR_RESIZE_EDGE_RIGHT;
+                      // else if (b)  edge = LIBDECOR_RESIZE_EDGE_BOTTOM;
+                      // if (edge != LIBDECOR_RESIZE_EDGE_NONE)
+                      //     libdecor_frame_resize(tool->focus_frame, g_wl_seat,
+                      //                           tool->down_serial,
+                      //                           static_cast<libdecor_resize_edge>(edge));
+                  }
+
+               // ── Title bar (sy < top) ───────────────────────────────
+              } else if (sy >= 0 && sy < top) {
+
+                  // ── GTK plugin path: use gtk_surface1_titlebar_gesture ──
+                  Fl_Wayland_Screen_Driver *scr =
+                      static_cast<Fl_Wayland_Screen_Driver *>(Fl::screen_driver());
+#if USE_GTK
+                  if (scr->seat->gtk_shell && gtk_shell_surface == tool->focus_surface) {
+                      // Button-zone heuristic for GNOME/Adwaita: ~36 px per button, right-aligned.
+                      constexpr double kBtnW   = 36.0;
+                      constexpr double kBtnPad =  6.0;
+                      constexpr double kRPad   =  6.0;
+                      double x_from_right = total_decor_w - sx;
+
+                      struct gtk_surface1 *gsurf =
+                          gtk_shell1_get_gtk_surface(scr->seat->gtk_shell, tool->focus_surface);
+                      if (x_from_right < kRPad + kBtnW) {
+                          // Close button
+                          gtk_surface1_titlebar_gesture(gsurf, tool->down_serial, g_wl_seat,
+                                                        GTK_SURFACE1_GESTURE_CLOSE);
+                      } else if (x_from_right < kRPad + kBtnW + kBtnPad + kBtnW) {
+                          // Maximize button
+                          gtk_surface1_titlebar_gesture(gsurf, tool->down_serial, g_wl_seat,
+                                                        GTK_SURFACE1_GESTURE_MAXIMIZE);
+                      } else if (tool->down_serial) {
+                          // Title bar drag → move
+                          libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->down_serial);
+                      }
+                      gtk_surface1_release(gsurf);
+
+                      // ── Non-GTK path: use libdecor_frame_* API directly ───
+                  } else
+#endif
+                  {
+
+                      // For FLTK's own bundled plugin, FLTK knows the button layout.
+                      // For the fallback plugin, the button layout is similar to Adwaita.
+                      constexpr double kBtnW   = 24.0;   // fallback plugin buttons are smaller
+                      constexpr double kBtnPad =  4.0;
+                      constexpr double kRPad   =  6.0;
+                      double x_from_right = total_decor_w - sx;
+
+                      if (x_from_right < kRPad + kBtnW) {
+                          // Close button
+                          libdecor_frame_close(tool->focus_frame);
+                      } else if (x_from_right < kRPad + kBtnW + kBtnPad + kBtnW) {
+                          // Maximize / restore
+                          if (libdecor_frame_is_floating(tool->focus_frame))
+                              libdecor_frame_set_maximized(tool->focus_frame);
+                          else
+                              libdecor_frame_unset_maximized(tool->focus_frame);
+                      } else if (tool->down_serial) {
+                          // Title bar drag → move
+                          libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->down_serial);
+                      }
+                  }
+              }
+          } // if (dwin)
+       } // over_decoration
+
+  tablet_tool_reset_frame(tool);
+  tool->prev_state = tool->ev.state;
+  return;
+}
     tablet_tool_reset_frame(tool);
     tool->prev_state = tool->ev.state;
     return;

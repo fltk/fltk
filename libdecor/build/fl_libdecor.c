@@ -96,14 +96,14 @@ void fl_libdecor_frame_set_minimized(struct libdecor_frame *frame)
  2) if this directory does not exist or contains no plugin, the built-in plugin is used.
     * if FLTK was built with package libgtk-3-dev, the GTK plugin is used
     * if FLTK was built without package libgtk-3-dev, the Cairo plugin is used
- 
+
  If FLTK was built with FLTK_USE_SYSTEM_LIBDECOR turned ON, the present modification
  isn't compiled, so the plugin-searching algorithm of libdecor_new() in libdecor-0.so is used.
  This corresponds to step 1) above and to use no titlebar is no plugin is found.
- 
+
  N.B.: only the system package is built with a meaningful value of -DLIBDECOR_PLUGIN_DIR=
  so a plugin may be loaded that way only if FLTK was built with FLTK_USE_SYSTEM_LIBDECOR turned ON.
- 
+
  */
 struct libdecor *fl_libdecor_new(struct wl_display *wl_display, const struct libdecor_interface *iface)
 {
@@ -140,6 +140,33 @@ struct libdecor *fl_libdecor_new(struct wl_display *wl_display, const struct lib
 
   wl_display_flush(wl_display);
   return context;
+}
+
+/* fl_libdecor.c  — FLTK-specific additions section */
+
+#include <stdlib.h>
+/* A simple linked list mapping decoration surface → frame.
+   Populated by the plugin when it creates decoration surfaces. */
+struct fl_decor_surface_entry {
+  struct wl_surface     *surface;
+  struct libdecor_frame *frame;
+  struct fl_decor_surface_entry *next;
+};
+static struct fl_decor_surface_entry *fl_decor_surface_list = NULL;
+
+void fl_wayland_register_decor_surface(struct wl_surface *s, struct libdecor_frame *f) {
+  struct fl_decor_surface_entry *e = malloc(sizeof *e);
+  e->surface = s; e->frame = f; e->next = fl_decor_surface_list;
+  fl_decor_surface_list = e;
+}
+void fl_wayland_unregister_decor_surface(struct wl_surface *s) {
+  struct fl_decor_surface_entry **p = &fl_decor_surface_list;
+  while (*p) { if ((*p)->surface == s) { struct fl_decor_surface_entry *t = *p; *p = t->next; free(t); return; } p = &(*p)->next; }
+}
+bool fl_wayland_is_decor_surface(struct wl_surface *s, struct libdecor_frame *f) {
+  for (struct fl_decor_surface_entry *e = fl_decor_surface_list; e; e = e->next)
+    if (e->surface == s && e->frame == f) return true;
+  return false;
 }
 
 #endif //! USE_SYSTEM_LIBDECOR
