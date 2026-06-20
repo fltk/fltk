@@ -34,6 +34,11 @@ set(ZLIB_SRCS
     zutil.c
 )
 
+set(include_dirs
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:include>
+)
+
 #######################################################################
 
 # Suppress some Visual Studio compiler warnings
@@ -46,9 +51,13 @@ set(msvc_warnings /wd4267 /wd4996)
 
 fl_add_library(fltk_z STATIC "${ZLIB_SRCS}")
 
+target_include_directories(fltk_z PUBLIC ${include_dirs})
+
 if(MSVC)
   target_compile_options(fltk_z PRIVATE ${msvc_warnings})
 endif(MSVC)
+
+list(APPEND FLTK_IMAGE_LIBRARIES fltk::z)
 
 #######################################################################
 # Build the shared library (optional)
@@ -61,9 +70,13 @@ if(FLTK_BUILD_SHARED_LIBS)
 
   fl_add_library(fltk_z SHARED "${ZLIB_SRCS}")
 
+  target_include_directories(fltk_z-shared PUBLIC ${include_dirs})
+
   if(MSVC)
     target_compile_options(fltk_z-shared PRIVATE ${msvc_warnings})
   endif(MSVC)
+
+  list(APPEND FLTK_IMAGE_LIBRARIES fltk::z-shared)
 
 endif(FLTK_BUILD_SHARED_LIBS)
 
