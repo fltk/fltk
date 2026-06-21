@@ -386,6 +386,7 @@ int main(int argc, char **argv)
 
   // A fourth canvas is a top level window by itself.
   auto cv_window = cvwin = new CanvasWindow(100, 380, 200, 200, "Canvas Window");
+  //cvwin->resizable(cvwin);
 
   // All canvases subscribe to pen events.
   Fl::Pen::subscribe(canvas_widget_0);

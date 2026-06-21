@@ -97,7 +97,9 @@ struct pointer_output {
 
 
 static std::vector<int> key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
-static struct wl_surface *gtk_shell_surface = NULL;
+/*static*/ struct wl_surface *gtk_shell_surface = NULL;
+/*static*/ libdecor_frame *gtk_shell_frame = NULL;
+/*static*/ Fl_Window *gtk_shell_window = nullptr;
 
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
   Fl_Wayland_Screen_Driver::unspecified;

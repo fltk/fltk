@@ -71,6 +71,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/platform.H>
 
+#include "gtk-shell-client-protocol.h"
 #include "tablet-client-protocol.h"
 
 #include <cmath>
@@ -88,6 +89,14 @@
 #ifndef BTN_STYLUS3
 #  define BTN_STYLUS3 0x149   // third barrel button (uncommon)
 #endif
+
+extern "C" {
+  bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
+                                        bool *using_GTK);
+}
+extern struct wl_surface *gtk_shell_surface;
+extern libdecor_frame *gtk_shell_frame;
+extern Fl_Window *gtk_shell_window;
 
 // fl_xmousewin tracks which window last received pointer/pen events.
 extern Fl_Window *fl_xmousewin;
@@ -121,6 +130,7 @@ struct TabletTool {
   bool                            in_proximity;
   Fl_Window                      *focus_win;    // toplevel window under the pen
   struct wl_surface              *focus_surface;
+  uint32_t                        serial;
 
   // Per-frame accumulated event data (flushed by tool_cb_frame)
   EventData  ev;
@@ -467,17 +477,41 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
   tool->ev.state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER
     ? State::ERASER_HOVERS : State::TIP_HOVERS) | btn_bits;
+
+  auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  auto seat = drvr->seat;
+  static bool using_GTK = seat->gtk_shell &&
+    (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
+  if (!tool->focus_win && using_GTK) {
+    // check whether surface is the headerbar of a GTK-decorated window
+    Fl_X *xp = Fl_X::first;
+    while (xp && using_GTK) { // all mapped windows
+      struct wld_window *xid = (struct wld_window*)xp->xid;
+      if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+          fl_is_surface_from_GTK_titlebar(surface, xid->frame, &using_GTK)) {
+        gtk_shell_surface = surface;
+        gtk_shell_frame = xid->frame;
+        gtk_shell_window = xp->w;
+        break;
+      }
+      xp = xp->next;
+    }
+  }
 }
 
 static void tool_cb_proximity_out(void *data, struct zwp_tablet_tool_v2 *) {
   TabletTool *tool           = static_cast<TabletTool *>(data);
   tool->in_proximity         = false;
   tool->frame_proximity_out  = true;
+  gtk_shell_surface          = nullptr;
+  gtk_shell_frame            = nullptr;
+  gtk_shell_window           = nullptr;
 }
 
 static void tool_cb_down(void *data, struct zwp_tablet_tool_v2 *,
-                          uint32_t /*serial*/) {
+                          uint32_t serial) {
   TabletTool *tool = static_cast<TabletTool *>(data);
+  tool->serial = serial;
   // Tip contact; preserve any side-button bits already present.
   State btn_bits = tool->ev.state &
     (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
@@ -569,6 +603,38 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
   }
 }
 
+#include "../../../libdecor/src/libdecor.h"
+#include "xdg-shell-client-protocol.h"
+#include "gtk-shell-client-protocol.h"
+
+/*
+  Convert pen evenets over the titlebar or resize area into libdecor actions.
+
+  \todo this is just a proof of concept, tested on Ubuntu 26.4. We still
+  need to implement actions for resizing, maximizing, minimizing, and closing the window.
+
+  \return a value that indicate how the caller shall continue processing the event.
+  The return values are yet to be defined.
+*/
+static int handle_frame_events(TabletTool *tool) {
+  if (gtk_shell_surface && gtk_shell_frame) {
+    auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    if (tool->frame_down) {
+      if (gtk_shell_window) gtk_shell_window->show(); // raise the clicked window to the top and activate
+      libdecor_frame_ref(gtk_shell_frame); // lock for multiple calls
+      libdecor_frame_move(gtk_shell_frame, drvr->seat->wl_seat, tool->serial);
+      libdecor_frame_unref(gtk_shell_frame);
+      // libdecor_frame_close(struct libdecor_frame *frame)
+      // libdecor_frame_set_fullscreen(struct libdecor_frame *frame, struct wl_output *output)
+      // libdecor_frame_set_maximized(struct libdecor_frame *frame)
+      // libdecor_frame_resize(struct libdecor_frame *frame,struct wl_seat *wl_seat,uint32_t serial,enum libdecor_resize_edge edge)
+      // libdecor_frame_close(struct libdecor_frame *frame)
+      // see: pointer_button, handle_button_on_header, and handle_button_on_shadow in libdecor-gtk.c
+    }   
+  }
+  return 0;
+}
+
 /*
  tool_cb_frame — the main dispatch point.
 
@@ -590,6 +656,14 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
 static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                            uint32_t /*time*/) {
   TabletTool *tool = static_cast<TabletTool *>(data);
+
+  // Handle pen events inside the title bar.
+  // \todo proof of concept, we still need to find the correct location
+  // for this code, and the use of return codes for aborting event handling.
+  if (gtk_shell_surface && gtk_shell_frame) {
+    int result = handle_frame_events(tool);
+    (void)result; // silence unused result warning
+  }
 
   // ── 1. Proximity-out ──────────────────────────────────────────────────────
   if (tool->frame_proximity_out) {
