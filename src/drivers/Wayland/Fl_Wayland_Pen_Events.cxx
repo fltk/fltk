@@ -633,7 +633,14 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
     return;
   }
 
-  Fl_Window *eventWindow = tool->focus_win;
+  Fl_Window *eventWindow = nullptr;
+  if (Fl::grab()) {
+    eventWindow = Fl::grab();
+  } else if (Fl::modal()) {
+    eventWindow = Fl::modal();
+  } else {
+    eventWindow = tool->focus_win;
+  }
 
   bool is_menu_window = eventWindow->menu_window();
 

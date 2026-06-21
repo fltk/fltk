@@ -84,7 +84,7 @@ int CanvasInterface::cv_handle(int event)
       /* fall through */
     case Fl::Pen::HOVER:
       // Pen move over the surface without touching it.
-      if (Fl::event_state(FL_CTRL) || Fl::Pen::event_state(Fl::Pen::State::BUTTON1))
+      if (Fl::event_state(FL_CTRL) || Fl::Pen::event_state(Fl::Pen::State::BUTTON0))
         return popup_app_menu();
       overlay_ = PEN_HOVER;
       ov_x_ = Fl::event_x();
