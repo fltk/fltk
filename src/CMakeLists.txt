@@ -881,7 +881,7 @@ if(UNIX AND FLTK_USE_WAYLAND)
 # but that protocol's header file is not necessary for the "cursor shape" protocol itself.
     set(INFILE ${PROTOCOLS}/stable/tablet/tablet-v2.xml)
     add_custom_command(
-      OUTPUT tablet-protocol.c # tablet-client-protocol.h
+      OUTPUT tablet-protocol.c tablet-client-protocol.h
       COMMAND wayland-scanner private-code  ${INFILE} tablet-protocol.c
       COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
       DEPENDS ${INFILE}
