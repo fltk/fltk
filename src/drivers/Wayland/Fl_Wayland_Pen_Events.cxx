@@ -775,9 +775,12 @@ static int handle_gtk_frame_events(Fl_Window* win, TabletTool *tool) {
 
         double kCloseBtn = kRPad + kBtnW;
         double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
-        if (!win->resizable())
-            kMaximizeBtn = -10000;
         double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
+        if (!win->resizable())
+        {
+            kMinimizeBtn = kMaximizeBtn;
+            kMaximizeBtn = -10000;
+        }
         int ret = handle_titlebar_events(win, tool, x_from_right,
                                          kCloseBtn, kMaximizeBtn,
                                          kMinimizeBtn);
