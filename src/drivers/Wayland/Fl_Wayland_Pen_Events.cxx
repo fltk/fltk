@@ -66,6 +66,7 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "../../Fl_Window_Driver.H"
+#include "../../../libdecor/build/fl_libdecor.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -78,14 +79,10 @@ extern "C" {
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "../../../libdecor/build/fl_libdecor-plugins.h"
 }
+
 #include <cmath>
 #include <cstring>
 #include <cstdint>
-
-// Whether libdecor uses GTK
-#ifndef HAVE_GTK
-#  define HAVE_GTK 0
-#endif
 
 // Physical stylus button codes from linux/input-event-codes.h.
 // Defined locally so we don't depend on the kernel header directly.
@@ -100,12 +97,11 @@ extern "C" {
 #endif
 
 extern "C" {
-  bool fl_is_surface_from_GTK_titlebar(struct wl_surface *surface,
-                                       struct libdecor_frame *frame,
-                                       bool *using_GTK);
-bool fl_is_surface_from_cairo_titlebar(struct wl_surface *surface,
-                                       struct libdecor_frame *frame,
-                                       bool *using_CAIRO);
+  bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
+                                        bool *using_GTK);
+  bool fl_is_surface_from_cairo_titlebar(struct wl_surface *surface,
+                                         struct libdecor_frame *frame,
+                                         bool *using_CAIRO);
 }
 extern struct wl_surface *gtk_shell_surface;
 extern libdecor_frame *gtk_shell_frame;
@@ -501,7 +497,7 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
 
   if (!tool->focus_win)
   {
-    // Surface is not an FLTK content surface — it is a libdecor decoration.
+    // check whether surface is the headerbar of a GTK-decorated window
     tool->over_decoration = true;
     bool found = false;
 
@@ -510,17 +506,24 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     static bool using_GTK = seat->gtk_shell &&
                             (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
     // check whether surface is the headerbar of a GTK-decorated window
-    Fl_X *xp = Fl_X::first;
-    while (xp && using_GTK) { // all mapped windows
-        struct wld_window *xid = (struct wld_window*)xp->xid;
-        if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
-            fl_is_surface_from_GTK_titlebar(surface, xid->frame,
-                                            &using_GTK)) {
-            gtk_shell_surface = surface;
-            gtk_shell_frame = xid->frame;
-            gtk_shell_window = xp->w;
-            found = true;
-            break;
+    if (using_GTK)
+    {
+        fprintf(stderr, "using_GTK\n");
+        Fl_X *xp = Fl_X::first;
+        while (xp && using_GTK) { // all mapped windows
+            struct wld_window *xid = (struct wld_window*)xp->xid;
+            if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+                fl_is_surface_from_GTK_titlebar(surface, xid->frame,
+                                                &using_GTK)) {
+                gtk_shell_surface = surface;
+                gtk_shell_frame = xid->frame;
+                tool->focus_frame = xid->frame;
+                fprintf(stderr, "got gtk_shell_frame\n");
+                gtk_shell_window = xp->w;
+                found = true;
+                break;
+            }
+            xp = xp->next;
         }
     }
 
@@ -528,12 +531,14 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     {
         // check whether surface is the headerbar of a Cairo-decorated window
         static bool using_CAIRO = true;
+        Fl_X *xp = Fl_X::first;
         while (xp && using_CAIRO) { // all mapped windows
             struct wld_window *xid = (struct wld_window*)xp->xid;
             if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
                 fl_is_surface_from_cairo_titlebar(surface, xid->frame,
                                                   &using_CAIRO)) {
                 tool->focus_frame = xid->frame;
+                fprintf(stderr, "got cairo frame\n");
                 found = true;
                 break;
             }
@@ -547,6 +552,7 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     if (!found) {
       Fl_Window *focused = Fl::focus() ? Fl::focus()->top_window() : nullptr;
       if (focused) {
+        fprintf(stderr, "got focused frame\n");
         auto *xid = fl_wl_xid(focused);
         if (xid && xid->kind == Fl_Wayland_Window_Driver::DECORATED && xid->frame)
           tool->focus_frame = xid->frame;
@@ -675,13 +681,12 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
   The return values are yet to be defined.
 */
 static int handle_frame_events(TabletTool *tool) {
-  if (gtk_shell_surface && gtk_shell_frame) {
-    auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (gtk_shell_surface && tool->focus_frame) {
     if (tool->frame_down) {
       if (gtk_shell_window) gtk_shell_window->show(); // raise the clicked window to the top and activate
-      libdecor_frame_ref(gtk_shell_frame); // lock for multiple calls
-      libdecor_frame_move(gtk_shell_frame, drvr->seat->wl_seat, tool->serial);
-      libdecor_frame_unref(gtk_shell_frame);
+      libdecor_frame_ref(tool->focus_frame); // lock for multiple calls
+      libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->serial);
+      libdecor_frame_unref(tool->focus_frame);
       // libdecor_frame_close(struct libdecor_frame *frame)
       // libdecor_frame_set_fullscreen(struct libdecor_frame *frame, struct wl_output *output)
       // libdecor_frame_set_maximized(struct libdecor_frame *frame)
@@ -721,6 +726,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   if (gtk_shell_surface && gtk_shell_frame) {
     int result = handle_frame_events(tool);
     (void)result; // silence unused result warning
+    return;
   }
 
   // ── 1. Proximity-out ──────────────────────────────────────────────────────
@@ -786,9 +792,6 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
 
           if (dwin) {
               enum plugin_kind plugin = get_plugin_kind(tool->focus_frame);
-              if (plugin == SSD)
-                  return;
-
 
               float f  = Fl::screen_scale(dwin->screen_num());
               // Total decoration surface dimensions in surface-local pixels:
@@ -800,6 +803,8 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
 
               switch(plugin)
               {
+              case SSD:
+                  break;
               case GTK3:
                   break;
               case CAIRO:
