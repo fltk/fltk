@@ -137,7 +137,6 @@ struct TabletTool {
   struct zwp_tablet_tool_v2      *wl_tool;
   enum zwp_tablet_tool_v2_type    type;
 
-  uint32_t       down_serial { 0 };   // serial from tool_cb_down, needed for frame_move/resize
   double         decor_sx { 0 };      // surface-local x when over a decoration surface
   double         decor_sy { 0 };      // surface-local y when over a decoration surface
   struct libdecor_frame *focus_frame { nullptr }; // owning frame when over a decoration
@@ -525,21 +524,23 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
         }
     }
 
-    // check whether surface is the headerbar of a Cairo-decorated window
-    static bool using_CAIRO = true;
-    while (xp && using_CAIRO) { // all mapped windows
-        struct wld_window *xid = (struct wld_window*)xp->xid;
-        if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
-            fl_is_surface_from_cairo_titlebar(surface, xid->frame,
-                                              &using_CAIRO)) {
-            tool->focus_frame = xid->frame;
-            found = true;
-            break;
+    if (!found)
+    {
+        // check whether surface is the headerbar of a Cairo-decorated window
+        static bool using_CAIRO = true;
+        while (xp && using_CAIRO) { // all mapped windows
+            struct wld_window *xid = (struct wld_window*)xp->xid;
+            if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+                fl_is_surface_from_cairo_titlebar(surface, xid->frame,
+                                                  &using_CAIRO)) {
+                tool->focus_frame = xid->frame;
+                found = true;
+                break;
+            }
+
+            xp = xp->next;
         }
-
-        xp = xp->next;
     }
-
     // ── Path C: fallback decoration — use the keyboard-focused window ───────
     // Works when only one decorated window is on screen, or when the user
     // was recently typing in the window whose titlebar they are now touching.
@@ -800,37 +801,6 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
               switch(plugin)
               {
               case GTK3:
-                  // Can we use GTK3 calls to not hard-code buttons?
-                  if(sy >= 0 && sy < top) {
-                      constexpr double kBtnW   = 24.0;
-                      constexpr double kBtnPad =  4.0;
-                      constexpr double kRPad   =  6.0;
-                      double x_from_right = total_decor_w - sx;
-
-                      constexpr double kCloseBtn = kRPad + kBtnW;
-                      constexpr double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
-                      constexpr double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
-                      libdecor_frame_ref(tool->focus_frame);
-                      if (x_from_right < kCloseBtn) {
-                          // Close button
-                          //dwin->hide(); <-- do not use this.  Crashes on Vulkan
-                          libdecor_frame_close(tool->focus_frame);
-                      } else if (x_from_right < kMaximizeBtn) {
-                          // Maximize / restore
-                          if (dwin->maximize_active())
-                              dwin->un_maximize();
-                          else
-                              dwin->maximize();
-                      } else if (x_from_right < kMinimizeBtn) {
-                          // Minimize (works)
-                          dwin->iconize();
-                      } else if (tool->serial) {
-                          // Title bar drag → move (works)
-                          libdecor_frame_move(tool->focus_frame, g_wl_seat,
-                                              tool->serial);
-                      }
-                      libdecor_frame_unref(tool->focus_frame);
-                  } // else if (sy >= 0 && sy < top)
                   break;
               case CAIRO:
               case UNKNOWN:
