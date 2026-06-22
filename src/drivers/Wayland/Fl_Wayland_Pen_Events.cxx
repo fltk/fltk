@@ -66,6 +66,7 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "../../Fl_Window_Driver.H"
+#include "../../../libdecor/build/fl_libdecor.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
