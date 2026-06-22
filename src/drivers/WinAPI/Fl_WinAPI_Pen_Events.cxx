@@ -382,9 +382,9 @@ static void update_axes(PenDevice *dev, const POINTER_PEN_INFO &pi) {
 
   // Windows: tilt in [-90, 90] degrees -> FLTK: [-1.0, 1.0]
   if (pi.penMask & PEN_MASK_TILT_X)
-    dev->ev.tilt_x = pi.tiltX / 90.0;
+    dev->ev.tilt_x = -pi.tiltX / 90.0;
   if (pi.penMask & PEN_MASK_TILT_Y)
-    dev->ev.tilt_y = pi.tiltY / 90.0;
+    dev->ev.tilt_y = -pi.tiltY / 90.0;
 
   // Windows: rotation in [0, 360) degrees clockwise -> FLTK: [-180, 180]
   // degrees, matching the convention documented in pen_events.H.
@@ -434,7 +434,7 @@ static PenDevice *get_or_create_device(HANDLE source_device) {
  WM_POINTERENTER — the pen entered the hit-test area of hwnd.
  Mirrors the proximity-in branch of the Wayland tool_cb_frame().
  */
-static void handle_proximity_in(PenDevice *dev, HWND hwnd,
+static bool handle_proximity_in(PenDevice *dev, HWND hwnd,
                                  const POINTER_PEN_INFO &pi) {
   update_position(dev, hwnd, pi.pointerInfo);
   update_axes(dev, pi);
@@ -450,9 +450,11 @@ static void handle_proximity_in(PenDevice *dev, HWND hwnd,
   } else {
     pen_send_all(dev, Fl::Pen::IN_RANGE, (State)0);
   }
-  
+
   g_current_tool   = dev;
   dev->prev_state  = dev->ev.state;
+
+  return false; // Handled here, but also let WIN32 synthesize mouse events
 }
 
 /*
@@ -466,7 +468,9 @@ static void handle_proximity_in(PenDevice *dev, HWND hwnd,
     further "frame" to naturally re-evaluate find_below_pen(), so the
     below_pen_ widget (if it belongs to this window) is sent LEAVE here.
  */
-static void handle_leave(PenDevice *dev, WPARAM wParam) {
+static bool handle_leave(PenDevice *dev, WPARAM wParam)
+{
+  bool ret = false;
   bool still_in_range = IS_POINTER_INRANGE_WPARAM(wParam);
 
   if (!still_in_range) {
@@ -474,7 +478,7 @@ static void handle_leave(PenDevice *dev, WPARAM wParam) {
 
     if (below_pen_ && below_pen_->widget()) {
       bool copied = false;
-      pen_send(dev, below_pen_->widget(), Fl::Pen::LEAVE, (State)0, copied);
+      ret = pen_send(dev, below_pen_->widget(), Fl::Pen::LEAVE, (State)0, copied);
     }
     below_pen_ = nullptr;
 
@@ -483,21 +487,22 @@ static void handle_leave(PenDevice *dev, WPARAM wParam) {
       pushed_ = nullptr;
       ReleaseCapture();
     }
-    
+
     if (g_current_tool == dev) g_current_tool = nullptr;
     dev->in_proximity = false;
     dev->focus_win    = nullptr;
     dev->focus_hwnd   = nullptr;
-    return;
+
+    return ret;
   }
 
   // Still in range, but no longer over this window.
   if (below_pen_ && below_pen_->widget() &&
       below_pen_->widget()->top_window() == dev->focus_win) {
     bool copied = false;
-    pen_send(dev, below_pen_->widget(), Fl::Pen::LEAVE, (State)0, copied);
+    ret = pen_send(dev, below_pen_->widget(), Fl::Pen::LEAVE, (State)0, copied);
     below_pen_ = nullptr;
-    Fl::belowmouse(nullptr);   
+    Fl::belowmouse(nullptr);
   }
   // If pushed_ is set (an active tip-down drag) and the window called
   // SetCapture() in handle_update() below, WM_POINTERUPDATE messages will
@@ -505,6 +510,8 @@ static void handle_leave(PenDevice *dev, WPARAM wParam) {
   // bounds, so pushed_ is intentionally left untouched here.
   dev->focus_win  = nullptr;
   dev->focus_hwnd = nullptr;
+
+  return ret;
 }
 
 /*
@@ -513,7 +520,8 @@ static void handle_leave(PenDevice *dev, WPARAM wParam) {
  progress. Make sure the widget that was pushed gets a closing LIFT event
  and FLTK's pushed state is cleared, so it doesn't get stuck.
  */
-static void handle_capture_lost(PenDevice *dev) {
+static bool handle_capture_lost(PenDevice *dev) {
+  bool ret = false;
   if (pushed_ && pushed_->widget()) {
     if (is_down_state(dev->ev.state)) {
       bool copied = false;
@@ -524,8 +532,10 @@ static void handle_capture_lost(PenDevice *dev) {
     }
     Fl::pushed(nullptr);
     pushed_ = nullptr;
+    ret = true;
   }
   dev->prev_state = dev->ev.state;
+  return ret;
 }
 
 /*
@@ -545,18 +555,20 @@ static void handle_capture_lost(PenDevice *dev) {
    5. barrel buttons   -> BUTTON_PUSH / BUTTON_RELEASE
    6. motion           -> DRAW (if pushed) or HOVER
  */
-static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
-                           const POINTER_PEN_INFO &pi) {
+static bool handle_update(PenDevice *dev, HWND hwnd, UINT msg,
+                           const POINTER_PEN_INFO &pi)
+{
+  int       pen_handled = 0;
   EventData prev_ev  = dev->ev;
   State     old_state = dev->prev_state;
-  
-  update_position(dev, hwnd, pi.pointerInfo);  
+
+  update_position(dev, hwnd, pi.pointerInfo);
   update_axes(dev, pi);
   dev->ev.pen_id = dev->pen_id;
 
   State new_state = compute_pen_state(pi);
   dev->ev.state   = new_state;
-  
+
   bool frame_down   = !is_down_state(old_state) && is_down_state(new_state);
   bool frame_up     =  is_down_state(old_state) && !is_down_state(new_state);
   bool frame_motion = (dev->ev.x != prev_ev.x) || (dev->ev.y != prev_ev.y) ||
@@ -564,9 +576,9 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
 
   if (!dev->focus_win || subscriber_list_.empty()) {
     dev->prev_state = new_state;
-    return;
+    return pen_handled;
   }
-  
+
   Fl_Window *eventWindow = dev->focus_win;
   bool is_menu_window = eventWindow->menu_window();
 
@@ -574,11 +586,11 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     // ── 1. Modal / grab guards ──────────────────────────────────────────────
     if (Fl::grab() && Fl::grab() != eventWindow) {
       dev->prev_state = new_state;
-      return;
+      return pen_handled;
     }
     if (Fl::modal() && Fl::modal() != eventWindow) {
       dev->prev_state = new_state;
-      return;
+      return pen_handled;
     }
   }
 
@@ -590,7 +602,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
 
   // ── 2. Receiver selection & below_pen ENTER/LEAVE ─────────────────────────
   if (pushed_ && pushed_->widget() && Fl::pushed() == pushed_->widget()) {
-      
+
     // An earlier tip-down fixed this device's receiver until the tip lifts.
     receiver  = pushed_->widget();
     is_pushed = true;
@@ -599,7 +611,7 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     auto bpen_old    = (Fl::belowmouse() == bpen_widget) ? bpen_widget : nullptr;
     auto bpen_now    = find_below_pen(eventWindow, dev->ev.x, dev->ev.y);
 
-    if (bpen_now != bpen_old) { 
+    if (bpen_now != bpen_old) {
       if (bpen_old) {
         pen_send(dev, bpen_old, Fl::Pen::LEAVE, (State)0, event_data_copied);
       }
@@ -623,21 +635,21 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     // input drive the normal FLTK mouse path. (See the "Mouse fallback"
     // section in the file header comment.)
     dev->prev_state = new_state;
-    return;
+    return pen_handled;
   }
 
-  int pen_handled = 0;
+  Fl_Widget_Tracker receiver_tracker(receiver);
 
   // ── 3. Tip/eraser down -> TOUCH ───────────────────────────────────────────
   if (frame_down) {
     if (!is_pushed) {
-      pushed_ = subscriber_list_[receiver];  
+      pushed_ = subscriber_list_[receiver];
       Fl::pushed(receiver);
       // Capture pointer input so a drag that leaves hwnd's bounds keeps
       // generating WM_POINTERUPDATE for this pen.
       SetCapture(hwnd);
     }
-    
+
     Fl::e_is_click        = 1;
     Fl::Private::e_x_down = (int)dev->ev.x;
     Fl::Private::e_y_down = (int)dev->ev.y;
@@ -645,33 +657,48 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     pen_handled |= pen_send(dev, receiver, Fl::Pen::TOUCH,
                              new_state & (State::TIP_DOWN | State::ERASER_DOWN),
                              event_data_copied);
+    if (receiver_tracker.deleted()) {
+      Fl::Pen::unsubscribe(receiver);
+      return pen_handled;
+    }
   }
 
   // ── 4. Tip/eraser up -> LIFT ──────────────────────────────────────────────
   if (frame_up) {
     if ((new_state & State::ANY_DOWN) == (State)0) {
       Fl::pushed(nullptr);
-      pushed_ = nullptr;  
+      pushed_ = nullptr;
       ReleaseCapture();
     }
-    
+
     State trigger = is_eraser_state(new_state)
       ? State::ERASER_HOVERS : State::TIP_HOVERS;
     pen_handled |= pen_send(dev, receiver, Fl::Pen::LIFT, trigger,
                              event_data_copied);
+    if (receiver_tracker.deleted()) {
+      Fl::Pen::unsubscribe(receiver);
+      return pen_handled;
+    }
   }
 
   // ── 5. Barrel button events ───────────────────────────────────────────────
   for (State bit : kButtonBits) {
-    if (newly_set_bits(old_state, new_state, bit) != (State)0)
+    if (newly_set_bits(old_state, new_state, bit) != (State)0) {
       pen_handled |= pen_send(dev, receiver, Fl::Pen::BUTTON_PUSH, bit,
                                event_data_copied);
-    
+      if (receiver_tracker.deleted()) {
+        Fl::Pen::unsubscribe(receiver);
+        return pen_handled;
+      }
+    }
     if (newly_set_bits(new_state, old_state, bit) != (State)0)
     {
       pen_handled |= pen_send(dev, receiver, Fl::Pen::BUTTON_RELEASE, bit,
                                event_data_copied);
-      
+      if (receiver_tracker.deleted()) {
+        Fl::Pen::unsubscribe(receiver);
+        return pen_handled;
+      }
     }
   }
 
@@ -684,11 +711,15 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
     pen_handled |= pen_send(dev, receiver,
                              is_pushed ? Fl::Pen::DRAW : Fl::Pen::HOVER,
                              (State)0, event_data_copied);
+    if (receiver_tracker.deleted()) {
+      Fl::Pen::unsubscribe(receiver);
+      return pen_handled;
+    }
   }
 
-    
-  (void)pen_handled;
   dev->prev_state = new_state;
+
+  return pen_handled;
 }
 
 
@@ -696,7 +727,21 @@ static void handle_update(PenDevice *dev, HWND hwnd, UINT msg,
 // Public entry point — called from the WinAPI WndProc
 // ─────────────────────────────────────────────────────────────────────────────
 
-FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM /*lParam*/) {
+/**
+  If the event is a WM_POINTER* message, handle it, and return true if no further processing is needed.
+  Called from Fl_win32.cxx WndProc.
+  \param hwnd The window receiving the message.
+  \param msg The message code (e.g. WM_POINTERDOWN).
+  \param wParam The WPARAM of the message, containing the pointer ID and flags.
+  \param lParam The LPARAM of the message (unused).
+  \return true if the message was handled as a pen event and should not be processed further;
+  \return false to have WndProc call DefWindowProcW, which in turn will synthesize the
+  the pen event into a matching mouse event.
+ */
+FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM /*lParam*/)
+{
+  bool ret = false;
+
   switch (msg) {
     case WM_POINTERENTER:
     case WM_POINTERLEAVE:
@@ -706,50 +751,51 @@ FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM /
     case WM_POINTERCAPTURECHANGED:
       break;
     default:
-      return false;
+      return ret;
   }
 
-  
+
   if (subscriber_list_.empty()) {
     // No widget cares about pen events right now; let normal mouse handling
     // take over without doing any bookkeeping that would need to be undone
     // later if a subscription appears.
-    return false;
+    return ret;
   }
-  
-  
+
+
   UINT32 pointer_id = GET_POINTERID_WPARAM(wParam);
 
-  
+
   POINTER_INPUT_TYPE ptype;
   if (!GetPointerType(pointer_id, &ptype) || ptype != PT_PEN)
-    return false; // touch, mouse-emulated pointer, etc -- not ours.
+    return ret; // touch, mouse-emulated pointer, etc -- not ours.
 
-  
+
   POINTER_PEN_INFO pi;
   if (!GetPointerPenInfo(pointer_id, &pi))
-    return false;
+    return ret;
 
-  
+
   PenDevice *dev = get_or_create_device(pi.pointerInfo.sourceDevice);
-  if (!dev) return false;
+  if (!dev)
+    return ret;
 
   switch (msg) {
     case WM_POINTERENTER:
-      handle_proximity_in(dev, hwnd, pi);
+      ret = handle_proximity_in(dev, hwnd, pi);
       break;
     case WM_POINTERLEAVE:
-      handle_leave(dev, wParam);
+      ret = handle_leave(dev, wParam);
       break;
     case WM_POINTERCAPTURECHANGED:
-      handle_capture_lost(dev);
+      ret = handle_capture_lost(dev);
       break;
     case WM_POINTERDOWN:
     case WM_POINTERUPDATE:
     case WM_POINTERUP:
-      handle_update(dev, hwnd, msg, pi);
+      ret = handle_update(dev, hwnd, msg, pi);
       break;
   }
 
-  return true;
+  return ret;
 }

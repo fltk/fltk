@@ -351,14 +351,14 @@ elseif(FLTK_USE_WAYLAND)
 )
 
   if(UNIX AND FLTK_USE_WAYLAND)
-      if(FLTK_HAVE_PEN_SUPPORT)
-	  list(APPEND DRIVER_FILES
+    if(FLTK_HAVE_PEN_SUPPORT)
+	    list(APPEND DRIVER_FILES
 	      drivers/Wayland/Fl_Wayland_Pen_Events.cxx
-	  )
-	  list(APPEND DRIVER_HEADER_FILES
+	    )
+	    list(APPEND DRIVER_HEADER_FILES
 	      drivers/Wayland/Fl_Wayland_Pen_Events.H
-	  )
-      endif(FLTK_HAVE_PEN_SUPPORT)
+	    )
+    endif(FLTK_HAVE_PEN_SUPPORT)
   endif(UNIX AND FLTK_USE_WAYLAND)
 
 elseif(APPLE)
@@ -602,6 +602,7 @@ if(FLTK_USE_WAYLAND)
       ${FLTK_SOURCE_DIR}/libdecor/build/fl_libdecor-plugins.c
       ${FLTK_SOURCE_DIR}/libdecor/src/os-compatibility.c
       ${FLTK_SOURCE_DIR}/libdecor/src/desktop-settings.c
+      ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Pen_Events.cxx
       PROPERTIES COMPILE_DEFINITIONS "${CDEFS}"
       INCLUDE_DIRECTORIES "${IDIRS}"
       COMPILE_OPTIONS "${COPTS}"
@@ -881,7 +882,7 @@ if(UNIX AND FLTK_USE_WAYLAND)
 # but that protocol's header file is not necessary for the "cursor shape" protocol itself.
     set(INFILE ${PROTOCOLS}/stable/tablet/tablet-v2.xml)
     add_custom_command(
-      OUTPUT tablet-protocol.c # tablet-client-protocol.h
+      OUTPUT tablet-protocol.c tablet-client-protocol.h
       COMMAND wayland-scanner private-code  ${INFILE} tablet-protocol.c
       COMMAND wayland-scanner client-header ${INFILE} tablet-client-protocol.h
       DEPENDS ${INFILE}
