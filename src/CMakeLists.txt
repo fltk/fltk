@@ -602,6 +602,7 @@ if(FLTK_USE_WAYLAND)
       ${FLTK_SOURCE_DIR}/libdecor/build/fl_libdecor-plugins.c
       ${FLTK_SOURCE_DIR}/libdecor/src/os-compatibility.c
       ${FLTK_SOURCE_DIR}/libdecor/src/desktop-settings.c
+      ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Pen_Events.cxx
       PROPERTIES COMPILE_DEFINITIONS "${CDEFS}"
       INCLUDE_DIRECTORIES "${IDIRS}"
       COMPILE_OPTIONS "${COPTS}"
