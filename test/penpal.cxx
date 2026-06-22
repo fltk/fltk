@@ -66,6 +66,12 @@ public:
   void cv_draw_buttons();
   void cv_paint();
   void cv_pen_paint();
+  void cv_rescale() { fl_rescale_offscreen(offscreen_); }
+  void cv_reset() {
+    fl_delete_offscreen(offscreen_);
+    offscreen_ = 0;
+    first_draw_ = true;
+  }
 };
 
 
@@ -270,6 +276,12 @@ public:
     return ret ? ret : Fl_Widget::handle(event);
   }
   void draw() override { return cv_draw(); }
+  void resize(int x, int y, int w, int h) override {
+    bool rescale = (w == this->w() && h == this->h());
+    Fl_Widget::resize(x, y, w, h);
+    if (rescale) cv_rescale();
+    else cv_reset();
+  }
 };
 
 //
@@ -286,6 +298,12 @@ public:
     return ret ? ret : Fl_Window::handle(event);
   }
   void draw() override { return cv_draw(); }
+  void resize(int x, int y, int w, int h) override {
+    bool rescale = (w == this->w() && h == this->h());
+    Fl_Window::resize(x, y, w, h);
+    if (rescale) cv_rescale();
+    else cv_reset();
+  }
 };
 
 // -- menu callbacks --
@@ -386,7 +404,7 @@ int main(int argc, char **argv)
 
   // A fourth canvas is a top level window by itself.
   auto cv_window = cvwin = new CanvasWindow(100, 380, 200, 200, "Canvas Window");
-  //cvwin->resizable(cvwin);
+  cvwin->resizable(cvwin);  // does not yet work
 
   // All canvases subscribe to pen events.
   Fl::Pen::subscribe(canvas_widget_0);

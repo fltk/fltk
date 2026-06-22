@@ -261,7 +261,6 @@ static const char *get_libdecor_plugin_description() {
   return plugin_description ? plugin_description->description : NULL;
 }
 
-
 enum plugin_kind get_plugin_kind(struct libdecor_frame *frame) {
   static enum plugin_kind kind = UNKNOWN;
   if (kind == UNKNOWN) {
@@ -308,4 +307,13 @@ bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdeco
   if (!*using_GTK) return false;
   struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
   return (frame_gtk->headerbar.wl_surface == surface);
+}
+
+/* Returns whether surface is the libdecor-created GTK-titlebar of frame */
+bool fl_is_surface_from_cairo_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
+                                      bool *using_CAIRO) {
+  *using_CAIRO = (get_plugin_kind(NULL) == CAIRO);
+  if (!*using_CAIRO) return false;
+  struct libdecor_frame_cairo *frame_cairo = (struct libdecor_frame_cairo*)frame;
+  return (frame_cairo->title_bar.title.server.wl_surface == surface);
 }

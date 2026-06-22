@@ -66,7 +66,6 @@
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "../../Fl_Window_Driver.H"
-#include "../../../libdecor/build/fl_libdecor.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -101,8 +100,12 @@ extern "C" {
 #endif
 
 extern "C" {
-  bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
-                                        bool *using_GTK);
+  bool fl_is_surface_from_GTK_titlebar(struct wl_surface *surface,
+                                       struct libdecor_frame *frame,
+                                       bool *using_GTK);
+bool fl_is_surface_from_cairo_titlebar(struct wl_surface *surface,
+                                       struct libdecor_frame *frame,
+                                       bool *using_CAIRO);
 }
 extern struct wl_surface *gtk_shell_surface;
 extern libdecor_frame *gtk_shell_frame;
@@ -491,6 +494,11 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
   tool->focus_win          = Fl_Wayland_Window_Driver::surface_to_window(surface);
   tool->in_proximity       = true;
   tool->frame_proximity_in = true;
+  // Set hover state immediately so ev.state is valid even without a tip-down.
+  State btn_bits = tool->ev.state &
+    (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
+  tool->ev.state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER
+    ? State::ERASER_HOVERS : State::TIP_HOVERS) | btn_bits;
 
   if (!tool->focus_win)
   {
@@ -498,32 +506,41 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     tool->over_decoration = true;
     bool found = false;
 
-    enum plugin_kind plugin = get_plugin_kind(tool->focus_frame);
-
-    Fl_Window* win;
-    for (win = Fl::first_window(); win && !found; win = Fl::next_window(win)) {
-        wld_window* xid = fl_wl_xid(win);
-        if ((xid && xid->kind != Fl_Wayland_Window_Driver::DECORATED) || !xid->frame)
-          continue;
-
-      // ── Path A: GTK3 plugin ───────────────────────────────────────────────
-      if (plugin == GTK3) {
-        fprintf(stderr, "GTK3 plugin\n");
-        tool->focus_frame = xid->frame;
-        found = true;
-        break;
-      }
-
-      // ── Path B: cairo plugin ─────────────────────────────────────────────
-      if (plugin == CAIRO)
-      {
-        tool->focus_frame = xid->frame;
-        found = true;
-        break;
-      }
+    auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    auto seat = drvr->seat;
+    static bool using_GTK = seat->gtk_shell &&
+                            (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
+    // check whether surface is the headerbar of a GTK-decorated window
+    Fl_X *xp = Fl_X::first;
+    while (xp && using_GTK) { // all mapped windows
+        struct wld_window *xid = (struct wld_window*)xp->xid;
+        if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+            fl_is_surface_from_GTK_titlebar(surface, xid->frame,
+                                            &using_GTK)) {
+            gtk_shell_surface = surface;
+            gtk_shell_frame = xid->frame;
+            gtk_shell_window = xp->w;
+            found = true;
+            break;
+        }
     }
 
-    // ── Path C: fallback — use the keyboard-focused window ─────────────────
+    // check whether surface is the headerbar of a Cairo-decorated window
+    static bool using_CAIRO = true;
+    while (xp && using_CAIRO) { // all mapped windows
+        struct wld_window *xid = (struct wld_window*)xp->xid;
+        if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+            fl_is_surface_from_cairo_titlebar(surface, xid->frame,
+                                              &using_CAIRO)) {
+            tool->focus_frame = xid->frame;
+            found = true;
+            break;
+        }
+
+        xp = xp->next;
+    }
+
+    // ── Path C: fallback decoration — use the keyboard-focused window ───────
     // Works when only one decorated window is on screen, or when the user
     // was recently typing in the window whose titlebar they are now touching.
     if (!found) {
@@ -533,32 +550,6 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
         if (xid && xid->kind == Fl_Wayland_Window_Driver::DECORATED && xid->frame)
           tool->focus_frame = xid->frame;
       }
-    }
-  }
-
-  // Set hover state immediately so ev.state is valid even without a tip-down.
-  State btn_bits = tool->ev.state &
-    (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
-  tool->ev.state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER
-    ? State::ERASER_HOVERS : State::TIP_HOVERS) | btn_bits;
-
-  auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  auto seat = drvr->seat;
-  static bool using_GTK = seat->gtk_shell &&
-    (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
-  if (!tool->focus_win && using_GTK) {
-    // check whether surface is the headerbar of a GTK-decorated window
-    Fl_X *xp = Fl_X::first;
-    while (xp && using_GTK) { // all mapped windows
-      struct wld_window *xid = (struct wld_window*)xp->xid;
-      if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
-          fl_is_surface_from_GTK_titlebar(surface, xid->frame, &using_GTK)) {
-        gtk_shell_surface = surface;
-        gtk_shell_frame = xid->frame;
-        gtk_shell_window = xp->w;
-        break;
-      }
-      xp = xp->next;
     }
   }
 }
@@ -767,6 +758,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   }
 
   // No subscribers or no focus window → nothing more to do.
+  // Check if over decoration and if so, do an action if needed.
   if (!tool->focus_win || subscriber_list_.empty()) {
 
       // ── Decoration bridge ─────────────────────────────────────────────────
@@ -792,6 +784,11 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
           }
 
           if (dwin) {
+              enum plugin_kind plugin = get_plugin_kind(tool->focus_frame);
+              if (plugin == SSD)
+                  return;
+
+
               float f  = Fl::screen_scale(dwin->screen_num());
               // Total decoration surface dimensions in surface-local pixels:
               double total_decor_w = dwin->w() * f + 2 * left;
@@ -800,67 +797,82 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
               double sx = tool->decor_sx;
               double sy = tool->decor_sy;
 
-              // ── Resize edges (check before title-bar actions) ──────
-              if (sy > top) {
-                  // Below content area: resize edge
-                  if (tool->serial) {
-                      bool l = sx < left;
-                      bool r = sx > total_decor_w - left;
-                      bool b = sy > total_decor_h - left;
-                      uint32_t edge = LIBDECOR_RESIZE_EDGE_NONE;
-                      if (l && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_LEFT;
-                      else if (r && b) edge = LIBDECOR_RESIZE_EDGE_BOTTOM_RIGHT;
-                      else if (l)  edge = LIBDECOR_RESIZE_EDGE_LEFT;
-                      else if (r)  edge = LIBDECOR_RESIZE_EDGE_RIGHT;
-                      else if (b)  edge = LIBDECOR_RESIZE_EDGE_BOTTOM;
-                      if (edge != LIBDECOR_RESIZE_EDGE_NONE)
-                          libdecor_frame_resize(tool->focus_frame, g_wl_seat,
-                                                tool->serial,
-                                                static_cast<libdecor_resize_edge>(edge));
-                  }
+              switch(plugin)
+              {
+              case GTK3:
+                  // Can we use GTK3 calls to not hard-code buttons?
+                  if(sy >= 0 && sy < top) {
+                      constexpr double kBtnW   = 24.0;
+                      constexpr double kBtnPad =  4.0;
+                      constexpr double kRPad   =  6.0;
+                      double x_from_right = total_decor_w - sx;
 
-               // ── Title bar (sy < top) ───────────────────────────────
-              } else if (sy >= 0 && sy < top) {
+                      constexpr double kCloseBtn = kRPad + kBtnW;
+                      constexpr double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
+                      constexpr double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
+                      libdecor_frame_ref(tool->focus_frame);
+                      if (x_from_right < kCloseBtn) {
+                          // Close button
+                          //dwin->hide(); <-- do not use this.  Crashes on Vulkan
+                          libdecor_frame_close(tool->focus_frame);
+                      } else if (x_from_right < kMaximizeBtn) {
+                          // Maximize / restore
+                          if (dwin->maximize_active())
+                              dwin->un_maximize();
+                          else
+                              dwin->maximize();
+                      } else if (x_from_right < kMinimizeBtn) {
+                          // Minimize (works)
+                          dwin->iconize();
+                      } else if (tool->serial) {
+                          // Title bar drag → move (works)
+                          libdecor_frame_move(tool->focus_frame, g_wl_seat,
+                                              tool->serial);
+                      }
+                      libdecor_frame_unref(tool->focus_frame);
+                  } // else if (sy >= 0 && sy < top)
+                  break;
+              case CAIRO:
+              case UNKNOWN:
+                  // Handle titlebar for Cairo and any unknown plugin
+                  if(sy >= 0 && sy < top) {
+                      constexpr double kBtnW   = 24.0;
+                      constexpr double kBtnPad =  4.0;
+                      constexpr double kRPad   =  6.0;
+                      double x_from_right = total_decor_w - sx;
 
-                  // For FLTK's own bundled plugin, FLTK knows the button
-                  // layout.
-                  // For the fallback plugin, the button layout is similar to
-                  // Adwaita.
+                      constexpr double kCloseBtn = kRPad + kBtnW;
+                      constexpr double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
+                      constexpr double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
+                      libdecor_frame_ref(tool->focus_frame);
+                      if (x_from_right < kCloseBtn) {
+                          // Close button
+                          //dwin->hide(); <-- do not use this.  Crashes on Vulkan
+                          libdecor_frame_close(tool->focus_frame);
+                      } else if (x_from_right < kMaximizeBtn) {
+                          // Maximize / restore
+                          if (dwin->maximize_active())
+                              dwin->un_maximize();
+                          else
+                              dwin->maximize();
+                      } else if (x_from_right < kMinimizeBtn) {
+                          // Minimize (works)
+                          dwin->iconize();
+                      } else if (tool->serial) {
+                          // Title bar drag → move (works)
+                          libdecor_frame_move(tool->focus_frame, g_wl_seat,
+                                              tool->serial);
+                      }
+                      libdecor_frame_unref(tool->focus_frame);
+                  } // else if (sy >= 0 && sy < top)
+                  break;
+              }
+          } // if (dwin)
+      } // over_decoration
 
-                  // fallback plugin buttons are smaller
-                  constexpr double kBtnW   = 24.0;
-                  constexpr double kBtnPad =  4.0;
-                  constexpr double kRPad   =  6.0;
-                  double x_from_right = total_decor_w - sx;
-
-                  constexpr double kCloseBtn = kRPad + kBtnW;
-                  constexpr double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
-                  constexpr double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
-
-                  if (x_from_right < kCloseBtn) {
-                      // Close button
-                      //dwin->hide(); <-- do not use this.  Crashes on Vulkan
-                      libdecor_frame_close(tool->focus_frame);
-                  } else if (x_from_right < kMaximizeBtn) {
-                      // Maximize / restore
-                      if (dwin->maximize_active())
-                          dwin->un_maximize();
-                      else
-                          dwin->maximize();
-                  } else if (x_from_right < kMinimizeBtn) {
-                      // Minimize (works)
-                      dwin->iconize();
-                } else if (tool->serial) {
-                      // Title bar drag → move (works)
-                      libdecor_frame_move(tool->focus_frame, g_wl_seat, tool->serial);
-                }
-            } // else if (sy >= 0 && sy < top)
-        } // if (dwin)
-    } // over_decoration
-
-    tablet_tool_reset_frame(tool);
-    tool->prev_state = tool->ev.state;
-    return;
+      tablet_tool_reset_frame(tool);
+      tool->prev_state = tool->ev.state;
+      return;
   }
 
   Fl_Window *eventWindow = nullptr;
@@ -871,6 +883,10 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   } else {
     eventWindow = tool->focus_win;
   }
+
+  // Safe-guard
+  if (!eventWindow)
+      return;
 
   bool is_menu_window = eventWindow->menu_window();
 
