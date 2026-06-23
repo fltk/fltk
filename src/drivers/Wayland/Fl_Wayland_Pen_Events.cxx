@@ -135,7 +135,6 @@ struct TabletTool {
   double         decor_sx { 0 };      // surface-local x when over a decoration surface
   double         decor_sy { 0 };      // surface-local y when over a decoration surface
   struct libdecor_frame *focus_frame { nullptr }; // owning frame when over a decoration
-  bool           over_decoration { false };
 
   uint64_t                        hardware_serial;
   int                             pen_id;       // int-sized pen identity
@@ -292,16 +291,48 @@ static bool event_inside(Fl_Widget *w, double x, double y) {
 }
 
 /*
- Search the subscriber list for the topmost subscribed widget inside (x, y)
- that belongs to top-window win.
- */
-static Fl_Widget *find_below_pen(Fl_Window *win, double x, double y) {
-  for (auto &sub : subscriber_list_) {
-    Fl_Widget *w = sub.second->widget();
-    if (w && w->top_window() == win && w->visible() && event_inside(w, x, y))
-      return w;
-  }
-  return nullptr;
+  Find the topmost subscribed widget under (x, y) in top-window coordinates.
+  Handles:
+   - Normal widgets
+   - Widgets inside groups
+   - Subwindows (Fl_Window as child)
+   - Separate top-level windows that are themselves subscribers
+*/
+static Fl_Widget *find_below_pen(Fl_Window *topwin, double x, double y)
+{
+  if (!topwin) return nullptr;
+
+  struct Finder {
+      static Fl_Widget* find_in_group(Fl_Group* g, double gx, double gy)
+    {
+      if (!g) return nullptr;
+
+      // 1. Check children back-to-front (topmost first)
+      for (int i = g->children() - 1; i >= 0; --i) {
+        Fl_Widget* w = g->child(i);
+        if (!w || !w->visible()) continue;
+
+        if (!event_inside(w, gx, gy))
+            continue;
+
+        if (subscriber_list_.count(w))
+            return w;
+
+        if (Fl_Group* sg = w->as_group()) {
+            if (Fl_Widget* found = find_in_group(sg, gx, gy))
+                return found;
+        }
+      }
+
+      // 2. Check if THIS window/group is a pen subscriber
+      if (subscriber_list_.count(g))
+          return g;
+
+      return nullptr;
+    }
+  };
+
+  return Finder::find_in_group(topwin, x, y);
 }
 
 /*
@@ -484,7 +515,6 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
   TabletTool *tool = static_cast<TabletTool *>(data);
   tool->focus_surface      = surface;
   tool->focus_frame        = nullptr;
-  tool->over_decoration    = false;
   tool->focus_win          = Fl_Wayland_Window_Driver::surface_to_window(surface);
   tool->in_proximity       = true;
   tool->frame_proximity_in = true;
@@ -497,7 +527,6 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
   if (!tool->focus_win)
   {
     // check whether surface is the headerbar of a GTK-decorated window
-    tool->over_decoration = true;
     bool found = false;
 
     auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
@@ -851,12 +880,8 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   // Check if over decoration and if so, do an action if needed.
   if (!tool->focus_win || subscriber_list_.empty()) {
 
-      // ── Decoration bridge ─────────────────────────────────────────────────
-      if (tool->over_decoration && tool->focus_frame && tool->frame_down) {
-
-          // ── Determine total decoration surface width ─────────────────────
-          // libdecor_frame_translate_coordinate(frame, 0, 0, &left, &top) gives the
-          // content origin within the decoration frame.  top == titlebar height.
+      // ── frame down on decoration ───────────────────────────────────────
+      if (tool->focus_frame && tool->frame_down) {
 
           // Find the Fl_Window that owns this frame.
           Fl_Window* win = nullptr;
@@ -890,7 +915,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                   break;
               }
           } // if (win)
-      } // over_decoration
+      } // focus_frame && frame_down
 
       tablet_tool_reset_frame(tool);
       tool->prev_state = tool->ev.state;
