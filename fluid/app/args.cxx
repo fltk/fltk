@@ -32,6 +32,10 @@ using namespace fld::app;
  \param[in] argv pointer to an array of arguments
  \return 0 if the args were handled successfully, -1 if there was an error
     and the usage message was shown.
+
+ \todo argument to override the application directory, helpful when running in batch mode
+ \todo argument to run a specific shell command as set in shell_command list
+ \todo maybe argument to extract embedded files, i.e. CMakeLists.txt ?
  */
 int Args::load(int argc,char **argv) {
   int i = 1;

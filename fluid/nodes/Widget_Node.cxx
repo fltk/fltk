@@ -1181,7 +1181,7 @@ void live_mode_cb(Fl_Button* o, void *) {
   static Fl_Window* live_window = nullptr;
 
   if (!current_widget) {
-    o->value(0);
+    wLiveMode->value(0);
     return;
   }
 
