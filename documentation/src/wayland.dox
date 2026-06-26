@@ -106,8 +106,8 @@ and calls corresponding listeners.
 
 The core protocol defines also a number of mostly opaque structures whose names begin with \c wl_.
 The names of symbols and types defined by the other protocols FLTK uses begin with \c xdg_,
-\c zwp_text_input_v3, \c zxdg_toplevel_decoration_, \c gtk_shell1_, \c gtk_surface1_
-and \c wp_cursor_shape_.
+\c zwp_text_input_v3, \c zxdg_toplevel_decoration_, \c gtk_shell1_, \c gtk_surface1_,
+\c wp_cursor_shape_ and \c zwp_tablet_v2.
 FLTK defines a few structures holding Wayland-related data.
 The names of FLTK-defined structures don't begin with \c wl_. For example,
 <tt>struct wld_window</tt> (see \ref wld_window) is used to store all Wayland-specific data associated
@@ -118,8 +118,8 @@ to a mapped Fl_Window.
 
 Classes \c Fl_Wayland_Window_Driver, \c Fl_Wayland_Screen_Driver, \c Fl_Wayland_Graphics_Driver,
 \c Fl_Wayland_Copy_Surface_Driver, \c Fl_Wayland_Image_Surface_Driver and
-\c Fl_Wayland_Gl_Window_Driver and file \c  fl_wayland_platform_init.cxx
-contain all the Wayland-specific code of the FLTK library.
+\c Fl_Wayland_Gl_Window_Driver and files \c Fl_Wayland_Pen_Events.cxx and
+\c fl_wayland_platform_init.cxx contain all the Wayland-specific code of the FLTK library.
 This code is located at \c src/drivers/Wayland/ in the FLTK source tree.
 A single C++ source file generally contains all the code of a given class.
 The code for class \c Fl_Wayland_Screen_Driver, however, is split in two source files,
@@ -161,8 +161,9 @@ Similar operations are performed for FLTK to use protocols
 <a href=https://wayland.app/protocols/xdg-dialog-v1>XDG dialog windows</a>,
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>,
 <a href=https://wayland.app/protocols/cursor-shape-v1>Cursor shape</a>,
-<a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>
-and <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>.
+<a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>,
+<a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>
+and <a href=https://wayland.app/protocols/tablet-v2>Tablet</a>.
 
 
 \section wayland-x11-hybrid  The hybrid Wayland/X11 platform
@@ -316,7 +317,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 \endcode
 
 Each time Wayland calls \c registry_handle_global(), \c interface and \c version give the name
-and version of a component or feature of the Wayland system.
+and version of a supported Wayland protocol or a system feature.
 Here is the list of the \c interface value for all protocols and system features relevant for FLTK:
 
   Interface                          | How FLTK uses this interface
@@ -335,7 +336,7 @@ Here is the list of the \c interface value for all protocols and system features
   org_kde_plasma_shell               | indicates KDE/Plasma is in use
   zwp_text_input_manager_v3          | interface with Text Input Methods
   zxdg_decoration_manager_v1         | select between CSD and SSD modes
-
+  zwp_tablet_manager_v2              | support of graphics tablets
 
 Wayland compositors typically support several other protocols (e.g., \c zxdg_output_manager_v1)
 that FLTK does not use.
@@ -459,9 +460,10 @@ to detect that Wayland needs be informed of the desired size change, which gets 
 to \c libdecor_frame_commit(). Wayland later calls \c handle_configure() and events described
 above unfold.
 
-Wayland generally does not provide a way to control where the compositor should map a window
-in the system displays. Nevertheless, for multi-display systems, Wayland allows to control
-on what display should the compositor map a fullscreen window. That is done inside function
+Wayland does not provide a way to control where the compositor should map a
+\c DECORATED or \c UNFRAMED window in a display. When the system has several displays, it's
+not even possible to control on what display should the compositor map a new window,
+except for a fullscreen window. That is done inside function
 \c handle_configure() which calls \c libdecor_frame_set_fullscreen() for DECORATED windows
 and inside function \c xdg_toplevel_configure() which calls \c xdg_toplevel_set_fullscreen()
 for UNFRAMED. The <tt>struct wl_output</tt> pointer for the targeted display is transmitted
@@ -750,9 +752,10 @@ Wayland names <em>buffer factory</em> a software procedure that constructs objec
 FLTK creates a \c wl_buffer object each time a non-GL Fl_Window is mapped on a display or resized.
 FLTK triggers the creation of a Wayland buffer as follows:
 <pre>Fl::flush() calls, if the window is damaged:
-  \e Fl_Wayland_Window_Driver::flush() calls, if the window's \c frame_cb is NULL:
-    \e Fl_Wayland_Graphics_Driver::buffer_commit() calls, if the window's \c buffer->wl_buffer is NULL:
-      \e Fl_Wayland_Graphics_Driver::create_shm_buffer() creates a Wayland buffer.</pre>
+   Fl_Wayland_Window_Driver::flush() calls, if the window's frame_cb is NULL:
+     Fl_Wayland_Graphics_Driver::buffer_commit() calls, if the window's buffer->wl_buffer is NULL:
+       Fl_Wayland_Graphics_Driver::create_shm_buffer() creates a Wayland buffer.
+</pre>
 Member function \c Fl_Wayland_Graphics_Driver::create_shm_buffer()
 follows this 3-step procedure to create one or more <em>shared memory pools</em> and to
 construct Wayland buffers from them:
@@ -984,6 +987,12 @@ which ensures that what \c gnome-tweaks has assigned to middle-click events is e
 At this point in time, FLTK obeys what \c libdecor decides for right-click (display the window
 menu) and double-click (maximize the window) events on titlebars which may diverge
 from \c gnome-tweaks settings.
+
+\section wayland-pen Tablet and pen handling
+
+FLTK implements the <a href=https://wayland.app/protocols/tablet-v2>Tablet</a> protocol
+to support graphics tablets unless CMake option \c FLTK_OPTION_PEN_SUPPORT was turned Off at
+library build time.
 
 \section wayland-cursor Wayland cursors
 
@@ -1507,7 +1516,7 @@ struct Fl_Wayland_Screen_Driver::seat {
   <td>
     <a href=https://wayland.app/protocols/>Wayland Explorer</a>
   </td>
-  <td>Documentation of all Wayland protocols, both stable and unstable.
+  <td>Documentation of all Wayland protocols (stable, staging and unstable).
   <td>
 </tr>
 
