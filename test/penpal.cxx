@@ -37,6 +37,8 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/names.h>
 
+#include <memory>
+
 extern Fl_Menu_Item app_menu[];
 extern int popup_app_menu();
 Fl_Widget *cv1 { nullptr };
