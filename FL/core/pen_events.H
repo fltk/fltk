@@ -228,6 +228,8 @@ enum Event {
 
   /**
    Pen went from hovering to touching the surface.
+   If the event handler returns 1, the widget will be marked Fl::pushed() and
+   will receive DRAW events until the tip or eraser is released.
    event_trigger() returns TIP_DOWN or ERASER_DOWN.
    */
   TOUCH,
@@ -246,6 +248,8 @@ enum Event {
 
   /**
    A pen button was pushed.
+   If the event handler returns 1, the widget will be marked Fl::pushed() and
+   will receive DRAW events until the button is released.
    event_trigger() returns BUTTON0, BUTTON1, BUTTON2, or BUTTON3.
    */
   BUTTON_PUSH,

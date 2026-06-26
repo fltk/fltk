@@ -395,11 +395,8 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
     return 0;
 
   if (is_down) {
-    if (!pushed) {
-      pushed_ = subscriber_list_[receiver];
-      Fl::pushed(receiver);
-    }
     State trigger = button_to_trigger([event buttonNumber], true);
+    int result = 0;
     if ([event buttonNumber] == 0) {
       Fl::e_is_click = 1;
       Fl::Private::e_x_down = (int)ev.x;
@@ -408,20 +405,24 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
         Fl::e_clicks++;
       else
         Fl::e_clicks = 0;
-      pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
+      result = pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
     } else {
-      pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
+      result = pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
+    }
+    if (!pushed && result) {
+      pushed_ = subscriber_list_[receiver];
+      Fl::pushed(receiver);
     }
   } else if (is_up) {
-    if ( (ev.state & State::ANY_DOWN) == State::NONE ) {
-      Fl::pushed(nullptr);
-      pushed_ = nullptr;
-    }
     State trigger = button_to_trigger([event buttonNumber], true);
     if ([event buttonNumber] == 0)
       pen_send(receiver, Fl::Pen::LIFT, trigger, event_data_copied);
     else
       pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
+    if ( ((ev.state & State::ANY_DOWN) == State::NONE) && ( Fl::pushed() || pushed_ ) ) {
+      Fl::pushed(nullptr);
+      pushed_ = nullptr;
+    }
   } else if (is_motion) {
     if (  Fl::e_is_click &&
          ( (fabs((int)ev.x - Fl::Private::e_x_down) > 5) ||

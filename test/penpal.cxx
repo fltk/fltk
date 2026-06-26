@@ -34,6 +34,7 @@
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_message.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/names.h>
 
 extern Fl_Menu_Item app_menu[];
@@ -50,17 +51,22 @@ class CanvasInterface {
   Fl_Widget *widget_ { nullptr };
   bool in_window_ { false };
   bool first_draw_ { true };
-  Fl_Offscreen offscreen_ { 0 };
+  std::unique_ptr<Fl_Image_Surface> offscreen_; // fixed size image buffer
   Fl_Color color_ { 1 };
   enum { NONE, HOVER, DRAW, PEN_HOVER, PEN_DRAW } overlay_ { NONE };
   int ov_x_ { 0 };
   int ov_y_ { 0 };
 public:
-  CanvasInterface(Fl_Widget *w) : widget_(w) { }
-  CanvasInterface(Fl_Window *w) : widget_(w), in_window_(true) { }
-  ~CanvasInterface() {
-    if (offscreen_) fl_delete_offscreen(offscreen_);
-  }
+  CanvasInterface(Fl_Widget *w)
+  : widget_(w)
+  , offscreen_(std::unique_ptr<Fl_Image_Surface>(new Fl_Image_Surface(400, 400)))
+  { }
+  CanvasInterface(Fl_Window *w)
+  : widget_(w)
+  , in_window_(true)
+  , offscreen_(std::unique_ptr<Fl_Image_Surface>(new Fl_Image_Surface(400, 400)))
+  { }
+  ~CanvasInterface() = default;
   int cv_handle(int event);
   void cv_draw();
   void cv_draw_buttons();
@@ -84,23 +90,34 @@ int CanvasInterface::cv_handle(int event)
       /* fall through */
     case Fl::Pen::HOVER:
       // Pen move over the surface without touching it.
-      if (Fl::event_state(FL_CTRL) || Fl::Pen::event_state(Fl::Pen::State::BUTTON0))
-        return popup_app_menu();
       overlay_ = PEN_HOVER;
       ov_x_ = Fl::event_x();
       ov_y_ = Fl::event_y();
       widget_->redraw();
       return 1;
+    case Fl::Pen::BUTTON_PUSH:
+      // front barrel button
+      if (Fl::Pen::event_state(Fl::Pen::State::BUTTON0)) {
+        popup_app_menu();
+        return 0;
+      }
+      return 0;
     case Fl::Pen::TOUCH:
       // Pen tip or eraser just touched the surface.
+      if (Fl::event_state(FL_CTRL)) {
+        popup_app_menu();
+        return 0;
+      }
       /* fall through */
     case Fl::Pen::DRAW:
       // Pen is dragged over the surface, or hovers with a button pressed.
-      overlay_ = PEN_DRAW;
-      ov_x_ = Fl::event_x();
-      ov_y_ = Fl::event_y();
-      cv_pen_paint();
-      widget_->redraw();
+      if (Fl::Pen::event_state(Fl::Pen::State::TIP_DOWN | Fl::Pen::State::ERASER_DOWN)) {
+        overlay_ = PEN_DRAW;
+        ov_x_ = Fl::event_x();
+        ov_y_ = Fl::event_y();
+        cv_pen_paint();
+        widget_->redraw();
+      }
       return 1;
     case Fl::Pen::LIFT:
       // Pen was just lifted from the surface and is now hovering
@@ -123,8 +140,10 @@ int CanvasInterface::cv_handle(int event)
       widget_->redraw();
       return 1;
     case FL_PUSH:
-      if (Fl::event_state(FL_CTRL) || Fl::event_button() == FL_RIGHT_MOUSE)
-        return popup_app_menu();
+      if (Fl::event_state(FL_CTRL) || Fl::event_button() == FL_RIGHT_MOUSE) {
+        popup_app_menu();
+        return 0;
+      }
       /* fall through */
     case FL_DRAG:
       overlay_ = DRAW;
@@ -150,14 +169,13 @@ void CanvasInterface::cv_draw()
 {
   if (first_draw_) {
     first_draw_ = false;
-    offscreen_ = fl_create_offscreen(widget_->w(), widget_->h());
-    fl_begin_offscreen(offscreen_);
+    Fl_Surface_Device::push_current(offscreen_.get());
     fl_color(FL_WHITE);
     fl_rectf(0, 0, widget_->w(), widget_->h());
-    fl_end_offscreen();
+    Fl_Surface_Device::pop_current();
   }
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
-  fl_copy_offscreen(dx, dy, widget_->w(), widget_->h(), offscreen_, 0, 0);
+  fl_copy_offscreen(dx, dy, widget_->w(), widget_->h(), offscreen_->offscreen(), 0, 0);
 
   // Preset values for overlay
   int r = 10;
@@ -223,12 +241,10 @@ void CanvasInterface::cv_draw_buttons()
 // Paint a circle with mouse events.
 //
 void CanvasInterface::cv_paint() {
-  if (!offscreen_)
-    return;
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
-  fl_begin_offscreen(offscreen_);
+  Fl_Surface_Device::push_current(offscreen_.get());
   fl_draw_circle(Fl::event_x()-dx-12, Fl::event_y()-dy-12, 24, color_);
-  fl_end_offscreen();
+  Fl_Surface_Device::pop_current();
 }
 
 //
@@ -236,8 +252,6 @@ void CanvasInterface::cv_paint() {
 // draw a white circle.
 //
 void CanvasInterface::cv_pen_paint() {
-  if (!offscreen_)
-    return;
   float pressure = Fl::Pen::event_pressure();
   int r = static_cast<int>(32.0 * pressure * pressure); // squared to make pressure more visible
 #if 0
@@ -250,9 +264,9 @@ void CanvasInterface::cv_pen_paint() {
   if (r < 1) r = 1;
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
-  fl_begin_offscreen(offscreen_);
+  Fl_Surface_Device::push_current(offscreen_.get());
   fl_draw_circle(Fl::event_x()-dx-r, Fl::event_y()-dy-r, 2*r, cc);
-  fl_end_offscreen();
+  Fl_Surface_Device::pop_current();
 }
 
 
