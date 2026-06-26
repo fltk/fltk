@@ -4560,20 +4560,24 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Name);
             o->align(Fl_Align(132));
           } // Fl_Input* o
-          { wp_data_filename = new Fl_Input(95, 125, 270, 20, "Filename:");
-            wp_data_filename->tooltip("name and path of file that will be inlined");
-            wp_data_filename->labelfont(1);
-            wp_data_filename->labelsize(11);
-            wp_data_filename->textfont(4);
-            wp_data_filename->textsize(11);
-            wp_data_filename->callback((Fl_Callback*)cb_wp_data_filename);
-            wp_data_filename->align(Fl_Align(132));
-            Fl_Group::current()->resizable(wp_data_filename);
-          } // Fl_Input* wp_data_filename
-          { Fl_Button* o = new Fl_Button(365, 125, 40, 20, "@fileopen");
-            o->labelcolor((Fl_Color)134);
-            o->callback((Fl_Callback*)cb_fileopen);
-          } // Fl_Button* o
+          { Fl_Group* o = new Fl_Group(95, 125, 310, 20);
+            o->callback((Fl_Callback*)propagate_load);
+            { wp_data_filename = new Fl_Input(95, 125, 270, 20, "Filename:");
+              wp_data_filename->tooltip("name and path of file that will be inlined");
+              wp_data_filename->labelfont(1);
+              wp_data_filename->labelsize(11);
+              wp_data_filename->textfont(4);
+              wp_data_filename->textsize(11);
+              wp_data_filename->callback((Fl_Callback*)cb_wp_data_filename);
+              wp_data_filename->align(Fl_Align(132));
+              Fl_Group::current()->resizable(wp_data_filename);
+            } // Fl_Input* wp_data_filename
+            { Fl_Button* o = new Fl_Button(365, 125, 40, 20, "@fileopen");
+              o->labelcolor((Fl_Color)134);
+              o->callback((Fl_Callback*)cb_fileopen);
+            } // Fl_Button* o
+            o->end();
+          } // Fl_Group* o
           { Fl_Text_Editor* o = new Fl_Text_Editor(95, 150, 310, 105, "Comment:");
             o->box(FL_DOWN_BOX);
             o->labelfont(1);
@@ -4582,6 +4586,7 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Comment);
             o->align(Fl_Align(FL_ALIGN_LEFT));
+            Fl_Group::current()->resizable(o);
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
           } // Fl_Text_Editor* o
