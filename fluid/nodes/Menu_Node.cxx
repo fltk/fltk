@@ -323,12 +323,10 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
   if (callback() && is_name(callback()) && !user_defined(callback()))
-    f.write_h_once("extern void %s(Fl_Menu_*, %s);",
-                   callback(),
-                   user_data_type_or_voidp().c_str());
+    f.write_h_once("extern void " + std::string(callback()) + "(Fl_Menu_*, " + user_data_type_or_voidp() + ");");
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
-      f.write_h_once("%s", extra_code(n).c_str());
+      f.write_h_once(extra_code(n));
   }
   if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -386,7 +384,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
           // class memeber variable.
           Menu_Bar_Node *tmb = (Menu_Bar_Node*)tw;
           f.write_c("%s%s* sys_menu_bar = ((%s*)o);\n", f.indent(1),
-                    tmb->sys_menubar_proxy_name(), tmb->sys_menubar_proxy_name());
+                    tmb->sys_menubar_proxy_name().c_str(), tmb->sys_menubar_proxy_name().c_str());
           f.write_c("%s%s* parent_class = ((%s*)sys_menu_bar->_parent_class);\n",
                     f.indent(1), k, k);
           f.write_c("%sparent_class->%s_i(o,v);\n}\n",
@@ -838,13 +836,11 @@ Fl_Menu_Item menu_bar_type_menu[] = {
   {nullptr}};
 
 Menu_Bar_Node::Menu_Bar_Node()
-: _proxy_name(nullptr)
 {
 }
 
-Menu_Bar_Node::~Menu_Bar_Node() {
-  if (_proxy_name)
-    ::free(_proxy_name);
+Menu_Bar_Node::~Menu_Bar_Node()
+{
 }
 
 /**
@@ -864,11 +860,8 @@ std::string Menu_Bar_Node::sys_menubar_name() const {
     return "Fl_Sys_Menu_Bar";
 }
 
-const char *Menu_Bar_Node::sys_menubar_proxy_name() {
-  if (!_proxy_name)
-    _proxy_name = (char*)::malloc(128);
-  ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name().c_str());
-  return _proxy_name;
+std::string Menu_Bar_Node::sys_menubar_proxy_name() const {
+  return sys_menubar_name() + "_Proxy";
 }
 
 
@@ -879,15 +872,12 @@ void Menu_Bar_Node::write_static(fluid::io::Code_Writer& f) {
     if (is_in_class()) {
       // Make room for a pointer to the enclosing class.
       f.write_c_once( // must be less than 1024 bytes!
-                     "\nclass %s: public %s {\n"
+                     "\nclass " + sys_menubar_proxy_name() + ": public " + sys_menubar_name() + " {\n"
                      "public:\n"
-                     "  %s(int x, int y, int w, int h, const char* l=nullptr)\n"
-                     "  : %s(x, y, w, h, l) { }\n"
+                     "  " + sys_menubar_proxy_name() + "(int x, int y, int w, int h, const char* l=nullptr)\n"
+                     "  : " + sys_menubar_name() + "(x, y, w, h, l) { }\n"
                      "  void* _parent_class;\n"
-                     "};\n",
-                     sys_menubar_proxy_name(), sys_menubar_name().c_str(),
-                     sys_menubar_proxy_name(), sys_menubar_name().c_str()
-                     );
+                     "};\n");
     }
   }
 }
@@ -896,7 +886,7 @@ void Menu_Bar_Node::write_code1(fluid::io::Code_Writer& f) {
   super::write_code1(f);
   if (is_sys_menu_bar() && is_in_class()) {
     f.write_c("%s((%s*)%s)->_parent_class = (void*)this;\n",
-              f.indent(), sys_menubar_proxy_name(), name() ? name() : "o");
+              f.indent(), sys_menubar_proxy_name().c_str(), name() ? name() : "o");
   }
 }
 

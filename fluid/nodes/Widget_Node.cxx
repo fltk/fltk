@@ -1450,11 +1450,11 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   if (subclass().empty() || (is_class() && (t.compare(0, 3, "Fl_")==0))) {
     f.write_h_once("#include <FL/Fl.H>");
-    f.write_h_once("#include <FL/%s.H>", t.c_str());
+    f.write_h_once("#include <FL/" + t + ".H>");
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
-      f.write_h_once("%s", extra_code(n).c_str());
+      f.write_h_once(extra_code(n));
   }
   if (callback() && is_name(callback())) {
     int write_extern_declaration = 1;
@@ -1467,10 +1467,7 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
         write_extern_declaration = 0;
     }
     if (write_extern_declaration)
-      f.write_h_once("extern void %s(%s*, %s);",
-                     callback(),
-                     t.c_str(),
-                     user_data_type_or_voidp().c_str());
+      f.write_h_once("extern void " + std::string(callback()) + "(" + t + "*, " + user_data_type_or_voidp() + ");");
   }
   const char* k = class_name(1);
   const char* c = array_name(this);
@@ -1623,7 +1620,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
              && ((Menu_Bar_Node*)this)->is_sys_menu_bar()
              && is_in_class()) {
     f.write_c("(%s*)new %s(%d, %d, %d, %d",
-              t.c_str(), ((Menu_Bar_Node*)this)->sys_menubar_proxy_name(),
+              t.c_str(), ((Menu_Bar_Node*)this)->sys_menubar_proxy_name().c_str(),
               o->x(), o->y(), o->w(), o->h());
   } else {
     f.write_c("new %s(%d, %d, %d, %d", t.c_str(), o->x(), o->y(), o->w(), o->h());

@@ -384,16 +384,23 @@ std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, ui
   // Write the first 32 bit word as an encoded divider line
   uint32_t pt = static_cast<uint32_t>(prev_type);
   uint32_t nt = static_cast<uint32_t>(next_type);
-  uint32_t word = (0<<24) | (pt<<16) | (uid); // top 8 bit available for encoding type
+  uint32_t word = ((0<<24)&0xff000000) | ((pt<<16)&0x00ff0000) | ((uid)&0x0000ffff); // top 8 bit available for encoding type
   for (int i=30; i>=0; i-=3) result += lut[(word>>i)&7];
   // Write a string indicating the type of editable text
+  #if 0
   if ( next_type != Tag::GENERIC) {
-    result += tag_lut[nt];
+    result += tag_lut[(nt%4)];
   } else if (prev_type != Tag::GENERIC) {
-    result += tag_lut[nt];
+    result += tag_lut[(pt%4)];
+  } else {
+    result += tag_lut[0];
   }
+  #else
+  result += tag_lut[(nt%4)];
+  #endif
   // Write the second 32 bit word as an encoded divider line
   for (int i=30; i>=0; i-=3) result += lut[(crc>>i)&7];
+  // printf("  uid=%d, prev_type=%d, next_type=%d, crc=%u\n", uid, pt, nt, crc);
   // Repeat the intro pattern
   result += ' ';
   if (prev_type != Tag::GENERIC) result += "▲";
