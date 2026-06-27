@@ -22,11 +22,11 @@
 
 #include "widgets/Code_Viewer.h"
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 /**
- Create a fld::widget::Code_Viewer widget.
+ Create a fluid::widget::Code_Viewer widget.
  \param[in] X, Y, W, H position and size of the widget
  \param[in] L optional label
  */

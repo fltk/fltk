@@ -23,13 +23,13 @@
 #include "Fluid.h"
 #include "Project.h"
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 extern void mergeback_cb(Fl_Widget *, void *);
 
 /**
- Create a fld::widget::App_Menu_Bar widget.
+ Create a fluid::widget::App_Menu_Bar widget.
  \param[in] X, Y, W, H position and size of the widget
  \param[in] L optional label
  */

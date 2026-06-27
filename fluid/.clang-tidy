@@ -1,0 +1,75 @@
+#
+# Experimental FLTK clang-tidy file. This is not an officiel clang-tidy test yet.
+#
+
+# Fluid-specific clang-tidy configuration.
+# Inherits bugprone-*, cert-*, clang-analyzer-*, cppcoreguidelines-* from the root .clang-tidy.
+# All modernize-* checks are restricted to C++11-compatible suggestions.
+# C++14+ checks (make-unique, transparent-functors, nodiscard, concat-nested-namespaces) are omitted.
+
+InheritParentConfig: true
+
+Checks:
+  # --- C++11 modernization ---
+  - 'modernize-avoid-bind'
+  - 'modernize-deprecated-headers'
+  - 'modernize-loop-convert'
+  - 'modernize-make-shared'
+  - 'modernize-pass-by-value'
+  - 'modernize-redundant-void-arg'
+  - 'modernize-replace-auto-ptr'
+  - 'modernize-return-braced-init-list'
+  - 'modernize-shrink-to-fit'
+  - 'modernize-use-auto'
+  - 'modernize-use-bool-literals'
+  - 'modernize-use-default-member-init'
+  - 'modernize-use-emplace'
+  - 'modernize-use-equals-default'
+  - 'modernize-use-equals-delete'
+  - 'modernize-use-noexcept'
+  - 'modernize-use-nullptr'
+  - 'modernize-use-override'
+  - 'modernize-use-using'
+  # --- Readability / refactoring ---
+  - 'readability-avoid-const-params-in-decls'
+  - 'readability-braces-around-statements'
+  - 'readability-const-return-type'
+  - 'readability-container-size-empty'
+  - 'readability-else-after-return'
+  - 'readability-inconsistent-declaration-parameter-name'
+  - 'readability-make-member-function-const'
+  - 'readability-misleading-indentation'
+  - 'readability-qualified-auto'
+  - 'readability-redundant-access-specifiers'
+  - 'readability-redundant-control-flow'
+  - 'readability-redundant-member-init'
+  - 'readability-redundant-smartptr-get'
+  - 'readability-redundant-string-cstr'
+  - 'readability-redundant-string-init'
+  - 'readability-simplify-boolean-expr'
+  - 'readability-static-accessed-through-instance'
+  - 'readability-string-compare'
+  - 'readability-uniqueptr-delete-release'
+  # --- Performance ---
+  - 'performance-for-range-copy'
+  - 'performance-implicit-conversion-in-loop'
+  - 'performance-inefficient-string-concatenation'
+  - 'performance-move-constructor-init'
+  - 'performance-unnecessary-copy-initialization'
+  - 'performance-unnecessary-value-param'
+
+CheckOptions:
+  # Only suggest auto when the original type name is long enough to make auto a win
+  - key: modernize-use-auto.MinTypeNameLength
+    value: '5'
+  # Accept range-for when the loop is clearly safe to transform
+  - key: modernize-loop-convert.MinConfidence
+    value: 'reasonable'
+  # Pointer and integer conditions are idiomatic in FLTK / C-adjacent code
+  - key: readability-implicit-bool-conversion.AllowIntegerConditions
+    value: '1'
+  - key: readability-implicit-bool-conversion.AllowPointerConditions
+    value: '1'
+
+# Warn on Fluid headers only; suppress noise from FLTK and system headers
+HeaderFilterRegex: '.*/fluid/.*'

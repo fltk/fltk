@@ -22,7 +22,7 @@
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
 
-using namespace fld;
+using namespace fluid;
 
 // ---- project settings
 
@@ -167,8 +167,8 @@ std::string Project::stringsfile_name() const {
   if (!proj_filename) return std::string{};
   switch (i18n.type) {
     default: return fl_filename_setext_str(fl_filename_name(proj_filename), ".txt");
-    case fld::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
-    case fld::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");
+    case fluid::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
+    case fluid::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");
   }
 }
 
@@ -274,7 +274,7 @@ void Project::write_strings() {
     if (!proj_filename) return;
   }
   std::string filename = stringsfile_path() + stringsfile_name();
-  int x = fld::io::write_strings(*this, filename);
+  int x = fluid::io::write_strings(*this, filename);
   if (Fluid.batch_mode) {
     if (x) {
       fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));

@@ -19,7 +19,7 @@
 
 #include <FL/Fl_Button.H>
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 // Adding drag and drop for dragging widgets into windows.
@@ -39,6 +39,6 @@ public:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_WIDGETS_BIN_BUTTON_H

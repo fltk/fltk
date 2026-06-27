@@ -62,13 +62,13 @@ protected:
   /// disabling the output of the "hide" property by the Widget Type.
   uchar override_visible_ = 0;
 
-  void write_static(fld::io::Code_Writer& f) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_widget_code(fld::io::Code_Writer& f);
-  void write_extra_code(fld::io::Code_Writer& f);
-  void write_block_close(fld::io::Code_Writer& f);
-  void write_code2(fld::io::Code_Writer& f) override;
-  void write_color(fld::io::Code_Writer& f, const char*, Fl_Color);
+  void write_static(fluid::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_widget_code(fluid::io::Code_Writer& f);
+  void write_extra_code(fluid::io::Code_Writer& f);
+  void write_block_close(fluid::io::Code_Writer& f);
+  void write_code2(fluid::io::Code_Writer& f) override;
+  void write_color(fluid::io::Code_Writer& f, const char*, Fl_Color);
 
   /// Pointer to widget representing this node in live mode.
   Fl_Widget* live_widget = nullptr;
@@ -122,8 +122,8 @@ public:
   int is_true_widget() const override { return 1; }
   int is_public() const override;
 
-  void write_properties(fld::io::Project_Writer& f) override;
-  void read_property(fld::io::Project_Reader& f, const char*) override;
+  void write_properties(fluid::io::Project_Writer& f) override;
+  void read_property(fluid::io::Project_Reader& f, const char*) override;
   int read_fdesign(const char*, const char*) override;
 
   Fl_Widget* enter_live_mode(int top = 0) override;

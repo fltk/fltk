@@ -39,13 +39,13 @@
 /// \defgroup flfile .fl Project File Operations
 /// \{
 
-using namespace fld;
-using namespace fld::io;
+using namespace fluid;
+using namespace fluid::io;
 
 // This file contains code to read and write .fl files.
 
 /// If set, we read an old fdesign file and widget y coordinates need to be flipped.
-int fld::io::fdesign_flip = 0;
+int fluid::io::fdesign_flip = 0;
 
 /** \brief Read a .fl project file.
 
@@ -57,7 +57,7 @@ int fld::io::fdesign_flip = 0;
  \param[in] strategy add new nodes after current or as last child
  \return 0 if the operation failed, 1 if it succeeded
  */
-int fld::io::read_file(Project &proj, const char *filename, int merge, Strategy strategy) {
+int fluid::io::read_file(Project &proj, const char *filename, int merge, Strategy strategy) {
   Project_Reader f(proj);
   strategy.source(Strategy::FROM_FILE);
   return f.read_project(filename, merge, strategy);

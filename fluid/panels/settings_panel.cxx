@@ -24,7 +24,7 @@
 #include <FL/fl_ask.H>
 #include "../src/flstring.h"
 #include <string.h>
-using namespace fld::widget;
+using namespace fluid::widget;
 void scheme_cb(Fl_Scheme_Choice *, void *);
 int w_settings_shell_list_selected;
 
@@ -543,8 +543,8 @@ Fl_Menu_Button* w_layout_menu = (Fl_Menu_Button*)nullptr;
 
 static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
   if (v == LOAD) {
-    fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-    if (suite.storage_ == fld::Tool_Store::INTERNAL) {
+    fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+    if (suite.storage_ == fluid::Tool_Store::INTERNAL) {
       w_layout_menu_rename->deactivate();
       for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
       w_layout_menu_delete->deactivate();
@@ -570,26 +570,26 @@ static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
 }
 
 static void cb_w_layout_menu_storage(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::INTERNAL);
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::INTERNAL);
   Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage1(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::USER);
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::USER);
   Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage2(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::PROJECT);
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::PROJECT);
   Fluid.layout_list.update_dialogs();
 }
 
 static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::FILE);
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::FILE);
   Fluid.layout_list.update_dialogs();
 }
 
@@ -895,9 +895,9 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
       for (int i=0; i<g_shell_config->list_size; i++) {
         Fd_Shell_Command *cmd = g_shell_config->list[i];
         o->add(cmd->name.c_str());
-        if (cmd->storage == fld::Tool_Store::USER)
+        if (cmd->storage == fluid::Tool_Store::USER)
           o->icon(i+1, w_settings_shell_fd_user->image());
-        else if (cmd->storage == fld::Tool_Store::PROJECT)
+        else if (cmd->storage == fluid::Tool_Store::PROJECT)
           o->icon(i+1, w_settings_shell_fd_project->image());
       }
     }
@@ -930,9 +930,9 @@ static void cb_a(Fl_Button*, void* v) {
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
-    if (cmd->storage == fld::Tool_Store::USER) {
+    if (cmd->storage == fluid::Tool_Store::USER) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-    } else if (cmd->storage == fld::Tool_Store::PROJECT) {
+    } else if (cmd->storage == fluid::Tool_Store::PROJECT) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
       Fluid.proj.set_modflag(1);
     }
@@ -960,9 +960,9 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
-    if (cmd->storage == fld::Tool_Store::USER) {
+    if (cmd->storage == fluid::Tool_Store::USER) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-    } else if (cmd->storage == fld::Tool_Store::PROJECT) {
+    } else if (cmd->storage == fluid::Tool_Store::PROJECT) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
       Fluid.proj.set_modflag(1);
     }
@@ -988,7 +988,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     int ret = fl_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
       "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
     if (ret==1) return;
-    if (g_shell_config->at(selected-1)->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (g_shell_config->at(selected-1)->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     g_shell_config->remove(selected-1);
     w_settings_shell_list->remove(selected);
     if (selected <= w_settings_shell_list->size())
@@ -1073,7 +1073,7 @@ static void cb_Name(Fl_Input* o, void* v) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->name = o->value();
       w_settings_shell_list->text(selected, o->value());
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1091,7 +1091,7 @@ static void cb_Menu(Fl_Input* o, void* v) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->label = o->value();
       cmd->update_shell_menu();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1114,7 +1114,7 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->shortcut = o->value();
       cmd->update_shell_menu();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1123,30 +1123,30 @@ static void cb_Store(Fl_Choice* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      fld::Tool_Store ts = g_shell_config->list[selected-1]->storage;
+      fluid::Tool_Store ts = g_shell_config->list[selected-1]->storage;
       o->value(o->find_item_with_argument((long)ts));
     } else {
-      o->value(o->find_item_with_argument((long)fld::Tool_Store::USER));
+      o->value(o->find_item_with_argument((long)fluid::Tool_Store::USER));
     }
   } else {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
-      fld::Tool_Store ts = (fld::Tool_Store)(o->mvalue()->argument());
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      fluid::Tool_Store ts = (fluid::Tool_Store)(o->mvalue()->argument());
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
       cmd->storage = ts;
       //w_settings_shell_list->text(selected, cmd->name.c_str());
-      if (cmd->storage == fld::Tool_Store::USER)
+      if (cmd->storage == fluid::Tool_Store::USER)
         w_settings_shell_list->icon(selected, w_settings_shell_fd_user->image());
-      else if (cmd->storage == fld::Tool_Store::PROJECT)
+      else if (cmd->storage == fluid::Tool_Store::PROJECT)
         w_settings_shell_list->icon(selected, w_settings_shell_fd_project->image());
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
 
 Fl_Menu_Item menu_Store[] = {
- {"@fd_user User Setting", 0,  nullptr, (void*)(fld::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
- {"@fd_project Project File", 0,  nullptr, (void*)(fld::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"@fd_user User Setting", 0,  nullptr, (void*)(fluid::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"@fd_project Project File", 0,  nullptr, (void*)(fluid::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
@@ -1165,7 +1165,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
       int cond = (int)(o->mvalue()->argument());
       cmd->condition = cond;
       g_shell_config->rebuild_shell_menu();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1202,7 +1202,7 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->command = o->buffer()->text();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1281,7 +1281,7 @@ static void cb_save(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1303,7 +1303,7 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1325,7 +1325,7 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1347,7 +1347,7 @@ static void cb_show(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::DONT_SHOW_TERMINAL;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1369,7 +1369,7 @@ static void cb_clear(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::CLEAR_TERMINAL;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -1391,7 +1391,7 @@ static void cb_clear1(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::CLEAR_HISTORY;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
 }
@@ -2465,8 +2465,8 @@ static void cb_Reset(Fl_Button* o, void* v) {
 
 static void cb_Close(Fl_Button*, void*) {
   if (g_shell_config)
-    g_shell_config->write(Fluid.preferences, fld::Tool_Store::USER);
-  Fluid.layout_list.write(Fluid.preferences, fld::Tool_Store::USER);
+    g_shell_config->write(Fluid.preferences, fluid::Tool_Store::USER);
+  Fluid.layout_list.write(Fluid.preferences, fluid::Tool_Store::USER);
   settings_window->hide();
 }
 

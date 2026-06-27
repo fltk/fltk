@@ -25,7 +25,7 @@
 
 #include "widgets/Code_Editor.h"
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 /**
@@ -47,6 +47,6 @@ protected:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_WIDGETS_CODE_VIEWER_H

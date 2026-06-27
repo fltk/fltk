@@ -46,8 +46,8 @@
 #undef max
 #include <algorithm>
 
-using namespace fld;
-using namespace fld::proj;
+using namespace fluid;
+using namespace fluid::proj;
 
 extern void redraw_browser();
 
@@ -95,7 +95,7 @@ std::string subclassname(Node* l) {
 void Widget_Node::ideal_size(int &w, int &h) {
   w = 120;
   h = 100;
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 /**
@@ -359,88 +359,88 @@ void label_cb(Fl_Input* i, void* v) {
 
 int widget_i = 0;
 
-static int vars_i_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_i_cb(const fluid::widget::Formula_Input*, void* v) {
   return widget_i;
 }
 
-static int vars_x_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_x_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->x();
   return 0;
 }
 
-static int vars_y_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_y_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->y();
   return 0;
 }
 
-static int vars_w_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_w_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->w();
   return 0;
 }
 
-static int vars_h_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_h_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = (Node*)v;
   if (t->is_widget())
     return ((Widget_Node*)t)->o->h();
   return 0;
 }
 
-static int vars_px_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_px_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->x();
   return 0;
 }
 
-static int vars_py_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_py_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->y();
   return 0;
 }
 
-static int vars_pw_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_pw_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->w();
   return 0;
 }
 
-static int vars_ph_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_ph_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->parent;
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->h();
   return 0;
 }
 
-static int vars_sx_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_sx_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->x();
   return 0;
 }
 
-static int vars_sy_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_sy_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->y();
   return 0;
 }
 
-static int vars_sw_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_sw_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->w();
   return 0;
 }
 
-static int vars_sh_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_sh_cb(const fluid::widget::Formula_Input*, void* v) {
   Node* t = ((Node*)v)->prev_sibling();
   if (t && t->is_widget())
     return ((Widget_Node*)t)->o->h();
@@ -469,27 +469,27 @@ static void calculate_bbox(Node* p) {
   }
 }
 
-static int vars_cx_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_cx_cb(const fluid::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_x;
 }
 
-static int vars_cy_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_cy_cb(const fluid::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_y;
 }
 
-static int vars_cw_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_cw_cb(const fluid::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_r - bbox_x;
 }
 
-static int vars_ch_cb(const fld::widget::Formula_Input*, void* v) {
+static int vars_ch_cb(const fluid::widget::Formula_Input*, void* v) {
   calculate_bbox((Node*)v);
   return bbox_b - bbox_y;
 }
 
-fld::widget::Formula_Input_Vars widget_vars[] = {
+fluid::widget::Formula_Input_Vars widget_vars[] = {
   { "i", vars_i_cb },   // zero based counter of selected widgets
   { "x", vars_x_cb },   // position and size of current widget
   { "y", vars_y_cb },
@@ -1446,7 +1446,7 @@ int isdeclare(const char* c) {
   return 0;
 }
 
-void Widget_Node::write_static(fld::io::Code_Writer& f) {
+void Widget_Node::write_static(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   if (subclass().empty() || (is_class() && (t.compare(0, 3, "Fl_")==0))) {
     f.write_h_once("#include <FL/Fl.H>");
@@ -1533,7 +1533,7 @@ void Widget_Node::write_static(fld::io::Code_Writer& f) {
   inactive_image.write_static(f);
 }
 
-void Widget_Node::write_code1(fld::io::Code_Writer& f) {
+void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   const char* c = array_name(this);
   if (c) {
@@ -1631,15 +1631,15 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
   if (label() && *label()) {
     f.write_c(", ");
     switch (Fluid.proj.i18n.type) {
-    case fld::I18n_Type::NONE : /* None */
+    case fluid::I18n_Type::NONE : /* None */
         f.write_cstring(label());
         break;
-    case fld::I18n_Type::GNU : /* GNU gettext */
+    case fluid::I18n_Type::GNU : /* GNU gettext */
         f.write_c("%s(", Fluid.proj.i18n.gnu_function.c_str());
         f.write_cstring(label());
         f.write_c(")");
         break;
-    case fld::I18n_Type::POSIX : /* POSIX catgets */
+    case fluid::I18n_Type::POSIX : /* POSIX catgets */
         f.write_c("catgets(%s,%s,%d,",
                   Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
                   Fluid.proj.i18n.posix_set.c_str(), msgnum());
@@ -1659,7 +1659,7 @@ void Widget_Node::write_code1(fld::io::Code_Writer& f) {
   write_widget_code(f);
 }
 
-void Widget_Node::write_color(fld::io::Code_Writer& f, const char* field, Fl_Color color) {
+void Widget_Node::write_color(fluid::io::Code_Writer& f, const char* field, Fl_Color color) {
   const char* color_name = nullptr;
   switch (color) {
   case FL_FOREGROUND_COLOR:     color_name = "FL_FOREGROUND_COLOR";     break;
@@ -1697,23 +1697,23 @@ void Widget_Node::write_color(fld::io::Code_Writer& f, const char* field, Fl_Col
   }
 }
 
-// this is split from write_code1(fld::io::Code_Writer& f) for Window_Node:
-void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
+// this is split from write_code1(fluid::io::Code_Writer& f) for Window_Node:
+void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   Fl_Widget* tplate = ((Widget_Node*)factory)->o;
   const char* var = is_class() ? "this" : name() ? name() : "o";
 
   if (!tooltip().empty()) {
     f.write_c("%s%s->tooltip(",f.indent(), var);
     switch (Fluid.proj.i18n.type) {
-    case fld::I18n_Type::NONE : /* None */
+    case fluid::I18n_Type::NONE : /* None */
         f.write_cstring(tooltip().c_str());
         break;
-    case fld::I18n_Type::GNU : /* GNU gettext */
+    case fluid::I18n_Type::GNU : /* GNU gettext */
         f.write_c("%s(", Fluid.proj.i18n.gnu_function.c_str());
         f.write_cstring(tooltip().c_str());
         f.write_c(")");
         break;
-    case fld::I18n_Type::POSIX : /* POSIX catgets */
+    case fluid::I18n_Type::POSIX : /* POSIX catgets */
         f.write_c("catgets(%s,%s,%d,",
                   Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
                   Fluid.proj.i18n.posix_set.c_str(),
@@ -1879,26 +1879,26 @@ void Widget_Node::write_widget_code(fld::io::Code_Writer& f) {
   }
 }
 
-void Widget_Node::write_extra_code(fld::io::Code_Writer& f) {
+void Widget_Node::write_extra_code(fluid::io::Code_Writer& f) {
   for (int n=0; n < NUM_EXTRA_CODE; n++)
     if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str()))
       f.write_c("%s%s\n", f.indent(), extra_code(n).c_str());
 }
 
-void Widget_Node::write_block_close(fld::io::Code_Writer& f) {
+void Widget_Node::write_block_close(fluid::io::Code_Writer& f) {
   f.indentation--;
   f.write_c("%s} // %s* %s\n", f.indent(), subclassname(this).c_str(),
           name() ? name() : "o");
 }
 
-void Widget_Node::write_code2(fld::io::Code_Writer& f) {
+void Widget_Node::write_code2(fluid::io::Code_Writer& f) {
   write_extra_code(f);
   write_block_close(f);
 }
 
 ////////////////////////////////////////////////////////////////
 
-void Widget_Node::write_properties(fld::io::Project_Writer &f) {
+void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   Node::write_properties(f);
   f.write_indent(level+1);
   switch (public_) {
@@ -2021,7 +2021,7 @@ void Widget_Node::write_properties(fld::io::Project_Writer &f) {
   }
 }
 
-void Widget_Node::read_property(fld::io::Project_Reader &f, const char* c) {
+void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
   int x,y,w,h; Fl_Font ft; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
     public_ = 0;
@@ -2239,7 +2239,7 @@ int Widget_Node::read_fdesign(const char* propname, const char* value) {
   if (!strcmp(propname,"box")) {
     float x,y,w,h;
     if (sscanf(value,"%f %f %f %f",&x,&y,&w,&h) == 4) {
-      if (fld::io::fdesign_flip) {
+      if (fluid::io::fdesign_flip) {
         Node* p;
         for (p = parent; p && !p->is_a(Type::Window); p = p->parent) {/*empty*/}
         if (p && p->is_widget()) y = ((Widget_Node*)p)->o->h()-(y+h);

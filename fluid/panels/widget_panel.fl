@@ -102,7 +102,7 @@ extern void color_common(Fl_Color c);
 extern void color2_common(Fl_Color c);
 extern void textcolor_common(Fl_Color c);
 extern int widget_i;
-extern fld::widget::Formula_Input_Vars widget_vars[];} {uid 81c9 private global
+extern fluid::widget::Formula_Input_Vars widget_vars[];} {uid 81c9 private global
 }
 
 decl {extern int numselected;
@@ -220,7 +220,7 @@ Function {make_image_panel()} {uid b832
     if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this width in pixel units} xywh {75 75 55 20} labelsize 11 align 5 textsize 11
-          class {fld::widget::Formula_Input}
+          class {fluid::widget::Formula_Input}
         }
         Fl_Input image_panel_imageh {uid e676
           label {Height:}
@@ -250,7 +250,7 @@ Function {make_image_panel()} {uid b832
     if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this height in pixel units} xywh {135 75 55 20} labelsize 11 align 5 textsize 11
-          class {fld::widget::Formula_Input}
+          class {fluid::widget::Formula_Input}
         }
         Fl_Button {} {uid 4df5
           label Reset
@@ -370,7 +370,7 @@ Function {make_image_panel()} {uid b832
     if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this width in pixel units} xywh {75 215 55 20} labelsize 11 align 5 textsize 11
-          class {fld::widget::Formula_Input}
+          class {fluid::widget::Formula_Input}
         }
         Fl_Input image_panel_deimageh {uid c6c4
           label {Height:}
@@ -400,7 +400,7 @@ Function {make_image_panel()} {uid b832
     if (mod) Fluid.proj.set_modflag(1);
   }}
           tooltip {Scale image to this height in pixel units} xywh {135 215 55 20} labelsize 11 align 5 textsize 11
-          class {fld::widget::Formula_Input}
+          class {fluid::widget::Formula_Input}
         }
         Fl_Button {} {uid a381
           label Reset
@@ -857,7 +857,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               tooltip {The X position of the widget as a number or formula.
 Formulas can be simple math, including the variables
 x, px, sx, cx, and i} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
+              class {fluid::widget::Formula_Input}
             }
             Fl_Input widget_y_input {uid 5985
               label {Y:}
@@ -890,7 +890,7 @@ x, px, sx, cx, and i} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
               tooltip {The Y position of the widget as a number or formula.
 Formulas can be simple math, including the variables
 y, py, sy, cy, and i} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
+              class {fluid::widget::Formula_Input}
             }
             Fl_Input widget_w_input {uid 2e88
               label {Width:}
@@ -923,7 +923,7 @@ y, py, sy, cy, and i} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
               tooltip {The width of the widget as a number or formula.
 Formulas can be simple math, including the variables
 w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
+              class {fluid::widget::Formula_Input}
             }
             Fl_Input widget_h_input {uid 2382
               label {Height:}
@@ -956,7 +956,7 @@ w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
               tooltip {The height of the widget as a number or formula.
 Formulas can be simple math, including the variables
 h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
-              class {fld::widget::Formula_Input}
+              class {fluid::widget::Formula_Input}
             }
             Fl_Choice {} {uid 4f6a
               label {Children:}
@@ -2504,7 +2504,7 @@ wCallback->do_callback(wCallback, v);} open
   }}
                 tooltip {The callback function or code for the widget. Use the variable name 'o' to access the Widget pointer and 'v' to access the user value.} xywh {95 225 310 80} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
-                class {fld::widget::Code_Editor}
+                class {fluid::widget::Code_Editor}
               }
             }
           }
@@ -3485,7 +3485,7 @@ a `\#` directive: `\#include <foo.h>`, a typedef `typedef char byte;`,
  or a `using` statement, etc.} xywh {95 75 310 100} labelfont 1 labelsize 11 align 132 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
-                class {fld::widget::Code_Editor}
+                class {fluid::widget::Code_Editor}
               }
             }
             Fl_Group {} {uid 160e
@@ -3624,7 +3624,7 @@ Code_Node* nd = (Code_Node*)current_node;
             code1 {\#include "widgets/Code_Editor.h"}
             code2 {o->linenumber_width(60);
 o->linenumber_size(o->Fl_Text_Display::textsize());}
-            class {fld::widget::Code_Editor}
+            class {fluid::widget::Code_Editor}
           }
         }
       }
@@ -3772,7 +3772,7 @@ if (v == LOAD) {
                 tooltip {function name and args, or blank for `main(..)`} xywh {95 100 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
-                class {fld::widget::Code_Editor}
+                class {fluid::widget::Code_Editor}
               }
             }
             Fl_Group {} {uid 3cb7
@@ -3790,7 +3790,7 @@ update_current(o, v,
                 tooltip {return type, or blank to return outermost widget} xywh {95 160 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
-                class {fld::widget::Code_Editor}
+                class {fluid::widget::Code_Editor}
               }
             }
             Fl_Group {} {uid 01de

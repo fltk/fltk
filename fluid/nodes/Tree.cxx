@@ -19,8 +19,8 @@
 
 #include "Project.h"
 
-using namespace fld;
-using namespace fld::node;
+using namespace fluid;
+using namespace fluid::node;
 
 
 Tree::Iterator::Iterator(Node *t, bool only_selected)

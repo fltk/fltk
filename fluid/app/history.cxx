@@ -20,8 +20,8 @@
 
 #include "../src/flstring.h"
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 
 /**
@@ -71,7 +71,7 @@ void History::update(std::string project_file) {
   Fluid.preferences.get("recent_files", max_files, 5);
   if (max_files > 10) max_files = 10;
 
-  std::string absolute = fld::fix_separators(fl_filename_absolute_str(project_file));
+  std::string absolute = fluid::fix_separators(fl_filename_absolute_str(project_file));
   for (i = 0; i < max_files; i ++)
 #if defined(_WIN32) || defined(__APPLE__)
     if (!strcasecmp(absolute.c_str(), abspath[i])) break;

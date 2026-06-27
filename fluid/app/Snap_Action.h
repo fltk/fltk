@@ -26,15 +26,15 @@ class Fl_Preferences;
 
 extern Fl_Menu_Item main_layout_submenu_[];
 
-namespace fld {
-enum class Tool_Store; // fld::
+namespace fluid {
+enum class Tool_Store; // fluid::
 namespace io {
-class Project_Reader; // fld::io::
-class Project_Writer; // fld::io::
+class Project_Reader; // fluid::io::
+class Project_Writer; // fluid::io::
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
-namespace fld {
+namespace fluid {
 namespace app {
 
 /**
@@ -78,8 +78,8 @@ public:
 
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
-  void write(fld::io::Project_Writer*);
-  void read(fld::io::Project_Reader*);
+  void write(fluid::io::Project_Writer*);
+  void read(fluid::io::Project_Reader*);
 
   int textsize_not_null();
 };
@@ -99,13 +99,13 @@ public:
   char *name_;                  ///< name of the suite
   char *menu_label;             ///< label text used in pulldown menu
   Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
-  fld::Tool_Store storage_;       ///< storage location (see fld::Tool_Store::INTERNAL, etc.)
+  fluid::Tool_Store storage_;       ///< storage location (see fluid::Tool_Store::INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
-  void write(fld::io::Project_Writer*);
-  void read(fld::io::Project_Reader*);
+  void write(fluid::io::Project_Writer*);
+  void read(fluid::io::Project_Reader*);
   void update_label();
-  void storage(fld::Tool_Store s) { storage_ = s; update_label(); }
+  void storage(fluid::Tool_Store s) { storage_ = s; update_label(); }
   void name(const char *n);
   void init();
   ~Layout_Suite();
@@ -149,13 +149,13 @@ public:
 
   int load(const std::string &filename);
   int save(const std::string &filename);
-  void write(Fl_Preferences &prefs, fld::Tool_Store storage);
-  void read(Fl_Preferences &prefs, fld::Tool_Store storage);
-  void write(fld::io::Project_Writer*);
-  void read(fld::io::Project_Reader*);
+  void write(Fl_Preferences &prefs, fluid::Tool_Store storage);
+  void read(Fl_Preferences &prefs, fluid::Tool_Store storage);
+  void write(fluid::io::Project_Writer*);
+  void read(fluid::io::Project_Reader*);
   int add(Layout_Suite*);
   void remove(int index);
-  void remove_all(fld::Tool_Store storage);
+  void remove_all(fluid::Tool_Store storage);
   Layout_Preset *at(int);
   int size();
 };
@@ -201,7 +201,7 @@ public:
 };
 
 } // namespace app
-} // namespace fld
+} // namespace fluid
 
 
 #endif // _FLUID_FD_SNAP_ACTION_H

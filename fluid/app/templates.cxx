@@ -28,14 +28,14 @@
 #include <FL/Fl_PNG_Image.H>
 #include "../src/flstring.h"
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 /**
  Save a design template.
  \todo We should document the concept of templates.
  */
-void fld::app::save_template() {
+void fluid::app::save_template() {
   // Setup the template panel...
   if (!template_panel) make_template_panel();
 
@@ -96,7 +96,7 @@ void fld::app::save_template() {
                   "Replace", nullptr, c) == 0) return;
   }
 
-  if (!fld::io::write_file(Fluid.proj, filename)) {
+  if (!fluid::io::write_file(Fluid.proj, filename)) {
     fl_alert("Error writing %s: %s", filename, strerror(errno));
     return;
   }

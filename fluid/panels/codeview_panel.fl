@@ -187,7 +187,7 @@ if (!cv_design_filename) {
 }
 
 if (cv_project->visible_r()) {
-  fld::io::write_file(Fluid.proj, cv_design_filename, false, true);
+  fluid::io::write_file(Fluid.proj, cv_design_filename, false, true);
   int top = cv_project->top_line();
   cv_project->buffer()->loadfile(cv_design_filename);
   cv_project->scroll(top, 0);
@@ -197,13 +197,13 @@ if (cv_project->visible_r()) {
   fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
   fl_strlcat(fn, "strings", FL_PATH_MAX);
   fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n.type)]);
-  fld::io::write_strings(Fluid.proj, fn);
+  fluid::io::write_strings(Fluid.proj, fn);
   int top = cv_strings->top_line();
   cv_strings->buffer()->loadfile(fn);
   cv_strings->scroll(top, 0);
 } else if (cv_source->visible_r() || cv_header->visible_r()) {
   // Generate code into in-memory ostringstream buffers (no temp files).
-  fld::io::Code_Writer f(Fluid.proj);
+  fluid::io::Code_Writer f(Fluid.proj);
   std::string code_filename = Fluid.proj.codefile_path() + Fluid.proj.codefile_name();
   std::string header_filename = Fluid.proj.headerfile_path() + Fluid.proj.headerfile_name();
   if (Fluid.proj.proj_filename)
@@ -297,7 +297,7 @@ Function {make_codeview()} {open
           code0 {\#include "widgets/Code_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Code_Viewer}
+          class {fluid::widget::Code_Viewer}
         }
       }
       Fl_Group {} {
@@ -309,7 +309,7 @@ Function {make_codeview()} {open
           code0 {\#include "widgets/Code_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Code_Viewer}
+          class {fluid::widget::Code_Viewer}
         }
       }
       Fl_Group {} {
@@ -321,7 +321,7 @@ Function {make_codeview()} {open
           code0 {\#include "widgets/Text_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Text_Viewer}
+          class {fluid::widget::Text_Viewer}
         }
       }
       Fl_Group {} {
@@ -333,7 +333,7 @@ Function {make_codeview()} {open
           code0 {\#include "widgets/Text_Viewer.h"}
           code1 {o->linenumber_width(60);}
           code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Text_Viewer}
+          class {fluid::widget::Text_Viewer}
         }
       }
     }

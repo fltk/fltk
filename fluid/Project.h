@@ -28,7 +28,7 @@
 // ---- project class declaration
 
 
-namespace fld {
+namespace fluid {
 
 namespace app {
   class Layout_Preset;
@@ -117,7 +117,7 @@ public: // Methods
   void set_modflag(int mf, int mfc = -1);
 };
 
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_PROJECT_H
 

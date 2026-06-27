@@ -23,10 +23,10 @@
 #include <ctype.h>
 #include <string.h>
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
-/** \class fld::widget::Formula_Input
+/** \class fluid::widget::Formula_Input
  The Formula_Input widget is an input field for entering widget coordinates
  and sizes. It includes basic math capabilities and allows the use of variables
  in formulas. This widget is useful for specifying precise positions and

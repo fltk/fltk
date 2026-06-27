@@ -1,0 +1,31 @@
+#
+# Experimental FLTK clang-tidy file. This is not an officiel clang-tidy test yet.
+#
+
+Checks:
+  - '-*'
+  - 'bugprone-*'
+  - '-bugprone-narrowing-conversions'
+  - 'cert-*'
+  - '-cert-err58-cpp'
+  - 'clang-analyzer-*'
+  - 'cppcoreguidelines-*'
+  - '-cppcoreguidelines-narrowing-conversions'
+  # Disabled: intentional FLTK design decisions, not defects
+  - '-cppcoreguidelines-avoid-c-arrays'               # string buffers, image data
+  - '-cppcoreguidelines-avoid-magic-numbers'           # RGB values, widget sizes, etc.
+  - '-cppcoreguidelines-avoid-non-const-global-variables' # Fl::first_window() etc.
+  - '-cppcoreguidelines-macro-to-enum'                 # FL_RED/FL_BLUE style constants
+  - '-cppcoreguidelines-macro-usage'                   # FL_EXPORT, FL_OVERRIDE, etc.
+  - '-cppcoreguidelines-non-private-member-variables-in-classes'
+  - '-cppcoreguidelines-owning-memory'                 # requires GSL; fires on all new/delete
+  - '-cppcoreguidelines-pro-bounds-array-to-pointer-decay'
+  - '-cppcoreguidelines-pro-bounds-pointer-arithmetic' # image/buffer manipulation
+  - '-cppcoreguidelines-pro-type-reinterpret-cast'    # OS handle idiom (Fl_X, etc.)
+  - '-cppcoreguidelines-pro-type-vararg'              # printf, fl_message, etc.
+  - '-cppcoreguidelines-special-member-functions'     # would require Rule-of-5 everywhere
+  - '-cppcoreguidelines-use-enum-class'               # Fl_Color/Fl_Font are public API
+
+# Report warnings only in FLTK's own headers; suppress noise from bundled
+# third-party libraries (jpeg, png, zlib, nanosvg, libdecor).
+HeaderFilterRegex: '.*/fltk-1\.5\.git/(FL|src|fluid|fltk-options|test|util|public)/.*'

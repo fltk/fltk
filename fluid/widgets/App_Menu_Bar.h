@@ -23,7 +23,7 @@
 
 #include <FL/Fl_Menu_Bar.H>
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 /**
@@ -36,6 +36,6 @@ public:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_WIDGETS_APP_MENU_BAR_H

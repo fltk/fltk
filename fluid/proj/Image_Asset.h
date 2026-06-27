@@ -46,9 +46,9 @@ private: // methods
   Image_Asset(const Image_Asset&) = delete;
   Image_Asset& operator=(const Image_Asset&) = delete;
 
-  size_t write_static_binary(fld::io::Code_Writer& f, const char* fmt);
-  size_t write_static_text(fld::io::Code_Writer& f, const char* fmt);
-  void write_static_rgb(fld::io::Code_Writer& f, const char* idata_name);
+  size_t write_static_binary(fluid::io::Code_Writer& f, const char* fmt);
+  size_t write_static_text(fluid::io::Code_Writer& f, const char* fmt);
+  void write_static_rgb(fluid::io::Code_Writer& f, const char* idata_name);
 
 public: // methods
   ~Image_Asset();
@@ -58,11 +58,11 @@ public: // methods
   /// Return the image filename relative to the project directory.
   const char *filename() const { return filename_.c_str(); }
 
-  void write_static(fld::io::Code_Writer& f, int compressed);
-  void write_initializer(fld::io::Code_Writer& f, const char *type_name, const char *format, ...);
-  void write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive = 0);
-  void write_inline(fld::io::Code_Writer& f, int inactive = 0);
-  void write_file_error(fld::io::Code_Writer& f, const char *fmt);
+  void write_static(fluid::io::Code_Writer& f, int compressed);
+  void write_initializer(fluid::io::Code_Writer& f, const char *type_name, const char *format, ...);
+  void write_code(fluid::io::Code_Writer& f, int bind, const char *var, int inactive = 0);
+  void write_inline(fluid::io::Code_Writer& f, int inactive = 0);
+  void write_file_error(fluid::io::Code_Writer& f, const char *fmt);
 };
 
 // Pop up a file chooser and return a valid image selected by the user,

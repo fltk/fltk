@@ -27,7 +27,7 @@
 
 #include <FL/Fl_Text_Editor.H>
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 // ---- Code_Editor declaration
@@ -66,7 +66,7 @@ public:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 
 #endif // FLUID_WIDGETS_CODE_EDITOR_H

@@ -78,7 +78,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("CodeBlock"));
         o->image(pixmap[(int)Type::CodeBlock]);
       } // Fl_Button* o
-      { fld::widget::Bin_Window_Button* o = new fld::widget::Bin_Window_Button(55, 46, 24, 24);
+      { fluid::widget::Bin_Window_Button* o = new fluid::widget::Bin_Window_Button(55, 46, 24, 24);
         o->tooltip("Widget Class");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -91,7 +91,7 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Widget_Class]);
-      } // fld::widget::Bin_Window_Button* o
+      } // fluid::widget::Bin_Window_Button* o
       { Fl_Button* o = new Fl_Button(5, 71, 24, 24);
         o->tooltip("Declaration");
         o->box(FL_THIN_UP_BOX);
@@ -114,7 +114,7 @@ Fl_Window* make_widgetbin() {
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(87, 19, 79, 79, "Groups");
       o->labelsize(12);
-      { fld::widget::Bin_Window_Button* o = new fld::widget::Bin_Window_Button(89, 21, 24, 24);
+      { fluid::widget::Bin_Window_Button* o = new fluid::widget::Bin_Window_Button(89, 21, 24, 24);
         o->tooltip("Window");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -127,8 +127,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Window]);
-      } // fld::widget::Bin_Window_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(114, 21, 24, 24);
+      } // fluid::widget::Bin_Window_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(114, 21, 24, 24);
         o->tooltip("Group");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -141,8 +141,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Group]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(139, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(139, 21, 24, 24);
         o->tooltip("Pack");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -155,8 +155,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Pack]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(89, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(89, 46, 24, 24);
         o->tooltip("Tabs");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -169,8 +169,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Tabs]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(114, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(114, 46, 24, 24);
         o->tooltip("Scroll");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -183,8 +183,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Scroll]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(139, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(139, 46, 24, 24);
         o->tooltip("Flex");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -197,8 +197,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Flex]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(89, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(89, 71, 24, 24);
         o->tooltip("Tile");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -211,8 +211,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Tile]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(114, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(114, 71, 24, 24);
         o->tooltip("Wizard");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -225,8 +225,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Wizard]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(139, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(139, 71, 24, 24);
         o->tooltip("Grid");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -239,12 +239,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Grid]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(171, 19, 54, 79, "Buttons");
       o->labelsize(12);
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(173, 21, 24, 24);
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(173, 21, 24, 24);
         o->tooltip("Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -257,8 +257,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Button]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(198, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(198, 21, 24, 24);
         o->tooltip("Return Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -271,8 +271,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Return_Button]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(173, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(173, 46, 24, 24);
         o->tooltip("Light Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -285,8 +285,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Light_Button]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(198, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(198, 46, 24, 24);
         o->tooltip("Repeat Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -299,8 +299,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Repeat_Button]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(173, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(173, 71, 24, 24);
         o->tooltip("Check Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -313,8 +313,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Check_Button]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(198, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(198, 71, 24, 24);
         o->tooltip("Round Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -327,12 +327,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Round_Button]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(230, 19, 104, 79, "Valuators");
       o->labelsize(12);
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(232, 21, 24, 24);
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(232, 21, 24, 24);
         o->tooltip("Slider");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -345,8 +345,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Slider]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(257, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(257, 21, 24, 24);
         o->tooltip("Scroll Bar");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -359,8 +359,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Scrollbar]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(282, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(282, 21, 24, 24);
         o->tooltip("Value Slider");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -373,8 +373,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Value_Slider]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(307, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(307, 21, 24, 24);
         o->tooltip("Value Output");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -387,8 +387,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Value_Output]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(232, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(232, 46, 24, 24);
         o->tooltip("Adjuster");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -401,8 +401,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Adjuster]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(257, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(257, 46, 24, 24);
         o->tooltip("Counter");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -415,8 +415,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Counter]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(282, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(282, 46, 24, 24);
         o->tooltip("Dial");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -429,8 +429,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Dial]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(232, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(232, 71, 24, 24);
         o->tooltip("Roller");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -443,8 +443,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Roller]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(257, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(257, 71, 24, 24);
         o->tooltip("Spinner");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -457,8 +457,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Spinner]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(282, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(282, 71, 24, 24);
         o->tooltip("Value Input");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -471,12 +471,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Value_Input]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(339, 19, 54, 79, "Text");
       o->labelsize(12);
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(341, 21, 24, 24);
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(341, 21, 24, 24);
         o->tooltip("Input");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -489,8 +489,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Input]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(366, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(366, 21, 24, 24);
         o->tooltip("Output");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -503,8 +503,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Output]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(341, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(341, 46, 24, 24);
         o->tooltip("Text Edit");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -517,8 +517,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Text_Editor]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(366, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(366, 46, 24, 24);
         o->tooltip("Text Display");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -531,8 +531,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Text_Display]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(341, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(341, 71, 24, 24);
         o->tooltip("File Input");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -545,8 +545,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::File_Input]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(366, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(366, 71, 24, 24);
         o->tooltip("Terminal");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -559,12 +559,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Terminal]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(398, 19, 79, 79, "Menus");
       o->labelsize(12);
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(400, 22, 24, 24);
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(400, 22, 24, 24);
         o->tooltip("Input Choice");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -577,8 +577,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Input_Choice]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(425, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(425, 21, 24, 24);
         o->tooltip("Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -591,8 +591,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Menu_Item]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(450, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(450, 21, 24, 24);
         o->tooltip("Menu Bar");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -605,8 +605,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Menu_Bar]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(400, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(400, 46, 24, 24);
         o->tooltip("Menu Button");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -619,8 +619,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Menu_Button]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(425, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(425, 46, 24, 24);
         o->tooltip("Checkbox Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -633,8 +633,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Checkbox_Menu_Item]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(450, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(450, 46, 24, 24);
         o->tooltip("Sub Menu");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -647,8 +647,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Submenu]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(400, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(400, 71, 24, 24);
         o->tooltip("Choice");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -661,8 +661,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Choice]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(425, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(425, 71, 24, 24);
         o->tooltip("Radio Menu Item");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -675,12 +675,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Radio_Menu_Item]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(482, 19, 54, 79, "Browsers");
       o->labelsize(12);
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(484, 21, 24, 24);
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(484, 21, 24, 24);
         o->tooltip("Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -693,8 +693,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Browser]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(509, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(509, 21, 24, 24);
         o->tooltip("Tree");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -707,8 +707,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Tree]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(484, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(484, 46, 24, 24);
         o->tooltip("Check Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -721,8 +721,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Check_Browser]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(509, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(509, 46, 24, 24);
         o->tooltip("Help Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -735,8 +735,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Help_View]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(484, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(484, 71, 24, 24);
         o->tooltip("File Browser");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -749,8 +749,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::File_Browser]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(509, 71, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(509, 71, 24, 24);
         o->tooltip("Table");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -763,12 +763,12 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Table]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(540, 19, 55, 79, "Misc");
       o->labelsize(12);
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(542, 21, 24, 24);
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(542, 21, 24, 24);
         o->tooltip("Box");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -781,8 +781,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Box]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(567, 21, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(567, 21, 24, 24);
         o->tooltip("Clock");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -795,8 +795,8 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Clock]);
-      } // fld::widget::Bin_Button* o
-      { fld::widget::Bin_Button* o = new fld::widget::Bin_Button(542, 46, 24, 24);
+      } // fluid::widget::Bin_Button* o
+      { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(542, 46, 24, 24);
         o->tooltip("Progress");
         o->box(FL_THIN_UP_BOX);
         o->color(FL_BACKGROUND_COLOR);
@@ -809,7 +809,7 @@ Fl_Window* make_widgetbin() {
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
         o->image(pixmap[(int)Type::Progress]);
-      } // fld::widget::Bin_Button* o
+      } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
     widgetbin_panel->set_non_modal();

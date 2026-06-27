@@ -21,7 +21,7 @@
 
 #include <FL/filename.H>
 
-namespace fld {
+namespace fluid {
 namespace app {
 
 class History {
@@ -39,7 +39,7 @@ public:
 };
 
 } // namespace app
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_APP_HISTORY_H
 

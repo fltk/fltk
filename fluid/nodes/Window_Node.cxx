@@ -77,19 +77,19 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
     c->value(static_cast<int>(Fluid.proj.i18n.type));
   } else {
     Fluid.proj.undo.checkpoint();
-    Fluid.proj.i18n.type = static_cast<fld::I18n_Type>(c->value());
+    Fluid.proj.i18n.type = static_cast<fluid::I18n_Type>(c->value());
     Fluid.proj.set_modflag(1);
   }
   switch (Fluid.proj.i18n.type) {
-  case fld::I18n_Type::NONE : /* None */
+  case fluid::I18n_Type::NONE : /* None */
       i18n_gnu_group->hide();
       i18n_posix_group->hide();
       break;
-  case fld::I18n_Type::GNU : /* GNU gettext */
+  case fluid::I18n_Type::GNU : /* GNU gettext */
       i18n_gnu_group->show();
       i18n_posix_group->hide();
       break;
-  case fld::I18n_Type::POSIX : /* POSIX cat */
+  case fluid::I18n_Type::POSIX : /* POSIX cat */
       i18n_gnu_group->hide();
       i18n_posix_group->show();
       break;
@@ -339,7 +339,7 @@ void Window_Node::ideal_size(int &w, int &h) {
     Fl::screen_work_area(sx, sy, sw, sh, screen);
     w = std::min(w, sw*3/4); h = std::min(h, sh*3/4);
   }
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 
@@ -359,7 +359,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   if (X!=x() || Y!=y() || W!=w() || H!=h()) {
     // Set a checkpoint on the first resize event, ignore further resizes until
     // a different type of checkpoint is triggered.
-    if (Fluid.proj.undo.checkpoint(fld::proj::Undo::OnceType::WINDOW_RESIZE))
+    if (Fluid.proj.undo.checkpoint(fluid::proj::Undo::OnceType::WINDOW_RESIZE))
       Fluid.proj.set_modflag(1);
   }
 
@@ -404,8 +404,8 @@ void Window_Node::newdx() {
         break;
       }
     }
-    fld::app::Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Widget_Node*)selection, this };
-    fld::app::Snap_Action::check_all(data);
+    fluid::app::Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Widget_Node*)selection, this };
+    fluid::app::Snap_Action::check_all(data);
     if (data.x_dist < 4) mydx = data.dx_out;
     if (data.y_dist < 4) mydy = data.dy_out;
   }
@@ -652,8 +652,8 @@ void Window_Node::draw_overlay() {
   fl_rectf(mysx,myst-5,5,5);
 
   if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
-    fld::app::Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
-    fld::app::Snap_Action::draw_all(data);
+    fluid::app::Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
+    fluid::app::Snap_Action::draw_all(data);
   }
 }
 
@@ -1165,9 +1165,9 @@ int Window_Node::handle(int event) {
       if (Fl::event_state(FL_COMMAND)) {
         int x_step, y_step;
         if (drag & (FD_RIGHT|FD_BOTTOM))
-          fld::app::Snap_Action::get_resize_stepsize(x_step, y_step);
+          fluid::app::Snap_Action::get_resize_stepsize(x_step, y_step);
         else
-          fld::app::Snap_Action::get_move_stepsize(x_step, y_step);
+          fluid::app::Snap_Action::get_move_stepsize(x_step, y_step);
         dx *= x_step;
         dy *= y_step;
       }
@@ -1202,7 +1202,7 @@ int Window_Node::handle(int event) {
  Write the C++ code that comes before the children of the window are written.
  \param f the source code output stream
  */
-void Window_Node::write_code1(fld::io::Code_Writer& f) {
+void Window_Node::write_code1(fluid::io::Code_Writer& f) {
   Widget_Node::write_code1(f);
 }
 
@@ -1211,7 +1211,7 @@ void Window_Node::write_code1(fld::io::Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Window_Node::write_code2(fld::io::Code_Writer& f) {
+void Window_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
   // make the window modal or non-modal
   if (modal) {
@@ -1246,7 +1246,7 @@ void Window_Node::write_code2(fld::io::Code_Writer& f) {
   write_block_close(f);
 }
 
-void Window_Node::write_properties(fld::io::Project_Writer &f) {
+void Window_Node::write_properties(fluid::io::Project_Writer &f) {
   Widget_Node::write_properties(f);
   if (modal) f.write_string("modal");
   else if (non_modal) f.write_string("non_modal");
@@ -1257,7 +1257,7 @@ void Window_Node::write_properties(fld::io::Project_Writer &f) {
   if (o->visible() || override_visible_) f.write_string("visible");
 }
 
-void Window_Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Window_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
   } else if (!strcmp(c,"non_modal")) {
@@ -1345,7 +1345,7 @@ Node *Widget_Class_Node::make(Strategy strategy) {
   return myo;
 }
 
-void Widget_Class_Node::write_properties(fld::io::Project_Writer &f) {
+void Widget_Class_Node::write_properties(fluid::io::Project_Writer &f) {
   Window_Node::write_properties(f);
   if (wc_relative==1)
     f.write_string("position_relative");
@@ -1353,7 +1353,7 @@ void Widget_Class_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("position_relative_rescale");
 }
 
-void Widget_Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Widget_Class_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
   } else if (!strcmp(c,"position_relative_rescale")) {
@@ -1376,9 +1376,9 @@ static const char *trimclassname(const char *n) {
 }
 
 
-void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
+void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
 #if 0
-  Widget_Node::write_code1(fld::io::Code_Writer& f);
+  Widget_Node::write_code1(fluid::io::Code_Writer& f);
 #endif // 0
 
   current_widget_class = this;
@@ -1446,7 +1446,7 @@ void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Widget_Class_Node::write_code2(fld::io::Code_Writer& f) {
+void Widget_Class_Node::write_code2(fluid::io::Code_Writer& f) {
   // make the window modal or non-modal
   if (modal) {
     f.write_c("%sset_modal();\n", f.indent());

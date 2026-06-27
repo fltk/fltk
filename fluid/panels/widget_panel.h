@@ -31,14 +31,14 @@ extern Fl_Group* image_panel_imagegroup;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Shared_Image.H>
 extern Fl_Box* image_panel_data;
-extern fld::widget::Formula_Input* image_panel_imagew;
-extern fld::widget::Formula_Input* image_panel_imageh;
+extern fluid::widget::Formula_Input* image_panel_imagew;
+extern fluid::widget::Formula_Input* image_panel_imageh;
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Button.H>
 extern Fl_Group* image_panel_deimagegroup;
 extern Fl_Box* image_panel_dedata;
-extern fld::widget::Formula_Input* image_panel_deimagew;
-extern fld::widget::Formula_Input* image_panel_deimageh;
+extern fluid::widget::Formula_Input* image_panel_deimagew;
+extern fluid::widget::Formula_Input* image_panel_deimageh;
 extern Fl_Button* image_panel_close;
 Fl_Double_Window* make_image_panel();
 void run_image_panel();
@@ -61,10 +61,10 @@ extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
 extern void position_group_cb(Fl_Group*, void*);
-extern fld::widget::Formula_Input* widget_x_input;
-extern fld::widget::Formula_Input* widget_y_input;
-extern fld::widget::Formula_Input* widget_w_input;
-extern fld::widget::Formula_Input* widget_h_input;
+extern fluid::widget::Formula_Input* widget_x_input;
+extern fluid::widget::Formula_Input* widget_y_input;
+extern fluid::widget::Formula_Input* widget_w_input;
+extern fluid::widget::Formula_Input* widget_h_input;
 extern Fl_Group* wp_gui_flexp;
 #include <FL/Fl_Value_Input.H>
 extern Fl_Value_Input* widget_flex_size;
@@ -100,7 +100,7 @@ extern Fl_Input* v_input[4];
 #include <FL/Fl_Text_Editor.H>
 extern Fl_Text_Editor* wComment;
 #include "widgets/Code_Editor.h"
-extern fld::widget::Code_Editor* wCallback;
+extern fluid::widget::Code_Editor* wCallback;
 extern Fl_Group* wp_cpp_callback;
 extern Fl_Menu_Item whenmenu[];
 #include <FL/Fl_Input_Choice.H>

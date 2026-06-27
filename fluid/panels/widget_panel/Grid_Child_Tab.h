@@ -13,19 +13,19 @@ extern void propagate_load(Fl_Group*, void*);
 class Grid_Child_Tab : public Fl_Group {
 public:
   Grid_Child_Tab(int X, int Y, int W, int H, const char* L=nullptr);
-  fld::widget::Formula_Input* widget_grid_row_input;
+  fluid::widget::Formula_Input* widget_grid_row_input;
 private:
-  inline void cb_widget_grid_row_input_i(fld::widget::Formula_Input*, void*);
-  static void cb_widget_grid_row_input(fld::widget::Formula_Input*, void*);
+  inline void cb_widget_grid_row_input_i(fluid::widget::Formula_Input*, void*);
+  static void cb_widget_grid_row_input(fluid::widget::Formula_Input*, void*);
   inline void cb__i(Fl_Button*, void*);
   static void cb_(Fl_Button*, void*);
   inline void cb_1_i(Fl_Button*, void*);
   static void cb_1(Fl_Button*, void*);
 public:
-  fld::widget::Formula_Input* widget_grid_col_input;
+  fluid::widget::Formula_Input* widget_grid_col_input;
 private:
-  inline void cb_widget_grid_col_input_i(fld::widget::Formula_Input*, void*);
-  static void cb_widget_grid_col_input(fld::widget::Formula_Input*, void*);
+  inline void cb_widget_grid_col_input_i(fluid::widget::Formula_Input*, void*);
+  static void cb_widget_grid_col_input(fluid::widget::Formula_Input*, void*);
   inline void cb_2_i(Fl_Button*, void*);
   static void cb_2(Fl_Button*, void*);
   inline void cb_3_i(Fl_Button*, void*);
@@ -51,29 +51,29 @@ private:
 public:
   Fl_Group* wp_gridc_size;
 private:
-  inline void cb_Width_i(fld::widget::Formula_Input*, void*);
-  static void cb_Width(fld::widget::Formula_Input*, void*);
-  inline void cb_Height_i(fld::widget::Formula_Input*, void*);
-  static void cb_Height(fld::widget::Formula_Input*, void*);
+  inline void cb_Width_i(fluid::widget::Formula_Input*, void*);
+  static void cb_Width(fluid::widget::Formula_Input*, void*);
+  inline void cb_Height_i(fluid::widget::Formula_Input*, void*);
+  static void cb_Height(fluid::widget::Formula_Input*, void*);
 public:
-  fld::widget::Formula_Input* widget_grid_rowspan_input;
+  fluid::widget::Formula_Input* widget_grid_rowspan_input;
 private:
-  inline void cb_widget_grid_rowspan_input_i(fld::widget::Formula_Input*, void*);
-  static void cb_widget_grid_rowspan_input(fld::widget::Formula_Input*, void*);
+  inline void cb_widget_grid_rowspan_input_i(fluid::widget::Formula_Input*, void*);
+  static void cb_widget_grid_rowspan_input(fluid::widget::Formula_Input*, void*);
   inline void cb_4_i(Fl_Button*, void*);
   static void cb_4(Fl_Button*, void*);
   inline void cb_5_i(Fl_Button*, void*);
   static void cb_5(Fl_Button*, void*);
 public:
-  fld::widget::Formula_Input* widget_grid_colspan_input;
+  fluid::widget::Formula_Input* widget_grid_colspan_input;
 private:
-  inline void cb_widget_grid_colspan_input_i(fld::widget::Formula_Input*, void*);
-  static void cb_widget_grid_colspan_input(fld::widget::Formula_Input*, void*);
+  inline void cb_widget_grid_colspan_input_i(fluid::widget::Formula_Input*, void*);
+  static void cb_widget_grid_colspan_input(fluid::widget::Formula_Input*, void*);
   inline void cb_6_i(Fl_Button*, void*);
   static void cb_6(Fl_Button*, void*);
   inline void cb_7_i(Fl_Button*, void*);
   static void cb_7(Fl_Button*, void*);
 public:
-  void grid_child_cb(fld::widget::Formula_Input* i, void* v, int what);
+  void grid_child_cb(fluid::widget::Formula_Input* i, void* v, int what);
 };
 #endif

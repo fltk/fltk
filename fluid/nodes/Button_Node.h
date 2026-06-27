@@ -38,8 +38,8 @@ public:
   int is_button() const override { return 1; }
   Type type() const override { return Type::Button; }
   bool is_a(Type inType) const override { return (inType==Type::Button) ? true : super::is_a(inType); }
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   void copy_properties() override;
 };
 

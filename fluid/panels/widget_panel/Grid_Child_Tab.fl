@@ -33,7 +33,7 @@ widget_class Grid_Child_Tab {
       callback {grid_child_cb(o, v, 8);
   if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
       xywh {85 30 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {125 30 30 20}
@@ -62,7 +62,7 @@ widget_class Grid_Child_Tab {
       callback {grid_child_cb(o, v, 9);
   if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
       xywh {165 30 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {205 30 30 20}
@@ -243,13 +243,13 @@ widget_class Grid_Child_Tab {
       label {Width:}
       callback {grid_child_cb(o, v, 12);}
       xywh {85 105 55 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Input {} {
       label {Height:}
       callback {grid_child_cb(o, v, 13);}
       xywh {145 105 55 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Box {} {
       xywh {385 105 1 20} hide resizable
@@ -265,7 +265,7 @@ widget_class Grid_Child_Tab {
       callback {grid_child_cb(o, v, 10);
   if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
       xywh {85 140 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {125 140 30 20}
@@ -294,7 +294,7 @@ widget_class Grid_Child_Tab {
       callback {grid_child_cb(o, v, 11);
   if (v!=LOAD) widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);}
       xywh {165 140 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {205 140 30 20}
@@ -325,7 +325,7 @@ widget_class Grid_Child_Tab {
   Fl_Box {} {
     xywh {85 320 300 5} labelsize 11 hide resizable
   }
-  Function {grid_child_cb(fld::widget::Formula_Input* i, void* v, int what)} {open return_type void
+  Function {grid_child_cb(fluid::widget::Formula_Input* i, void* v, int what)} {open return_type void
   } {
     code {if (   !current_widget
       || !current_widget->parent

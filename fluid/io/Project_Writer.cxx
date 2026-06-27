@@ -30,8 +30,8 @@
 /// \defgroup flfile .fl Project File Operations
 /// \{
 
-using namespace fld;
-using namespace fld::io;
+using namespace fluid;
+using namespace fluid::io;
 
 /** \brief Write an .fl design description file.
 
@@ -42,7 +42,7 @@ using namespace fld::io;
     is used to implement copy and paste.
  \return 0 if the operation failed, 1 if it succeeded
  */
-int fld::io::write_file(Project &proj, const char *filename, int selected_only, bool to_codeview) {
+int fluid::io::write_file(Project &proj, const char *filename, int selected_only, bool to_codeview) {
   Project_Writer out(proj);
   return out.write_project(filename, selected_only, to_codeview);
 }

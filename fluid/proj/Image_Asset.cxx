@@ -54,7 +54,7 @@
  \param fmt Short image type name used in the error message (e.g. "GIF", "PNG").
  \return Number of bytes written, or 0 if the file could not be opened or read.
  */
-size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt) {
+size_t Image_Asset::write_static_binary(fluid::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   map_->project().enter_project_dir();
   FILE *in = fl_fopen(filename(), "rb");
@@ -89,7 +89,7 @@ size_t Image_Asset::write_static_binary(fld::io::Code_Writer& f, const char* fmt
  \param fmt Short image type name used in the error message (e.g. "SVG").
  \return Number of bytes written, or 0 if the file could not be opened or read.
  */
-size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) {
+size_t Image_Asset::write_static_text(fluid::io::Code_Writer& f, const char* fmt) {
   size_t nData = 0;
   map_->project().enter_project_dir();
   FILE *in = fl_fopen(filename(), "rb");
@@ -127,7 +127,7 @@ size_t Image_Asset::write_static_text(fld::io::Code_Writer& f, const char* fmt) 
  \param f          Code writer to emit the array and initializer into.
  \param idata_name Variable name to use for the generated static data array.
  */
-void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_name) {
+void Image_Asset::write_static_rgb(fluid::io::Code_Writer& f, const char* idata_name) {
   // Write image data...
   f.write_c("\n");
   f.write_c_once("#include <FL/Fl_Image.H>\n");
@@ -154,7 +154,7 @@ void Image_Asset::write_static_rgb(fld::io::Code_Writer& f, const char* idata_na
  \param f          Code writer to emit the data and initializer into.
  \param compressed If non-zero, embed the original compressed file bytes.
  */
-void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
+void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
   if (!image_) return;
   const char *idata_name = f.unique_id(this, "idata", fl_filename_name(filename()), nullptr);
   initializer_function_ = f.unique_id(this, "image", fl_filename_name(filename()), nullptr);
@@ -288,7 +288,7 @@ void Image_Asset::write_static(fld::io::Code_Writer& f, int compressed) {
  \param f   Code writer to emit the diagnostic lines into.
  \param fmt Short image type name shown in the warning (e.g. "GIF", "PNG").
  */
-void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
+void Image_Asset::write_file_error(fluid::io::Code_Writer& f, const char *fmt) {
   f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, filename(), strerror(errno));
   map_->project().enter_project_dir();
   f.write_c("// Searching in path \"%s\"\n", fl_getcwd(nullptr, FL_PATH_MAX));
@@ -320,7 +320,7 @@ void Image_Asset::write_file_error(fld::io::Code_Writer& f, const char *fmt) {
  \param format      printf-style format string for the constructor arguments,
                     followed by the matching variadic arguments.
  */
-void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_class, const char *format, ...) {
+void Image_Asset::write_initializer(fluid::io::Code_Writer& f, const char *image_class, const char *format, ...) {
   va_list ap;
   va_start(ap, format);
   f.write_c("static Fl_Image* %s() {\n", initializer_function_.c_str());
@@ -348,7 +348,7 @@ void Image_Asset::write_initializer(fld::io::Code_Writer& f, const char *image_c
  \param var Name of the Fl_Widget or Fl_Menu_Item to attach the image to.
  \param inactive If true, use deimage() instead of image().
  */
-void Image_Asset::write_code(fld::io::Code_Writer& f, int bind, const char *var, int inactive) {
+void Image_Asset::write_code(fluid::io::Code_Writer& f, int bind, const char *var, int inactive) {
   if (image_) {
     f.write_c("%s%s->%s%s( %s() );\n",
       f.indent(),
@@ -375,7 +375,7 @@ void Image_Asset::write_code(fld::io::Code_Writer& f, int bind, const char *var,
  \param f        Code writer to emit the expression into.
  \param inactive Unused; present for API symmetry with write_code().
  */
-void Image_Asset::write_inline(fld::io::Code_Writer& f, int inactive) {
+void Image_Asset::write_inline(fluid::io::Code_Writer& f, int inactive) {
   (void)inactive;
   if (image_) {
     f.write_c("%s()", initializer_function_.c_str());

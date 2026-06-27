@@ -122,7 +122,7 @@ public:
   void ideal_size(int &w, int &h) override {
     w = 120;
     h = 160;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Browser_"; }
   const char *alt_type_name() override { return "fltk::Browser_"; }
@@ -255,7 +255,7 @@ public:
   void ideal_size(int &w, int &h) override {
     w = 120;
     h = 160;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Tree"; }
   const char *alt_type_name() override { return "fltk::TreeBrowser"; }
@@ -310,7 +310,7 @@ public:
   void ideal_size(int &w, int &h) override {
     w = 160;
     h = 120;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Help_View"; }
   const char *alt_type_name() override { return "fltk::HelpView"; }
@@ -393,7 +393,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 4 * h; // make room for the arrows
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Counter"; }
   const char *alt_type_name() override { return "fltk::Counter"; }
@@ -423,7 +423,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->labelsize + 8;
     w = 3 * h;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Adjuster"; }
   const char *alt_type_name() override { return "fltk::Adjuster"; }
@@ -460,7 +460,7 @@ private:
 public:
   void ideal_size(int &w, int &h) override {
     w = 60; h = 60;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Dial"; }
   const char *alt_type_name() override { return "fltk::Dial"; }
@@ -498,7 +498,7 @@ public:
     auto layout = Fluid.proj.layout;
     w = layout->labelsize + 8;
     h = 4 * w;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Roller"; }
   const char *alt_type_name() override { return "fltk::Roller"; }
@@ -542,7 +542,7 @@ public:
     auto layout = Fluid.proj.layout;
     w = layout->labelsize + 8;
     h = 4 * w;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Slider"; }
   const char *alt_type_name() override { return "fltk::Slider"; }
@@ -652,7 +652,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Value_Input"; }
   const char *alt_type_name() override { return "fltk::ValueInput"; }
@@ -695,7 +695,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Value_Output"; }
   const char *alt_type_name() override { return "fltk::ValueOutput"; }
@@ -754,7 +754,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 6 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Input"; }
   const char *alt_type_name() override { return "fltk::Input"; }
@@ -796,7 +796,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8 + 10; // Directoy bar is additional 10 pixels high
     w = layout->textsize_not_null() * 10 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_File_Input"; }
   const char *alt_type_name() override { return "fltk::FileInput"; }
@@ -880,7 +880,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() * 4 + 8;
     w = layout->textsize_not_null() * 10 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Text_Display"; }
   const char *alt_type_name() override { return "fltk::TextDisplay"; }
@@ -1043,7 +1043,7 @@ public:
 public:
   void ideal_size(int &w, int &h) override {
     w = 100; h = 100;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Box"; }
   const char *alt_type_name() override { return "fltk::Widget"; }
@@ -1072,7 +1072,7 @@ public:
 public:
   void ideal_size(int &w, int &h) override {
     w = 80; h = 80;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Clock"; }
   const char *alt_type_name() override { return "fltk::Clock"; }
@@ -1104,7 +1104,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->labelsize + 8;
     w = layout->labelsize * 12;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Progress"; }
   const char *alt_type_name() override { return "fltk::ProgressBar"; }
@@ -1156,7 +1156,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 4 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   const char *type_name() override { return "Fl_Spinner"; }
   const char *alt_type_name() override { return "fltk::Spinner"; }

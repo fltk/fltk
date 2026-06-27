@@ -19,16 +19,16 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 
-using namespace fld;
+using namespace fluid;
 
-using namespace fld::proj;
+using namespace fluid::proj;
 
 
 /**
  Reset all project setting to create a new empty project.
  */
 void I18n::reset() {
-  type = fld::I18n_Type::NONE;
+  type = fluid::I18n_Type::NONE;
 
   gnu_include = "<libintl.h>";
   gnu_conditional = "";
@@ -43,7 +43,7 @@ void I18n::reset() {
 
 void I18n::read(io::Project_Reader &f, const char *key) {
   if (!strcmp(key, "i18n_type")) {
-    type = static_cast<fld::I18n_Type>(atoi(f.read_word()));
+    type = static_cast<fluid::I18n_Type>(atoi(f.read_word()));
   } else if (!strcmp(key, "i18n_gnu_function")) {
     gnu_function = f.read_word();
   } else if (!strcmp(key, "i18n_gnu_static_function")) {
@@ -53,33 +53,33 @@ void I18n::read(io::Project_Reader &f, const char *key) {
   } else if (!strcmp(key, "i18n_pos_set")) {
     posix_set = f.read_word();
   } else if (!strcmp(key, "i18n_include")) {
-    if (type == fld::I18n_Type::GNU) {
+    if (type == fluid::I18n_Type::GNU) {
       gnu_include = f.read_word();
-    } else if (type == fld::I18n_Type::POSIX) {
+    } else if (type == fluid::I18n_Type::POSIX) {
       posix_include = f.read_word();
     }
   } else if (!strcmp(key, "i18n_conditional")) {
-    if (type == fld::I18n_Type::GNU) {
+    if (type == fluid::I18n_Type::GNU) {
       gnu_conditional = f.read_word();
-    } else if (type == fld::I18n_Type::POSIX) {
+    } else if (type == fluid::I18n_Type::POSIX) {
       posix_conditional = f.read_word();
     }
   }
 }
 
 void I18n::write(io::Project_Writer &f) const {
-  if ((type != fld::I18n_Type::NONE)) {
+  if ((type != fluid::I18n_Type::NONE)) {
     f.write_string("\ni18n_type %d", static_cast<int>(type));
     switch (type) {
-      case fld::I18n_Type::NONE:
+      case fluid::I18n_Type::NONE:
         break;
-      case fld::I18n_Type::GNU : /* GNU gettext */
+      case fluid::I18n_Type::GNU : /* GNU gettext */
         f.write_string("\ni18n_include"); f.write_word(gnu_include);
         f.write_string("\ni18n_conditional"); f.write_word(gnu_conditional);
         f.write_string("\ni18n_gnu_function"); f.write_word(gnu_function);
         f.write_string("\ni18n_gnu_static_function"); f.write_word(gnu_static_function);
         break;
-      case fld::I18n_Type::POSIX : /* POSIX catgets */
+      case fluid::I18n_Type::POSIX : /* POSIX catgets */
         f.write_string("\ni18n_include"); f.write_word(posix_include);
         f.write_string("\ni18n_conditional"); f.write_word(posix_conditional);
         if (!posix_file.empty()) {

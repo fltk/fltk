@@ -60,14 +60,14 @@ void Button_Node::ideal_size(int &w, int &h) {
   auto layout = Fluid.proj.layout;
   h = layout->labelsize + 8;
   w = layout->labelsize * 4 + 8;
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 Fl_Widget *Button_Node::widget(int x, int y, int w, int h) {
   return new Fl_Button(x, y, w, h, "Button");
 }
 
-void Button_Node::write_properties(fld::io::Project_Writer &f) {
+void Button_Node::write_properties(fluid::io::Project_Writer &f) {
   Widget_Node::write_properties(f);
   Fl_Button *btn = (Fl_Button*)o;
   if (btn->compact()) {
@@ -76,7 +76,7 @@ void Button_Node::write_properties(fld::io::Project_Writer &f) {
   }
 }
 
-void Button_Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Button_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   Fl_Button *btn = (Fl_Button*)o;
   if (!strcmp(c, "compact")) {
     btn->compact((uchar)atol(f.read_word()));
@@ -98,7 +98,7 @@ void Return_Button_Node::ideal_size(int &w, int &h) {
   auto layout = Fluid.proj.layout;
   h = layout->labelsize + 8;
   w = layout->labelsize * 4 + 8 + h; // make room for the symbol
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 Fl_Widget *Return_Button_Node::widget(int x, int y, int w, int h) {
@@ -123,7 +123,7 @@ void Light_Button_Node::ideal_size(int &w, int &h) {
   auto layout = Fluid.proj.layout;
   h = layout->labelsize + 8;
   w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the light
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 Fl_Widget *Light_Button_Node::widget(int x, int y, int w, int h) {
@@ -139,7 +139,7 @@ void Check_Button_Node::ideal_size(int &w, int &h) {
   auto layout = Fluid.proj.layout;
   h = layout->labelsize + 8;
   w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 Fl_Widget *Check_Button_Node::widget(int x, int y, int w, int h) {
@@ -155,7 +155,7 @@ void Round_Button_Node::ideal_size(int &w, int &h) {
   auto layout = Fluid.proj.layout;
   h = layout->labelsize + 8;
   w = layout->labelsize * 4 + 8 + layout->labelsize; // make room for the symbol
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 Fl_Widget *Round_Button_Node::widget(int x, int y, int w, int h) {

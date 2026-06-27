@@ -28,10 +28,10 @@
 // ---- global variables
 
 /// Global access to the widget browser.
-fld::widget::Node_Browser *widget_browser = nullptr;
+fluid::widget::Node_Browser *widget_browser = nullptr;
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 
 /**

@@ -34,8 +34,8 @@
 #undef max
 #include <algorithm>
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 // TODO: warning if the user wants to change builtin layouts
 // TODO: move panel to global settings panel (move load & save to main pulldown, or to toolbox?)
@@ -98,11 +98,11 @@ static Layout_Preset grid_tool = {
   0, 10, -1, 10      // labelfont/size, textfont/size
 };
 
-Layout_Preset *fld::app::default_layout_preset = &fltk_app;
+Layout_Preset *fluid::app::default_layout_preset = &fltk_app;
 
 static Layout_Suite static_suite_list[] = {
-  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, fld::Tool_Store::INTERNAL },
-  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, fld::Tool_Store::INTERNAL }
+  { (char*)"FLTK", (char*)"@fd_beaker FLTK", { &fltk_app, &fltk_dlg, &fltk_tool }, fluid::Tool_Store::INTERNAL },
+  { (char*)"Grid", (char*)"@fd_beaker Grid", { &grid_app, &grid_dlg, &grid_tool }, fluid::Tool_Store::INTERNAL }
 };
 
 Fl_Menu_Item main_layout_submenu_[] = {
@@ -237,7 +237,7 @@ void Layout_Preset::read(Fl_Preferences &prefs) {
 /**
  Write presets to an .fl project file.
  */
-void Layout_Preset::write(fld::io::Project_Writer *out) {
+void Layout_Preset::write(fluid::io::Project_Writer *out) {
   out->write_string("    preset { 1\n"); // preset format version
   out->write_string("      %d %d %d %d %d %d\n",
                     left_window_margin, right_window_margin,
@@ -259,7 +259,7 @@ void Layout_Preset::write(fld::io::Project_Writer *out) {
 /**
  Read presets from an .fl project file.
  */
-void Layout_Preset::read(fld::io::Project_Reader *in) {
+void Layout_Preset::read(fluid::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -356,7 +356,7 @@ void Layout_Suite::read(Fl_Preferences &prefs) {
 /**
  Write a presets suite to an .fl project file.
  */
-void Layout_Suite::write(fld::io::Project_Writer *out) {
+void Layout_Suite::write(fluid::io::Project_Writer *out) {
   out->write_string("  suite {\n");
   out->write_string("    name "); out->write_word(name_); out->write_string("\n");
   for (int i = 0; i < 3; ++i) {
@@ -368,7 +368,7 @@ void Layout_Suite::write(fld::io::Project_Writer *out) {
 /**
  Read a presets suite from an .fl project file.
  */
-void Layout_Suite::read(fld::io::Project_Reader *in) {
+void Layout_Suite::read(fluid::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -399,10 +399,10 @@ void Layout_Suite::read(fld::io::Project_Reader *in) {
 void Layout_Suite::update_label() {
   std::string sym;
   switch (storage_) {
-    case fld::Tool_Store::INTERNAL: sym.assign("@fd_beaker  "); break;
-    case fld::Tool_Store::USER: sym.assign("@fd_user  "); break;
-    case fld::Tool_Store::PROJECT: sym.assign("@fd_project  "); break;
-    case fld::Tool_Store::FILE: sym.assign("@fd_file  "); break;
+    case fluid::Tool_Store::INTERNAL: sym.assign("@fd_beaker  "); break;
+    case fluid::Tool_Store::USER: sym.assign("@fd_user  "); break;
+    case fluid::Tool_Store::PROJECT: sym.assign("@fd_project  "); break;
+    case fluid::Tool_Store::FILE: sym.assign("@fd_file  "); break;
   }
   sym.append(name_);
   if (menu_label)
@@ -432,14 +432,14 @@ void Layout_Suite::init() {
   name_ = nullptr;
   menu_label = nullptr;
   layout[0] = layout[1] = layout[2] = nullptr;
-  storage_ = fld::Tool_Store::INTERNAL;
+  storage_ = fluid::Tool_Store::INTERNAL;
 }
 
 /**
  Free all allocated resources.
  */
 Layout_Suite::~Layout_Suite() {
-  if (storage_ == fld::Tool_Store::INTERNAL) return;
+  if (storage_ == fluid::Tool_Store::INTERNAL) return;
   if (name_) ::free(name_);
   for (int i = 0; i < 3; ++i) {
     delete layout[i];
@@ -615,7 +615,7 @@ Layout_List::~Layout_List() {
     ::free(choice_menu_);
     for (int i = 0; i < list_size_; i++) {
       Layout_Suite &suite = list_[i];
-      if (suite.storage_ != fld::Tool_Store::INTERNAL)
+      if (suite.storage_ != fluid::Tool_Store::INTERNAL)
         suite.~Layout_Suite();
     }
     ::free(list_);
@@ -660,9 +660,9 @@ void Layout_List::update_menu_labels() {
  Load all user layouts from the FLUID user preferences.
  */
 int Layout_List::load(const std::string &filename) {
-  remove_all(fld::Tool_Store::FILE);
+  remove_all(fluid::Tool_Store::FILE);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
-  read(prefs, fld::Tool_Store::FILE);
+  read(prefs, fluid::Tool_Store::FILE);
   return 0;
 }
 
@@ -673,14 +673,14 @@ int Layout_List::save(const std::string &filename) {
   assert(this);
   Fl_Preferences prefs(filename.c_str(), "layout.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   prefs.clear();
-  write(prefs, fld::Tool_Store::FILE);
+  write(prefs, fluid::Tool_Store::FILE);
   return 0;
 }
 
 /**
  Write Suite and Layout selection and selected layout data to Preferences database.
  */
-void Layout_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
+void Layout_List::write(Fl_Preferences &prefs, fluid::Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   prefs_list.clear();
   prefs_list.set("current_suite", list_[current_suite()].name_);
@@ -698,7 +698,7 @@ void Layout_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
 /**
  Read Suite and Layout selection and selected layout data to Preferences database.
  */
-void Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
+void Layout_List::read(Fl_Preferences &prefs, fluid::Tool_Store storage) {
   Fl_Preferences prefs_list(prefs, "Layouts");
   std::string cs;
   int cp = 0;
@@ -723,12 +723,12 @@ void Layout_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
 /**
  Write Suite and Layout selection and project layout data to an .fl project file.
  */
-void Layout_List::write(fld::io::Project_Writer *out) {
+void Layout_List::write(fluid::io::Project_Writer *out) {
   // Don't write the Snap field if no custom layout was used
   if ((current_suite()==0) && (current_preset()==0)) {
     int nSuite = 0;
     for (int i=0; i<list_size_; i++) {
-      if (list_[i].storage_ == fld::Tool_Store::PROJECT) nSuite++;
+      if (list_[i].storage_ == fluid::Tool_Store::PROJECT) nSuite++;
     }
     if (nSuite == 0) return;
   }
@@ -737,7 +737,7 @@ void Layout_List::write(fld::io::Project_Writer *out) {
   out->write_string("  current_preset %d\n", current_preset());
   for (int i=0; i<list_size_; i++) {
     Layout_Suite &suite = list_[i];
-    if (suite.storage_ == fld::Tool_Store::PROJECT)
+    if (suite.storage_ == fluid::Tool_Store::PROJECT)
       suite.write(out);
   }
   out->write_string("}");
@@ -746,7 +746,7 @@ void Layout_List::write(fld::io::Project_Writer *out) {
 /**
  Read Suite and Layout selection and project layout data from an .fl project file.
  */
-void Layout_List::read(fld::io::Project_Reader *in) {
+void Layout_List::read(fluid::io::Project_Reader *in) {
   const char *key;
   key = in->read_word(1);
   if (key && !strcmp(key, "{")) {
@@ -764,7 +764,7 @@ void Layout_List::read(fld::io::Project_Reader *in) {
       } else if (!strcmp(key, "suite")) {
         int n = add(in->filename_name());
         list_[n].read(in);
-        list_[n].storage(fld::Tool_Store::PROJECT);
+        list_[n].storage(fluid::Tool_Store::PROJECT);
       } else if (!strcmp(key, "}")) {
         break;
       } else {
@@ -869,9 +869,9 @@ int Layout_List::add(const char *name) {
     new_suite.layout[i] = new Layout_Preset;
     ::memcpy(new_suite.layout[i], old_suite.layout[i], sizeof(Layout_Preset));
   }
-  fld::Tool_Store new_storage = old_suite.storage_;
-  if (new_storage == fld::Tool_Store::INTERNAL)
-    new_storage = fld::Tool_Store::USER;
+  fluid::Tool_Store new_storage = old_suite.storage_;
+  if (new_storage == fluid::Tool_Store::INTERNAL)
+    new_storage = fluid::Tool_Store::USER;
   new_suite.storage(new_storage);
   main_menu_[n].label(new_suite.menu_label);
   main_menu_[n].callback(main_menu_[0].callback());
@@ -912,9 +912,9 @@ void Layout_List::remove(int ix) {
 
 /**
  Remove all Suites that use the given storage attribute.
- \param[in] storage storage attribute, see fld::Tool_Store::INTERNAL, etc.
+ \param[in] storage storage attribute, see fluid::Tool_Store::INTERNAL, etc.
  */
-void Layout_List::remove_all(fld::Tool_Store storage) {
+void Layout_List::remove_all(fluid::Tool_Store storage) {
   for (int i=list_size_-1; i>=0; --i) {
     if (list_[i].storage_ == storage)
       remove(i);

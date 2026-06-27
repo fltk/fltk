@@ -56,8 +56,8 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Group_Proxy *g = new Fl_Group_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Widget_Node *_make() override {return new Group_Node();}
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   void add_child(Node*, Node*) override;
   void move_child(Node*, Node*) override;
   void remove_child(Node*) override;
@@ -122,13 +122,13 @@ public:
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Type type() const override { return Type::Flex; }
   bool is_a(Type inType) const override { return (inType==Type::Flex) ? true : super::is_a(inType); }
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   Fl_Widget *enter_live_mode(int top=0) override;
   void copy_properties() override;
   void copy_properties_for_children() override;
   void postprocess_read() override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
 //  void add_child(Node*, Node*) override;
 //  void move_child(Node*, Node*) override;
   void remove_child(Node*) override;

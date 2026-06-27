@@ -19,7 +19,7 @@
 
 #include <string>
 
-namespace fld {
+namespace fluid {
 
 class Project;
 
@@ -28,6 +28,6 @@ namespace io {
 int write_strings(Project &proj, const std::string &filename);
 
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_IO_STRING_WRITER_H

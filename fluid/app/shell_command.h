@@ -35,14 +35,14 @@
 #  include <unistd.h>
 #endif
 
-namespace fld {
+namespace fluid {
 namespace io {
 
 class Project_Reader;
 class Project_Writer;
 
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
 struct Fl_Menu_Item;
 class Fl_Widget;
@@ -96,7 +96,7 @@ public:
   Fd_Shell_Command(const std::string &in_name,
                    const std::string &in_label,
                    Fl_Shortcut in_shortcut,
-                   fld::Tool_Store in_storage,
+                   fluid::Tool_Store in_storage,
                    int in_condition,
                    const std::string &in_condition_data,
                    const std::string &in_command,
@@ -104,7 +104,7 @@ public:
   std::string name { };
   std::string label { };
   Fl_Shortcut shortcut = 0;
-  fld::Tool_Store storage = fld::Tool_Store::USER;
+  fluid::Tool_Store storage = fluid::Tool_Store::USER;
   int condition = ALWAYS; // always, hide, windows only, linux only, mac only, user, machine
   std::string condition_data { }; // user name, machine name
   std::string command { };
@@ -113,8 +113,8 @@ public:
   void run();
   void read(Fl_Preferences &prefs);
   void write(Fl_Preferences &prefs, bool save_location = false);
-  void read(class fld::io::Project_Reader*);
-  void write(class fld::io::Project_Writer*);
+  void read(class fluid::io::Project_Reader*);
+  void write(class fluid::io::Project_Writer*);
   void update_shell_menu();
   bool is_active();
 };
@@ -134,15 +134,15 @@ public:
   void insert(int index, Fd_Shell_Command *cmd);
   void remove(int index);
   void clear();
-  void clear(fld::Tool_Store store);
+  void clear(fluid::Tool_Store store);
 //  void move_up();
 //  void move_down();
 //  int load(const std::string &filename);
 //  int save(const std::string &filename);
-  void read(Fl_Preferences &prefs, fld::Tool_Store storage);
-  void write(Fl_Preferences &prefs, fld::Tool_Store storage);
-  void read(class fld::io::Project_Reader*);
-  void write(class fld::io::Project_Writer*);
+  void read(Fl_Preferences &prefs, fluid::Tool_Store storage);
+  void write(Fl_Preferences &prefs, fluid::Tool_Store storage);
+  void read(class fluid::io::Project_Reader*);
+  void write(class fluid::io::Project_Writer*);
   void rebuild_shell_menu();
   void update_settings_dialog();
 

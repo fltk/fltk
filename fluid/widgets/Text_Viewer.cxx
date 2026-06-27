@@ -20,11 +20,11 @@
 
 #include "widgets/Text_Viewer.h"
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 /**
- Create a fld::widget::Text_Viewer widget.
+ Create a fluid::widget::Text_Viewer widget.
  \param[in] X, Y, W, H position and size of the widget
  \param[in] L optional label
  */

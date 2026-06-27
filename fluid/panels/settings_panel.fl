@@ -98,7 +98,7 @@ decl {\#include "../src/flstring.h"} {private global
 decl {\#include <string.h>} {private global
 }
 
-decl {using namespace fld::widget;} {private global
+decl {using namespace fluid::widget;} {private global
 }
 
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
@@ -512,8 +512,8 @@ Fluid.layout_list.update_dialogs();}
         }
         Fl_Menu_Button w_layout_menu {
           callback {if (v == LOAD) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  if (suite.storage_ == fld::Tool_Store::INTERNAL) {
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  if (suite.storage_ == fluid::Tool_Store::INTERNAL) {
     w_layout_menu_rename->deactivate();
     for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
     w_layout_menu_delete->deactivate();
@@ -541,29 +541,29 @@ Fluid.layout_list.update_dialogs();}
           }
           MenuItem {w_layout_menu_storage[0]} {
             label {@fd_beaker  FLUID Built-In}
-            callback {fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-suite.storage(fld::Tool_Store::INTERNAL);
+            callback {fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+suite.storage(fluid::Tool_Store::INTERNAL);
 Fluid.layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio deactivate
           }
           MenuItem {w_layout_menu_storage[1]} {
             label {@fd_user  User Preference}
-            callback {fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-suite.storage(fld::Tool_Store::USER);
+            callback {fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+suite.storage(fluid::Tool_Store::USER);
 Fluid.layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio
           }
           MenuItem {w_layout_menu_storage[2]} {
             label {@fd_project  Store in .fl Project File}
-            callback {fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-suite.storage(fld::Tool_Store::PROJECT);
+            callback {fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+suite.storage(fluid::Tool_Store::PROJECT);
 Fluid.layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio
           }
           MenuItem {w_layout_menu_storage[3]} {
             label {@fd_file  Store in External File}
-            callback {fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-suite.storage(fld::Tool_Store::FILE);
+            callback {fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+suite.storage(fluid::Tool_Store::FILE);
 Fluid.layout_list.update_dialogs();}
             xywh {0 0 31 20} type Radio divider
           }
@@ -932,9 +932,9 @@ list:}
     for (int i=0; i<g_shell_config->list_size; i++) {
       Fd_Shell_Command *cmd = g_shell_config->list[i];
       o->add(cmd->name.c_str());
-      if (cmd->storage == fld::Tool_Store::USER)
+      if (cmd->storage == fluid::Tool_Store::USER)
         o->icon(i+1, w_settings_shell_fd_user->image());
-      else if (cmd->storage == fld::Tool_Store::PROJECT)
+      else if (cmd->storage == fluid::Tool_Store::PROJECT)
         o->icon(i+1, w_settings_shell_fd_project->image());
     }
   }
@@ -966,9 +966,9 @@ list:}
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
   w_settings_shell_list->deselect();
   w_settings_shell_list->value(selected+1);
-  if (cmd->storage == fld::Tool_Store::USER) {
+  if (cmd->storage == fluid::Tool_Store::USER) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-  } else if (cmd->storage == fld::Tool_Store::PROJECT) {
+  } else if (cmd->storage == fluid::Tool_Store::PROJECT) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
     Fluid.proj.set_modflag(1);
   }
@@ -995,9 +995,9 @@ if (v==LOAD) {
   w_settings_shell_list->insert(selected+1, cmd->name.c_str());
   w_settings_shell_list->deselect();
   w_settings_shell_list->value(selected+1);
-  if (cmd->storage == fld::Tool_Store::USER) {
+  if (cmd->storage == fluid::Tool_Store::USER) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-  } else if (cmd->storage == fld::Tool_Store::PROJECT) {
+  } else if (cmd->storage == fluid::Tool_Store::PROJECT) {
     w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
     Fluid.proj.set_modflag(1);
   }
@@ -1022,7 +1022,7 @@ if (v==LOAD) {
   int ret = fl_choice("Delete the shell command\\n\\"%s\\"?\\n\\nThis can not be undone.",
     "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
   if (ret==1) return;
-  if (g_shell_config->at(selected-1)->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+  if (g_shell_config->at(selected-1)->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   g_shell_config->remove(selected-1);
   w_settings_shell_list->remove(selected);
   if (selected <= w_settings_shell_list->size())
@@ -1124,7 +1124,7 @@ if (v == LOAD) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->name = o->value();
     w_settings_shell_list->text(selected, o->value());
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {file the shell command under this name in the shell command list} xywh {110 246 230 20} labelfont 1 labelsize 12 when 13 textfont 4 textsize 12
@@ -1143,7 +1143,7 @@ if (v == LOAD) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->label = o->value();
     cmd->update_shell_menu();
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
             tooltip {label text for the Shell menu in the main menu bar} xywh {110 272 230 20} labelfont 1 labelsize 12 textfont 4 textsize 12
@@ -1167,7 +1167,7 @@ if (v == LOAD) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->shortcut = o->value();
     cmd->update_shell_menu();
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {an optional keyboard shortcut to run this shell command} xywh {110 297 130 20} labelsize 12 align 16
@@ -1179,35 +1179,35 @@ if (v == LOAD) {
               callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
   if (selected) {
-    fld::Tool_Store ts = g_shell_config->list[selected-1]->storage;
+    fluid::Tool_Store ts = g_shell_config->list[selected-1]->storage;
     o->value(o->find_item_with_argument((long)ts));
   } else {
-    o->value(o->find_item_with_argument((long)fld::Tool_Store::USER));
+    o->value(o->find_item_with_argument((long)fluid::Tool_Store::USER));
   }
 } else {
   if (selected) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
-    fld::Tool_Store ts = (fld::Tool_Store)(o->mvalue()->argument());
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    fluid::Tool_Store ts = (fluid::Tool_Store)(o->mvalue()->argument());
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     cmd->storage = ts;
     //w_settings_shell_list->text(selected, cmd->name.c_str());
-    if (cmd->storage == fld::Tool_Store::USER)
+    if (cmd->storage == fluid::Tool_Store::USER)
       w_settings_shell_list->icon(selected, w_settings_shell_fd_user->image());
-    else if (cmd->storage == fld::Tool_Store::PROJECT)
+    else if (cmd->storage == fluid::Tool_Store::PROJECT)
       w_settings_shell_list->icon(selected, w_settings_shell_fd_project->image());
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }} open
               tooltip {store this shell command as a user setting or save it with the .fl project file} xywh {110 322 130 20} down_box BORDER_BOX labelfont 1 labelsize 12 textsize 12
             } {
               MenuItem {} {
                 label {@fd_user User Setting}
-                user_data {fld::Tool_Store::USER} user_data_type long
+                user_data {fluid::Tool_Store::USER} user_data_type long
                 xywh {0 0 100 20} labelsize 12
               }
               MenuItem {} {
                 label {@fd_project Project File}
-                user_data {fld::Tool_Store::PROJECT} user_data_type long
+                user_data {fluid::Tool_Store::PROJECT} user_data_type long
                 xywh {0 0 100 20} labelsize 12
               }
             }
@@ -1227,7 +1227,7 @@ if (v == LOAD) {
     int cond = (int)(o->mvalue()->argument());
     cmd->condition = cond;
     g_shell_config->rebuild_shell_menu();
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }} open
               tooltip {add this command to the main menu bar only if this condition is true} xywh {110 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 12 textsize 12
@@ -1293,7 +1293,7 @@ if (v == LOAD) {
   if (selected) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->command = o->buffer()->text();
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               xywh {110 373 208 80} labelfont 1 labelsize 12 align 4 textfont 4 textsize 12 resizable
@@ -1414,7 +1414,7 @@ if (v == LOAD) {
     } else {
       cmd->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
     }
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {save the project to the .fl file before running the command} xywh {110 458 110 20} down_box DOWN_BOX labelsize 12
@@ -1437,7 +1437,7 @@ if (v == LOAD) {
     } else {
       cmd->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
     }
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {generate the source code and header file before running the command} xywh {110 478 110 19} down_box DOWN_BOX labelsize 12
@@ -1460,7 +1460,7 @@ if (v == LOAD) {
     } else {
       cmd->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
     }
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {save the internationalisation strings before running the command} xywh {110 498 110 20} down_box DOWN_BOX labelsize 12
@@ -1483,7 +1483,7 @@ if (v == LOAD) {
     } else {
       cmd->flags &= ~Fd_Shell_Command::DONT_SHOW_TERMINAL;
     }
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {show the terminal window when launching this script} xywh {229 458 106 20} down_box DOWN_BOX labelsize 12
@@ -1506,7 +1506,7 @@ if (v == LOAD) {
     } else {
       cmd->flags &= ~Fd_Shell_Command::CLEAR_TERMINAL;
     }
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {clear the teminal window before running this script} xywh {229 478 106 19} down_box DOWN_BOX labelsize 12
@@ -1529,7 +1529,7 @@ if (v == LOAD) {
     } else {
       cmd->flags &= ~Fd_Shell_Command::CLEAR_HISTORY;
     }
-    if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
   }
 }}
               tooltip {clear the teminal history in the terminal window} xywh {229 498 106 19} down_box DOWN_BOX labelsize 12
@@ -1880,8 +1880,8 @@ widget_browser->save_prefs();}
       Fl_Button {} {
         label Close
         callback {if (g_shell_config)
-  g_shell_config->write(Fluid.preferences, fld::Tool_Store::USER);
-Fluid.layout_list.write(Fluid.preferences, fld::Tool_Store::USER);
+  g_shell_config->write(Fluid.preferences, fluid::Tool_Store::USER);
+Fluid.layout_list.write(Fluid.preferences, fluid::Tool_Store::USER);
 settings_window->hide();}
         tooltip {Close this dialog.} xywh {230 550 120 25}
       }

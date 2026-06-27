@@ -26,7 +26,7 @@
 
 class Node;
 
-namespace fld {
+namespace fluid {
 
 class Project;
 
@@ -78,6 +78,6 @@ public:
 };
 
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_IO_PROJECT_READER_H

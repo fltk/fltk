@@ -35,7 +35,7 @@ struct Fd_Pointer_Tree;
 
 int is_id(char c);
 
-namespace fld {
+namespace fluid {
 
 class Project;
 
@@ -136,6 +136,6 @@ public:
 };
 
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_IO_CODE_WRITER_H

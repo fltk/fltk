@@ -194,14 +194,14 @@ void Group_Node::ideal_size(int &w, int &h) {
     w = 140;
     h = 140;
   }
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
-void Group_Node::write_code1(fld::io::Code_Writer& f) {
+void Group_Node::write_code1(fluid::io::Code_Writer& f) {
   Widget_Node::write_code1(f);
 }
 
-void Group_Node::write_code2(fld::io::Code_Writer& f) {
+void Group_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   write_extra_code(f);
   f.write_c("%s%s->end();\n", f.indent(), var);
@@ -352,7 +352,7 @@ void Flex_Node::copy_properties_for_children() {
   d->layout();
 }
 
-void Flex_Node::write_properties(fld::io::Project_Writer &f)
+void Flex_Node::write_properties(fluid::io::Project_Writer &f)
 {
   Group_Node::write_properties(f);
   Fl_Flex* flex = (Fl_Flex*)o;
@@ -377,7 +377,7 @@ void Flex_Node::write_properties(fld::io::Project_Writer &f)
   }
 }
 
-void Flex_Node::read_property(fld::io::Project_Reader &f, const char *c)
+void Flex_Node::read_property(fluid::io::Project_Reader &f, const char *c)
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
@@ -425,7 +425,7 @@ void Flex_Node::postprocess_read()
   suspend_auto_layout = 0;
 }
 
-void Flex_Node::write_code2(fld::io::Code_Writer& f) {
+void Flex_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
@@ -714,7 +714,7 @@ Fl_Widget *Table_Node::enter_live_mode(int) {
 void Table_Node::ideal_size(int &w, int &h) {
   w = 160;
   h = 120;
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 // ---- Tabs_Node --------------------------------------------------- MARK: -

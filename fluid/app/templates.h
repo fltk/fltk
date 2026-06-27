@@ -17,13 +17,13 @@
 #ifndef FLUID_APP_TEMPLATES_H
 #define FLUID_APP_TEMPLATES_H
 
-namespace fld {
+namespace fluid {
 namespace app {
 
 void save_template();
 
 } // namespace app
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_APP_TEMPLATES_H
 

@@ -22,8 +22,8 @@
 #include <ctype.h>
 #include <stdlib.h>     // bsearch()
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 // Sorted list of C/C++ keywords...
 static const char * const code_keywords[] = {

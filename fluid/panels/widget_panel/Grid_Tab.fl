@@ -54,7 +54,7 @@ if (v == LOAD) {
   }
 }}
       tooltip {Number of horizontal rows in the Grid group} xywh {85 30 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {125 30 30 20}
@@ -104,7 +104,7 @@ if (v == LOAD) {
   }
 }}
       tooltip {Number of vertical columns in the Grid group} xywh {165 30 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {205 30 30 20}
@@ -296,7 +296,7 @@ if (v == LOAD) {
   widget_grid_curr_row_attributes->do_callback(widget_grid_curr_row_attributes, LOAD);
 }}
       xywh {85 145 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {
       callback propagate_load open
@@ -347,7 +347,7 @@ if (v == LOAD) {
   }
 }}
         xywh {170 145 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Weight:}
@@ -367,7 +367,7 @@ if (v == LOAD) {
   }
 }}
         xywh {230 145 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Gap:}
@@ -387,7 +387,7 @@ if (v == LOAD) {
   }
 }}
         xywh {290 145 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
     }
     Fl_Box {} {
@@ -413,7 +413,7 @@ if (v == LOAD) {
   widget_grid_curr_col_attributes->do_callback(widget_grid_curr_col_attributes, LOAD);
 }}
       xywh {85 180 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {125 180 30 20}
@@ -463,7 +463,7 @@ if (v == LOAD) {
   }
 }}
         xywh {170 180 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Weight:}
@@ -483,7 +483,7 @@ if (v == LOAD) {
   }
 }}
         xywh {230 180 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Gap:}
@@ -503,7 +503,7 @@ if (v == LOAD) {
   }
 }}
         xywh {290 180 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
     }
     Fl_Box {} {

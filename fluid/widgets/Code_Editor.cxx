@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include "widgets/Code_Editor.h"
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 // ---- Code_Editor implementation
 

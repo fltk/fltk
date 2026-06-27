@@ -46,7 +46,7 @@ class Fl_Button;
 class Fl_Check_Button;
 class Fl_Help_Dialog;
 
-namespace fld {
+namespace fluid {
 namespace app {
 class Layout_List;
 }
@@ -120,7 +120,7 @@ public: // Member Variables
   // TODO: make this into a class: app::GUI
   Fl_Window *main_window { nullptr };
   static Fl_Menu_Item main_menu[];
-  fld::widget::App_Menu_Bar *main_menubar { nullptr };
+  fluid::widget::App_Menu_Bar *main_menubar { nullptr };
   Fl_Menu_Item *save_item { nullptr };
   Fl_Menu_Item *history_item { nullptr };
   Fl_Menu_Item *widgetbin_item { nullptr };
@@ -213,9 +213,9 @@ public: // Methods
 #endif // __APPLE__
 };
 
-} // namespace fld
+} // namespace fluid
 
-extern fld::Application Fluid;
+extern fluid::Application Fluid;
 
 
 #endif // FLUID_FLUID_H

@@ -28,14 +28,14 @@ class Node;
 class Group_Node;
 class Window_Node;
 
-namespace fld {
+namespace fluid {
 namespace io {
 
 class Project_Reader;
 class Project_Writer;
 
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
 /**
  Declare where a new type is placed and how to create it.
@@ -55,8 +55,8 @@ class Project_Writer;
  Add a hierarchy of Types
     void Node::add(Node *p, Strategy strategy)
     int read_file(const char *filename, int merge, Strategy strategy)
-    Node *fld::io::Project_Reader::read_children(Node *p, int merge, Strategy strategy, char skip_options)
-    int fld::io::Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
+    Node *fluid::io::Project_Reader::read_children(Node *p, int merge, Strategy strategy, char skip_options)
+    int fluid::io::Project_Reader::read_project(const char *filename, int merge, Strategy strategy)
  */
 typedef struct Strategy {
   enum Flags {
@@ -197,7 +197,7 @@ public: // things that should not be public:
   Node *first_child();
 
   Node *factory;
-  const char *callback_name(fld::io::Code_Writer& f);
+  const char *callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
   int code_static_start, code_static_end;
@@ -259,22 +259,22 @@ public:
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
-  virtual void write(fld::io::Project_Writer &f);
-  virtual void write_properties(fld::io::Project_Writer &f);
-  virtual void read_property(fld::io::Project_Reader &f, const char *);
-  virtual void write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate);
-  virtual void read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property);
+  virtual void write(fluid::io::Project_Writer &f);
+  virtual void write_properties(fluid::io::Project_Writer &f);
+  virtual void read_property(fluid::io::Project_Reader &f, const char *);
+  virtual void write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate);
+  virtual void read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 
   // write code, these are called in order:
-  virtual void write_static(fld::io::Code_Writer& f); // write static stuff to .c file
-  virtual void write_static_after(fld::io::Code_Writer& f); // write static stuff after children
-  virtual void write_code1(fld::io::Code_Writer& f); // code and .h before children
-  virtual void write_code2(fld::io::Code_Writer& f); // code and .h after children
-  void write_comment_h(fld::io::Code_Writer& f, const char *ind=""); // write the commentary text into the header file
-  void write_comment_c(fld::io::Code_Writer& f, const char *ind=""); // write the commentary text into the source file
-  void write_comment_inline_c(fld::io::Code_Writer& f, const char *ind=nullptr); // write the commentary text
+  virtual void write_static(fluid::io::Code_Writer& f); // write static stuff to .c file
+  virtual void write_static_after(fluid::io::Code_Writer& f); // write static stuff after children
+  virtual void write_code1(fluid::io::Code_Writer& f); // code and .h before children
+  virtual void write_code2(fluid::io::Code_Writer& f); // code and .h after children
+  void write_comment_h(fluid::io::Code_Writer& f, const char *ind=""); // write the commentary text into the header file
+  void write_comment_c(fluid::io::Code_Writer& f, const char *ind=""); // write the commentary text into the source file
+  void write_comment_inline_c(fluid::io::Code_Writer& f, const char *ind=nullptr); // write the commentary text
 
   // live mode
   virtual Fl_Widget *enter_live_mode(int top=0); // build widgets needed for live mode

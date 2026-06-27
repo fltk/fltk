@@ -21,7 +21,7 @@
 
 class Node;
 
-namespace fld {
+namespace fluid {
 
 class Project;
 
@@ -100,7 +100,7 @@ public:
 };
 
 } // namespace node
-} // namespace fld
+} // namespace fluid
 
 
 #endif // FLUID_NODES_TREE_H

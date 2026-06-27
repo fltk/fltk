@@ -22,8 +22,8 @@
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 /**
  Load args from command line into variables.

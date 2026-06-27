@@ -23,7 +23,7 @@
 #include <stdlib.h>     /* free().. */
 #include <stdio.h>      /* snprintf().. */
 
-using namespace fld;
+using namespace fluid;
 
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
