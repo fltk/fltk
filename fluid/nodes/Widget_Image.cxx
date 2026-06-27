@@ -93,15 +93,15 @@ void Widget_Image::write_code(fluid::io::Code_Writer& f, const char* var, bool d
   asset->write_code(f, bind, var, deimage ? 1 : 0);
   if (scale_w || scale_h) {
     const char* getter = deimage ? "deimage" : "image";
-    f.write_c("%s%s->%s()->scale(", f.indent(), var, getter);
+    f.write_c(f.indent() + var + "->" + getter + "()->scale(");
     if (scale_w > 0)
-      f.write_c("%d, ", scale_w);
+      f.write_c(std::to_string(scale_w) + ", ");
     else
-      f.write_c("%s->%s()->data_w(), ", var, getter);
+      f.write_c(std::string(var) + "->" + getter + "()->data_w(), ");
     if (scale_h > 0)
-      f.write_c("%d, 0, 1);\n", scale_h);
+      f.write_c(std::to_string(scale_h) + ", 0, 1);\n");
     else
-      f.write_c("%s->%s()->data_h(), 0, 1);\n", var, getter);
+      f.write_c(std::string(var) + "->" + getter + "()->data_h(), 0, 1);\n");
   }
 }
 

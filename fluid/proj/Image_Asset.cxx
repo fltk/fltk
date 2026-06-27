@@ -131,11 +131,16 @@ void Image_Asset::write_static_rgb(fluid::io::Code_Writer& f, const char* idata_
   // Write image data...
   f.write_c("\n");
   f.write_c_once("#include <FL/Fl_Image.H>\n");
-  f.write_c("static const unsigned char %s[] =\n", idata_name);
+  f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
   const int extra_data = image_->ld() ? (image_->ld()-image_->w()*image_->d()) : 0;
   f.write_cdata(image_->data()[0], (image_->w() * image_->d() + extra_data) * image_->h());
   f.write_c(";\n");
-  write_initializer(f, "Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, image_->w(), image_->h(), image_->d(), image_->ld());
+  write_initializer(f, "Fl_RGB_Image",
+    std::string(idata_name) + ", "
+    + std::to_string(image_->w()) + ", "
+    + std::to_string(image_->h()) + ", "
+    + std::to_string(image_->d()) + ", "
+    + std::to_string(image_->ld()));
 }
 
 
@@ -163,31 +168,40 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
     // Write animated gif image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Anim_GIF_Image.H>\n");
-    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
     size_t nData = write_static_binary(f, "AnimGIF");
     f.write_c(";\n");
-    write_initializer(f, "Fl_Anim_GIF_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+    write_initializer(f, "Fl_Anim_GIF_Image",
+      "\"" + fl_filename_name_str(filename()) + "\", "
+      + idata_name + ", "
+      + std::to_string(nData));
   } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".gif")==0) {
     // Write gif image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_GIF_Image.H>\n");
-    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
     size_t nData = write_static_binary(f, "GIF");
     f.write_c(";\n");
-    write_initializer(f, "Fl_GIF_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
-  } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".bmp")==0) {
+    write_initializer(f, "Fl_GIF_Image",
+       "\"" + fl_filename_name_str(filename()) + "\", "
+      + idata_name + ", "
+      + std::to_string(nData));
+ } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".bmp")==0) {
     // Write bmp image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_BMP_Image.H>\n");
-    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
     size_t nData = write_static_binary(f, "BMP");
     f.write_c(";\n");
-    write_initializer(f, "Fl_BMP_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+    write_initializer(f, "Fl_BMP_Image",
+       "\"" + fl_filename_name_str(filename()) + "\", "
+      + idata_name + ", "
+      + std::to_string(nData));
   } else if (image_->count() > 1) {
     // Write Pixmap data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Pixmap.H>\n");
-    f.write_c("static const char* %s[] = {\n", idata_name);
+    f.write_c("static const char* " + std::string(idata_name) + "[] = {\n");
     f.write_cstring(image_->data()[0], (int)strlen(image_->data()[0]));
 
     int i;
@@ -209,31 +223,41 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
       f.write_cstring(image_->data()[i], image_->w() * chars_per_color);
     }
     f.write_c("\n};\n");
-    write_initializer(f, "Fl_Pixmap", "%s", idata_name);
+    write_initializer(f, "Fl_Pixmap", std::string(idata_name));
   } else if (image_->d() == 0) {
     // Write Bitmap data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Bitmap.H>\n");
-    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
     f.write_cdata(image_->data()[0], ((image_->w() + 7) / 8) * image_->h());
     f.write_c(";\n");
-    write_initializer(f, "Fl_Bitmap", "%s, %d, %d, %d", idata_name, ((image_->w() + 7) / 8) * image_->h(), image_->w(), image_->h());
+    write_initializer(f, "Fl_Bitmap",
+      std::string(idata_name) + ", "
+      + std::to_string(((image_->w() + 7) / 8) * image_->h()) + ", "
+      + std::to_string(image_->w()) + ", "
+      + std::to_string(image_->h()));
   } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".jpg")==0) {
     // Write jpeg image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_JPEG_Image.H>\n");
-    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
     size_t nData = write_static_binary(f, "JPEG");
     f.write_c(";\n");
-    write_initializer(f, "Fl_JPEG_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+    write_initializer(f, "Fl_JPEG_Image",
+      "\"" + fl_filename_name_str(filename()) + "\", "
+      + idata_name + ", "
+      + std::to_string(nData));
   } else if (compressed && fl_ascii_strcasecmp(fl_filename_ext(filename()), ".png")==0) {
     // Write png image data...
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_PNG_Image.H>\n");
-    f.write_c("static const unsigned char %s[] =\n", idata_name);
+    f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
     size_t nData = write_static_binary(f, "PNG");
     f.write_c(";\n");
-    write_initializer(f, "Fl_PNG_Image", "\"%s\", %s, %d", fl_filename_name(filename()), idata_name, nData);
+    write_initializer(f, "Fl_PNG_Image",
+      "\"" + fl_filename_name_str(filename()) + "\", "
+      + idata_name + ", "
+      + std::to_string(nData));
   }
 #ifdef FLTK_USE_SVG
   else if (fl_ascii_strcasecmp(fl_filename_ext(filename()), ".svg")==0 || fl_ascii_strcasecmp(fl_filename_ext(filename()), ".svgz")==0) {
@@ -243,15 +267,20 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
       f.write_c("\n");
       f.write_c_once("#include <FL/Fl_SVG_Image.H>\n");
       if (gzipped) {
-        f.write_c("static const unsigned char %s[] =\n", idata_name);
+        f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
         size_t nData = write_static_binary(f, "SVGZ");
         f.write_c(";\n");
-        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s, %ld", fl_filename_name(filename()), idata_name, nData);
+        write_initializer(f, "Fl_SVG_Image",
+          "\"" + fl_filename_name_str(filename()) + "\", "
+          + idata_name + ", "
+          + std::to_string(nData));
       } else {
-        f.write_c("static const char %s[] =\n", idata_name);
+        f.write_c("static const char " + std::string(idata_name) + "[] =\n");
         write_static_text(f, "SVG");
         f.write_c(";\n");
-        write_initializer(f, "Fl_SVG_Image", "\"%s\", %s", fl_filename_name(filename()), idata_name);
+        write_initializer(f, "Fl_SVG_Image",
+          "\"" + fl_filename_name_str(filename()) + "\", "
+          + idata_name);
       }
     } else {
       // if FLUID runs from the command line, make sure that the image is not
@@ -289,9 +318,9 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
  \param fmt Short image type name shown in the warning (e.g. "GIF", "PNG").
  */
 void Image_Asset::write_file_error(fluid::io::Code_Writer& f, const char *fmt) {
-  f.write_c("#warning Cannot read %s file \"%s\": %s\n", fmt, filename(), strerror(errno));
+  f.write_c("#warning Cannot read " + std::string(fmt) + " file \"" + std::string(filename()) + "\": " + std::string(strerror(errno)) + "\n");
   map_->project().enter_project_dir();
-  f.write_c("// Searching in path \"%s\"\n", fl_getcwd(nullptr, FL_PATH_MAX));
+  f.write_c("// Searching in path \"" + std::string(fl_getcwd(nullptr, FL_PATH_MAX)) + "\"\n");
   map_->project().leave_project_dir();
 }
 
@@ -320,20 +349,17 @@ void Image_Asset::write_file_error(fluid::io::Code_Writer& f, const char *fmt) {
  \param format      printf-style format string for the constructor arguments,
                     followed by the matching variadic arguments.
  */
-void Image_Asset::write_initializer(fluid::io::Code_Writer& f, const char *image_class, const char *format, ...) {
-  va_list ap;
-  va_start(ap, format);
-  f.write_c("static Fl_Image* %s() {\n", initializer_function_.c_str());
+void Image_Asset::write_initializer(fluid::io::Code_Writer& f, const std::string& image_class, const std::string& args) {
+  f.write_c("static Fl_Image* " + initializer_function_ + "() {\n");
   if (is_animated_gif_)
-    f.write_c("%sFl_GIF_Image::animate = true;\n", f.indent(1));
-  f.write_c("%sstatic Fl_Image* image = nullptr;\n", f.indent(1));
-  f.write_c("%sif (!image)\n", f.indent(1));
-  f.write_c("%simage = new %s(", f.indent(2), image_class);
-  f.vwrite_c(format, ap);
+    f.write_c(f.indent(1) + "Fl_GIF_Image::animate = true;\n");
+  f.write_c(f.indent(1) + "static Fl_Image* image = nullptr;\n");
+  f.write_c(f.indent(1) + "if (!image)\n");
+  f.write_c(f.indent(2) + "image = new " + image_class + "(");
+  f.write_c(args);
   f.write_c(");\n");
-  f.write_c("%sreturn image;\n", f.indent(1));
+  f.write_c(f.indent(1) + "return image;\n");
   f.write_c("}\n");
-  va_end(ap);
 }
 
 
@@ -350,17 +376,14 @@ void Image_Asset::write_initializer(fluid::io::Code_Writer& f, const char *image
  */
 void Image_Asset::write_code(fluid::io::Code_Writer& f, int bind, const char *var, int inactive) {
   if (image_) {
-    f.write_c("%s%s->%s%s( %s() );\n",
-      f.indent(),
-      var,
-      bind ? "bind_" : "",
-      inactive ? "deimage" : "image",
-      initializer_function_.c_str());
+    f.write_c(f.indent() + var + "->"
+       + (bind ? "bind_" : "")
+       + (inactive ? "deimage" : "image") + "( "
+       + initializer_function_ + "() );\n");
     if (is_animated_gif_)
-      f.write_c("%s((Fl_Anim_GIF_Image*)(%s()))->canvas(%s, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n",
-        f.indent(),
-        initializer_function_.c_str(),
-        var);
+      f.write_c(f.indent(1) + "((Fl_Anim_GIF_Image*)("
+      + initializer_function_ + "()))->canvas("
+      + var + ", Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n");
   }
 }
 
@@ -378,7 +401,7 @@ void Image_Asset::write_code(fluid::io::Code_Writer& f, int bind, const char *va
 void Image_Asset::write_inline(fluid::io::Code_Writer& f, int inactive) {
   (void)inactive;
   if (image_) {
-    f.write_c("%s()", initializer_function_.c_str());
+    f.write_c(initializer_function_ + "()");
   }
 }
 

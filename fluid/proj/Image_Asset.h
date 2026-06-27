@@ -59,7 +59,7 @@ public: // methods
   const char *filename() const { return filename_.c_str(); }
 
   void write_static(fluid::io::Code_Writer& f, int compressed);
-  void write_initializer(fluid::io::Code_Writer& f, const char *type_name, const char *format, ...);
+  void write_initializer(fluid::io::Code_Writer& f, const std::string& image_class, const std::string& args);
   void write_code(fluid::io::Code_Writer& f, int bind, const char *var, int inactive = 0);
   void write_inline(fluid::io::Code_Writer& f, int inactive = 0);
   void write_file_error(fluid::io::Code_Writer& f, const char *fmt);

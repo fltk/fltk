@@ -36,6 +36,18 @@ using namespace fluid;
 using namespace fluid::io;
 using namespace fluid::proj;
 
+std::string fluid::io::to_string_8x(uint32_t value) {
+  char buf[32];
+  snprintf(buf, sizeof(buf), "%08x", value);
+  return std::string(buf);
+}
+
+std::string fluid::io::to_string_g(double value) {
+  char buf[32];
+  snprintf(buf, sizeof(buf), "%g", value);
+  return std::string(buf);
+}
+
 /**
  Return true if c can be in a C identifier.
  I needed this so it is not messed up by locale settings.
@@ -109,19 +121,15 @@ const char* Code_Writer::unique_id(void* o, const char* type, const char* name, 
  \param[in] set generate this indent depth
  \return pointer to a static string
  */
-const char *Code_Writer::indent(int set) {
-  static const char* spaces = "                                                                ";
-  int i = set * 2;
-  if (i>64) i = 64;
-  if (i<0) i = 0;
-  return spaces+64-i;
+std::string Code_Writer::indent(int set) const {
+  return std::string(set*2, ' ');
 }
 
 /**
  Return a C string that indents code to the current source file depth.
  \return pointer to a static string
  */
-const char *Code_Writer::indent() {
+std::string Code_Writer::indent() const {
   return indent(indentation);
 }
 
@@ -131,7 +139,7 @@ const char *Code_Writer::indent() {
     change the `indentation` variable; offset can be negative
  \return pointer to a static string
  */
-const char *Code_Writer::indent_plus(int offset) {
+std::string Code_Writer::indent_plus(int offset) const {
   return indent(indentation+offset);
 }
 
@@ -163,7 +171,8 @@ int Code_Writer::write_c_once(const std::string& code) {
   if (text_in_code.find(code) != text_in_code.end()) {
     return 0;
   }
-  crc_printf("%s\n", code.c_str());
+  crc_puts(code.c_str());
+  crc_putc('\n');
   text_in_code.insert(code);
   return 1;
 }
@@ -209,7 +218,7 @@ void Code_Writer::write_cstring(const char *s, int length) {
   // longer than four lines, we only render a placeholder.
   if (write_codeview && ((s==nullptr) || (length>300))) {
     if (length>=0)
-      crc_printf("\" ... %d bytes of text... \"", length);
+      crc_puts("\" ... " + std::to_string(length) + " bytes of text... \"");
     else
       crc_puts("\" ... text... \"");
     return;
@@ -267,7 +276,9 @@ void Code_Writer::write_cstring(const char *s, int length) {
       // otherwise we must print it as an octal constant:
       c &= 255;
       if (linelength >= 74) { crc_puts(next_line); linelength = 0; }
-      crc_printf("\\%03o", c);
+      char buf[8];
+      snprintf(buf, sizeof(buf), "\\%03o", c);
+      crc_puts(buf);
       linelength += 4;
       break;
     }
@@ -299,7 +310,7 @@ void Code_Writer::write_cdata(const char *s, int length) {
   }
   if (write_codeview) {
     if (length>=0)
-      crc_printf("{ /* ... %d bytes of binary data... */ }", length);
+      crc_puts("{ /* ... " + std::to_string(length) + "  bytes of binary data... */ }");
     else
       crc_puts("{ /* ... binary data... */ }");
     return;
@@ -319,43 +330,22 @@ void Code_Writer::write_cdata(const char *s, int length) {
     else if (c>9) linelength += 3;
     else linelength += 2;
     if (linelength >= 77) {crc_puts("\n"); linelength = 0;}
-    crc_printf("%d", c);
+    crc_puts(std::to_string(c));
     if (w<e) crc_putc(',');
   }
   crc_putc('}');
 }
 
 /**
- Print a formatted line to the source file.
- \param[in] format printf-style formatting text
- \param[in] args list of arguments
+ Write code to the source file.
+ \param[in] code string containing the code to write
  */
-void Code_Writer::vwrite_c(const char* format, va_list args) {
-  if (varused_test) {
-    varused = 1;
-    return;
-  }
-  crc_vprintf(format, args);
-}
-
-/**
- Print a formatted line to the source file.
- \param[in] format printf-style formatting text, followed by a vararg list
- */
-void Code_Writer::write_c(const char* format,...) {
-  va_list args;
-  va_start(args, format);
-  vwrite_c(format, args);
-  va_end(args);
-}
-
 void Code_Writer::write_c(const std::string& code) {
   if (varused_test) {
     varused = 1;
     return;
   }
   crc_puts(code.c_str());
-  crc_putc('\n');
 }
 
 /**
@@ -367,40 +357,19 @@ void Code_Writer::write_c(const std::string& code) {
  \param[in] com optional commentary
  */
 void Code_Writer::write_cc(const char *indent, int n, const char *c, const char *com) {
-  write_c("%s%.*s", indent, n, c);
+  write_c(std::string(indent) + std::string(c, n));
   char cc = c[n-1];
   if (cc!='}' && cc!=';')
     write_c(";");
   if (*com)
-    write_c(" %s", com);
+    write_c(" " + std::string(com));
   write_c("\n");
 }
 
 /**
- Print a formatted line to the header file.
- \param[in] format printf-style formatting text, followed by a vararg list
+ Write code to the header file.
+ \param[in] code string containing the code to write
  */
-void Code_Writer::write_h(const char* format,...)
-{
-  if (varused_test) return;
-
-  va_list args;
-  va_start(args, format);
-  int n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
-  if (n > block_buffer_size_) {
-    // Buffer was too small, reallocate and try again with the copy
-    block_buffer_size_ = n + 128;
-    if (block_buffer_) ::free(block_buffer_);
-    block_buffer_ = (char*)::malloc(block_buffer_size_+1);
-    va_end(args);
-    va_start(args, format);
-    n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
-  }
-  va_end(args);
-
-  header_buffer << block_buffer_;
-}
-
 void Code_Writer::write_h(const std::string& code) {
   if (varused_test) return;
   header_buffer << code;
@@ -445,16 +414,16 @@ void Code_Writer::write_c_indented(const char *textlines, int inIndent, char inT
         // avoid trailing spaces
       } else if (textlines[0]=='#') {
         // don't indent preprocessor statments starting with '#'
-        write_c("%.*s", line_len, textlines);
+        write_c(std::string(textlines, line_len));
       } else {
         // indent all other text lines
-        write_c("%s%.*s", indent(), line_len, textlines);
+        write_c(indent() + std::string(textlines, line_len));
       }
       if (newline) {
         write_c("\n");
       } else {
         if (inTrailWith)
-          write_c("%c", inTrailWith);
+          write_c(std::string(1, inTrailWith));
         break;
       }
       textlines = newline+1;
@@ -684,8 +653,8 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
       }
       macro_name_str = macro_name.str();
     }
-    write_h("#ifndef %s\n", macro_name_str.c_str());
-    write_h("#define %s\n", macro_name_str.c_str());
+    write_h("#ifndef " + macro_name_str + "\n");
+    write_h("#define " + macro_name_str + "\n");
   }
 
   if (proj_.avoid_early_includes==0) {
@@ -695,9 +664,9 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
     if (to_codeview) {
       write_c("#include \"CodeView.h\"\n");
     } else if (proj_.header_file_name[0] == '.' && strchr(proj_.header_file_name.c_str(), '/') == nullptr) {
-      write_c("#include \"%s\"\n", fl_filename_name(t));
+      write_c("#include \"" + fl_filename_name_str(t) + "\"\n");
     } else {
-      write_c("#include \"%s\"\n", proj_.header_file_name.c_str());
+      write_c("#include \"" + proj_.header_file_name + "\"\n");
     }
   }
   std::string loc_include, loc_conditional;
@@ -711,43 +680,43 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   if ((proj_.i18n.type != fluid::I18n_Type::NONE) && !loc_include.empty()) {
     int conditional = !loc_conditional.empty();
     if (conditional) {
-      write_c("#ifdef %s\n", loc_conditional.c_str());
+      write_c("#ifdef " + loc_conditional + "\n");
       indentation++;
     }
     if (loc_include[0] != '<' && loc_include[0] != '\"')
-      write_c("#%sinclude \"%s\"\n", indent(), loc_include.c_str());
+      write_c("#" + indent() + "include \"" + loc_include + "\"\n");
     else
-      write_c("#%sinclude %s\n", indent(), loc_include.c_str());
+      write_c("#" + indent() + "include " + loc_include + "\n");
     if (proj_.i18n.type == fluid::I18n_Type::POSIX) {
       if (!proj_.i18n.posix_file.empty()) {
-        write_c("extern nl_catd %s;\n", proj_.i18n.posix_file.c_str());
+        write_c("extern nl_catd " + proj_.i18n.posix_file + ";\n");
       } else {
         write_c("// Initialize I18N stuff now for menus...\n");
-        write_c("#%sinclude <locale.h>\n", indent());
+        write_c("#" + indent() + "include <locale.h>\n");
         write_c("static char* _locale = setlocale(LC_MESSAGES, \"\");\n");
-        write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n", proj_.basename().c_str());
+        write_c("static nl_catd _catalog = catopen(\"" + proj_.basename() + "\", 0);\n");
       }
     }
     if (conditional) {
       write_c("#else\n");
       if (proj_.i18n.type == fluid::I18n_Type::GNU) {
         if (!proj_.i18n.gnu_function.empty()) {
-          write_c("#%sifndef %s\n", indent(), proj_.i18n.gnu_function.c_str());
-          write_c("#%sdefine %s(text) text\n", indent_plus(1), proj_.i18n.gnu_function.c_str());
-          write_c("#%sendif\n", indent());
+          write_c("#" + indent() + "ifndef " + proj_.i18n.gnu_function + "\n");
+          write_c("#" + indent() + "define " + proj_.i18n.gnu_function + "(text) text\n");
+          write_c("#" + indent() + "endif\n");
         }
       }
       if (proj_.i18n.type == fluid::I18n_Type::POSIX) {
-        write_c("#%sifndef catgets\n", indent());
-        write_c("#%sdefine catgets(catalog, set, msgid, text) text\n", indent_plus(1));
-        write_c("#%sendif\n", indent());
+        write_c("#" + indent() + "ifndef catgets\n");
+        write_c("#" + std::string(indent_plus(1)) + "define catgets(catalog, set, msgid, text) text\n");
+        write_c("#" + indent() + "endif\n");
       }
       indentation--;
       write_c("#endif\n");
     }
     if (proj_.i18n.type == fluid::I18n_Type::GNU && proj_.i18n.gnu_static_function[0]) {
-      write_c("#ifndef %s\n", proj_.i18n.gnu_static_function.c_str());
-      write_c("#%sdefine %s(text) text\n", indent_plus(1), proj_.i18n.gnu_static_function.c_str());
+      write_c("#ifndef " + proj_.i18n.gnu_static_function + "\n");
+      write_c("#" + std::string(indent_plus(1)) + "define " + proj_.i18n.gnu_static_function + "(text) text\n");
       write_c("#endif\n");
     }
   }
@@ -829,7 +798,6 @@ Code_Writer::Code_Writer(Project &proj)
  */
 Code_Writer::~Code_Writer()
 {
-  if (block_buffer_) ::free(block_buffer_);
 }
 
 /**
@@ -887,46 +855,6 @@ unsigned long Code_Writer::block_crc(const void *data, int n, unsigned long in_c
  */
 void Code_Writer::crc_add(const void *data, int n) {
   block_crc_ = block_crc(data, n, block_crc_, &block_line_start_);
-}
-
-/** Write formatted text to the code buffer.
- If MergeBack is enabled, the CRC calculation is continued.
- \param[in] format printf style formatting string
- \return number of characters formatted
- */
-int Code_Writer::crc_printf(const char *format, ...) {
-  va_list args;
-  va_start(args, format);
-  int ret = crc_vprintf(format, args);
-  va_end(args);
-  return ret;
-}
-
-/** Write formatted text to the code buffer.
- If MergeBack is enabled, the CRC calculation is continued.
- \param[in] format printf style formatting string
- \param[in] args list of arguments
- \return number of characters formatted
- */
-int Code_Writer::crc_vprintf(const char *format, va_list args) {
-  // Make a copy of args in case we need to call vsnprintf twice
-  // (the first call consumes args on some platforms)
-  va_list args_copy;
-  va_copy(args_copy, args);
-  int n = vsnprintf(block_buffer_, block_buffer_size_, format, args);
-  if (n > block_buffer_size_) {
-    // Buffer was too small, reallocate and try again with the copy
-    block_buffer_size_ = n + 128;
-    if (block_buffer_) ::free(block_buffer_);
-    block_buffer_ = (char*)::malloc(block_buffer_size_+1);
-    n = vsnprintf(block_buffer_, block_buffer_size_, format, args_copy);
-  }
-  va_end(args_copy);
-  if (proj_.write_mergeback_data) {
-    crc_add(block_buffer_, n);
-  }
-  code_buffer << block_buffer_;
-  return n;
 }
 
 /** Write some text to the code buffer.

@@ -204,9 +204,9 @@ void Group_Node::write_code1(fluid::io::Code_Writer& f) {
 void Group_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   write_extra_code(f);
-  f.write_c("%s%s->end();\n", f.indent(), var);
+  f.write_c(f.indent() + var + "->end();\n");
   if (resizable()) {
-    f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
+    f.write_c(f.indent() + "Fl_Group::current()->resizable(" + var + ");\n");
   }
   write_block_close(f);
 }
@@ -431,14 +431,13 @@ void Flex_Node::write_code2(fluid::io::Code_Writer& f) {
   int lm, tm, rm, bm;
   flex->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    f.write_c("%s%s->margin(%d, %d, %d, %d);\n", f.indent(), var, lm, tm, rm, bm);
+    f.write_c(f.indent() + var + "->margin(" + std::to_string(lm) + ", " + std::to_string(tm) + ", " + std::to_string(rm) + ", " + std::to_string(bm) + ");\n");
   if (flex->gap())
-    f.write_c("%s%s->gap(%d);\n", f.indent(), var, flex->gap());
+    f.write_c(f.indent() + var + "->gap(" + std::to_string(flex->gap()) + ");\n");
   for (int i=0; i<flex->children(); ++i) {
     Fl_Widget *ci = flex->child(i);
     if (flex->fixed(ci))
-      f.write_c("%s%s->fixed(%s->child(%d), %d);\n", f.indent(), var, var, i,
-                flex->horizontal() ? ci->w() : ci->h());
+      f.write_c(f.indent() + var + "->fixed(" + var + "->child(" + std::to_string(i) + "), " + std::to_string(flex->horizontal() ? ci->w() : ci->h()) + ");\n");
   }
   Group_Node::write_code2(f);
 }

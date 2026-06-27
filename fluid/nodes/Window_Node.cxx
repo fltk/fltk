@@ -1215,34 +1215,36 @@ void Window_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
   // make the window modal or non-modal
   if (modal) {
-    f.write_c("%s%s->set_modal();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->set_modal();\n");
   } else if (non_modal) {
-    f.write_c("%s%s->set_non_modal();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->set_non_modal();\n");
   }
   // clear the window border
   if (!((Fl_Window*)o)->border()) {
-    f.write_c("%s%s->clear_border();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->clear_border();\n");
   }
   // set the xclass of the window
   if (xclass) {
-    f.write_c("%s%s->xclass(", f.indent(), var);
+    f.write_c(f.indent() + var + "->xclass(");
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
   // make the window resizable
   if (((Fl_Window*)o)->resizable() == o)
-    f.write_c("%s%s->resizable(%s);\n", f.indent(), var, var);
+    f.write_c(f.indent() + var + "->resizable(" + std::string(var) + ");\n");
   // set the size range last
   if (sr_max_w || sr_max_h) {
-    f.write_c("%s%s->size_range(%d, %d, %d, %d);\n", f.indent(), var,
-            sr_min_w, sr_min_h, sr_max_w, sr_max_h);
+    f.write_c(f.indent() + var + "->size_range(" +
+            std::to_string(sr_min_w) + ", " + std::to_string(sr_min_h) + ", " +
+            std::to_string(sr_max_w) + ", " + std::to_string(sr_max_h) + ");\n");
   } else if (sr_min_w || sr_min_h) {
-    f.write_c("%s%s->size_range(%d, %d);\n", f.indent(), var, sr_min_w, sr_min_h);
+    f.write_c(f.indent() + var + "->size_range(" +
+            std::to_string(sr_min_w) + ", " + std::to_string(sr_min_h) + ");\n");
   }
   // insert extra code from user, may call `show()`
   write_extra_code(f);
   // stop adding widgets to this window
-  f.write_c("%s%s->end();\n", f.indent(), var);
+  f.write_c(f.indent() + var + "->end();\n");
   write_block_close(f);
 }
 
@@ -1389,56 +1391,55 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
 
   f.write_c("\n");
   write_comment_h(f);
-  f.write_h("\nclass %s : public %s {\n", name(), c.c_str());
+  f.write_h("\nclass " + std::string(name()) + " : public " + c + " {\n");
   if (c.find("Window")!=c.npos) {
-    f.write_h("%svoid _%s();\n", f.indent(1), trimclassname(name()));
+    f.write_h(f.indent(1) + "void _" + std::string(trimclassname(name())) + "();\n");
     f.write_h("public:\n");
-    f.write_h("%s%s(int X, int Y, int W, int H, const char* L=nullptr);\n", f.indent(1), trimclassname(name()));
-    f.write_h("%s%s(int W, int H, const char* L=nullptr);\n", f.indent(1), trimclassname(name()));
-    f.write_h("%s%s();\n", f.indent(1), trimclassname(name()));
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int W, int H, const char* L=nullptr);\n");
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "();\n");
 
     // a constructor with all four dimensions plus label
-    f.write_c("%s::%s(int X, int Y, int W, int H, const char* L) :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c.c_str());
-    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L) :\n");
+    f.write_c(f.indent(1) + c + "(X, Y, W, H, L)\n{\n");
+    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
     f.write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
-    f.write_c("%s::%s(int W, int H, const char* L) :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c.c_str());
-    f.write_c("%sclear_flag(16);\n", f.indent(1));
-    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int W, int H, const char* L) :\n");
+    f.write_c(f.indent(1) + c + "(0, 0, W, H, L)\n{\n");
+    f.write_c(f.indent(1) + "clear_flag(16);\n");
+    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
     f.write_c("}\n\n");
 
     // a constructor that takes size and label from the Fluid database
-    f.write_c("%s::%s() :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(0, 0, %d, %d, ", f.indent(1), c.c_str(), o->w(), o->h());
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "() :\n");
+    f.write_c(f.indent(1) + c + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()) + ", ");
     const char *cstr = label();
     if (cstr) f.write_cstring(cstr);
     else f.write_c("nullptr");
     f.write_c(")\n{\n");
-    f.write_c("%sclear_flag(16);\n", f.indent(1));
-    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c(f.indent(1) + "clear_flag(16);\n");
+    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
     f.write_c("}\n\n");
 
-    f.write_c("void %s::_%s() {\n", name(), trimclassname(name()));
+    f.write_c("void " + std::string(name()) + "::_" + std::string(trimclassname(name())) + "() {\n");
 //    f.write_c("%s%s* w = this;\n", f.indent(1), name());
   } else {
     f.write_h("public:\n");
-    f.write_h("%s%s(int X, int Y, int W, int H, const char* L=nullptr);\n",
-            f.indent(1), trimclassname(name()));
-    f.write_c("%s::%s(int X, int Y, int W, int H, const char* L) :\n", name(), trimclassname(name()));
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L) :\n");
     if (wc_relative==1)
-      f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c.c_str());
+      f.write_c(f.indent(1) + c + "(0, 0, W, H, L)\n{\n");
     else if (wc_relative==2)
-      f.write_c("%s%s(0, 0, %d, %d, L)\n{\n", f.indent(1), c.c_str(), o->w(), o->h());
+      f.write_c(f.indent(1) + c + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()) + ", L)\n{\n");
     else
-      f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c.c_str());
+      f.write_c(f.indent(1) + c + "(X, Y, W, H, L)\n{\n");
   }
 
 //  f.write_c("%s%s* o = this;\n", f.indent(1), name());
 
-  f.indentation++;
+  f.indent_more();
   write_widget_code(f);
 }
 
@@ -1449,31 +1450,31 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
 void Widget_Class_Node::write_code2(fluid::io::Code_Writer& f) {
   // make the window modal or non-modal
   if (modal) {
-    f.write_c("%sset_modal();\n", f.indent());
+    f.write_c(f.indent() + "set_modal();\n");
   } else if (non_modal) {
-    f.write_c("%sset_non_modal();\n", f.indent());
+    f.write_c(f.indent() + "set_non_modal();\n");
   }
   // clear the window border
-  if (!((Fl_Window*)o)->border()) f.write_c("%sclear_border();\n", f.indent());
+  if (!((Fl_Window*)o)->border()) f.write_c(f.indent() + "clear_border();\n");
   // set the xclass of the window
   if (xclass) {
-    f.write_c("%sxclass(", f.indent());
+    f.write_c(f.indent() + "xclass(");
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
   // make the window resizable
   if (((Fl_Window*)o)->resizable() == o)
-    f.write_c("%sresizable(this);\n", f.indent());
+    f.write_c(f.indent() + "resizable(this);\n");
   // insert extra code from user
   write_extra_code(f);
   // stop adding widgets to this window
-  f.write_c("%send();\n", f.indent());
+  f.write_c(f.indent() + "end();\n");
   // reposition or resize the Widget Class to fit into the target
   if (wc_relative==1)
-    f.write_c("%sposition(X, Y);\n", f.indent());
+    f.write_c(f.indent() + "position(X, Y);\n");
   else if (wc_relative==2)
-    f.write_c("%sresize(X, Y, W, H);\n", f.indent());
-  f.indentation--;
+    f.write_c(f.indent() + "resize(X, Y, W, H);\n");
+  f.indent_less();
   f.write_c("}\n");
 }
 

@@ -1077,20 +1077,20 @@ int Node::read_fdesign(const char*, const char*) {return 0;}
 void Node::write_comment_h(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    f.write_h("%s/**\n", pre);
+    f.write_h(std::string(pre) + "/**\n");
     const char *s = comment();
-    f.write_h("%s ", pre);
+    f.write_h(std::string(pre) + " ");
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          f.write_h("\n%s ", pre);
+          f.write_h("\n" + std::string(pre) + " ");
         }
       } else {
-        f.write_h("%c", *s); // FIXME this is much too slow!
+        f.write_h(std::string(1, *s)); // FIXME this is much too slow!
       }
       s++;
     }
-    f.write_h("\n%s*/\n", pre);
+    f.write_h("\n" + std::string(pre) + "*/\n");
   }
 }
 
@@ -1100,22 +1100,22 @@ void Node::write_comment_h(fluid::io::Code_Writer& f, const char *pre)
 void Node::write_comment_c(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    f.write_c("%s/**\n", pre);
+    f.write_c(std::string(pre) + "/**\n");
     const char *s = comment();
     if (*s && *s!='\n')
-      f.write_c("%s ", pre);
+      f.write_c(std::string(pre) + " ");
     while(*s) {
       if (*s=='\n') {
         f.write_c("\n");
         if (s[1] && s[1]!='\n') {
-          f.write_c("%s ", pre);
+          f.write_c(std::string(pre) + " ");
         }
       } else {
-        f.write_c("%c", *s); // FIXME this is much too slow!
+        f.write_c(std::string(1, *s)); // FIXME this is much too slow!
       }
       s++;
     }
-    f.write_c("\n%s*/\n", pre);
+    f.write_c("\n" + std::string(pre) + "*/\n");
   }
 }
 
@@ -1128,37 +1128,40 @@ void Node::write_comment_inline_c(fluid::io::Code_Writer& f, const char *pre)
     const char *s = comment();
     if (strchr(s, '\n')==nullptr) {
       // single line comment
-      if (pre) f.write_c("%s", pre);
-      f.write_c("// %s\n", s);
-      if (!pre) f.write_c("%s", f.indent_plus(1));
+      if (pre) f.write_c(std::string(pre));
+      f.write_c("// " + std::string(s) + "\n");
+      if (!pre) f.write_c(f.indent_plus(1));
     } else {
-      f.write_c("%s/*\n", pre?pre:"");
+      if (pre)
+        f.write_c(std::string(pre) + "/*\n");
+      else
+        f.write_c("/*\n");
       if (*s && *s!='\n') {
         if (pre)
-          f.write_c("%s ", pre);
+          f.write_c(std::string(pre) + " ");
         else
-          f.write_c("%s ", f.indent_plus(1));
+          f.write_c(f.indent_plus(1) + " ");
       }
       while(*s) {
         if (*s=='\n') {
           f.write_c("\n");
           if (s[1] && s[1]!='\n') {
             if (pre)
-              f.write_c("%s ", pre);
+              f.write_c(std::string(pre) + " ");
             else
-              f.write_c("%s ", f.indent_plus(1));
+              f.write_c(f.indent_plus(1) + " ");
           }
         } else {
-          f.write_c("%c", *s); // FIXME this is much too slow!
+          f.write_c(std::string(1, *s)); // FIXME this is much too slow!
         }
         s++;
       }
       if (pre)
-        f.write_c("\n%s */\n", pre);
+        f.write_c("\n" + std::string(pre) + " */\n");
       else
-        f.write_c("\n%s */\n", f.indent_plus(1));
+        f.write_c("\n" + f.indent_plus(1) + " */\n");
       if (!pre)
-        f.write_c("%s", f.indent_plus(1));
+        f.write_c(f.indent_plus(1));
     }
   }
 }
@@ -1262,8 +1265,8 @@ void Node::write_static_after(fluid::io::Code_Writer&) {
 }
 
 void Node::write_code1(fluid::io::Code_Writer& f) {
-  f.write_h("// Header for %s\n", title());
-  f.write_c("// Code for %s\n", title());
+  f.write_h("// Header for " + std::string(title()) + "\n");
+  f.write_c("// Code for " + std::string(title()) + "\n");
 }
 
 void Node::write_code2(fluid::io::Code_Writer&) {

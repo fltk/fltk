@@ -1474,11 +1474,11 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
   if (c && !k && !is_class()) {
     f.write_c("\n");
     if (!public_) f.write_c("static ");
-    else f.write_h("extern %s* %s;\n", t.c_str(), c);
+    else f.write_h("extern " + t + "* " + c + ";\n");
     if (strchr(c, '[') == nullptr)
-      f.write_c("%s* %s = (%s*)nullptr;\n", t.c_str(), c, t.c_str());
+      f.write_c(t + "* " + c + " = (" + t + "*)nullptr;\n");
     else
-      f.write_c("%s* %s = {(%s*)nullptr};\n", t.c_str(), c, t.c_str());
+      f.write_c(t + "* " + c + " = {(" + t + "*)nullptr};\n");
   }
   if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -1493,13 +1493,13 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     }
     const char* cn = callback_name(f);
     if (k) {
-      f.write_c("\nvoid %s::%s_i(%s*", k, cn, t.c_str());
+      f.write_c("\nvoid " + std::string(k) + "::" + std::string(cn) + "_i(" + t + "*");
     } else {
-      f.write_c("\nstatic void %s(%s*", cn, t.c_str());
+      f.write_c("\nstatic void " + std::string(cn) + "(" + t + "*");
     }
     if (use_o) f.write_c(" o");
     std::string ut = user_data_type_or_voidp();
-    f.write_c(", %s", ut.c_str());
+    f.write_c(", " + ut);
     if (use_v) f.write_c(" v");
     f.write_c(") {\n");
     f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
@@ -1516,14 +1516,14 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
     f.write_c("}\n");
     if (k) {
-      f.write_c("void %s::%s(%s* o, %s v) {\n", k, cn, t.c_str(), ut.c_str());
-      f.write_c("%s((%s*)(o", f.indent(1), k);
+      f.write_c("void " + std::string(k) + "::" + std::string(cn) + "(" + t + "* o, " + ut + " v) {\n");
+      f.write_c(f.indent(1) + "((" + std::string(k)+ "*)(o");
       Node* q = nullptr;
       for (Node* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
       if (!q || !q->is_a(Type::Widget_Class))
         f.write_c("->user_data()");
-      f.write_c("))->%s_i(o,v);\n}\n", cn);
+      f.write_c("))->" + std::string(cn) + "_i(o,v);\n}\n");
     }
   }
   active_image.write_static(f);
@@ -1536,15 +1536,15 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   if (c) {
     if (class_name(1)) {
       f.write_public(public_);
-      f.write_h("%s%s* %s;\n", f.indent(1), t.c_str(), c);
+      f.write_h(f.indent(1) + t + "* " + c + ";\n");
     }
   }
   if (class_name(1) && callback() && !is_name(callback())) {
     const char* cn = callback_name(f);
     std::string ut = user_data_type_or_voidp();
     f.write_public(0);
-    f.write_h("%sinline void %s_i(%s*, %s);\n", f.indent(1), cn, t.c_str(), ut.c_str());
-    f.write_h("%sstatic void %s(%s*, %s);\n", f.indent(1), cn, t.c_str(), ut.c_str());
+    f.write_h(f.indent(1) + "inline void " + std::string(cn) + "_i(" + t + "*, " + ut + ");\n");
+    f.write_h(f.indent(1) + "static void " + std::string(cn) + "(" + t + "*, " + ut + ");\n");
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && is_a(Type::Window);
@@ -1605,25 +1605,27 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
       }
   }
 
-  f.write_c("%s{ ", f.indent());
+  f.write_c(f.indent() + "{ ");
   write_comment_inline_c(f);
-  if (f.varused) f.write_c("%s* o = ", t.c_str());
-  if (name()) f.write_c("%s = ", name());
+  if (f.varused) f.write_c(t + "* o = ");
+  if (name()) f.write_c(std::string(name()) + " = ");
   if (is_a(Type::Window)) {
     // Handle special case where user is faking a Fl_Group type as a window,
     // there is no 2-argument constructor in that case:
     if (t.find("Window")==t.npos)
-      f.write_c("new %s(0, 0, %d, %d", t.c_str(), o->w(), o->h());
+      f.write_c("new " + t + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()));
     else
-      f.write_c("new %s(%d, %d", t.c_str(), o->w(), o->h());
+      f.write_c("new " + t + "(" + std::to_string(o->w()) + ", " + std::to_string(o->h()));
   } else if (is_a(Type::Menu_Bar)
              && ((Menu_Bar_Node*)this)->is_sys_menu_bar()
              && is_in_class()) {
-    f.write_c("(%s*)new %s(%d, %d, %d, %d",
-              t.c_str(), ((Menu_Bar_Node*)this)->sys_menubar_proxy_name().c_str(),
-              o->x(), o->y(), o->w(), o->h());
+    f.write_c("(" + t + "*)new " + ((Menu_Bar_Node*)this)->sys_menubar_proxy_name()
+              + "(" + std::to_string(o->x()) + ", " + std::to_string(o->y())
+              + ", " + std::to_string(o->w()) + ", " + std::to_string(o->h()) );
   } else {
-    f.write_c("new %s(%d, %d, %d, %d", t.c_str(), o->x(), o->y(), o->w(), o->h());
+    f.write_c("new " + t
+              + "(" + std::to_string(o->x()) + ", " + std::to_string(o->y())
+              + ", " + std::to_string(o->w()) + ", " + std::to_string(o->h()) );
   }
   if (label() && *label()) {
     f.write_c(", ");
@@ -1632,14 +1634,14 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
         f.write_cstring(label());
         break;
     case fluid::I18n_Type::GNU : /* GNU gettext */
-        f.write_c("%s(", Fluid.proj.i18n.gnu_function.c_str());
+        f.write_c(Fluid.proj.i18n.gnu_function + "(");
         f.write_cstring(label());
         f.write_c(")");
         break;
     case fluid::I18n_Type::POSIX : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,",
-                  Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
-                  Fluid.proj.i18n.posix_set.c_str(), msgnum());
+        f.write_c("catgets("
+                  + (Fluid.proj.i18n.posix_file.empty() ? std::string("_catalog") : Fluid.proj.i18n.posix_file)
+                  + ", " + Fluid.proj.i18n.posix_set + ", " + std::to_string(msgnum()) + ",");
         f.write_cstring(label());
         f.write_c(")");
         break;
@@ -1647,11 +1649,11 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   }
   f.write_c(");\n");
 
-  f.indentation++;
+  f.indent_more();
 
   // Avoid compiler warning for unused variable.
   // Also avoid quality control warnings about incorrect allocation error handling.
-  if (wused) f.write_c("%sw = o; (void)w;\n", f.indent());
+  if (wused) f.write_c(f.indent() + "w = o; (void)w;\n");
 
   write_widget_code(f);
 }
@@ -1688,9 +1690,9 @@ void Widget_Node::write_color(fluid::io::Code_Writer& f, const char* field, Fl_C
   }
   const char* var = is_class() ? "this" : name() ? name() : "o";
   if (color_name) {
-    f.write_c("%s%s->%s(%s);\n", f.indent(), var, field, color_name);
+    f.write_c(f.indent() + var + "->" + field + "(" + color_name + ");\n");
   } else {
-    f.write_c("%s%s->%s((Fl_Color)%d);\n", f.indent(), var, field, color);
+    f.write_c(f.indent() + var + "->" + field + "((Fl_Color)" + std::to_string(color) + ");\n");
   }
 }
 
@@ -1700,21 +1702,21 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   const char* var = is_class() ? "this" : name() ? name() : "o";
 
   if (!tooltip().empty()) {
-    f.write_c("%s%s->tooltip(",f.indent(), var);
+    f.write_c(f.indent() + var + "->tooltip(");
     switch (Fluid.proj.i18n.type) {
     case fluid::I18n_Type::NONE : /* None */
         f.write_cstring(tooltip().c_str());
         break;
     case fluid::I18n_Type::GNU : /* GNU gettext */
-        f.write_c("%s(", Fluid.proj.i18n.gnu_function.c_str());
+        f.write_c(Fluid.proj.i18n.gnu_function + "(");
         f.write_cstring(tooltip().c_str());
         f.write_c(")");
         break;
     case fluid::I18n_Type::POSIX : /* POSIX catgets */
-        f.write_c("catgets(%s,%s,%d,",
-                  Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
-                  Fluid.proj.i18n.posix_set.c_str(),
-                  msgnum() + 1);
+        f.write_c("catgets("
+                  + (Fluid.proj.i18n.posix_file.empty() ? std::string("_catalog") : Fluid.proj.i18n.posix_file)
+                  + ", " + Fluid.proj.i18n.posix_set
+                  + ", " + std::to_string(msgnum() + 1) + ", ");
         f.write_cstring(tooltip().c_str());
         f.write_c(")");
         break;
@@ -1723,11 +1725,11 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   }
 
   if (is_a(Type::Spinner) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
-    f.write_c("%s%s->type(%d);\n", f.indent(), var, ((Fl_Spinner*)o)->type());
+    f.write_c(f.indent() + var + "->type(" + std::to_string(((Fl_Spinner*)o)->type()) + ");\n");
   else if (o->type() != tplate->type() && !is_a(Type::Window))
-    f.write_c("%s%s->type(%d);\n", f.indent(), var, o->type());
+    f.write_c(f.indent() + var + "->type(" + std::to_string(o->type()) + ");\n");
   if (o->box() != tplate->box() || !subclass().empty())
-    f.write_c("%s%s->box(FL_%s);\n", f.indent(), var, boxname(o->box()));
+    f.write_c(f.indent() + var + "->box(FL_" + boxname(o->box()) + ");\n");
 
   // write shortcut command if needed
   int shortcut = 0;
@@ -1737,7 +1739,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   else if (is_a(Type::Text_Display)) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
     int s = shortcut;
-    f.write_c("%s%s->shortcut(", f.indent(), var);
+    f.write_c(f.indent() + var + "->shortcut(");
     if (Fluid.proj.use_FL_COMMAND) {
       if (s & FL_CTRL) { f.write_c("FL_CONTROL|"); s &= ~FL_CTRL; }
       if (s & FL_META) { f.write_c("FL_COMMAND|"); s &= ~FL_META; }
@@ -1748,25 +1750,28 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
     if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
     if ((s < 127) && isprint(s))
-      f.write_c("'%c');\n", s);
-    else
-      f.write_c("0x%x);\n", s);
+      f.write_c("'" + std::string(1, s) + "');\n");
+    else {
+      f.write_c("0x" + fluid::io::to_string_8x(s) + ");\n");
+    }
   }
 
   if (is_a(Type::Button)) {
     Fl_Button* b = (Fl_Button*)o;
-    if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
-                               boxname(b->down_box()));
-    if (b->value()) f.write_c("%s%s->value(1);\n", f.indent(), var);
-    if (b->compact()) f.write_c("%s%s->compact(%d);\n", f.indent(), var, b->compact());
+    if (b->down_box())
+      f.write_c(f.indent() + var + "->down_box(FL_" + boxname(b->down_box()) + ");\n");
+    if (b->value())
+      f.write_c(f.indent() + var + "->value(1);\n");
+    if (b->compact())
+      f.write_c(f.indent() + var + "->compact(" + std::to_string(b->compact()) + ");\n");
   } else if (is_a(Type::Input_Choice)) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
-    if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
-                               boxname(b->down_box()));
+    if (b->down_box())
+      f.write_c(f.indent() + var + "->down_box(FL_" + boxname(b->down_box()) + ");\n");
   } else if (is_a(Type::Menu_Manager_)) {
     Fl_Menu_* b = (Fl_Menu_*)o;
-    if (b->down_box()) f.write_c("%s%s->down_box(FL_%s);\n", f.indent(), var,
-                               boxname(b->down_box()));
+    if (b->down_box())
+      f.write_c(f.indent() + var + "->down_box(FL_" + boxname(b->down_box()) + ");\n");
   }
   if (o->color() != tplate->color() || !subclass().empty())
     write_color(f, "color", o->color());
@@ -1775,117 +1780,116 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   active_image.write_code(f, var, false);
   inactive_image.write_code(f, var, true);
   if (o->labeltype() != tplate->labeltype() || !subclass().empty())
-    f.write_c("%s%s->labeltype(FL_%s);\n", f.indent(), var,
-            item_name(labeltypemenu, o->labeltype()));
+    f.write_c(f.indent() + var + "->labeltype(FL_" + item_name(labeltypemenu, o->labeltype()) + ");\n");
   if (o->labelfont() != tplate->labelfont() || !subclass().empty())
-    f.write_c("%s%s->labelfont(%d);\n", f.indent(), var, o->labelfont());
+    f.write_c(f.indent() + var + "->labelfont(" + std::to_string(o->labelfont()) + ");\n");
   if (o->labelsize() != tplate->labelsize() || !subclass().empty())
-    f.write_c("%s%s->labelsize(%d);\n", f.indent(), var, o->labelsize());
+    f.write_c(f.indent() + var + "->labelsize(" + std::to_string(o->labelsize()) + ");\n");
   if (o->labelcolor() != tplate->labelcolor() || !subclass().empty())
     write_color(f, "labelcolor", o->labelcolor());
   if (o->horizontal_label_margin() != tplate->horizontal_label_margin())
-    f.write_c("%s%s->horizontal_label_margin(%d);\n", f.indent(), var, o->horizontal_label_margin());
+    f.write_c(f.indent() + var + "->horizontal_label_margin(" + std::to_string(o->horizontal_label_margin()) + ");\n");
   if (o->vertical_label_margin() != tplate->vertical_label_margin())
-    f.write_c("%s%s->vertical_label_margin(%d);\n", f.indent(), var, o->vertical_label_margin());
+    f.write_c(f.indent() + var + "->vertical_label_margin(" + std::to_string(o->vertical_label_margin()) + ");\n");
   if (o->label_image_spacing() != tplate->label_image_spacing())
-    f.write_c("%s%s->label_image_spacing(%d);\n", f.indent(), var, o->label_image_spacing());
+    f.write_c(f.indent() + var + "->label_image_spacing(" + std::to_string(o->label_image_spacing()) + ");\n");
   if (is_a(Type::Valuator_)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
     if (v->minimum()!=t->minimum())
-      f.write_c("%s%s->minimum(%g);\n", f.indent(), var, v->minimum());
+      f.write_c(f.indent() + var + "->minimum(" + fluid::io::to_string_g(v->minimum()) + ");\n");
     if (v->maximum()!=t->maximum())
-      f.write_c("%s%s->maximum(%g);\n", f.indent(), var, v->maximum());
+      f.write_c(f.indent() + var + "->maximum(" + fluid::io::to_string_g(v->maximum()) + ");\n");
     if (v->step()!=t->step())
-      f.write_c("%s%s->step(%g);\n", f.indent(), var, v->step());
+      f.write_c(f.indent() + var + "->step(" + fluid::io::to_string_g(v->step()) + ");\n");
     if (v->value()) {
       if (is_a(Type::Scrollbar)) { // Fl_Scrollbar::value(double) is not available
-        f.write_c("%s%s->Fl_Slider::value(%g);\n", f.indent(), var, v->value());
+        f.write_c(f.indent() + var + "->Fl_Slider::value(" + fluid::io::to_string_g(v->value()) + ");\n");
       } else {
-        f.write_c("%s%s->value(%g);\n", f.indent(), var, v->value());
+        f.write_c(f.indent() + var + "->value(" + fluid::io::to_string_g(v->value()) + ");\n");
       }
     }
     if (is_a(Type::Slider)) {
       double x = ((Fl_Slider*)v)->slider_size();
       double y = ((Fl_Slider*)t)->slider_size();
-      if (x != y) f.write_c("%s%s->slider_size(%g);\n", f.indent(), var, x);
+      if (x != y) f.write_c(f.indent() + var + "->slider_size(" + fluid::io::to_string_g(x) + ");\n");
     }
   }
   if (is_a(Type::Spinner)) {
     Fl_Spinner* v = (Fl_Spinner*)o;
     Fl_Spinner* t = (Fl_Spinner*)(tplate);
     if (v->minimum()!=t->minimum())
-      f.write_c("%s%s->minimum(%g);\n", f.indent(), var, v->minimum());
+      f.write_c(f.indent() + var + "->minimum(" + fluid::io::to_string_g(v->minimum()) + ");\n");
     if (v->maximum()!=t->maximum())
-      f.write_c("%s%s->maximum(%g);\n", f.indent(), var, v->maximum());
+      f.write_c(f.indent() + var + "->maximum(" + fluid::io::to_string_g(v->maximum()) + ");\n");
     if (v->step()!=t->step())
-      f.write_c("%s%s->step(%g);\n", f.indent(), var, v->step());
+      f.write_c(f.indent() + var + "->step(" + fluid::io::to_string_g(v->step()) + ");\n");
     if (v->value()!=1.0f)
-      f.write_c("%s%s->value(%g);\n", f.indent(), var, v->value());
+      f.write_c(f.indent() + var + "->value(" + fluid::io::to_string_g(v->value()) + ");\n");
   }
 
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font g; int s; Fl_Color c; textstuff(0,g,s,c);
-    if (g != ff) f.write_c("%s%s->textfont(%d);\n", f.indent(), var, g);
-    if (s != fs) f.write_c("%s%s->textsize(%d);\n", f.indent(), var, s);
+    if (g != ff) f.write_c(f.indent() + var + "->textfont(" + std::to_string(g) + ");\n");
+    if (s != fs) f.write_c(f.indent() + var + "->textsize(" + std::to_string(s) + ");\n");
     if (c != fc) write_color(f, "textcolor", c);
   }}
   std::string ud = user_data();
   if (class_name(1) && !parent->is_widget()) ud = "this";
   if (callback()) {
     if (callback()[0] == '[') { // lambda callback function
-      f.write_c("%s%s->callback(\n", f.indent(), var);
+      f.write_c(f.indent() + var + "->callback(\n");
       f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
       f.write_c_indented(callback(), 1, 0);
       f.write_c("\n");
       f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
-      f.write_c("%s", f.indent());
+      f.write_c(f.indent());
     } else {
-      f.write_c("%s%s->callback((Fl_Callback*)%s", f.indent(), var, callback_name(f));
+      f.write_c(f.indent() + var + "->callback((Fl_Callback*)" + callback_name(f));
     }
     if (!ud.empty())
-      f.write_c(", (void*)(%s));\n", ud.c_str());
+      f.write_c(", (void*)(" + ud + "));\n");
     else
       f.write_c(");\n");
   } else if (!ud.empty()) {
-    f.write_c("%s%s->user_data((void*)(%s));\n", f.indent(), var, ud.c_str());
+    f.write_c(f.indent() + var + "->user_data((void*)(" + ud + "));\n");
   }
   if (o->align() != tplate->align() || !subclass().empty()) {
     int i = o->align();
-    f.write_c("%s%s->align(Fl_Align(%s", f.indent(), var,
-            item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
+    f.write_c(f.indent() + var + "->align(Fl_Align("
+            + item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
     if (i & FL_ALIGN_INSIDE) f.write_c("|FL_ALIGN_INSIDE");
     f.write_c("));\n");
   }
   Fl_When ww = o->when();
   if (ww != tplate->when() || !subclass().empty())
-    f.write_c("%s%s->when(%s);\n", f.indent(), var, when_symbol_name(ww));
+    f.write_c(f.indent() + var + "->when(" + when_symbol_name(ww) + ");\n");
   if (!o->visible() && o->parent())
-    f.write_c("%s%s->hide();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->hide();\n");
   if (!o->active())
-    f.write_c("%s%s->deactivate();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->deactivate();\n");
   if (!is_a(Type::Group) && resizable())
-    f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
+    f.write_c(f.indent() + "Fl_Group::current()->resizable(" + var + ");\n");
   if (hotspot()) {
     if (is_class())
-      f.write_c("%shotspot(%s);\n", f.indent(), var);
+      f.write_c(f.indent() + "hotspot(" + var + ");\n");
     else if (is_a(Type::Window))
-      f.write_c("%s%s->hotspot(%s);\n", f.indent(), var, var);
+      f.write_c(f.indent() + var + "->hotspot(" + var + ");\n");
     else
-      f.write_c("%s%s->window()->hotspot(%s);\n", f.indent(), var, var);
+      f.write_c(f.indent() + var + "->window()->hotspot(" + var + ");\n");
   }
 }
 
 void Widget_Node::write_extra_code(fluid::io::Code_Writer& f) {
   for (int n=0; n < NUM_EXTRA_CODE; n++)
     if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str()))
-      f.write_c("%s%s\n", f.indent(), extra_code(n).c_str());
+      f.write_c(f.indent() + extra_code(n) + "\n");
 }
 
 void Widget_Node::write_block_close(fluid::io::Code_Writer& f) {
-  f.indentation--;
-  f.write_c("%s} // %s* %s\n", f.indent(), subclassname(this).c_str(),
-          name() ? name() : "o");
+  f.indent_less();
+  f.write_c(f.indent() + "} // " + subclassname(this) + "* "
+          + (name() ? name() : "o") + "\n");
 }
 
 void Widget_Node::write_code2(fluid::io::Code_Writer& f) {

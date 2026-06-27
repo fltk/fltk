@@ -41,6 +41,9 @@ class Project;
 
 namespace io {
 
+extern std::string to_string_8x(uint32_t value);
+extern std::string to_string_g(double value);
+
 class Code_Writer
 {
 private:
@@ -65,16 +68,9 @@ private:
   unsigned long block_crc_ = 0;
   /// if set, we are at the start of a line and can ignore leading spaces in crc
   bool block_line_start_ = true;
-  /// expanding buffer for vsnprintf
-  char *block_buffer_ = nullptr;
-  /// size of expanding buffer for vsnprintf
-  int block_buffer_size_ = 0;
 
-  void crc_add(const void *data, int n=-1);
-  int crc_printf(const char *format, ...);
-  int crc_vprintf(const char *format, va_list args);
-  int crc_puts(const char *text);
-  int crc_putc(int c);
+  /// current level of source code indentation
+  int indentation = 0;
 
   bool file_content_matches(const char *filename, const std::string &content);
   bool write_file_if_changed(const char *filename, const std::string &content);
@@ -84,9 +80,13 @@ private:
   /// Return the current write position in the header output stream.
   int header_pos() { return (int)header_buffer.tellp(); }
 
+protected:
+  void crc_add(const void *data, int n=-1);
+  int crc_puts(const char *text);
+  int crc_puts(const std::string& text) { return crc_puts(text.c_str()); }
+  int crc_putc(int c);
+
 public:
-  /// current level of source code indentation
-  int indentation = 0;
   /// set if we write abbreviated file for the source code previewer
   /// (disables binary data blocks, for example)
   bool write_codeview = false;
@@ -100,32 +100,36 @@ public:
 public:
   Code_Writer(Project &proj);
   ~Code_Writer();
+
   const char* unique_id(void* o, const char*, const char*, const char*);
+
   /// Increment source code indentation level.
   void indent_more() { indentation++; }
   /// Decrement source code indentation level.
   void indent_less() { indentation--; }
-  const char *indent();
-  const char *indent(int set);
-  const char *indent_plus(int offset);
+  void indent_reset() { indentation = 0; }
+  std::string indent() const;
+  std::string indent(int set) const;
+  std::string indent_plus(int offset) const;
+
+  bool c_contains(void* ptr);
+
   int write_h_once(const std::string& code);
   int write_c_once(const std::string& code);
-  bool c_contains(void* ptr);
   void write_cstring(const char *,int length);
   void write_cstring(const char *);
   void write_cdata(const char *,int length);
-  void vwrite_c(const char* format, va_list args);
-  void write_c(const char*, ...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_c(const std::string& code);
-  void write_cc(const char *, int, const char*, const char*);
-  void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 2, 3)));
   void write_h(const std::string& code);
+  void write_cc(const char *, int, const char*, const char*);
   void write_hc(const char *, int, const char*, const char*);
   void write_c_indented(const char *textlines, int inIndent, char inTrailwWith);
+  void write_public(int state); // writes pubic:/private: as needed
+
   Node* write_static(Node* p);
   Node* write_code(Node* p);
+
   int write_code(const char *cfile, const char *hfile, bool to_codeview=false);
-  void write_public(int state); // writes pubic:/private: as needed
 
   /// Return the generated source code as a string (valid after write_code() with to_codeview=true).
   std::string code_string() const { return code_buffer.str(); }
