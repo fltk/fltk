@@ -381,7 +381,7 @@ void Image_Asset::write_code(fluid::io::Code_Writer& f, int bind, const char *va
        + (inactive ? "deimage" : "image") + "( "
        + initializer_function_ + "() );\n");
     if (is_animated_gif_)
-      f.write_c(f.indent(1) + "((Fl_Anim_GIF_Image*)("
+      f.write_c(f.indent() + "((Fl_Anim_GIF_Image*)("
       + initializer_function_ + "()))->canvas("
       + var + ", Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);\n");
   }
