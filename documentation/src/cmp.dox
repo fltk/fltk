@@ -736,6 +736,7 @@ that can be used to conditionalize code based on the Visual Studio version:
 
 Version |  Product Name        | _MSC_VER
 --------|----------------------|----------
+  18.0  |  Visual Studio 2026  |   1950
   17.0  |  Visual Studio 2022  |   1930
   16.0  |  Visual Studio 2019  |   1920
   15.0  |  Visual Studio 2017  |   1910
