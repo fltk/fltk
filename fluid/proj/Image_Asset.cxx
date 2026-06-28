@@ -69,7 +69,7 @@ size_t Image_Asset::write_static_binary(fluid::io::Code_Writer& f, const char* f
     if (nData) {
       char *data = (char*)calloc(nData, 1);
       if (fread(data, nData, 1, in)==0) { /* ignore */ }
-      f.write_cdata(data, (int)nData);
+      f.write_cdata(fluid::string_view(data, nData));
       free(data);
     }
     fclose(in);
@@ -104,7 +104,7 @@ size_t Image_Asset::write_static_text(fluid::io::Code_Writer& f, const char* fmt
     if (nData) {
       char *data = (char*)calloc(nData+1, 1);
       if (fread(data, nData, 1, in)==0) { /* ignore */ }
-      f.write_cstring(data, (int)nData);
+      f.write_cstring(fluid::string_view(data, nData));
       free(data);
     }
     fclose(in);
@@ -133,7 +133,7 @@ void Image_Asset::write_static_rgb(fluid::io::Code_Writer& f, const char* idata_
   f.write_c_once("#include <FL/Fl_Image.H>\n");
   f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
   const int extra_data = image_->ld() ? (image_->ld()-image_->w()*image_->d()) : 0;
-  f.write_cdata(image_->data()[0], (image_->w() * image_->d() + extra_data) * image_->h());
+  f.write_cdata(fluid::string_view(image_->data()[0], (image_->w() * image_->d() + extra_data) * image_->h()));
   f.write_c(";\n");
   write_initializer(f, "Fl_RGB_Image",
     std::string(idata_name) + ", "
@@ -161,8 +161,9 @@ void Image_Asset::write_static_rgb(fluid::io::Code_Writer& f, const char* idata_
  */
 void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
   if (!image_) return;
-  const char *idata_name = f.unique_id(this, "idata", fl_filename_name(filename()), nullptr);
-  initializer_function_ = f.unique_id(this, "image", fl_filename_name(filename()), nullptr);
+  const char* fn = fl_filename_name(filename());
+  std::string idata_name = f.unique_id(this, "idata", (fn?fn:""), "");
+  initializer_function_ = f.unique_id(this, "image", (fn?fn:""), "");
 
   if (is_animated_gif_) {
     // Write animated gif image data...
@@ -202,7 +203,7 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Pixmap.H>\n");
     f.write_c("static const char* " + std::string(idata_name) + "[] = {\n");
-    f.write_cstring(image_->data()[0], (int)strlen(image_->data()[0]));
+    f.write_cstring(fluid::string_view(image_->data()[0]));
 
     int i;
     int ncolors, chars_per_color;
@@ -210,17 +211,17 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
 
     if (ncolors < 0) {
       f.write_c(",\n");
-      f.write_cstring(image_->data()[1], ncolors * -4);
+      f.write_cstring(fluid::string_view(image_->data()[1], ncolors * -4));
       i = 2;
     } else {
       for (i = 1; i <= ncolors; i ++) {
         f.write_c(",\n");
-        f.write_cstring(image_->data()[i], (int)strlen(image_->data()[i]));
+        f.write_cstring(fluid::string_view(image_->data()[i]));
       }
     }
     for (; i < image_->count(); i ++) {
       f.write_c(",\n");
-      f.write_cstring(image_->data()[i], image_->w() * chars_per_color);
+      f.write_cstring(fluid::string_view(image_->data()[i], image_->w() * chars_per_color));
     }
     f.write_c("\n};\n");
     write_initializer(f, "Fl_Pixmap", std::string(idata_name));
@@ -229,7 +230,7 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
     f.write_c("\n");
     f.write_c_once("#include <FL/Fl_Bitmap.H>\n");
     f.write_c("static const unsigned char " + std::string(idata_name) + "[] =\n");
-    f.write_cdata(image_->data()[0], ((image_->w() + 7) / 8) * image_->h());
+    f.write_cdata(fluid::string_view(image_->data()[0], ((image_->w() + 7) / 8) * image_->h()));
     f.write_c(";\n");
     write_initializer(f, "Fl_Bitmap",
       std::string(idata_name) + ", "
@@ -293,7 +294,7 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
         svg_image = rgb_image->as_svg_image();
       if (svg_image) {
         svg_image->resize(svg_image->w(), svg_image->h());
-        write_static_rgb(f, idata_name);
+        write_static_rgb(f, idata_name.c_str());
       } else {
         write_file_error(f, "RGB_from_SVG");
       }
@@ -301,7 +302,7 @@ void Image_Asset::write_static(fluid::io::Code_Writer& f, int compressed) {
   }
 #endif // FLTK_USE_SVG
   else {
-    write_static_rgb(f, idata_name);
+    write_static_rgb(f, idata_name.c_str());
   }
 }
 

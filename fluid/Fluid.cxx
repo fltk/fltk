@@ -859,7 +859,7 @@ int Application::write_code_files(bool dont_show_completion_dialog)
 
   // -- write the code and header files
   if (!batch_mode) proj.enter_project_dir();
-  int x = f.write_code(code_filename.c_str(), header_filename.c_str());
+  int x = f.write_code(code_filename, header_filename);
   std::string code_filename_rel = fl_filename_relative_str(code_filename);
   std::string header_filename_rel = fl_filename_relative_str(header_filename);
   if (!batch_mode) proj.leave_project_dir();

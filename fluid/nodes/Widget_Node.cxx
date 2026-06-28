@@ -1491,11 +1491,11 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
       do d++; while (is_id(*d));
       while (*d && !is_id(*d)) d++;
     }
-    const char* cn = callback_name(f);
+    std::string cn = callback_name(f);
     if (k) {
-      f.write_c("\nvoid " + std::string(k) + "::" + std::string(cn) + "_i(" + t + "*");
+      f.write_c("\nvoid " + std::string(k) + "::" + cn + "_i(" + t + "*");
     } else {
-      f.write_c("\nstatic void " + std::string(cn) + "(" + t + "*");
+      f.write_c("\nstatic void " + cn + "(" + t + "*");
     }
     if (use_o) f.write_c(" o");
     std::string ut = user_data_type_or_voidp();
@@ -1540,11 +1540,11 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
     }
   }
   if (class_name(1) && callback() && !is_name(callback())) {
-    const char* cn = callback_name(f);
+    std::string cn = callback_name(f);
     std::string ut = user_data_type_or_voidp();
     f.write_public(0);
-    f.write_h(f.indent(1) + "inline void " + std::string(cn) + "_i(" + t + "*, " + ut + ");\n");
-    f.write_h(f.indent(1) + "static void " + std::string(cn) + "(" + t + "*, " + ut + ");\n");
+    f.write_h(f.indent(1) + "inline void " + cn + "_i(" + t + "*, " + ut + ");\n");
+    f.write_h(f.indent(1) + "static void " + cn + "(" + t + "*, " + ut + ");\n");
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && is_a(Type::Window);

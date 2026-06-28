@@ -1205,9 +1205,9 @@ int Node::user_defined(const char* cbname) const {
   return 0;
 }
 
-const char *Node::callback_name(fluid::io::Code_Writer& f) {
+std::string Node::callback_name(fluid::io::Code_Writer& f) {
   if (is_name(callback())) return callback();
-  return f.unique_id(this, "cb", name(), label());
+  return f.unique_id(this, "cb", (name()?name():""), (label()?label():""));
 }
 
 /**

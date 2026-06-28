@@ -243,7 +243,7 @@ void Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_crc, 
   Node *tp = proj_.tree.find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
-    unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb);
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
       num_changed_code++;
@@ -265,7 +265,7 @@ void Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, int 
   Node *tp = proj_.tree.find_by_uid(uid);
   if (tp && tp->is_a(Type::Code)) {
     std::string code = tp->name(); code += "\n";
-    unsigned long project_crc = fluid::io::Code_Writer::block_crc(code.c_str());
+    unsigned long project_crc = fluid::io::Code_Writer::block_crc(code);
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
       num_changed_code++;
@@ -451,7 +451,7 @@ int Mergeback::analyse() {
     const char *tag = find_mergeback_tag(line);
     if (!tag) {
       // if this line has no tag, add the contents to the CRC and continue
-      code_crc = fluid::io::Code_Writer::block_crc(line, -1, code_crc, &line_start);
+      code_crc = fluid::io::Code_Writer::block_crc(line, code_crc, &line_start);
     } else {
       // if this line has a tag, read all tag data
       Tag tag_type = Tag::UNUSED_;
@@ -492,7 +492,7 @@ int Mergeback::apply_callback(long block_end, long block_start, unsigned long co
   Node *tp = proj_.tree.find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
-    unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb);
     if (project_crc!=code_crc) {
       tp->callback(read_and_unindent_block(block_start, block_end).c_str());
       return 1;
@@ -508,7 +508,7 @@ int Mergeback::apply_code(long block_end, long block_start, unsigned long code_c
   Node *tp = proj_.tree.find_by_uid(uid);
   if (tp && tp->is_a(Type::Code)) {
     std::string cb = tp->name(); cb += "\n";
-    unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb.c_str());
+    unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb);
     if (project_crc!=code_crc) {
       tp->name(read_and_unindent_block(block_start, block_end).c_str());
       return 1;
@@ -544,7 +544,7 @@ int Mergeback::apply() {
     const char *tag = find_mergeback_tag(line);
     if (!tag) {
       // if this line has no tag, add the contents to the CRC and continue
-      code_crc = fluid::io::Code_Writer::block_crc(line, -1, code_crc, &line_start);
+      code_crc = fluid::io::Code_Writer::block_crc(line, code_crc, &line_start);
       block_end = ::ftell(code);
     } else {
       // if this line has a tag, read all tag data

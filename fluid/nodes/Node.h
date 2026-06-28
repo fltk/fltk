@@ -197,7 +197,7 @@ public: // things that should not be public:
   Node *first_child();
 
   Node *factory;
-  const char *callback_name(fluid::io::Code_Writer& f);
+  std::string callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
   int code_static_start, code_static_end;

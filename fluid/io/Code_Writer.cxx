@@ -36,12 +36,22 @@ using namespace fluid;
 using namespace fluid::io;
 using namespace fluid::proj;
 
+/**
+ Return a string with the given value formatted as an 8-digit hexadecimal number.
+ \param[in] value a 32-bit unsigned integer
+ \return string with the hexadecimal representation of the value
+ */
 std::string fluid::io::to_string_8x(uint32_t value) {
   char buf[32];
   snprintf(buf, sizeof(buf), "%08x", value);
   return std::string(buf);
 }
 
+/**
+ Return a string with the given value formatted using the `%g` specifier.
+ \param[in] value a double-precision floating-point number
+ \return string with the formatted representation of the value
+ */
 std::string fluid::io::to_string_g(double value) {
   char buf[32];
   snprintf(buf, sizeof(buf), "%g", value);
@@ -58,7 +68,10 @@ int is_id(char c) {
   return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || c=='_';
 }
 
-/** \brief Return a unique name for the given object.
+/** \brief Return a unique name for the given object within this file.
+
+ This is used to create unique identifiers for callback functions, menu items,
+ and other objects that need a unique name in file scope.
 
  This function combines the name and label into an identifier. It then checks
  if that id was already taken by another object, and if so, appends a
@@ -70,16 +83,17 @@ int is_id(char c) {
  \param[in] type is the first word of the ID
  \param[in] name if name is set, it is appended to the ID
  \param[in] label else if label is set, it is appended, skipping non-keyword characters
- \return buffer to a unique identifier, managed by Code_Writer, so caller must NOT free() it
+ \return a unique identifier for this object and type
  */
-const char* Code_Writer::unique_id(void* o, const char* type, const char* name, const char* label) {
+std::string Code_Writer::unique_id(void* o, const std::string& type, const std::string& name, const std::string& label) {
   char buffer[128];
   char* q = buffer;
   char* q_end = q + 128 - 8 - 1; // room for hex number and NUL
-  while (*type) *q++ = *type++;
+  const char* type_cstr = type.c_str();
+  while (*type_cstr) *q++ = *type_cstr++;
   *q++ = '_';
-  const char* n = name;
-  if (!n || !*n) n = label;
+  const char* n = name.c_str();
+  if (name.empty()) n = label.c_str();
   if (n && *n) {
     while (*n && !is_id(*n)) n++;
     while (is_id(*n) && (q < q_end)) *q++ = *n++;
@@ -92,20 +106,16 @@ const char* Code_Writer::unique_id(void* o, const char* type, const char* name, 
     // If the id does not exist, add it to the map
     if (it == unique_id_list.end()) {
       it = unique_id_list.insert(std::make_pair(buffer, o)).first;
-      return it->first.c_str();
+      return it->first;
     }
     // If it does exist, and the pointers are the same, just return it.
     if (it->second == o) {
-      return it->first.c_str();
+      return it->first;
     }
     // Else repeat until we have a new id,
     sprintf(q,"%x",++which);
   }
 }
-
-////////////////////////////////////////////////////////////////
-// return current indentation:
-
 
 /**
  Return a C string that indents code to the given depth.
@@ -119,25 +129,25 @@ const char* Code_Writer::unique_id(void* o, const char* type, const char* name, 
  fully featured code formatter.
 
  \param[in] set generate this indent depth
- \return pointer to a static string
+ \return indenting string
  */
 std::string Code_Writer::indent(int set) const {
   return std::string(set*2, ' ');
 }
 
 /**
- Return a C string that indents code to the current source file depth.
- \return pointer to a static string
+ Return a string that indents code to the current source file depth.
+ \return indenting string
  */
 std::string Code_Writer::indent() const {
   return indent(indentation);
 }
 
 /**
- Return a C string that indents code to the current source file depth plus an offset.
+ Return a string that indents code to the current source file depth plus an offset.
  \param[in] offset adds a temporary offset for this call only; this does not
     change the `indentation` variable; offset can be negative
- \return pointer to a static string
+ \return indenting string
  */
 std::string Code_Writer::indent_plus(int offset) const {
   return indent(indentation+offset);
@@ -147,7 +157,7 @@ std::string Code_Writer::indent_plus(int offset) const {
 /**
  Write a line of code to the header file unless the same line was written before.
  \param[in] code line of code, a newline character will be appended
- \return 1 if the text was written to the file, 0 if it was previously written.
+ \return 1 if the text was added to the file, 0 if it was previously written.
  */
 int Code_Writer::write_h_once(const std::string& code) {
   if (text_in_header.find(code) != text_in_header.end()) {
@@ -162,7 +172,7 @@ int Code_Writer::write_h_once(const std::string& code) {
 /**
  Write a line of code to the source file unless the same line was written before to the header or source file.
  \param[in] code line of code, a newline character will be appended
- \return 1 if the text was written to the file, 0 if it was previously written.
+ \return 1 if the text was added to the file, 0 if it was previously written.
  */
 int Code_Writer::write_c_once(const std::string& code) {
   if (text_in_header.find(code) != text_in_header.end()) {
@@ -171,7 +181,7 @@ int Code_Writer::write_c_once(const std::string& code) {
   if (text_in_code.find(code) != text_in_code.end()) {
     return 0;
   }
-  crc_puts(code.c_str());
+  crc_puts(code);
   crc_putc('\n');
   text_in_code.insert(code);
   return 1;
@@ -180,7 +190,7 @@ int Code_Writer::write_c_once(const std::string& code) {
 /**
  Return true if this pointer was already included in the code file.
  If it was not, add it to the list and return false.
- \param[in] pp ay pointer
+ \param[in] pp any pointer
  \return true if found in the tree, false if added to the tree
  */
 bool Code_Writer::c_contains(void *pp) {
@@ -195,7 +205,7 @@ bool Code_Writer::c_contains(void *pp) {
  Write a C string to the code file, escaping non-ASCII characters.
 
  Text is broken into lines of 78 character.
- FLUID " before and after every line text.
+ Fluid adds quotation marks before and after every line of text.
 
  A list of control characters and ", ', and \\ are escaped by adding a \\ in
  front of them. Escape ?? by writing ?\\?. All other characters that are not
@@ -203,12 +213,9 @@ bool Code_Writer::c_contains(void *pp) {
 
  This function is utf8 agnostic.
 
- \param[in] s write this string
- \param[in] length write so many bytes in this string
-
- \see f.write_cstring(const char*)
+ \param[in] text write this string
  */
-void Code_Writer::write_cstring(const char *s, int length) {
+void Code_Writer::write_cstring(fluid::string_view text) {
   const char *next_line = "\"\n\"";
   if (varused_test) {
     varused = 1;
@@ -216,21 +223,21 @@ void Code_Writer::write_cstring(const char *s, int length) {
   }
   // if we are rendering to the source code preview window, and the text is
   // longer than four lines, we only render a placeholder.
-  if (write_codeview && ((s==nullptr) || (length>300))) {
-    if (length>=0)
-      crc_puts("\" ... " + std::to_string(length) + " bytes of text... \"");
+  if (write_codeview && (text.empty() || (text.size()>300))) {
+    if (text.size()>=0)
+      crc_puts("\" ... " + std::to_string(text.size()) + " bytes of text... \"");
     else
       crc_puts("\" ... text... \"");
     return;
   }
-  if (length==-1 || s==nullptr) {
+  if (text.data() == nullptr) {
     crc_puts("\n#error  string not found\n");
     crc_puts("\" ... undefined size text... \"");
     return;
   }
 
-  const char *p = s;
-  const char *e = s+length;
+  const char *p = text.data();
+  const char *e = text.data()+text.size();
   int linelength = 1;
   crc_putc('\"');
   for (; p < e;) {
@@ -251,7 +258,13 @@ void Code_Writer::write_cstring(const char *s, int length) {
       linelength += 2;
       break;
     case '?': // prevent trigraphs by writing ?? as ?\?
-      if (p-2 >= s && *(p-2) == '?') goto QUOTED;
+      if ( (p-2 >= text.data()) && (*(p-2) == '?')) {
+        // first question mark was alreaady written
+        crc_putc('\\');
+        crc_putc('?');
+        linelength += 2;
+        break;
+      }
       // else fall through:
     default:
       if (c >= ' ' && c < 127) {
@@ -287,41 +300,31 @@ void Code_Writer::write_cstring(const char *s, int length) {
 }
 
 /**
- Write a C string, escaping non-ASCII characters.
- \param[in] s write this string
- \see f.write_cstring(const char*, int)
- */
-void Code_Writer::write_cstring(const char *s) {
-  write_cstring(s, (int)strlen(s));
-}
-
-/**
  Write an array of C binary data (does not add a null).
  The output is bracketed in { and }. The content is written
  as decimal bytes, i.e. `{ 1, 2, 200 }`
 
- \param[in] s a block of binary data, interpreted as unsigned bytes
- \param[in] length size of the block in bytes
+ \param[in] block pointer to a block of binary data, interpreted as unsigned bytes
  */
-void Code_Writer::write_cdata(const char *s, int length) {
+void Code_Writer::write_cdata(fluid::string_view block) {
   if (varused_test) {
     varused = 1;
     return;
   }
   if (write_codeview) {
-    if (length>=0)
-      crc_puts("{ /* ... " + std::to_string(length) + "  bytes of binary data... */ }");
+    if (!block.empty())
+      crc_puts("{ /* ... " + std::to_string(block.size()) + "  bytes of binary data... */ }");
     else
       crc_puts("{ /* ... binary data... */ }");
     return;
   }
-  if (length==-1) {
+  if (block.data() == nullptr) {
     crc_puts("\n#error  data not found\n");
     crc_puts("{ /* ... undefined size binary data... */ }");
     return;
   }
-  const unsigned char *w = (const unsigned char *)s;
-  const unsigned char *e = w+length;
+  const unsigned char *w = (const unsigned char *)block.data();
+  const unsigned char *e = w+block.size();
   int linelength = 1;
   crc_putc('{');
   for (; w < e;) {
@@ -329,7 +332,10 @@ void Code_Writer::write_cdata(const char *s, int length) {
     if (c>99) linelength += 4;
     else if (c>9) linelength += 3;
     else linelength += 2;
-    if (linelength >= 77) {crc_puts("\n"); linelength = 0;}
+    if (linelength >= 77) {
+      crc_puts("\n");
+      linelength = 0;
+    }
     crc_puts(std::to_string(c));
     if (w<e) crc_putc(',');
   }
@@ -345,24 +351,23 @@ void Code_Writer::write_c(const std::string& code) {
     varused = 1;
     return;
   }
-  crc_puts(code.c_str());
+  crc_puts(code);
 }
 
 /**
- Write code (c) of size (n) to C file, with optional comment (com) w/o trailing space.
+ Write a line of code to the source file, appending an optional comment.
  if the code line does not end in a ';' or '}', a ';' will be added.
  \param[in] indent indentation string for all lines
- \param[in] n number of bytes in code line
- \param[in] c line of code
- \param[in] com optional commentary
+ \param[in] code line of code
+ \param[in] comment optional commentary
  */
-void Code_Writer::write_cc(const char *indent, int n, const char *c, const char *com) {
-  write_c(std::string(indent) + std::string(c, n));
-  char cc = c[n-1];
+void Code_Writer::write_cc(const std::string& indent, const std::string& code, const std::string& comment) {
+  write_c(indent + code);
+  char cc = code.back();
   if (cc!='}' && cc!=';')
     write_c(";");
-  if (*com)
-    write_c(" " + std::string(com));
+  if (!comment.empty())
+    write_c(" " + comment);
   write_c("\n");
 }
 
@@ -376,64 +381,80 @@ void Code_Writer::write_h(const std::string& code) {
 }
 
 /**
- Write code (c) of size (n) to H file, with optional comment (com) w/o trailing space.
+ Write a line of code to the header file, appending an optional comment.
  if the code line does not end in a ';' or '}', a ';' will be added.
  \param[in] indent indentation string for all lines
- \param[in] n number of bytes in code line
- \param[in] c line of code
- \param[in] com optional commentary
+ \param[in] code line of code
+ \param[in] comment optional commentary
  */
-void Code_Writer::write_hc(const char *indent, int n, const char* c, const char *com) {
-  write_h(std::string(indent) + std::string(c, n));
-  char cc = c[n-1];
+void Code_Writer::write_hc(const std::string& indent, const std::string& code, const std::string& comment) {
+  write_h(indent + code);
+  char cc = code.back();
   if (cc!='}' && cc!=';')
     write_h(";");
-  if (*com)
-    write_h(" " + std::string(com));
+  if (!comment.empty())
+    write_h(" " + comment);
   write_h("\n");
 }
 
 /**
- Write one or more lines of code, indenting each one of them.
- \param[in] textlines one or more lines of text, separated by \\n
- \param[in] inIndent increment indentation by this amount
- \param[in] inTrailWith append this character if the last line did not end with
+ Write a block of code, indenting it as needed.
+ \param[in] codeblock one or more lines of text, separated by \\n
+ \param[in] additional_indent increment indentation by this amount
+ \param[in] trail_char append this character if the last line did not end with
             a newline, usually 0 or newline.
  */
-void Code_Writer::write_c_indented(const char *textlines, int inIndent, char inTrailWith) {
-  if (textlines) {
-    indentation += inIndent;
-    for (;;) {
-      int line_len;
-      const char *newline = strchr(textlines, '\n');
-      if (newline)
-        line_len = (int)(newline-textlines);
-      else
-        line_len = (int)strlen(textlines);
-      if (textlines[0]=='\n') {
-        // avoid trailing spaces
-      } else if (textlines[0]=='#') {
-        // don't indent preprocessor statments starting with '#'
-        write_c(std::string(textlines, line_len));
-      } else {
-        // indent all other text lines
-        write_c(indent() + std::string(textlines, line_len));
-      }
-      if (newline) {
-        write_c("\n");
-      } else {
-        if (inTrailWith)
-          write_c(std::string(1, inTrailWith));
-        break;
-      }
-      textlines = newline+1;
-    }
-    indentation -= inIndent;
+void Code_Writer::write_c_indented(const std::string& codeblock, int additional_indent, char trail_char)
+{
+  if (codeblock.empty()) return;
+
+  std::string trailing_text;
+  if (trail_char && codeblock.back() != '\n') {
+    trailing_text = std::string(1, trail_char);
   }
+
+  indentation += additional_indent;
+
+  size_t line_start = 0;
+  size_t line_end = 0;
+  size_t line_length = 0;
+  bool done = false;
+
+  while (!done)
+  {
+    // get the length of the next line.
+    line_end = codeblock.find('\n', line_start);
+    if (line_end == std::string::npos) {
+      line_length = codeblock.length() - line_start;
+      done = true;
+      if (line_length == 0) break;
+    } else {
+      line_length = line_end - line_start + 1; // include the newline character
+    }
+
+    if (codeblock[line_start] == '\n') {
+      // no characters in the line, don't indent
+      write_c("\n");
+    } else if (codeblock[line_start]=='#') {
+      // don't indent preprocessor statments starting with '#'
+      write_c(codeblock.substr(line_start, line_length));
+    } else {
+      // indent all other text lines
+      write_c(indent() + codeblock.substr(line_start, line_length));
+    }
+    line_start = line_end + 1;
+  }
+
+  if (!trailing_text.empty()) {
+    write_c(trailing_text);
+  }
+
+  indentation -= additional_indent;
 }
 
 /**
- Return true if the type would be the member of a class.
+ Return true if the type can be the member of a class.
+
  Some types are treated differently if they are inside class. Especially within
  a Widget Class, children that are widgets are written as part of the
  constructor whereas functions, declarations, and inline data are seen as
@@ -443,16 +464,18 @@ bool is_class_member(Node *t) {
   return    t->is_a(Type::Function)
          || t->is_a(Type::Decl)
          || t->is_a(Type::Data);
-//         || t->is_a(Type::Class)         // FLUID can't handle a class inside a class
-//         || t->is_a(Type::Widget_Class)
-//         || t->is_a(Type::DeclBlock)     // Declaration blocks are generally not handled well
+//         || t->is_a(Type::Class)          // FLUID can't handle a class inside a class
+//         || t->is_a(Type::Widget_Class)   // ???
+//         || t->is_a(Type::DeclBlock)      // Declaration blocks are generally not handled well
 }
 
 /**
  Return true, if this is a comment, and if it is followed by a class member.
+
  This must only be called if q is inside a widget class.
  Widget classes can have widgets and members (functions/methods, declarations,
  etc.) intermixed.
+
  \param[in] q should be a comment type
  \return true if this comment is followed by a class member
  \return false if it is followed by a widget or code
@@ -565,7 +588,7 @@ Node* Code_Writer::write_code(Node* p) {
  \param[in] t filename of the header file
  \return 0 if the operation failed, 1 if it was successful
  */
-int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
+int Code_Writer::write_code(const std::string& code_arg, const std::string& header_arg, bool to_codeview) {
   write_codeview = to_codeview;
   unique_id_list.clear();
   indentation = 0;
@@ -579,13 +602,13 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   header_buffer.clear();
 
   // Remember the last code file location for MergeBack
-  if (s && proj_.write_mergeback_data && !to_codeview) {
+  if (!code_arg.empty() && proj_.write_mergeback_data && !to_codeview) {
     std::string filename = proj_.projectfile_path() + proj_.projectfile_name();
     int i, n = (int)filename.size();
     for (i=0; i<n; i++) if (filename[i]=='\\') filename[i] = '/';
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
     Fl_Preferences path(build_records, filename.c_str());
-    path.set("code", s);
+    path.set("code", code_arg);
   }
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
@@ -631,7 +654,7 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
         header_name = proj_.headerfile_name();
         a = header_name.c_str();
       } else {
-        a = fl_filename_name(t);
+        a = fl_filename_name(header_arg.c_str());
       }
       const char* b = a + strlen(a);
       int len = 0;
@@ -660,11 +683,11 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
   if (proj_.avoid_early_includes==0) {
     write_h_once("#include <FL/Fl.H>");
   }
-  if (t && proj_.include_H_from_C) {
+  if (!header_arg.empty() && proj_.include_H_from_C) {
     if (to_codeview) {
       write_c("#include \"CodeView.h\"\n");
     } else if (proj_.header_file_name[0] == '.' && strchr(proj_.header_file_name.c_str(), '/') == nullptr) {
-      write_c("#include \"" + fl_filename_name_str(t) + "\"\n");
+      write_c("#include \"" + fl_filename_name_str(header_arg) + "\"\n");
     } else {
       write_c("#include \"" + proj_.header_file_name + "\"\n");
     }
@@ -748,16 +771,16 @@ int Code_Writer::write_code(const char *s, const char *t, bool to_codeview) {
 
   // Write code output: to file if filename provided, to stdout otherwise
   bool code_ok = true;
-  if (s) {
-    code_ok = write_file_if_changed(s, code_buffer.str());
+  if (!code_arg.empty()) {
+    code_ok = write_file_if_changed(code_arg, code_buffer.str());
   } else {
     fputs(code_buffer.str().c_str(), stdout);
   }
 
   // Write header output: to file if filename provided, to stdout otherwise
   bool header_ok = true;
-  if (t) {
-    header_ok = write_file_if_changed(t, header_buffer.str());
+  if (!header_arg.empty()) {
+    header_ok = write_file_if_changed(header_arg, header_buffer.str());
   } else {
     fputs(header_buffer.str().c_str(), stdout);
   }
@@ -794,13 +817,6 @@ Code_Writer::Code_Writer(Project &proj)
 }
 
 /**
- Release all resources.
- */
-Code_Writer::~Code_Writer()
-{
-}
-
-/**
  Write a MergeBack tag as a separate line of C++ comment.
  The tag contains information about the type of tag that we are writing, a
  link back to the type using its unique id, and the CRC of all code written
@@ -826,12 +842,12 @@ void Code_Writer::tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_
             if we are the start of a line, used to find leading whitespace
  \return the new CRC
  */
-unsigned long Code_Writer::block_crc(const void *data, int n, unsigned long in_crc, bool *inout_line_start) {
-  if (!data) return 0;
-  if (n==-1) n = (int)strlen((const char*)data);
+unsigned long Code_Writer::block_crc(fluid::string_view block, unsigned long in_crc, bool *inout_line_start) {
+  if (block.empty()) return 0;
   bool line_start = true;
   if (inout_line_start) line_start = *inout_line_start;
-  const char *s = (const char*)data;
+  const char *s = block.data();
+  int n = (int)block.size();
   for ( ; n>0; --n, ++s) {
     if (line_start) {
       // don't count leading spaces and tabs in a line
@@ -853,8 +869,8 @@ unsigned long Code_Writer::block_crc(const void *data, int n, unsigned long in_c
  \param[in] data a pointer to the data block
  \param[in] n the size of the data in bytes, or -1 to use strlen()
  */
-void Code_Writer::crc_add(const void *data, int n) {
-  block_crc_ = block_crc(data, n, block_crc_, &block_line_start_);
+void Code_Writer::crc_add(fluid::string_view block) {
+  block_crc_ = block_crc(block, block_crc_, &block_line_start_);
 }
 
 /** Write some text to the code buffer.
@@ -862,7 +878,7 @@ void Code_Writer::crc_add(const void *data, int n) {
  \param[in] text any text, no requirements to end in a newline or such
  \return always 0
  */
-int Code_Writer::crc_puts(const char *text) {
+int Code_Writer::crc_puts(const std::string& text) {
   if (proj_.write_mergeback_data) {
     crc_add(text);
   }
@@ -879,7 +895,7 @@ int Code_Writer::crc_puts(const char *text) {
 int Code_Writer::crc_putc(int c) {
   if (proj_.write_mergeback_data) {
     uchar uc = (uchar)c;
-    crc_add(&uc, 1);
+    crc_add(fluid::string_view((const char*)&uc, 1));
   }
   code_buffer << (char)c;
   return c;
@@ -891,8 +907,8 @@ int Code_Writer::crc_putc(int c) {
  \param[in] content the string content to compare with
  \return true if the file exists and its content matches exactly, false otherwise
  */
-bool Code_Writer::file_content_matches(const char *filename, const std::string &content) {
-  FILE *f = fl_fopen(filename, "rb");
+bool Code_Writer::file_content_matches(const std::string& filename, const std::string &content) {
+  FILE *f = fl_fopen(filename.c_str(), "rb");
   if (!f) {
     return false;  // File doesn't exist
   }
@@ -938,14 +954,14 @@ bool Code_Writer::file_content_matches(const char *filename, const std::string &
  \param[in] content the string content to write
  \return true if the file was written or already up-to-date, false on write error
  */
-bool Code_Writer::write_file_if_changed(const char *filename, const std::string &content) {
+bool Code_Writer::write_file_if_changed(const std::string& filename, const std::string &content) {
   // If content matches, no need to write
   if (file_content_matches(filename, content)) {
     return true;  // File is already up-to-date
   }
 
   // Content differs or file doesn't exist - write the new content
-  FILE *f = fl_fopen(filename, "wb");
+  FILE *f = fl_fopen(filename.c_str(), "wb");
   if (!f) {
     return false;  // Cannot open file for writing
   }

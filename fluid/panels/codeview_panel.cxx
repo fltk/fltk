@@ -184,7 +184,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       Fluid.proj.enter_project_dir();
     // Setting code_view to true write code files directly into a string buffer
     // and does not write over the code files on disk.
-    if (f.write_code(code_filename.c_str(), header_filename.c_str(), true))
+    if (f.write_code(code_filename, header_filename, true))
     {
       // Push generated text directly into the editor buffers.
       int pos = cv_source->top_line();

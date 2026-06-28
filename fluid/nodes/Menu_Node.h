@@ -65,7 +65,7 @@ public:
   int is_button() const override {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) override {return nullptr;}
   Widget_Node* _make() override {return nullptr;}
-  virtual const char* menu_name(fluid::io::Code_Writer& f, int& i);
+  std::string menu_name(fluid::io::Code_Writer& f, int& i);
   int flags();
   void write_static(fluid::io::Code_Writer& f) override;
   void write_item(fluid::io::Code_Writer& f);

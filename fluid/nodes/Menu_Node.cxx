@@ -302,7 +302,7 @@ int isdeclare(const char *c);
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
 // to this menu item.
-const char* Menu_Item_Node::menu_name(fluid::io::Code_Writer& f, int& i) {
+std::string Menu_Item_Node::menu_name(fluid::io::Code_Writer& f, int& i) {
   i = 0;
   Node* t = prev;
   while (t && t->is_a(Type::Menu_Item)) {
@@ -314,7 +314,7 @@ const char* Menu_Item_Node::menu_name(fluid::io::Code_Writer& f, int& i) {
     i++;
   }
   if (!t) return "\n#error Menu_Item_Node::menu_name, invalid f\n";
-  return f.unique_id(t, "menu", t->name(), t->label());
+  return f.unique_id(t, "menu", (t->name()?t->name():""), (t->label()?t->label():""));
 }
 
 void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
@@ -339,12 +339,12 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
       do d++; while (is_id(*d));
       while (*d && !is_id(*d)) d++;
     }
-    const char* cn = callback_name(f);
+    std::string cn = callback_name(f);
     const char* k = class_name(1);
     if (k) {
-      f.write_c("\nvoid " + std::string(k) + "::" + std::string(cn) + "_i(Fl_Menu_*");
+      f.write_c("\nvoid " + std::string(k) + "::" + cn + "_i(Fl_Menu_*");
     } else {
-      f.write_c("\nstatic void " + std::string(cn) + "(Fl_Menu_*");
+      f.write_c("\nstatic void " + cn + "(Fl_Menu_*");
     }
     if (use_o) f.write_c(" o");
     std::string ut = user_data_type_or_voidp();
@@ -416,7 +416,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     f.write_c("\nFl_Menu_Item " + std::string(k) + "::" + menu_name(f, i) + "[] = {\n");
   } else {
     int i;
-    f.write_c("\nFl_Menu_Item " + std::string(menu_name(f, i)) + "[] = {\n");
+    f.write_c("\nFl_Menu_Item " + menu_name(f, i) + "[] = {\n");
   }
   Node* t = prev; while (t && t->is_a(Type::Menu_Item)) t = t->prev;
   for (Node* q = t->next; q && q->is_a(Type::Menu_Item); q = q->next) {
@@ -442,8 +442,8 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
           int i;
-          const char* n = ((Menu_Item_Node *)q)->menu_name(f, i);
-          f.write_c("Fl_Menu_Item* " + std::string(k) + "::" + std::string(c) + " = " + std::string(k) + "::" + std::string(n) + " + " + std::to_string(i) + ";\n");
+          std::string n = ((Menu_Item_Node *)q)->menu_name(f, i);
+          f.write_c("Fl_Menu_Item* " + std::string(k) + "::" + std::string(c) + " = " + std::string(k) + "::" + n + " + " + std::to_string(i) + ";\n");
         } else {
           // if the name is an array, only define the array.
           // The actual assignment is in write_code1(fluid::io::Code_Writer& f)
@@ -567,14 +567,15 @@ void start_menu_initialiser(fluid::io::Code_Writer& f, int &initialized, const c
 }
 
 void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
-  int i; const char* mname = menu_name(f, i);
+  int i;
+  std::string mname = menu_name(f, i);
 
   if (!prev->is_a(Type::Menu_Item)) {
     // for first menu item, declare the array
     if (class_name(1)) {
-      f.write_h(f.indent(1) + "static Fl_Menu_Item " + std::string(mname) + "[];\n");
+      f.write_h(f.indent(1) + "static Fl_Menu_Item " + mname + "[];\n");
     } else {
-      f.write_h("extern Fl_Menu_Item " + std::string(mname) + "[];\n");
+      f.write_h("extern Fl_Menu_Item " + mname + "[];\n");
     }
   }
 
@@ -585,7 +586,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_h(f.indent(1) + "static Fl_Menu_Item* " + std::string(c) + ";\n");
     } else {
       if (c==name())
-        f.write_h("#define " + std::string(c) + " (" + std::string(mname) + "+" + std::to_string(i) + ")\n");
+        f.write_h("#define " + std::string(c) + " (" + mname + "+" + std::to_string(i) + ")\n");
       else
         f.write_h("extern Fl_Menu_Item* " + std::string(c) + ";\n");
     }
@@ -593,21 +594,21 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
 
   if (callback()) {
     if (!is_name(callback()) && (callback()[0] != '[') && class_name(1)) {
-      const char* cn = callback_name(f);
+      std::string cn = callback_name(f);
       std::string ut = user_data_type_or_voidp();
       f.write_public(0);
-      f.write_h(f.indent(1) + "inline void " + std::string(cn) + "_i(Fl_Menu_*, " + ut + ");\n");
-      f.write_h(f.indent(1) + "static void " + std::string(cn) + "(Fl_Menu_*, " + ut + ");\n");
+      f.write_h(f.indent(1) + "inline void " + cn + "_i(Fl_Menu_*, " + ut + ");\n");
+      f.write_h(f.indent(1) + "static void " + cn + "(Fl_Menu_*, " + ut + ");\n");
     }
   }
 
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name() && strchr(name(), '[')) {
-    f.write_c(f.indent_plus(1) + std::string(name()) + " = &" + std::string(mname) + "[" + std::to_string(i) + "];\n");
+    f.write_c(f.indent_plus(1) + std::string(name()) + " = &" + mname + "[" + std::to_string(i) + "];\n");
   }
   if (active_image.asset) {
-    start_menu_initialiser(f, menuItemInitialized, mname, i);
+    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
     if (label() && label()[0]) {
       f.write_c(f.indent() + "Fl_Multi_Label* ml = new Fl_Multi_Label;\n");
       f.write_c(f.indent() + "ml->labela = (char*)");
@@ -635,7 +636,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
-      start_menu_initialiser(f, menuItemInitialized, mname, i);
+      start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
       if (Fluid.proj.i18n.type==fluid::I18n_Type::GNU) {
         f.write_c(f.indent() + "o->label(" + Fluid.proj.i18n.gnu_function + "(o->label()));\n");
       } else if (Fluid.proj.i18n.type==fluid::I18n_Type::POSIX) {
@@ -647,7 +648,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
   }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str())) {
-      start_menu_initialiser(f, menuItemInitialized, mname, i);
+      start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
       f.write_c(f.indent() + extra_code(n) + "\n");
     }
   }
@@ -752,7 +753,7 @@ Node* Menu_Base_Node::click_test(int, int) {
 void Menu_Manager_Node::write_code2(fluid::io::Code_Writer& f) {
   if (next && next->is_a(Type::Menu_Item)) {
     f.write_c(f.indent() + (name() ? name() : "o") + "->menu(" +
-            f.unique_id(this, "menu", name(), label()) + ");\n");
+            f.unique_id(this, "menu", (name()?name():""), (label()?label():"")) + ");\n");
   }
   Widget_Node::write_code2(f);
 }
