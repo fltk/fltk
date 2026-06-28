@@ -23,6 +23,7 @@
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
+#include "io/file_chooser.h"
 #include "io/Code_Writer.h"
 #include "nodes/Node.h"
 #include "nodes/Function_Node.h"
@@ -502,7 +503,12 @@ bool Application::open_project_file(const std::string &filename_arg) {
   // ask for a filename if none was given
   std::string new_filename = filename_arg;
   if (new_filename.empty()) {
-    new_filename = open_project_filechooser("Open Project File");
+    new_filename = fluid::io::load_project_filechooser(
+      "Open Project File",
+      history.latest_project_path(),
+      launch_path(),
+      "FLUID Project Files\t*.f[ld]\n"
+    );
     if (new_filename.empty()) {
       return false;
     }
@@ -533,7 +539,12 @@ bool Application::merge_project_file(const std::string &filename_arg) {
   // ask for a filename if none was given
   std::string new_filename = filename_arg;
   if (new_filename.empty()) {
-    new_filename = open_project_filechooser(title);
+    new_filename = fluid::io::load_project_filechooser(
+      title,
+      history.latest_project_path(),
+      launch_path(),
+      "FLUID Project Files\t*.f[ld]\n"
+    );
     if (new_filename.empty()) {
       return false;
     }
@@ -566,6 +577,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
     proj.set_modflag(0, 0);
     proj.undo.clear();
   }
+  proj.update_settings_dialog();
   if (oldfilename) free((void *)oldfilename);
   return true;
 }
@@ -1206,32 +1218,6 @@ void Application::make_main_window() {
     make_settings_window();
   }
 }
-
-
-/**
- Open a native file chooser to allow choosing a project file for reading.
-
- Path and filename are preset with the current project filename, if there
- is one.
-
- \param title a text describing the action after selecting a file (load, merge, ...)
- \return the file path and name, or an empty string if the operation was canceled
- */
-std::string Application::open_project_filechooser(const std::string &title) {
-  Fl_Native_File_Chooser dialog;
-  dialog.title(title.c_str());
-  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  dialog.filter("FLUID Files\t*.f[ld]\n");
-  if (proj.proj_filename) {
-    std::string current_project_file = proj.proj_filename;
-    dialog.directory(fl_filename_path_str(current_project_file).c_str());
-    dialog.preset_file(fl_filename_name_str(current_project_file).c_str());
-  }
-  if (dialog.show() != 0)
-    return std::string();
-  return std::string(dialog.filename());
-}
-
 
 /**
  Give the user the opportunity to save a project before clearing it.

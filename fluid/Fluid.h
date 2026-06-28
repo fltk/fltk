@@ -193,8 +193,6 @@ public: // Methods
 
   // Build the main app window and create a few other dialogs.
   void make_main_window();
-  // Open a native file chooser to allow choosing a project file for reading.
-  std::string open_project_filechooser(const std::string &title);
   // Give the user the opportunity to save a project before clearing it.
   bool confirm_project_clear();
   // Ensure that text widgets in the widget panel propagates apply current changes.

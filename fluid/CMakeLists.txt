@@ -119,6 +119,7 @@ set(CPPFILES
   app/shell_command.cxx
   app/templates.cxx
   io/Code_Writer.cxx
+  io/file_chooser.cxx
   io/Project_Writer.cxx
   io/Project_Reader.cxx
   io/String_Writer.cxx
@@ -175,6 +176,7 @@ set(HEADERFILES
   app/shell_command.h
   app/templates.h
   io/Code_Writer.h
+  io/file_chooser.h
   io/Project_Writer.h
   io/Project_Reader.h
   io/String_Writer.h

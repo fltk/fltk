@@ -57,6 +57,9 @@ decl {\#include "nodes/Window_Node.h"} {uid b4c3 private global
 decl {\#include "nodes/Grid_Node.h"} {uid 867b private global
 }
 
+decl {\#include "io/file_chooser.h"} {uid 867e private global
+}
+
 decl {\#include "nodes/Menu_Node.h"} {uid 2b16 private global
 }
 
@@ -546,7 +549,7 @@ Function {make_widget_panel()} {uid 9310
             xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Input wp_gui_label {uid 5f88
-              callback label_cb
+              callback label_cb selected
               tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
             }
@@ -2636,7 +2639,7 @@ if (v == LOAD) {
       }
       Fl_Tabs data_tabs {uid 3ae5
         callback {if (current_node && current_node->is_a(Type::Data))
-  propagate_load((Fl_Group *)o,v);} open
+  propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
         Fl_Group data_tabs_data {uid b260
@@ -2818,14 +2821,20 @@ update_current(o, v,
             Fl_Button {} {uid a0fe
               label {@fileopen}
               callback {if (v != LOAD) {
+
   Fluid.proj.enter_project_dir();
-  const char *fn = fl_file_chooser("Load Inline Data",
-    nullptr, wp_data_filename->value(), 1);
+  std::string fn = fluid::io::load_inline_data_filechooser(
+    "Load Inline Data",
+    wp_data_filename->value(),
+    Fluid.proj.projectfile_path(),
+    ""
+  );
   Fluid.proj.leave_project_dir();
-  if (fn) {
-    if (strcmp(fn, wp_data_filename->value())) {
+  
+  if (!fn.empty()) {
+    if (strcmp(fn.c_str(), wp_data_filename->value())) {
       Fluid.proj.set_modflag(1);
-      wp_data_filename->value(fn);
+      wp_data_filename->value(fn.c_str());
       wp_data_filename->do_callback();
     }
   }
@@ -2983,12 +2992,17 @@ if (v == LOAD) {
               label {Import...}
               callback {// load a comment from disk
 if (v != LOAD) {
-  fl_file_chooser_ok_label("Load");
-  const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
-  fl_file_chooser_ok_label(nullptr);
-  if (fname) {
-    if (comment_tabs_name->buffer()->loadfile(fname)) {
-      fl_alert("Error loading file\\n%s", fname);
+   Fluid.proj.enter_project_dir();
+  std::string fname = fluid::io::load_comment_filechooser(
+    "Load Comment From File",
+    "",
+    Fluid.proj.projectfile_path(),
+    ""
+  );
+  Fluid.proj.leave_project_dir();
+   if (!fname.empty()) {
+    if (comment_tabs_name->buffer()->loadfile(fname.c_str())) {
+      fl_alert("Error loading file\\n%s", fname.c_str());
     }
     comment_tabs_name->do_callback();
   }

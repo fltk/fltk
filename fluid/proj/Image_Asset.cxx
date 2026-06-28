@@ -17,6 +17,8 @@
 #include "proj/Image_Asset.h"
 
 #include "Fluid.h"
+#include "Project.h"
+#include "io/file_chooser.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
@@ -451,16 +453,18 @@ Image_Asset::~Image_Asset() {
  */
 std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
   Fluid.proj.enter_project_dir();
-  fl_file_chooser_ok_label("Use Image");
-  const char *name = fl_file_chooser("Image?",
-            "Image Files (*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg"
+
+  std::string name = fluid::io::load_image_filechooser(
+    "Image?",
+    oldname ? oldname : "",
+    Fluid.proj.projectfile_path(),
+    "Image Files\t*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg"
 #ifdef HAVE_LIBZ
                         ",svgz"
 #endif
-                                     "})",
-            oldname,1);
-  fl_file_chooser_ok_label(nullptr);
-  std::shared_ptr<Image_Asset> ret = (name && *name) ? Fluid.proj.image_assets.find_or_create(name) : nullptr;
+                                     "}"
+  );
+  std::shared_ptr<Image_Asset> ret = (!name.empty()) ? Fluid.proj.image_assets.find_or_create(name) : nullptr;
   Fluid.proj.leave_project_dir();
   return ret;
 }

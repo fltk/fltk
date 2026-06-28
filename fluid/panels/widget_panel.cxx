@@ -23,6 +23,7 @@
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
+#include "io/file_chooser.h"
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
 #include <FL/Fl_Spinner.H>
@@ -53,7 +54,7 @@ extern int haderror;
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code --~--=--=-~=-==~~=-~=-~- ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ---~=~=-----=-=~-~=~--~- ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~~-~=---~-------------~-=--~~-=~=-~~--~-~=-- ▲ ﬂ//
 }
@@ -2651,19 +2652,25 @@ static void cb_wp_data_filename(Fl_Input* o, void* v) {
 static void cb_fileopen(Fl_Button*, void* v) {
 //ﬂ ▼ ---------------------- callback ~--=-~~~=~~--~=-=~-=~- ▼ ﬂ//
   if (v != LOAD) {
+
     Fluid.proj.enter_project_dir();
-    const char *fn = fl_file_chooser("Load Inline Data",
-      nullptr, wp_data_filename->value(), 1);
+    std::string fn = fluid::io::load_inline_data_filechooser(
+      "Load Inline Data",
+      wp_data_filename->value(),
+      Fluid.proj.projectfile_path(),
+      ""
+    );
     Fluid.proj.leave_project_dir();
-    if (fn) {
-      if (strcmp(fn, wp_data_filename->value())) {
+    
+    if (!fn.empty()) {
+      if (strcmp(fn.c_str(), wp_data_filename->value())) {
         Fluid.proj.set_modflag(1);
-        wp_data_filename->value(fn);
+        wp_data_filename->value(fn.c_str());
         wp_data_filename->do_callback();
       }
     }
   }
-//ﬂ ▲ ----------=~~---~~=~~=----------~--~-~=~=-~=--~=-~~=-- ▲ ﬂ//
+//ﬂ ▲ ----------=~~---~~=~~=----------~-~=--~-=~~~~--~~~=--- ▲ ﬂ//
 }
 
 static void cb_Comment(Fl_Text_Editor* o, void* v) {
@@ -2814,17 +2821,22 @@ static void cb_comment_load_2(Fl_Button*, void* v) {
 //ﬂ ▼ ---------------------- callback ~~~~~=~-=~~-=-=-~=-=~= ▼ ﬂ//
   // load a comment from disk
   if (v != LOAD) {
-    fl_file_chooser_ok_label("Load");
-    const char *fname = fl_file_chooser("Pick a comment", nullptr, nullptr);
-    fl_file_chooser_ok_label(nullptr);
-    if (fname) {
-      if (comment_tabs_name->buffer()->loadfile(fname)) {
-        fl_alert("Error loading file\n%s", fname);
+     Fluid.proj.enter_project_dir();
+    std::string fname = fluid::io::load_comment_filechooser(
+      "Load Comment From File",
+      "",
+      Fluid.proj.projectfile_path(),
+      ""
+    );
+    Fluid.proj.leave_project_dir();
+     if (!fname.empty()) {
+      if (comment_tabs_name->buffer()->loadfile(fname.c_str())) {
+        fl_alert("Error loading file\n%s", fname.c_str());
       }
       comment_tabs_name->do_callback();
     }
   }
-//ﬂ ▲ ----------=~--=--=~=~=----------~~-~~----=--~~-~~~=~=- ▲ ﬂ//
+//ﬂ ▲ ----------=~--=--=~=~=----------~~=--~--~=-=-=-=--=--~ ▲ ﬂ//
 }
 
 static void cb_output(Fl_Check_Button* o, void* v) {

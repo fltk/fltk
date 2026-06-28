@@ -48,6 +48,7 @@ void History::load() {
       else Fluid.history_item[i].flags = 0;
     } else break;
   }
+  Fluid.preferences.get("latest_project_path", latest_project_path_, "");
 
   for (; i < 10; i ++) {
     if (i) Fluid.history_item[i-1].flags |= FL_MENU_DIVIDER;
@@ -78,6 +79,12 @@ void History::update(std::string project_file) {
 #else
     if (!strcmp(absolute.c_str(), abspath[i])) break;
 #endif // _WIN32 || __APPLE__
+
+  std::string path = fl_filename_path_str(absolute);
+  if (path != latest_project_path_) {
+    latest_project_path_ = path;
+    Fluid.preferences.set("latest_project_path", latest_project_path_);
+  }
 
   // Does the first entry match?
   if (i == 0)
