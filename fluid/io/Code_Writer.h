@@ -21,8 +21,9 @@
 
 #include <FL/fl_attr.h>
 
-#include <stdarg.h>
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 #include <string>
 #include <set>
 #include <map>
