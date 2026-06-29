@@ -53,22 +53,25 @@ class CanvasInterface {
   Fl_Widget *widget_ { nullptr };
   bool in_window_ { false };
   bool first_draw_ { true };
-  std::unique_ptr<Fl_Image_Surface> offscreen_; // fixed size image buffer
+  Fl_Offscreen offscreen_ { };
   Fl_Color color_ { 1 };
   enum { NONE, HOVER, DRAW, PEN_HOVER, PEN_DRAW } overlay_ { NONE };
   int ov_x_ { 0 };
   int ov_y_ { 0 };
+  float scale_ { 1.0f };
 public:
   CanvasInterface(Fl_Widget *w)
   : widget_(w)
-  , offscreen_(std::unique_ptr<Fl_Image_Surface>(new Fl_Image_Surface(400, 400)))
   { }
   CanvasInterface(Fl_Window *w)
   : widget_(w)
   , in_window_(true)
-  , offscreen_(std::unique_ptr<Fl_Image_Surface>(new Fl_Image_Surface(400, 400)))
   { }
-  ~CanvasInterface() = default;
+  ~CanvasInterface() {
+    if (!first_draw_) {
+      fl_delete_offscreen(offscreen_);
+    }
+  }
   int cv_handle(int event);
   void cv_draw();
   void cv_draw_buttons();
@@ -171,13 +174,19 @@ void CanvasInterface::cv_draw()
 {
   if (first_draw_) {
     first_draw_ = false;
-    Fl_Surface_Device::push_current(offscreen_.get());
+    offscreen_ = fl_create_offscreen(widget_->w(), widget_->h());
+    fl_begin_offscreen(offscreen_);
     fl_color(FL_WHITE);
     fl_rectf(0, 0, widget_->w(), widget_->h());
-    Fl_Surface_Device::pop_current();
+    fl_end_offscreen();
+    scale_ = fl_graphics_driver->scale();
+  }
+  if (fl_graphics_driver->scale() != scale_) {
+    fl_rescale_offscreen(offscreen_);
+    scale_ = fl_graphics_driver->scale();
   }
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
-  fl_copy_offscreen(dx, dy, widget_->w(), widget_->h(), offscreen_->offscreen(), 0, 0);
+  fl_copy_offscreen(dx, dy, widget_->w(), widget_->h(), offscreen_, 0, 0);
 
   // Preset values for overlay
   int r = 10;
@@ -243,10 +252,12 @@ void CanvasInterface::cv_draw_buttons()
 // Paint a circle with mouse events.
 //
 void CanvasInterface::cv_paint() {
+  if (!offscreen_)
+    return;
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
-  Fl_Surface_Device::push_current(offscreen_.get());
+  fl_begin_offscreen(offscreen_);
   fl_draw_circle(Fl::event_x()-dx-12, Fl::event_y()-dy-12, 24, color_);
-  Fl_Surface_Device::pop_current();
+  fl_end_offscreen();
 }
 
 //
@@ -266,9 +277,9 @@ void CanvasInterface::cv_pen_paint() {
   if (r < 1) r = 1;
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   Fl_Color cc = Fl::Pen::event_state(Fl::Pen::State::ERASER_DOWN) ? FL_WHITE : color_;
-  Fl_Surface_Device::push_current(offscreen_.get());
+  fl_begin_offscreen(offscreen_);
   fl_draw_circle(Fl::event_x()-dx-r, Fl::event_y()-dy-r, 2*r, cc);
-  Fl_Surface_Device::pop_current();
+  fl_end_offscreen();
 }
 
 
