@@ -913,7 +913,7 @@ void Fd_Shell_Command_List::export_selected() {
 
   std::string filename = fluid::io::filechooser(
     fluid::io::FileChooserType::SAVE_FILE,
-    fluid::io::FileChooserPath::ABSOLUTE,
+    fluid::io::FileChooserPath::ABSOLUTE_PATH,
     "Export Shell Commands",
     "Can't create shell commands file:\n%s.",
     Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".flcmd",
@@ -945,7 +945,7 @@ void Fd_Shell_Command_List::import_from_file() {
 
   std::string filename = fluid::io::filechooser(
     fluid::io::FileChooserType::LOAD_FILE,
-    fluid::io::FileChooserPath::ABSOLUTE,
+    fluid::io::FileChooserPath::ABSOLUTE_PATH,
     "Import Shell Commands",
     "Can't open shell commands file:\n%s.",
     Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".flcmd",

@@ -29,8 +29,8 @@ enum class FileChooserType {
 };
 
 enum class FileChooserPath {
-  ABSOLUTE,
-  RELATIVE
+  ABSOLUTE_PATH,
+  RELATIVE_PATH
 };
 
 extern std::string filechooser(

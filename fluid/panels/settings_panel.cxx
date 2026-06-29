@@ -673,7 +673,7 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
 
     std::string filename = fluid::io::filechooser(
       fluid::io::FileChooserType::LOAD_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
       "Import Layout Settings",
       "Can't open layout file:\n%s.",
       Fluid.layout_list.filename_,
@@ -698,7 +698,7 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
 
     std::string filename = fluid::io::filechooser(
       fluid::io::FileChooserType::SAVE_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
       "Export Layout Settings",
       "Can't create layout file:\n%s.",
       Fluid.layout_list.filename_,

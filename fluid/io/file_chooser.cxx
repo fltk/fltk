@@ -75,7 +75,7 @@ std::string fluid::io::filechooser(
     case 1: // Cancelled
       return "";
     default: // Success
-      if (path_type == FileChooserPath::ABSOLUTE) {
+      if (path_type == FileChooserPath::ABSOLUTE_PATH) {
         return fl_filename_absolute_str(fnfc.filename());
       } else {
         return fl_filename_relative_str(fnfc.filename());

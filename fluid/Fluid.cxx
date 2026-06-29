@@ -505,7 +505,7 @@ bool Application::open_project_file(const std::string &filename_arg) {
   if (new_filename.empty()) {
     new_filename = fluid::io::filechooser(
       fluid::io::FileChooserType::LOAD_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
       "Open Project File",
       "Can't open project file:\n%s.",
       history.latest_project_path(),
@@ -544,7 +544,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
   if (new_filename.empty()) {
     new_filename = fluid::io::filechooser(
       fluid::io::FileChooserType::LOAD_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
       title,
       "Can't open project file:\n%s.",
       history.latest_project_path(),
@@ -603,7 +603,7 @@ void Application::save_project_file(void *v) {
   if (v || !c || !*c) {
     std::string filename = fluid::io::filechooser(
       fluid::io::FileChooserType::SAVE_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
       "Save Project File As",
       "Can't create project file:\n%s.",
       c ? c : "",

@@ -457,7 +457,7 @@ std::shared_ptr<Image_Asset> ui_find_image(const char *oldname)
 
   std::string name = fluid::io::filechooser(
     fluid::io::FileChooserType::LOAD_FILE,
-    fluid::io::FileChooserPath::RELATIVE,
+    fluid::io::FileChooserPath::RELATIVE_PATH,
     "Open Image File",
     "Can't open image file:\n%s.",
     oldname ? oldname : "",

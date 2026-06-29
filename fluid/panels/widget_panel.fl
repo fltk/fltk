@@ -2824,7 +2824,7 @@ update_current(o, v,
    Fluid.proj.enter_project_dir();
   std::string fn = fluid::io::filechooser(
     fluid::io::FileChooserType::LOAD_FILE,
-    fluid::io::FileChooserPath::RELATIVE,
+    fluid::io::FileChooserPath::RELATIVE_PATH,
     "Load Inline Data File",
     "Can't open inline data file:\\n%s.",
     wp_data_filename->value(),
@@ -2995,7 +2995,7 @@ if (v == LOAD) {
 if (v != LOAD) {
   std::string fname  = fluid::io::filechooser(
     fluid::io::FileChooserType::LOAD_FILE,
-    fluid::io::FileChooserPath::ABSOLUTE,
+    fluid::io::FileChooserPath::ABSOLUTE_PATH,
     "Load Comment From File",
     "Can't open text file:\\n%s.",
     "",
