@@ -398,20 +398,24 @@ static void pointer_axis(void *data, struct wl_pointer *wl_pointer,
   // This variable will persist across function calls,
   // keeping track of any scroll inputs that havent quite crossed the
   // threshold to scroll by one unit
-  static int carryover = 0;
+  static double carryover = 0;
 
-  // the integer part of the value
-  int delta = wl_fixed_to_int(value);
+  double delta_full = wl_fixed_to_double(value);
 
+  double delta_whole = 0;
+  double delta_fractional = std::modf(delta_full, &delta_whole);
 
-  // add the decimal part to carryover
-  carryover +=  (!(value & 0x80000000)) ? (value & 0xFF) : -(value & 0xFF);
+  // the whole part of the value
+  int delta = (int) delta_whole;
+  
+  // add the fractional part to carryover
+  carryover = carryover + delta_fractional;
 
   // if carryover has reached |1|, add it to the total delta
-  delta += carryover / 256;
+  delta += (int) (carryover / 1.0);
 
-  // keep any remaining decimal region
-  carryover = carryover % 256;
+  // keep any remaining fractional portion
+  carryover = std::fmod(carryover, (double) 1);
 
   if (abs(delta) >= 10) delta /= 10;
   // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
