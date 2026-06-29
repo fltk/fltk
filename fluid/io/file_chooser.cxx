@@ -26,11 +26,7 @@
 static constexpr int load_type = Fl_Native_File_Chooser::BROWSE_FILE;
 static constexpr int save_type = Fl_Native_File_Chooser::BROWSE_SAVE_FILE;
 static constexpr int load_options = Fl_Native_File_Chooser::PREVIEW;
-#ifdef __APPLE__
-static constexpr int save_options = Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native_File_Chooser::SAVEAS_CONFIRM;
-#else
-static constexpr int save_options = Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native_File_Chooser::SAVEAS_CONFIRM;
-#endif
+static constexpr int save_options = Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native_File_Chooser::SAVEAS_CONFIRM|Fl_Native_File_Chooser::USE_FILTER_EXT;
 
 
 std::string fluid::io::filechooser(

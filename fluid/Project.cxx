@@ -22,6 +22,8 @@
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
 
+#include <FL/fl_ask.H>
+
 using namespace fluid;
 
 // ---- project settings

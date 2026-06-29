@@ -23,17 +23,6 @@ namespace fluid {
 
 namespace io {
 
-// ✔︎ Load Inline Data
-// ✔︎ Pick a comment
-// ✔︎ ui_find_image (the offender here, I guess)
-
-// Application::save_project_file
-// ✔︎ Application::open_project_filechooser
-// Fd_Shell_Command_List::export_selected
-// ✔︎ Fd_Shell_Command_List::import_from_file
-// ✔︎ Load Layout Settings
-// Save Layout Settings
-
 enum class FileChooserType {
   LOAD_FILE,
   SAVE_FILE

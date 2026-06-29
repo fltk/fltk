@@ -48,7 +48,7 @@
 #endif
 #include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_PNG_Image.H>
-#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_string_functions.h>
 
@@ -598,30 +598,24 @@ bool Application::merge_project_file(const std::string &filename_arg) {
  */
 void Application::save_project_file(void *v) {
   flush_text_widgets();
-  Fl_Native_File_Chooser fnfc;
+
   const char *c = proj.proj_filename;
   if (v || !c || !*c) {
-    fnfc.title("Save Project File As:");
-    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-#ifndef __APPLE__
-    fnfc.options(Fl_Native_File_Chooser::NEW_FOLDER);
-#else
-    // Apple file choosers always ask to confirm
-    fnfc.options(Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native_File_Chooser::SAVEAS_CONFIRM);
-#endif
-    fnfc.filter("FLUID Files\t*.f[ld]");
-    if (proj.proj_filename) {
-      if (!proj.projectfile_path().empty())
-        fnfc.directory(proj.projectfile_path().c_str());
-      if (!proj.projectfile_name().empty())
-        fnfc.preset_file(proj.projectfile_name().c_str());
-    }
-    fnfc.filter("Fluid Project\t*.fl\nAny\t*");
-    if (fnfc.show() != 0) return;
-    c = fnfc.filename();
-#ifndef __APPLE__
+    std::string filename = fluid::io::filechooser(
+      fluid::io::FileChooserType::SAVE_FILE,
+      fluid::io::FileChooserPath::ABSOLUTE,
+      "Save Project File As",
+      "Can't create project file:\n%s.",
+      c ? c : "",
+      history.latest_project_path(),
+      "Fluid Project Files\t*.fl"
+    );
+    if (filename.empty()) return;
+    c = filename.c_str();
+
+#if 0 // filechooser is already doing this check, so we don't need to do it again here
     if (!fl_access(c, 0)) {
-      std::string basename = fl_filename_name_str(std::string(c));
+      std::string basename = fl_filename_name_str(c);
       if (fl_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
                     "Replace", nullptr, basename.c_str()) == 0) return;

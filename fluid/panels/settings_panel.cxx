@@ -667,37 +667,49 @@ static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
 static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
 //ﬂ ▼ ---------------------- callback ~~=--=--=-~~=--~-==~-~ ▼ ﬂ//
   // Give the user a file chooser and load that file
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Load Layout Settings:");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fnfc.options(Fl_Native_File_Chooser::USE_FILTER_EXT);
-  fnfc.filter("FLUID Layouts\t*.fll\n");
-  if (fnfc.show() != 0) return;
-  const char *new_filename = fnfc.filename();
-  if (!new_filename) return;
-  Fluid.layout_list.load(new_filename);
-  //Fluid.layout_list.current_suite(n);
-  Fluid.layout_list.update_dialogs();
-//ﬂ ▲ ----------=--=~=-~--~=-------------=-==~-~-=--=~-~-=~~ ▲ ﬂ//
+    if (Fluid.layout_list.filename_.empty()) {
+      Fluid.layout_list.filename_ = Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll";
+    }
+
+    std::string filename = fluid::io::filechooser(
+      fluid::io::FileChooserType::LOAD_FILE,
+      fluid::io::FileChooserPath::ABSOLUTE,
+      "Import Layout Settings",
+      "Can't open layout file:\n%s.",
+      Fluid.layout_list.filename_,
+      Fluid.proj.projectfile_path(),
+      "Fluid Layout File\t*.fll"
+    );
+    if (filename.empty()) return;
+
+    Fluid.layout_list.filename_ = filename;
+    Fluid.layout_list.load(filename.c_str());
+    //Fluid.layout_list.current_suite(n);
+    Fluid.layout_list.update_dialogs();
+//ﬂ ▲ ----------=--=~=-~--~=-----------~=~-~-~~~~=~-=~~~~--- ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
 //ﬂ ▼ ---------------------- callback -~~--=-=~-=---=~~=---= ▼ ﬂ//
   // Give the user a file chooser with a suggested name
-    Fl_Native_File_Chooser fnfc;
-    fnfc.title("Save Layout Settings:");
-    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
-    fnfc.filter("FLUID Layouts\t*.fll\n");
-    std::string filename = Fluid.layout_list.filename_;
-    fnfc.directory(fl_filename_path_str(filename).c_str());
-    fnfc.preset_file(fl_filename_name_str(filename).c_str());
-    if (fnfc.show() != 0) return;
-    const char *new_filename = fnfc.filename();
-    if (!new_filename) return;
-    Fluid.layout_list.filename_ = new_filename;
-    Fluid.layout_list.save(new_filename);
-//ﬂ ▲ -----------=---=~=--~=-----------~---~-==~~-~-~-=-~-=- ▲ ﬂ//
+    if (Fluid.layout_list.filename_.empty()) {
+      Fluid.layout_list.filename_ = Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll";
+    }
+
+    std::string filename = fluid::io::filechooser(
+      fluid::io::FileChooserType::SAVE_FILE,
+      fluid::io::FileChooserPath::ABSOLUTE,
+      "Export Layout Settings",
+      "Can't create layout file:\n%s.",
+      Fluid.layout_list.filename_,
+      Fluid.proj.projectfile_path(),
+      "Fluid Layout File\t*.fll"
+    );
+    if (filename.empty()) return;
+
+    Fluid.layout_list.filename_ = filename;
+    Fluid.layout_list.save(filename.c_str());
+//ﬂ ▲ -----------=---=~=--~=-----------~~-=~--=---~--~-==~~= ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
