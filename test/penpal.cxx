@@ -186,6 +186,7 @@ void CanvasInterface::cv_draw()
     scale_ = fl_graphics_driver->scale();
   }
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
+  fl_push_clip(dx, dy, widget_->w(), widget_->h());
   fl_copy_offscreen(dx, dy, widget_->w(), widget_->h(), offscreen_, 0, 0);
 
   // Preset values for overlay
@@ -232,6 +233,7 @@ void CanvasInterface::cv_draw()
       fl_arc(ov_x_-r, ov_y_-r, 2*r, 2*r, 0, 360);
       break;
   }
+  fl_pop_clip();
 }
 
 void CanvasInterface::cv_draw_buttons()
