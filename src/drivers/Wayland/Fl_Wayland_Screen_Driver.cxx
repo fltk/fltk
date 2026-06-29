@@ -409,13 +409,13 @@ static void pointer_axis(void *data, struct wl_pointer *wl_pointer,
   int delta = (int) delta_whole;
   
   // add the fractional part to carryover
-  carryover = carryover + delta_fractional;
+  carryover +=  delta_fractional;
 
   // if carryover has reached |1|, add it to the total delta
-  delta += (int) (carryover / 1.0);
+  delta += (int) carryover;
 
   // keep any remaining fractional portion
-  carryover = std::fmod(carryover, (double) 1);
+  carryover -= (int) carryover;
 
   if (abs(delta) >= 10) delta /= 10;
   // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
