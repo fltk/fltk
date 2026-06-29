@@ -393,7 +393,26 @@ static void pointer_axis(void *data, struct wl_pointer *wl_pointer,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   wld_event_time = time;
+
+
+  // This variable will persist across function calls,
+  // keeping track of any scroll inputs that havent quite crossed the
+  // threshold to scroll by one unit
+  static int carryover = 0;
+
+  // the integer part of the value
   int delta = wl_fixed_to_int(value);
+
+
+  // add the decimal part to carryover
+  carryover +=  (!(value & 0x80000000)) ? (value & 0xFF) : -(value & 0xFF);
+
+  // if carryover has reached |1|, add it to the total delta
+  delta += carryover / 256;
+
+  // keep any remaining decimal region
+  carryover = carryover % 256;
+
   if (abs(delta) >= 10) delta /= 10;
   // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
   // allow both horizontal and vertical movements to be processed by the widget
