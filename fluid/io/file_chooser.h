@@ -30,33 +30,29 @@ namespace io {
 // Application::save_project_file
 // ✔︎ Application::open_project_filechooser
 // Fd_Shell_Command_List::export_selected
-// Fd_Shell_Command_List::import_from_file
-// Load Layout Settings
+// ✔︎ Fd_Shell_Command_List::import_from_file
+// ✔︎ Load Layout Settings
 // Save Layout Settings
 
-extern std::string load_project_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter);
+enum class FileChooserType {
+  LOAD_FILE,
+  SAVE_FILE
+};
 
-extern std::string load_inline_data_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter);
+enum class FileChooserPath {
+  ABSOLUTE,
+  RELATIVE
+};
 
-extern std::string load_comment_filechooser(
+extern std::string filechooser(
+  FileChooserType type,
+  FileChooserPath path_type,
   const std::string& title,
+  const std::string& error_message,
   const std::string& preset_path,
   const std::string& fallback_path,
-  const std::string& filter);
-
-extern std::string load_image_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter);
+  const std::string& filter
+);
 
 } // namespace io
 

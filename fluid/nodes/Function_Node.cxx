@@ -955,7 +955,7 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
   if (!c) return;
   std::string fn = filename();
   char *data = nullptr;
-  int nData = -1;
+  int nData = 0;
   int uncompressedDataSize = 0;
   // path should be set correctly already
   if (!filename().empty() && !f.write_codeview) {

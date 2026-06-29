@@ -99,6 +99,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "io/file_chooser.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "panels/settings_panel.h"
@@ -939,15 +940,19 @@ void Fd_Shell_Command_List::import_from_file() {
   if (!g_shell_config || (g_shell_config->list_size == 0)) return;
   if (!w_settings_shell_list) return;
 
-  Fl_Native_File_Chooser dialog;
-  dialog.title("Import shell commands:");
-  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(Fluid.proj.projectfile_path().c_str());
-  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
-  if (dialog.show() != 0) return;
+  std::string filename = fluid::io::filechooser(
+    fluid::io::FileChooserType::LOAD_FILE,
+    fluid::io::FileChooserPath::ABSOLUTE,
+    "Import Shell Commands",
+    "Can't open shell commands file:\n%s.",
+    Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".flcmd",
+    Fluid.proj.projectfile_path(),
+    "Fluid Shell Commands\t*.flcmd"
+  );
+  if (filename.empty())
+    return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
+  Fl_Preferences file(filename.c_str(), "flcmd.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, n = shell_commands.groups();
   for (i = 0; i < n; i++) {

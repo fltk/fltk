@@ -2652,17 +2652,18 @@ static void cb_wp_data_filename(Fl_Input* o, void* v) {
 static void cb_fileopen(Fl_Button*, void* v) {
 //ﬂ ▼ ---------------------- callback ~--=-~~~=~~--~=-=~-=~- ▼ ﬂ//
   if (v != LOAD) {
-
-    Fluid.proj.enter_project_dir();
-    std::string fn = fluid::io::load_inline_data_filechooser(
-      "Load Inline Data",
+     Fluid.proj.enter_project_dir();
+    std::string fn = fluid::io::filechooser(
+      fluid::io::FileChooserType::LOAD_FILE,
+      fluid::io::FileChooserPath::RELATIVE,
+      "Load Inline Data File",
+      "Can't open inline data file:\n%s.",
       wp_data_filename->value(),
       Fluid.proj.projectfile_path(),
       ""
     );
     Fluid.proj.leave_project_dir();
-    
-    if (!fn.empty()) {
+     if (!fn.empty()) {
       if (strcmp(fn.c_str(), wp_data_filename->value())) {
         Fluid.proj.set_modflag(1);
         wp_data_filename->value(fn.c_str());
@@ -2670,7 +2671,7 @@ static void cb_fileopen(Fl_Button*, void* v) {
       }
     }
   }
-//ﬂ ▲ ----------=~~---~~=~~=----------~-~=--~-=~~~~--~~~=--- ▲ ﬂ//
+//ﬂ ▲ ----------=~~---~~=~~=-------------=-~~-=~-~~-------~- ▲ ﬂ//
 }
 
 static void cb_Comment(Fl_Text_Editor* o, void* v) {
@@ -2821,22 +2822,23 @@ static void cb_comment_load_2(Fl_Button*, void* v) {
 //ﬂ ▼ ---------------------- callback ~~~~~=~-=~~-=-=-~=-=~= ▼ ﬂ//
   // load a comment from disk
   if (v != LOAD) {
-     Fluid.proj.enter_project_dir();
-    std::string fname = fluid::io::load_comment_filechooser(
+    std::string fname  = fluid::io::filechooser(
+      fluid::io::FileChooserType::LOAD_FILE,
+      fluid::io::FileChooserPath::ABSOLUTE,
       "Load Comment From File",
+      "Can't open text file:\n%s.",
       "",
       Fluid.proj.projectfile_path(),
       ""
     );
-    Fluid.proj.leave_project_dir();
-     if (!fname.empty()) {
+    if (!fname.empty()) {
       if (comment_tabs_name->buffer()->loadfile(fname.c_str())) {
         fl_alert("Error loading file\n%s", fname.c_str());
       }
       comment_tabs_name->do_callback();
     }
   }
-//ﬂ ▲ ----------=~--=--=~=~=----------~~=--~--~=-=-=-=--=--~ ▲ ﬂ//
+//ﬂ ▲ ----------=~--=--=~=~=-----------~--~=~==-=~~=~-~=-=-- ▲ ﬂ//
 }
 
 static void cb_output(Fl_Check_Button* o, void* v) {

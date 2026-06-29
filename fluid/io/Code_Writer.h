@@ -40,6 +40,7 @@ namespace fluid {
 
 class Project;
 
+// Note: data_ can be nullptr!
 struct string_view {
     const char *data_;
     size_t size_;
@@ -51,7 +52,7 @@ struct string_view {
 
     const char *data() const { return data_; }
     size_t size() const { return size_; }
-    bool empty() const { return size_ == 0; }
+    bool empty() const { return (data_ == nullptr) || (size_ == 0); }
     char operator[](size_t i) const { return data_[i]; }
 
     std::string str() const { return std::string(data_, size_); }

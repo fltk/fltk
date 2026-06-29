@@ -20,6 +20,7 @@
 
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/filename.H>
+#include <FL/fl_ask.H>
 
 
 static constexpr int load_type = Fl_Native_File_Chooser::BROWSE_FILE;
@@ -31,15 +32,30 @@ static constexpr int save_options = Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native
 static constexpr int save_options = Fl_Native_File_Chooser::NEW_FOLDER|Fl_Native_File_Chooser::SAVEAS_CONFIRM;
 #endif
 
-static void set_paths(
-  Fl_Native_File_Chooser& fnfc,
+
+std::string fluid::io::filechooser(
+  fluid::io::FileChooserType type,
+  fluid::io::FileChooserPath path_type,
+  const std::string& title,
+  const std::string& error_message,
   const std::string& preset_path,
   const std::string& fallback_path,
-  std::string& preset_directory,
-  std::string& preset_filename)
-{
+  const std::string& filter
+) {
   std::string preset;
+  std::string preset_directory;
+  std::string preset_filename;
 
+  Fl_Native_File_Chooser fnfc;
+  if (type == FileChooserType::LOAD_FILE) {
+    fnfc.type(load_type);
+    fnfc.options(load_options);
+  } else {
+    fnfc.type(save_type);
+    fnfc.options(save_options);
+  }
+  fnfc.title(title.c_str());
+  fnfc.filter(filter.c_str());
   if (!preset_path.empty()) {
     preset = fl_filename_absolute_str(preset_path);
     preset_directory = fl_filename_path_str(preset);
@@ -55,144 +71,18 @@ static void set_paths(
   }
   fnfc.directory(preset_directory.c_str());
   fnfc.preset_file(preset_filename.c_str());
-}
-
-/**
- Lets the user choose a project file to open.
- \param title the dialog window's title
- \param preset_path the path and name to a file that should be preselected in the dialog, or an empty string to use the fallback path
- \param fallback_path the path to use if no preset path is provided
- \param filter the file filter to apply in the dialog
- \return the absolute path to the chosen file, or an empty string if the operation was canceled
- */
-std::string fluid::io::load_project_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter)
-{
-  std::string preset_directory;
-  std::string preset_filename;
-
-  Fl_Native_File_Chooser fnfc;
-  fnfc.type(load_type);
-  fnfc.options(load_options);
-  fnfc.title(title.c_str());
-  fnfc.filter(filter.c_str());
-  set_paths(fnfc, preset_path, fallback_path, preset_directory, preset_filename);
 
   switch (fnfc.show()) {
     case -1: // Error
-      fl_alert("Can't open project:\n%s", fnfc.errmsg());
+      fl_alert(error_message.c_str(), fnfc.errmsg());
       return "";
     case 1: // Cancelled
       return "";
     default: // Success
-      return fl_filename_absolute_str(fnfc.filename());
-  }
-}
-
-/**
- Lets the user choose a data file to inline into the code.
- \param title the dialog window's title
- \param preset_path the path and name to a file that should be preselected in the dialog, or an empty string to use the fallback path
- \param fallback_path the path to use if no preset path is provided
- \param filter the file filter to apply in the dialog
- \return the relative path to the chosen file, or an empty string if the operation was canceled
- */
-std::string fluid::io::load_inline_data_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter)
-{
-  std::string preset_directory;
-  std::string preset_filename;
-
-  Fl_Native_File_Chooser fnfc;
-  fnfc.type(load_type);
-  fnfc.options(load_options);
-  fnfc.title(title.c_str());
-  fnfc.filter(filter.c_str());
-  set_paths(fnfc, preset_path, fallback_path, preset_directory, preset_filename);
-
-  switch (fnfc.show()) {
-    case -1: // Error
-      fl_alert("Can't open data file:\n%s", fnfc.errmsg());
-      return "";
-    case 1: // Cancelled
-      return "";
-    default: // Success
-      return fl_filename_relative_str(fnfc.filename());
-  }
-}
-
-/**
- Lets the user choose a comment file to load.
- \param title the dialog window's title
- \param preset_path not useful here, we never save the path to the comment file, just import it immediately
- \param fallback_path the path to use if no preset path is provided
- \param filter the file filter to apply in the dialog
- \return the absolute path to the chosen file, or an empty string if the operation was canceled
- */
-std::string fluid::io::load_comment_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter)
-{
-  std::string preset_directory;
-  std::string preset_filename;
-
-  Fl_Native_File_Chooser fnfc;
-  fnfc.type(load_type);
-  fnfc.options(load_options);
-  fnfc.title(title.c_str());
-  fnfc.filter(filter.c_str());
-  set_paths(fnfc, preset_path, fallback_path, preset_directory, preset_filename);
-
-  switch (fnfc.show()) {
-    case -1: // Error
-      fl_alert("Can't open comment file:\n%s", fnfc.errmsg());
-      return "";
-    case 1: // Cancelled
-      return "";
-    default: // Success
-      return fl_filename_absolute_str(fnfc.filename());
-  }
-}
-
-/**
- Lets the user choose an image file to load.
- \param title the dialog window's title
- \param preset_path the path and name to a file that should be preselected in the dialog, or an empty string to use the fallback path
- \param fallback_path the path to use if no preset path is provided
- \param filter the file filter to apply in the dialog
- \return the relative path to the chosen file, or an empty string if the operation was canceled
- */
-std::string fluid::io::load_image_filechooser(
-  const std::string& title,
-  const std::string& preset_path,
-  const std::string& fallback_path,
-  const std::string& filter)
-{
-  std::string preset_directory;
-  std::string preset_filename;
-
-  Fl_Native_File_Chooser fnfc;
-  fnfc.type(load_type);
-  fnfc.options(load_options);
-  fnfc.title(title.c_str());
-  fnfc.filter(filter.c_str());
-  set_paths(fnfc, preset_path, fallback_path, preset_directory, preset_filename);
-
-  switch (fnfc.show()) {
-    case -1: // Error
-      fl_alert("Can't open image file:\n%s", fnfc.errmsg());
-      return "";
-    case 1: // Cancelled
-      return "";
-    default: // Success
-      return fl_filename_relative_str(fnfc.filename());
+      if (path_type == FileChooserPath::ABSOLUTE) {
+        return fl_filename_absolute_str(fnfc.filename());
+      } else {
+        return fl_filename_relative_str(fnfc.filename());
+      }
   }
 }

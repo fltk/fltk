@@ -451,11 +451,15 @@ Image_Asset::~Image_Asset() {
  \return The selected asset, or nullptr if the user cancelled or the file
          could not be loaded.
  */
-std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
+std::shared_ptr<Image_Asset> ui_find_image(const char *oldname)
+{
   Fluid.proj.enter_project_dir();
 
-  std::string name = fluid::io::load_image_filechooser(
-    "Image?",
+  std::string name = fluid::io::filechooser(
+    fluid::io::FileChooserType::LOAD_FILE,
+    fluid::io::FileChooserPath::RELATIVE,
+    "Open Project File",
+    "Can't open project file:\n%s.",
     oldname ? oldname : "",
     Fluid.proj.projectfile_path(),
     "Image Files\t*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm,svg"
@@ -465,7 +469,9 @@ std::shared_ptr<Image_Asset> ui_find_image(const char *oldname) {
                                      "}"
   );
   std::shared_ptr<Image_Asset> ret = (!name.empty()) ? Fluid.proj.image_assets.find_or_create(name) : nullptr;
+
   Fluid.proj.leave_project_dir();
+
   return ret;
 }
 
