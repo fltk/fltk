@@ -2,7 +2,7 @@
 // PDF documentation tool to generate a png image from a Doxygen `@code`
 // segment with international characters for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,7 +50,7 @@
 
 Fl_Window* window = nullptr;
 Fl_Group* group = nullptr;
-fld::widget::Code_Viewer* code_viewer = nullptr;
+fluid::widget::Code_Viewer* code_viewer = nullptr;
 int line_height = 10;
 
 void create_window() {
@@ -59,7 +59,7 @@ void create_window() {
   group->color(0xf7f7ff00);
   group->box(FL_FLAT_BOX);
 
-  code_viewer = new fld::widget::Code_Viewer(5, 5, 1014, 94);
+  code_viewer = new fluid::widget::Code_Viewer(5, 5, 1014, 94);
   code_viewer->box(FL_FLAT_BOX);
   code_viewer->color(0xf7f7ff00);
   code_viewer->textsize(30);
