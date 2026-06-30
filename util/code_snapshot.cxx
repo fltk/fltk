@@ -46,6 +46,7 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <string>
 
 
 Fl_Window* window = nullptr;
