@@ -2366,7 +2366,7 @@ void Fl_WinAPI_Window_Driver::makeWindow() {
     if (!force_position()) {
       xp = yp = CW_USEDEFAULT;
     } else {
-      if (!Fl::grab()) {
+      if (!Fl::grab() && !w->tooltip_window()) {
         xp = xwm;
         yp = ywm;
         x(int(round(xp / s)));
