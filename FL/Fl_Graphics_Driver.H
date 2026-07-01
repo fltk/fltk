@@ -358,12 +358,13 @@ public:
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
   virtual void XDestroyRegion(Fl_Region r);
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
+  virtual const char* get_font_name2(Fl_Font fnum, int* weight, int* style);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual Fl_Font set_fonts(const char *name);
   virtual Fl_Fontdesc* calc_fl_fonts(void);
   virtual unsigned font_desc_size();
   virtual const char *font_name(int num);
-  virtual void font_name(int num, const char *name);
+  virtual void font_name(int num, const char *name, int weight, int style, bool legacy);
   // Defaut implementation may be enough
   virtual void overlay_rect(int x, int y, int w , int h);
   virtual float override_scale();

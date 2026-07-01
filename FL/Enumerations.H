@@ -989,6 +989,27 @@ const Fl_Font FL_BOLD                   = 1;    ///< add this to Helvetica, Cour
 const Fl_Font FL_ITALIC                 = 2;    ///< add this to Helvetica, Courier, or Times
 const Fl_Font FL_BOLD_ITALIC            = 3;    ///< add this to Helvetica, Courier, or Times
 
+enum Fl_Font_Weight {
+    FL_WEIGHT_THIN = 100,
+    FL_WEIGHT_EXTRALIGHT = 200,
+    FL_WEIGHT_LIGHT = 300,
+    FL_WEIGHT_SEMILIGHT = 350,
+    FL_WEIGHT_BOOK = 380,
+    FL_WEIGHT_NORMAL = 400,
+    FL_WEIGHT_MEDIUM = 500,
+    FL_WEIGHT_SEMIBOLD = 600,
+    FL_WEIGHT_BOLD = 700,
+    FL_WEIGHT_EXTRABOLD = 800,
+    FL_WEIGHT_HEAVY = 900,
+    FL_WEIGHT_ULTRAHEAVY = 1000,
+};
+
+enum Fl_Font_Style {
+    FL_STYLE_NORMAL = 0,
+    FL_STYLE_ITALIC = 1,
+    FL_STYLE_OBLIQUE = 2,
+};
+
 /**@}*/
 
 /** Size of a font in pixels.
