@@ -106,8 +106,11 @@ public:
   }
 };
 
-Cocoa_Driver cocoa_driver;
-Driver& driver = cocoa_driver;
+static Cocoa_Driver cocoa_driver;
+
+Driver& newPenDriver() {
+  return cocoa_driver;
+}
 
 } // namespace Pen
 

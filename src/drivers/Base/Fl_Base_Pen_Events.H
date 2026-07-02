@@ -107,6 +107,7 @@ public:
 };
 
 extern Driver& driver;
+extern Driver& newPenDriver();
 
 } // namespace Pen
 

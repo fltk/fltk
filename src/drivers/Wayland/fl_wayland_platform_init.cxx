@@ -156,4 +156,22 @@ int e_x_down { 0 };
 int e_y_down { 0 };
 }; // namespace Private
 }; // namespace Fl
+
+
+extern Fl::Pen::Driver& newWaylandPenDriver();
+
+#ifdef FLTK_USE_X11
+Fl::Pen::Driver &newX11PenDriver() {
+  Fl::Pen::Driver *x11_driver_instance = new Fl::Pen::Driver();
+  return *x11_driver_instance;
+}
+#endif
+
+Fl::Pen::Driver& Fl::Pen::newPenDriver() {
+#ifdef FLTK_USE_X11
+  if (!attempt_wayland()) return newX11PenDriver();
+#endif
+  return newWaylandPenDriver();
+}
+
 #endif

@@ -85,10 +85,10 @@ int e_y_down { 0 };
 }; // namespace Private
 }; // namespace Fl
 
-namespace Fl {
-namespace Pen {
-Driver default_driver;
-Driver& driver = default_driver;
-} // namespace Pen
-} // namespace Fl
+Fl::Pen::Driver& Fl::Pen::newPenDriver() {
+  Fl::Pen::Driver *x11_driver_instance = new Fl::Pen::Driver();
+  return *x11_driver_instance;
+}
+
 #endif
+

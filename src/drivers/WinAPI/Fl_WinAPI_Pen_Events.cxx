@@ -143,8 +143,11 @@ namespace Fl {
 namespace Pen {
 
 static WinAPI_Driver winapi_driver_instance;
-// Define the extern Driver& declared in Fl_Base_Pen_Events.H.
-Driver& driver = winapi_driver_instance;
+
+Driver& newPenDriver() {
+  return winapi_driver_instance;
+}
+
 
 Trait WinAPI_Driver::traits() {
   // The Pointer Input API used by this driver is available on Windows 8 and

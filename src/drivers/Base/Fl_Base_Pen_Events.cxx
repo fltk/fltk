@@ -100,6 +100,7 @@ Trait Fl::Pen::Driver::pen_traits(int pen_id) {
 }
 
 // ---- Fl::Pen API ------------------------------------------------------------
+Fl::Pen::Driver& Fl::Pen::driver = newPenDriver();
 
 void Fl::Pen::subscribe(Fl_Widget* widget) {
   driver.subscribe(widget);
