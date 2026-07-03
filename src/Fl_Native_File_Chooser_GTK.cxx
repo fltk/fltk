@@ -1,7 +1,7 @@
 //
 // FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 // Copyright 2012 IMM
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -126,6 +126,9 @@ private:
   char *gtkw_title; // the title to be applied to the dialog
   const char *previous_filter;
 
+  void preset_for_loading();
+  void preset_for_saving();
+  void preset_directory();
   int fl_gtk_chooser_wrapper(); // method that wraps the GTK widget
   Fl_GTK_Native_File_Chooser_Driver(int val);
   ~Fl_GTK_Native_File_Chooser_Driver() FL_OVERRIDE;
@@ -184,6 +187,10 @@ static XX_gtk_file_chooser_set_do_overwrite_confirmation fl_gtk_file_chooser_set
 // void gtk_file_chooser_set_current_name (GtkFileChooser *chooser, const gchar *name);
 typedef void (*XX_gtk_file_chooser_set_current_name)(GtkFileChooser *, const gchar *);
 static XX_gtk_file_chooser_set_current_name fl_gtk_file_chooser_set_current_name = NULL;
+
+// gboolean gtk_file_chooser_set_filename (GtkFileChooser *chooser, const char *filename);
+typedef void (*XX_gtk_file_chooser_set_filename)(GtkFileChooser *, const gchar *);
+static XX_gtk_file_chooser_set_filename fl_gtk_file_chooser_set_filename = NULL;
 
 // void gtk_file_chooser_set_current_folder (GtkFileChooser *chooser, const gchar *name);
 typedef void (*XX_gtk_file_chooser_set_current_folder)(GtkFileChooser *, const gchar *);
@@ -631,11 +638,80 @@ static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
   return 0;
 }
 
+void Fl_GTK_Native_File_Chooser_Driver::preset_for_loading() {
+  char *p;
+  char preset[FL_PATH_MAX];
+  size_t len = 0;
+
+  // preset a file for reading, or a directory for browsing
+  preset[0] = 0;
+  if (_directory && _directory[0]) {
+    // if a directory is specified, use it as the preset folder
+    p = extract_dir_from_path(_directory);
+    if (p) {
+      len = fl_strlcpy(preset, p, sizeof(preset)-2);
+      if (preset[len-1] != '/') { preset[len++] = '/'; preset[len++] = 0; }
+    }
+  }
+  if (_preset_file) {
+    // if a file is set as well, append it to the directory. 
+    strncat(preset, _preset_file, sizeof(preset)-1);
+    // set directory and file name in the GTK chooser
+    fl_gtk_file_chooser_set_filename ((GtkFileChooser *)gtkw_ptr, preset);
+  } else if (preset[0]) {
+    // if only a directory is set, set it as the current folder in the GTK chooser
+    fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, preset);
+  }
+}
+
+void Fl_GTK_Native_File_Chooser_Driver::preset_for_saving() {
+  char *p;
+  char preset[FL_PATH_MAX];
+  size_t len = 0;
+
+  // preset a file for reading, or a directory for browsing
+  preset[0] = 0;
+  if (_directory && _directory[0]) {
+    // if a directory is specified, use it as the preset folder
+    p = extract_dir_from_path(_directory);
+    if (p) {
+      len = fl_strlcpy(preset, p, sizeof(preset)-2);
+      if (preset[len-1] != '/') { preset[len++] = '/'; preset[len++] = 0; }
+    }
+  }
+  if (_preset_file) {
+    // if a file is set as well, append it to the directory. 
+    strncat(preset, _preset_file, sizeof(preset)-1);
+    // set directory and file name in the GTK chooser
+    std::string base = fl_filename_path_str(preset);
+    fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, base.c_str());
+    // This does not slect the file, so we comment it out: 
+    // fl_gtk_file_chooser_set_filename ((GtkFileChooser *)gtkw_ptr, preset);
+    fl_gtk_file_chooser_set_current_name ((GtkFileChooser *)gtkw_ptr, fl_filename_name(_preset_file));
+  } else if (preset[0]) {
+    // if only a directory is set, set it as the current folder in the GTK chooser
+    fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, preset);
+  }
+}
+
+void Fl_GTK_Native_File_Chooser_Driver::preset_directory() {
+  char *p;
+  if (_directory && _directory[0]) {
+    p = extract_dir_from_path(_directory);
+    if (p) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, p);
+  }
+  else if (_preset_file) {
+    p = extract_dir_from_path(_preset_file);
+    if (p) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, p);
+  }
+}
 
 int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
 {
   int result = 1;
   char *p;
+  char preset[FL_PATH_MAX];
+  size_t len = 0;
 
   if(gtkw_ptr) { // discard the previous dialog widget
     fl_gtk_widget_destroy (gtkw_ptr);
@@ -681,32 +757,37 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
 
   // set the dialog properties
   switch (_btype) {
-    case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY:
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
+      preset_for_loading();
+      break;
+
+    case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY:
+      preset_directory();
       fl_gtk_file_chooser_set_select_multiple((GtkFileChooser *)gtkw_ptr, TRUE);
       break;
 
     case Fl_Native_File_Chooser::BROWSE_SAVE_FILE:
-      if (_preset_file)fl_gtk_file_chooser_set_current_name ((GtkFileChooser *)gtkw_ptr, fl_filename_name(_preset_file));
-      /* FALLTHROUGH */
-    case Fl_Native_File_Chooser::BROWSE_SAVE_DIRECTORY:
+      preset_for_saving();
       fl_gtk_file_chooser_set_create_folders((GtkFileChooser *)gtkw_ptr, TRUE);
       fl_gtk_file_chooser_set_do_overwrite_confirmation ((GtkFileChooser *)gtkw_ptr, (_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM)?TRUE:FALSE);
       break;
 
-    case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
+    case Fl_Native_File_Chooser::BROWSE_SAVE_DIRECTORY:
+      preset_directory();
+      fl_gtk_file_chooser_set_create_folders((GtkFileChooser *)gtkw_ptr, TRUE);
+      fl_gtk_file_chooser_set_do_overwrite_confirmation ((GtkFileChooser *)gtkw_ptr, (_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM)?TRUE:FALSE);
+      break;
+
     case Fl_Native_File_Chooser::BROWSE_FILE:
+      preset_for_loading();
+      break;
+
+    case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
+      preset_directory();
+      break;
+
     default:
       break;
-  }
-
-  if (_directory && _directory[0]) {
-    p = extract_dir_from_path(_directory);
-    if (p) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, p);
-  }
-  else if (_preset_file) {
-    p = extract_dir_from_path(_preset_file);
-    if (p) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, p);
   }
 
   GtkFileFilter **filter_tab = NULL;
@@ -876,6 +957,7 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(gtk_file_chooser_set_select_multiple, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_do_overwrite_confirmation, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_current_name, ptr_gtk);
+  GET_SYM(gtk_file_chooser_set_filename, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_current_folder, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_create_folders, ptr_gtk);
   GET_SYM(gtk_file_chooser_get_select_multiple, ptr_gtk);
