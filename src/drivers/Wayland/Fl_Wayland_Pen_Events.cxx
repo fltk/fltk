@@ -75,6 +75,11 @@
 #include "gtk-shell-client-protocol.h"
 #include "tablet-client-protocol.h"
 
+extern "C" {
+#include "../../../libdecor/build/fl_libdecor.h"
+#include "../../../libdecor/build/fl_libdecor-plugins.h"
+}
+
 #include <cmath>
 #include <cstring>
 #include <cstdint>
@@ -94,9 +99,11 @@
 extern "C" {
   bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
                                         bool *using_GTK);
+  bool fl_is_surface_from_cairo_titlebar(struct wl_surface *surface,
+                                         struct libdecor_frame *frame,
+                                         bool *using_CAIRO);
 }
 extern struct wl_surface *gtk_shell_surface;
-extern libdecor_frame *gtk_shell_frame;
 extern Fl_Window *gtk_shell_window;
 
 // fl_xmousewin tracks which window last received pointer/pen events.
@@ -124,6 +131,11 @@ static const State kButtonBits[] = {
 struct TabletTool {
   struct zwp_tablet_tool_v2      *wl_tool;
   enum zwp_tablet_tool_v2_type    type;
+
+  double         decor_sx { 0 };      // surface-local x when over a decoration surface
+  double         decor_sy { 0 };      // surface-local y when over a decoration surface
+  struct libdecor_frame *focus_frame { nullptr }; // owning frame when over a decoration
+
   uint64_t                        hardware_serial;
   int                             pen_id;       // int-sized pen identity
   Trait                           capabilities; // reported by capability events
@@ -148,6 +160,7 @@ struct TabletTool {
 
   struct wl_list link;            // node in g_tool_list
 };
+
 
 // Convenience: reset all per-frame flags at the end of frame processing.
 static inline void tablet_tool_reset_frame(TabletTool *t) {
@@ -279,16 +292,48 @@ static bool event_inside(Fl_Widget *w, double x, double y) {
 }
 
 /*
- Search the subscriber list for the topmost subscribed widget inside (x, y)
- that belongs to top-window win.
- */
-static Fl_Widget *find_below_pen(Fl_Window *win, double x, double y) {
-  for (auto &sub : subscriber_list_) {
-    Fl_Widget *w = sub.second->widget();
-    if (w && w->top_window() == win && w->visible() && event_inside(w, x, y))
-      return w;
-  }
-  return nullptr;
+  Find the topmost subscribed widget under (x, y) in top-window coordinates.
+  Handles:
+   - Normal widgets
+   - Widgets inside groups
+   - Subwindows (Fl_Window as child)
+   - Separate top-level windows that are themselves subscribers
+*/
+static Fl_Widget *find_below_pen(Fl_Window *topwin, double x, double y)
+{
+  if (!topwin) return nullptr;
+
+  struct Finder {
+      static Fl_Widget* find_in_group(Fl_Group* g, double gx, double gy)
+    {
+      if (!g) return nullptr;
+
+      // 1. Check children back-to-front (topmost first)
+      for (int i = g->children() - 1; i >= 0; --i) {
+        Fl_Widget* w = g->child(i);
+        if (!w || !w->visible()) continue;
+
+        if (!event_inside(w, gx, gy))
+            continue;
+
+        if (subscriber_list_.count(w))
+            return w;
+
+        if (Fl_Group* sg = w->as_group()) {
+            if (Fl_Widget* found = find_in_group(sg, gx, gy))
+                return found;
+        }
+      }
+
+      // 2. Check if THIS window/group is a pen subscriber
+      if (subscriber_list_.count(g))
+          return g;
+
+      return nullptr;
+    }
+  };
+
+  return Finder::find_in_group(topwin, x, y);
 }
 
 /*
@@ -470,8 +515,8 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
                                   struct wl_surface *surface) {
   TabletTool *tool = static_cast<TabletTool *>(data);
   tool->focus_surface      = surface;
-  tool->focus_win          =
-    Fl_Wayland_Window_Driver::surface_to_window(surface);
+  tool->focus_frame        = nullptr;
+  tool->focus_win          = Fl_Wayland_Window_Driver::surface_to_window(surface);
   tool->in_proximity       = true;
   tool->frame_proximity_in = true;
   // Set hover state immediately so ev.state is valid even without a tip-down.
@@ -480,23 +525,51 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
   tool->ev.state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER
     ? State::ERASER_HOVERS : State::TIP_HOVERS) | btn_bits;
 
-  auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  auto seat = drvr->seat;
-  static bool using_GTK = seat->gtk_shell &&
-    (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
-  if (!tool->focus_win && using_GTK) {
+  if (!tool->focus_win)
+  {
     // check whether surface is the headerbar of a GTK-decorated window
-    Fl_X *xp = Fl_X::first;
-    while (xp && using_GTK) { // all mapped windows
-      struct wld_window *xid = (struct wld_window*)xp->xid;
-      if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
-          fl_is_surface_from_GTK_titlebar(surface, xid->frame, &using_GTK)) {
-        gtk_shell_surface = surface;
-        gtk_shell_frame = xid->frame;
-        gtk_shell_window = xp->w;
-        break;
-      }
-      xp = xp->next;
+    bool found = false;
+
+    auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    auto seat = drvr->seat;
+    static bool using_GTK = seat->gtk_shell &&
+                            (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
+    // check whether surface is the headerbar of a GTK-decorated window
+    if (using_GTK)
+    {
+        Fl_X *xp = Fl_X::first;
+        while (xp && using_GTK) { // all mapped windows
+            struct wld_window *xid = (struct wld_window*)xp->xid;
+            if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+                fl_is_surface_from_GTK_titlebar(surface, xid->frame,
+                                                &using_GTK)) {
+                gtk_shell_surface = surface;
+                tool->focus_frame = xid->frame;
+                gtk_shell_window = xp->w;
+                found = true;
+                break;
+            }
+            xp = xp->next;
+        }
+    }
+
+    if (!found)
+    {
+        // check whether surface is the headerbar of a Cairo-decorated window
+        static bool using_CAIRO = true;
+        Fl_X *xp = Fl_X::first;
+        while (xp && using_CAIRO) { // all mapped windows
+            struct wld_window *xid = (struct wld_window*)xp->xid;
+            if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
+                fl_is_surface_from_cairo_titlebar(surface, xid->frame,
+                                                  &using_CAIRO)) {
+                tool->focus_frame = xid->frame;
+                found = true;
+                break;
+            }
+
+            xp = xp->next;
+        }
     }
   }
 }
@@ -505,8 +578,6 @@ static void tool_cb_proximity_out(void *data, struct zwp_tablet_tool_v2 *) {
   TabletTool *tool           = static_cast<TabletTool *>(data);
   tool->in_proximity         = false;
   tool->frame_proximity_out  = true;
-  gtk_shell_surface          = nullptr;
-  gtk_shell_frame            = nullptr;
   gtk_shell_window           = nullptr;
 }
 
@@ -534,6 +605,8 @@ static void tool_cb_up(void *data, struct zwp_tablet_tool_v2 *) {
 static void tool_cb_motion(void *data, struct zwp_tablet_tool_v2 *,
                             wl_fixed_t x, wl_fixed_t y) {
   TabletTool *tool = static_cast<TabletTool *>(data);
+  tool->decor_sx = wl_fixed_to_double(x);
+  tool->decor_sy = wl_fixed_to_double(y);
   coords_from_surface(tool, x, y);
   tool->frame_motion = true;
 }
@@ -609,32 +682,142 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
 #include "xdg-shell-client-protocol.h"
 #include "gtk-shell-client-protocol.h"
 
+/**
+ * Generic function to handle titlebar events on each backend.  Sadly,
+ * libdecor does not expose where are each button, so we rely on offsets
+ * from the right of the titlebar.
+ *
+ * @param win             Fl_Window
+ * @param x_from_right    x position to the right of window
+ * @param kCloseBtn       min position of the close button from right
+ * @param kMaximizeBtn    min position of the maximize button from right
+ * @param kMinimizeBtn    min position of the minimize button from right
+ */
+static int handle_titlebar_events(Fl_Window* win, TabletTool* tool,
+                                  double x_from_right,
+                                  double kCloseBtn, double kMaximizeBtn,
+                                  double kMinimizeBtn)
+{
+    int out = 0;
+    libdecor_frame_ref(tool->focus_frame);
+    if (x_from_right < kCloseBtn) {
+        // Close button
+        //win->hide(); <-- do not use this.  Crashes on Vulkan
+        libdecor_frame_close(tool->focus_frame);
+        out = 1;
+    } else if (x_from_right < kMaximizeBtn) {
+        // Maximize / restore
+        if (win->maximize_active())
+            win->un_maximize();
+        else
+            win->maximize();
+        out = 1;
+    } else if (x_from_right < kMinimizeBtn) {
+        // Minimize (works)
+        win->iconize();
+        out = 1;
+    } else if (tool->serial) {
+        // Title bar drag → move (works)
+        libdecor_frame_move(tool->focus_frame, g_wl_seat,
+                            tool->serial);
+        out = 1;
+    }
+    libdecor_frame_unref(tool->focus_frame);
+    return out;
+}
+
+/**
+ * Convert TabletTool evens to libdecor's cairo plug-in.
+ *
+ * @param w     Fl_Window
+ * @param tool  TabletTool state
+ */
+static int handle_cairo_events(Fl_Window* win, TabletTool* tool)
+{
+    if (win) win->show();
+
+    double sx = tool->decor_sx;
+    double sy = tool->decor_sy;
+
+    int left = 0, top = 0;
+    libdecor_frame_translate_coordinate(tool->focus_frame, 0, 0,
+                                        &left, &top);
+
+    float f  = Fl::screen_scale(win->screen_num());
+    // Total decoration surface dimensions in surface-local pixels:
+    double total_decor_w = win->w() * f + 2 * left;
+    double total_decor_h = win->h() * f + top;  // bottom border ≈ left
+
+    /**
+     * Try handling title bar first.  Cairo always exposes all buttons,
+     * regardless of window's capabilities.
+     *
+     */
+    if(sy >= 0 && sy < top) {
+        double kBtnW   = 24.0;
+        double kBtnPad =  4.0;
+        double kRPad   =  6.0;
+        double x_from_right = total_decor_w - tool->decor_sx;
+
+        double kCloseBtn = kRPad + kBtnW;
+        double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
+        double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
+        int ret = handle_titlebar_events(win, tool, x_from_right,
+                                         kCloseBtn, kMaximizeBtn,
+                                         kMinimizeBtn);
+        if (ret)
+            return ret;
+    }
+
+    return 0;
+}
 /*
   Convert pen evenets over the titlebar or resize area into libdecor actions.
-
-  \todo this is just a proof of concept, tested on Ubuntu 26.4. We still
-  need to implement actions for resizing, maximizing, minimizing, and closing the window.
 
   \return a value that indicate how the caller shall continue processing the event.
   The return values are yet to be defined.
 */
-static int handle_frame_events(TabletTool *tool) {
-  if (gtk_shell_surface && gtk_shell_frame) {
-    auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    if (tool->frame_down) {
-      if (gtk_shell_window) gtk_shell_window->show(); // raise the clicked window to the top and activate
-      libdecor_frame_ref(gtk_shell_frame); // lock for multiple calls
-      libdecor_frame_move(gtk_shell_frame, drvr->seat->wl_seat, tool->serial);
-      libdecor_frame_unref(gtk_shell_frame);
-      // libdecor_frame_close(struct libdecor_frame *frame)
-      // libdecor_frame_set_fullscreen(struct libdecor_frame *frame, struct wl_output *output)
-      // libdecor_frame_set_maximized(struct libdecor_frame *frame)
-      // libdecor_frame_resize(struct libdecor_frame *frame,struct wl_seat *wl_seat,uint32_t serial,enum libdecor_resize_edge edge)
-      // libdecor_frame_close(struct libdecor_frame *frame)
-      // see: pointer_button, handle_button_on_header, and handle_button_on_shadow in libdecor-gtk.c
-    }   
-  }
-  return 0;
+static int handle_gtk_frame_events(Fl_Window* win, TabletTool *tool) {
+    if (win) win->show();
+
+    double sx = tool->decor_sx;
+    double sy = tool->decor_sy;
+
+    float f  = Fl::screen_scale(win->screen_num());
+    int left = 0, top = 0;
+    libdecor_frame_translate_coordinate(tool->focus_frame, 0, 0,
+                                        &left, &top);
+
+    // Total decoration surface dimensions in surface-local pixels:
+    double total_decor_w = win->w() * f + 2 * left;
+    double total_decor_h = win->h() * f + top;  // bottom border ≈ left
+
+    /**
+     * Try handling title bar first.  GTK3 may hide some buttons based
+     * on Window capabilities.
+     *
+     */
+    if(sy >= 0 && sy < top) {
+        double kBtnW   = 24.0;
+        double kBtnPad =  4.0;
+        double kRPad   =  6.0;
+        double x_from_right = total_decor_w - tool->decor_sx;
+
+        double kCloseBtn = kRPad + kBtnW;
+        double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
+        double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
+        if (!win->resizable())
+        {
+            kMinimizeBtn = kMaximizeBtn;
+            kMaximizeBtn = -10000;
+        }
+        int ret = handle_titlebar_events(win, tool, x_from_right,
+                                         kCloseBtn, kMaximizeBtn,
+                                         kMinimizeBtn);
+        if (ret)
+            return ret;
+    }
+    return 0;
 }
 
 /*
@@ -658,14 +841,6 @@ static int handle_frame_events(TabletTool *tool) {
 static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                            uint32_t /*time*/) {
   TabletTool *tool = static_cast<TabletTool *>(data);
-
-  // Handle pen events inside the title bar.
-  // \todo proof of concept, we still need to find the correct location
-  // for this code, and the use of return codes for aborting event handling.
-  if (gtk_shell_surface && gtk_shell_frame) {
-    int result = handle_frame_events(tool);
-    (void)result; // silence unused result warning
-  }
 
   // ── 1. Proximity-out ──────────────────────────────────────────────────────
   if (tool->frame_proximity_out) {
@@ -703,10 +878,49 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   }
 
   // No subscribers or no focus window → nothing more to do.
+  // Check if over decoration and if so, do an action if needed.
   if (!tool->focus_win || subscriber_list_.empty()) {
-    tablet_tool_reset_frame(tool);
-    tool->prev_state = tool->ev.state;
-    return;
+
+      // ── frame down on decoration ───────────────────────────────────────
+      if (tool->focus_frame && tool->frame_down) {
+
+          // Find the Fl_Window that owns this frame.
+          Fl_Window* win = nullptr;
+          for (win = Fl::first_window(); win;
+               win = Fl::next_window(win)) {
+              wld_window* xid = fl_wl_xid(win);
+              if (xid->kind != Fl_Wayland_Window_Driver::DECORATED ||
+                  !xid->frame)
+                  continue;
+              if (xid->frame == tool->focus_frame)
+                  break;
+          }
+
+          if (win) {
+              enum plugin_kind plugin = get_plugin_kind(tool->focus_frame);
+
+              int result;
+
+              switch(plugin)
+              {
+              case SSD:
+                  // Nothing to do.
+                  break;
+              case GTK3:
+                  result = handle_gtk_frame_events(win, tool);
+                  break;
+              case CAIRO:
+              case UNKNOWN:
+                  // Handle titlebar for Cairo and any unknown plugin
+                  result = handle_cairo_events(win, tool);
+                  break;
+              }
+          } // if (win)
+      } // focus_frame && frame_down
+
+      tablet_tool_reset_frame(tool);
+      tool->prev_state = tool->ev.state;
+      return;
   }
 
   Fl_Window *eventWindow = nullptr;
@@ -717,6 +931,10 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   } else {
     eventWindow = tool->focus_win;
   }
+
+  // Safe-guard
+  if (!eventWindow)
+      return;
 
   bool is_menu_window = eventWindow->menu_window();
 

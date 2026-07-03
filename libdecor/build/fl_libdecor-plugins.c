@@ -16,7 +16,7 @@
 
 /* Support of interactions between FLTK and libdecor plugins, either dynamically
  loaded by dlopen() or built-in FLTK.
- 
+
  Under USE_SYSTEM_LIBDECOR, the plugin can only be dynamically loaded.
  Under ! USE_SYSTEM_LIBDECOR, it can be dynamically loaded from a directory
  given in environment variable LIBDECOR_PLUGIN_DIR, or the built-in one is used.
@@ -24,15 +24,15 @@
 
 #include <dlfcn.h>
 #include <string.h>
+#include <stdlib.h>
 #include "fl_libdecor.h"
+#include "fl_libdecor-plugins.h"
 #include <pango/pangocairo.h>
-#include <dlfcn.h>
 
 #ifndef HAVE_GTK
 #  define HAVE_GTK 0
 #endif
 
-enum plugin_kind { UNKNOWN, SSD, CAIRO, GTK3 };
 
 #if USE_SYSTEM_LIBDECOR
 #  include "../src/libdecor-plugin.h"
@@ -226,14 +226,14 @@ static unsigned char *cairo_titlebar_buffer(struct libdecor_frame *frame,
  LIBDECOR_EXPORT const struct libdecor_plugin_description libdecor_plugin_description;
  these plugins are dlopen()'ed in libdecor.c without the RTLD_GLOBAL flag.
  Consequently their symbols are not discovered by dlsym(RTLD_DEFAULT, "symbol-name").
- 
+
  Under USE_SYSTEM_LIBDECOR, we repeat the dlopen() for the same plugin
  then dlsym() will report the address of libdecor_plugin_description.
- 
+
  Under !USE_SYSTEM_LIBDECOR, we compile fl_libdecor.c which modifies the dlopen()
  to call dlsym(ld, "libdecor_plugin_description") just after the dlopen and memorizes
  this address.
- 
+
  A plugin is loaded also if SSD.
  KWin has its own size limit, similar to that of GDK plugin
  */
@@ -261,8 +261,7 @@ static const char *get_libdecor_plugin_description() {
   return plugin_description ? plugin_description->description : NULL;
 }
 
-
-static enum plugin_kind get_plugin_kind(struct libdecor_frame *frame) {
+enum plugin_kind get_plugin_kind(struct libdecor_frame *frame) {
   static enum plugin_kind kind = UNKNOWN;
   if (kind == UNKNOWN) {
     if (frame) {
@@ -308,4 +307,13 @@ bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdeco
   if (!*using_GTK) return false;
   struct libdecor_frame_gtk *frame_gtk = (struct libdecor_frame_gtk*)frame;
   return (frame_gtk->headerbar.wl_surface == surface);
+}
+
+/* Returns whether surface is the libdecor-created GTK-titlebar of frame */
+bool fl_is_surface_from_cairo_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
+                                      bool *using_CAIRO) {
+  *using_CAIRO = (get_plugin_kind(NULL) == CAIRO);
+  if (!*using_CAIRO) return false;
+  struct libdecor_frame_cairo *frame_cairo = (struct libdecor_frame_cairo*)frame;
+  return (frame_cairo->title_bar.title.server.wl_surface == surface);
 }
