@@ -58,6 +58,31 @@ void PickFile_CB(Fl_Widget*, void*) {
   }
 }
 
+void PickFiles_CB(Fl_Widget*, void*) {
+  // Create native chooser
+  Fl_Native_File_Chooser native;
+  native.title("Pick multiple files");
+  native.type(Fl_Native_File_Chooser::BROWSE_MULTI_FILE);
+  native.filter(G_filter->value());
+  native.preset_file(G_filename->value());
+  // Show native chooser
+  switch ( native.show() ) {
+    case -1: G_tty->printf("ERROR: %s\n", native.errmsg()); break;      // ERROR
+    case  1: G_tty->printf("*** CANCEL\n"); fl_beep(); break;           // CANCEL
+    default:                                                            // PICKED FILE
+      if (native.count() > 0) {
+        G_filename->value(native.filename(0));
+        G_tty->printf("count=%d\n", native.count());
+        for (int i=0; i<native.count(); i++) {
+          G_tty->printf("filename[%d]='%s'\n", i, native.filename(i));
+        }
+      } else {
+        G_tty->printf("count=0\n");
+      }
+      break;
+  }
+}
+
 void PickDir_CB(Fl_Widget*, void*) {
   // Create native chooser
   Fl_Native_File_Chooser native;
@@ -71,10 +96,80 @@ void PickDir_CB(Fl_Widget*, void*) {
     default:                                                            // PICKED DIR
       if ( native.filename() ) {
         G_filename->value(native.filename());
-        G_tty->printf("dirname='%s'\n", native.filename());
+        G_tty->printf("filename='%s'\n", native.filename());
       } else {
         G_filename->value("NULL");
-        G_tty->printf("dirname='(null)'\n");
+        G_tty->printf("filename='(null)'\n");
+      }
+      break;
+  }
+}
+
+void PickDirs_CB(Fl_Widget*, void*) {
+  // Create native chooser
+  Fl_Native_File_Chooser native;
+  native.title("Pick multiple directories");
+  native.type(Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY);
+  native.filter(G_filter->value());
+  native.preset_file(G_filename->value());
+  // Show native chooser
+  switch ( native.show() ) {
+    case -1: G_tty->printf("ERROR: %s\n", native.errmsg()); break;      // ERROR
+    case  1: G_tty->printf("*** CANCEL\n"); fl_beep(); break;           // CANCEL
+    default:                                                            // PICKED DIR
+      if (native.count() > 0) {
+        G_filename->value(native.filename(0));
+        G_tty->printf("count=%d\n", native.count());
+        for (int i=0; i<native.count(); i++) {
+          G_tty->printf("filename[%d]='%s'\n", i, native.filename(i));
+        }
+      } else {
+        G_tty->printf("count=0\n");
+      }
+      break;
+  }
+}
+
+void SaveFile_CB(Fl_Widget*, void*) {
+  // Create native chooser
+  Fl_Native_File_Chooser native;
+  native.title("Save a file");
+  native.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  native.filter(G_filter->value());
+  native.preset_file(G_filename->value());
+  // Show native chooser
+  switch ( native.show() ) {
+    case -1: G_tty->printf("ERROR: %s\n", native.errmsg()); break;      // ERROR
+    case  1: G_tty->printf("*** CANCEL\n"); fl_beep(); break;           // CANCEL
+    default:                                                            // PICKED FILE
+      if ( native.filename() ) {
+        G_filename->value(native.filename());
+        G_tty->printf("filename='%s'\n", native.filename());
+      } else {
+        G_filename->value("NULL");
+        G_tty->printf("filename='(null)'\n");
+      }
+      break;
+  }
+}
+
+void SaveDir_CB(Fl_Widget*, void*) {
+  // Create native chooser
+  Fl_Native_File_Chooser native;
+  native.title("Save a Directory");
+  native.directory(G_filename->value());
+  native.type(Fl_Native_File_Chooser::BROWSE_SAVE_DIRECTORY);
+  // Show native chooser
+  switch ( native.show() ) {
+    case -1: G_tty->printf("ERROR: %s\n", native.errmsg()); break;      // ERROR
+    case  1: G_tty->printf("*** CANCEL\n"); fl_beep(); break;           // CANCEL
+    default:                                                            // PICKED DIR
+      if ( native.filename() ) {
+        G_filename->value(native.filename());
+        G_tty->printf("filename='%s'\n", native.filename());
+      } else {
+        G_filename->value("NULL");
+        G_tty->printf("filename='(null)'\n");
       }
       break;
   }
@@ -150,11 +245,32 @@ int main(int argc, char **argv) {
                 "    Apps<font color=#55f>&lt;Ctrl-I&gt;</font>*.app\n"
                 "</pre>\n");
 
-    Fl_Button *but = new Fl_Button(win->w()-x-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick File");
-    but->callback(PickFile_CB);
 
-    Fl_Button *butdir = new Fl_Button(but->x()-x-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick Dir");
-    butdir->callback(PickDir_CB);
+    // pick file, pick files, pick dir, pick dirs, save file, save files
+    // BROWSE_FILE = 0,                    ///< browse files (lets user choose one file)
+    // BROWSE_DIRECTORY,                   ///< browse directories (lets user choose one directory)
+    // BROWSE_MULTI_FILE,                  ///< browse files (lets user choose multiple files)
+    // BROWSE_MULTI_DIRECTORY,             ///< browse directories (lets user choose multiple directories)
+    // BROWSE_SAVE_FILE,                   ///< browse to save a file
+    // BROWSE_SAVE_DIRECTORY               ///< browse to save a directory
+
+    Fl_Button *pick_file_w = new Fl_Button(win->w()-600-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick File");
+    pick_file_w->callback(PickFile_CB);
+
+    Fl_Button *pick_files_w = new Fl_Button(win->w()-500-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick Files");
+    pick_files_w->callback(PickFiles_CB);
+
+    Fl_Button *pick_dir_w = new Fl_Button(win->w()-400-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick Dir");
+    pick_dir_w->callback(PickDir_CB);
+
+    Fl_Button *pick_dirs_w = new Fl_Button(win->w()-300-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick Dirs");
+    pick_dirs_w->callback(PickDirs_CB);
+
+    Fl_Button *save_file_w = new Fl_Button(win->w()-200-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Save File");
+    save_file_w->callback(SaveFile_CB);
+
+    Fl_Button *save_dir_w = new Fl_Button(win->w()-100-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Save Dir");
+    save_dir_w->callback(SaveDir_CB);
 
     win->resizable(G_filter);
   }

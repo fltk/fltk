@@ -721,8 +721,8 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   // set the dialog action type
   GtkFileChooserAction gtw_action_type;
   switch (_btype) {
-    case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
     case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY:
+    case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
       gtw_action_type = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
       break;
 
@@ -758,12 +758,13 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   // set the dialog properties
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
+      fl_gtk_file_chooser_set_select_multiple((GtkFileChooser *)gtkw_ptr, TRUE);
       preset_for_loading();
       break;
 
     case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY:
-      preset_directory();
       fl_gtk_file_chooser_set_select_multiple((GtkFileChooser *)gtkw_ptr, TRUE);
+      preset_directory();
       break;
 
     case Fl_Native_File_Chooser::BROWSE_SAVE_FILE:
@@ -791,7 +792,12 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   }
 
   GtkFileFilter **filter_tab = NULL;
-  if (_parsedfilt) {
+
+  if (_parsedfilt 
+      && (_btype != Fl_Native_File_Chooser::BROWSE_DIRECTORY)
+      && (_btype != Fl_Native_File_Chooser::BROWSE_SAVE_DIRECTORY)
+      && (_btype != Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY))
+  {
     filter_tab = new GtkFileFilter*[_nfilters];
     char *filter = fl_strdup(_parsedfilt);
     p = strtok(filter, "\t");
