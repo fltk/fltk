@@ -2,7 +2,7 @@
  * Common string header file for the Fast Light Tool Kit (FLTK).
  * Internal use only (see "important note" below).
  *
- * Copyright 1998-2020 by Bill Spitzak and others.
+ * Copyright 1998-2026 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -94,6 +94,43 @@ FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t);
  */
 FL_EXPORT extern int fl_ascii_strcasecmp(const char *s, const char *t);
 
+
+// Special character class detection functions for FLTK:
+//
+// The following functions replace system functions which are locale dependent
+// and/or work only with pure ASCII characters (range: 0x00 .. 0x7f).
+// Using input (bytes) outside this range results in undefined behavior and may
+// even crash (Visual Studio in Debug mode).
+// Note that UTF-8 sequences using 'char' variables would be sign-extended to
+// large negative values which are invalid.
+//
+// Note: These functions are not UTF-8 aware and are intended to fix bad behavior,
+//   but they don't fix wrong semantics. In the future we should check all text
+//   handling functions for UTF-8 awareness.
+//
+// These functions are intentionally declared and defined in this header in the
+// `src` folder which is hidden from user code. They should not be used in demo
+// programs in `test` and `examples` folders.
+// These functions must not be "exported" (don't use FL_EXPORT).
+//
+// AlbrechtS, June 2026
+
+/*
+  This function can be used to replace isspace(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isspace() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isspace(int ch) {
+  if (ch < 0 || ch > 0x7f) return 0;
+  return isspace(ch);
+}
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */

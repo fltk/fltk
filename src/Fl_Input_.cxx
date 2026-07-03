@@ -154,12 +154,14 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
     }
 
   } else while (o<e) {
-    if (wrap() && (p >= value_+size_ || isspace(*p & 255))) {
-      word_wrap = w() - Fl::box_dw(box()) - 5;  // 5 == space for cursor + gap (#1414)
-      width_to_lastspace += fl_width(lastspace_out, (int) (o-lastspace_out));
-      if (p > lastspace+1) {
+    if (wrap() && (p >= value_ + size_ || fl_ascii_isspace(*p))) {
+      word_wrap = w() - Fl::box_dw(box()) - 5; // 5 == space for cursor + gap (#1414)
+      width_to_lastspace += fl_width(lastspace_out, (int)(o - lastspace_out));
+      if (p > lastspace + 1) {
         if (word_count && ceil(width_to_lastspace) > word_wrap) {
-          p = lastspace; o = lastspace_out; break;
+          p = lastspace;
+          o = lastspace_out;
+          break;
         }
         word_count++;
       }
@@ -621,14 +623,14 @@ int Fl_Input_::line_start(int i) const {
 
 static int strict_word_start(const char *s, int i, int itype) {
   if (itype == FL_SECRET_INPUT) return 0;
-  while (i > 0 && !isspace(s[i-1]))
+  while (i > 0 && !fl_ascii_isspace(s[i-1]))
     i--;
   return i;
 }
 
 static int strict_word_end(const char *s, int len, int i, int itype) {
   if (itype == FL_SECRET_INPUT) return len;
-  while (i < len && !isspace(s[i]))
+  while (i < len && !fl_ascii_isspace(s[i]))
     i++;
   return i;
 }
@@ -998,15 +1000,21 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   // right after the whitespace before the current word.  This will
   // result in sub-optimal update when such wrapping does not happen
   // but it is too hard to figure out for now...
+
   if (wrap()) {
     // if there is a space in the pasted text, the whole line may have rewrapped
     int i;
-    for (i=0; i<ilen; i++)
-      if (text[i]==' ') break;
-    if (i==ilen)
-      while (b > 0 && !isspace(index(b) & 255) && index(b)!='\n') b--;
-    else
-      while (b > 0 && index(b)!='\n') b--;
+    for (i = 0; i < ilen; i++) {
+      if (text[i] == ' ')
+        break;
+    }
+    if (i == ilen) {
+      while (b > 0 && !fl_ascii_isspace(index(b)) && index(b) != '\n')
+        b--;
+    } else {
+      while (b > 0 && index(b) != '\n')
+        b--;
+    }
   }
 
   // make sure we redraw the old selection or cursor:
