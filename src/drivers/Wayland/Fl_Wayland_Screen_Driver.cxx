@@ -651,14 +651,14 @@ struct key_repeat_data_t {
   Fl_Window *window;
 };
 
-#define KEY_REPEAT_DELAY 0.5 // sec
-#define KEY_REPEAT_INTERVAL 0.05 // sec
+static double key_repeat_delay = 0.5; // sec
+static double key_repeat_interval = 0.05;  // sec
 
 
 static void key_repeat_timer_cb(key_repeat_data_t *key_repeat_data) {
   if (last_keydown_serial == key_repeat_data->serial) {
     Fl::handle(FL_KEYDOWN, key_repeat_data->window);
-    Fl::add_timeout(KEY_REPEAT_INTERVAL, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
+    Fl::add_timeout(key_repeat_interval, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
   }
   else delete key_repeat_data;
 }
@@ -902,7 +902,7 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
     key_repeat_data->serial = serial;
     key_repeat_data->window = win;
     last_keydown_serial = serial;
-    Fl::add_timeout(KEY_REPEAT_DELAY, (Fl_Timeout_Handler)key_repeat_timer_cb,
+    Fl::add_timeout(key_repeat_delay, (Fl_Timeout_Handler)key_repeat_timer_cb,
                     key_repeat_data);
   }
 }
@@ -948,7 +948,9 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
 
 static void wl_keyboard_repeat_info(void *data, struct wl_keyboard *wl_keyboard, int32_t rate, int32_t delay)
 {
-  // wl_keyboard is version 3 under Debian, but that event isn't sent until version 4
+  key_repeat_delay = delay / 1000.;
+  key_repeat_interval = 1./ rate;
+  //printf("wl_keyboard_repeat_info: rate=%d delay=%d\n",rate,delay);
 }
 
 
@@ -1274,7 +1276,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 //fprintf(stderr, "registry_handle_global: seat=%p\n", scr_driver->seat);
     wl_list_init(&scr_driver->seat->pointer_outputs);
     scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id,
-                                                           &wl_seat_interface, 3);
+                                                      &wl_seat_interface, fl_min(version, 4));
     scr_driver->seat->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (scr_driver->seat->xkb_context) {
       const char *locale = getenv("LC_ALL");
