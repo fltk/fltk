@@ -656,7 +656,7 @@ static double key_repeat_interval = 0.05;  // sec
 
 
 static void key_repeat_timer_cb(key_repeat_data_t *key_repeat_data) {
-  if (last_keydown_serial == key_repeat_data->serial) {
+  if (last_keydown_serial == key_repeat_data->serial && key_repeat_interval > 0) {
     Fl::handle(FL_KEYDOWN, key_repeat_data->window);
     Fl::add_timeout(key_repeat_interval, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
   }
@@ -949,7 +949,7 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
 static void wl_keyboard_repeat_info(void *data, struct wl_keyboard *wl_keyboard, int32_t rate, int32_t delay)
 {
   key_repeat_delay = delay / 1000.;
-  key_repeat_interval = 1./ rate;
+  key_repeat_interval = (rate > 0 ? 1. / rate : 0);
   //printf("wl_keyboard_repeat_info: rate=%d delay=%d\n",rate,delay);
 }
 
