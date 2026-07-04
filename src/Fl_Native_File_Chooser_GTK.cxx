@@ -873,7 +873,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
     if (_parsedfilt) {
       GtkFileFilter *gfilter = fl_gtk_file_chooser_get_filter((GtkFileChooser *)gtkw_ptr);
       for (_filtvalue = 0; _filtvalue < _nfilters; _filtvalue++) {
-        if (filter_tab[_filtvalue] == gfilter) break;
+        if (filter_tab && (filter_tab[_filtvalue] == gfilter)) break;
       }
     }
 
