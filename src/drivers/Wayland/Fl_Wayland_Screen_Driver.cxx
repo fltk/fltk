@@ -1438,7 +1438,7 @@ static const struct wl_registry_listener registry_listener = {
 };
 
 
-static void libdecor_fd_callback(int fd, struct libdecor *libdecor_context)
+static void wld_socket_callback(int fd, struct libdecor *libdecor_context)
 {
   if (libdecor_dispatch(libdecor_context, 0) >= 0) return;
   if (wl_display_get_error(Fl_Wayland_Screen_Driver::wl_display) == EPROTO) {
@@ -1544,7 +1544,7 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
   while (registry_cb) wl_display_dispatch(wl_display);
   libdecor_context = libdecor_new(wl_display, &libdecor_iface);
-  Fl::add_fd(libdecor_get_fd(libdecor_context), FL_READ, (Fl_FD_Handler)libdecor_fd_callback,
+  Fl::add_fd(libdecor_get_fd(libdecor_context), FL_READ, (Fl_FD_Handler)wld_socket_callback,
              libdecor_context);
   fl_create_print_window();
   atexit(do_atexit);
