@@ -229,7 +229,7 @@
 #define PNG_Z_DEFAULT_NOFILTER_STRATEGY 0
 #define PNG_Z_DEFAULT_STRATEGY 1
 #define PNG_ZBUF_SIZE 8192
-#define PNG_ZLIB_VERNUM 0x1310
+#define PNG_ZLIB_VERNUM 0x1320
 /* end of settings */
 #define png_access_version_number fltk_png_access_version_number
 #define png_benign_error fltk_png_benign_error
