@@ -1334,6 +1334,30 @@ set_component_input_region(struct libdecor_frame_gtk *frame_gtk,
 	}
 }
 
+
+static void
+update_titlebar_css_state(struct libdecor_frame_gtk *frame_gtk)
+{
+	GtkStyleContext *style = gtk_widget_get_style_context(frame_gtk->window);
+
+	if (libdecor_frame_is_floating(&frame_gtk->frame))
+		gtk_style_context_remove_class(style, "maximized");
+	else
+		gtk_style_context_add_class(style, "maximized");
+}
+
+static int
+get_titlebar_css_margin(struct libdecor_frame_gtk *frame_gtk)
+{
+	GtkBorder margin;
+
+	gtk_style_context_get_margin(
+		gtk_widget_get_style_context(frame_gtk->header),
+		gtk_widget_get_state_flags(frame_gtk->header),
+		&margin);
+	return margin.top + margin.bottom;
+}
+
 static void
 draw_border_component(struct libdecor_frame_gtk *frame_gtk,
 		      struct border_component *border_component,
@@ -1405,12 +1429,10 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 {
 	GtkAllocation allocation = {0, 0, frame_gtk->content_width, 0};
 	enum libdecor_window_state state;
-	GtkStyleContext *style;
 	int pref_width;
 	int current_min_w, current_min_h, current_max_w, current_max_h, W, H;
 
 	state = libdecor_frame_get_window_state((struct libdecor_frame*)frame_gtk);
-	style = gtk_widget_get_style_context(frame_gtk->window);
 
 	if (!(state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
 		gtk_widget_set_state_flags(frame_gtk->window, GTK_STATE_FLAG_BACKDROP, true);
@@ -1418,11 +1440,7 @@ draw_title_bar(struct libdecor_frame_gtk *frame_gtk)
 		gtk_widget_unset_state_flags(frame_gtk->window, GTK_STATE_FLAG_BACKDROP);
 	}
 
-	if (libdecor_frame_is_floating(&frame_gtk->frame)) {
-		gtk_style_context_remove_class(style, "maximized");
-	} else {
-		gtk_style_context_add_class(style, "maximized");
-	}
+	update_titlebar_css_state(frame_gtk);
 
 	gtk_widget_show_all(frame_gtk->window);
 
@@ -1793,13 +1811,16 @@ libdecor_plugin_gtk_frame_get_border_size(struct libdecor_plugin *plugin,
 			break;
 		case DECORATION_TYPE_ALL:
 			ensure_border_surfaces(frame_gtk);
-			//draw_border(frame_gtk);
 			G_GNUC_FALLTHROUGH;
 		case DECORATION_TYPE_TITLE_ONLY:
 			if (!frame_gtk->header)
 				ensure_title_bar_surfaces(frame_gtk);
+
+			update_titlebar_css_state(frame_gtk);
+
 			gtk_widget_show_all(frame_gtk->window);
 			gtk_widget_get_preferred_height(frame_gtk->header, NULL, top);
+			*top = MAX(0, *top + get_titlebar_css_margin(frame_gtk));
 			break;
 		}
 	}

@@ -274,12 +274,22 @@ frame_set_window_geometry(struct libdecor_frame *frame,
 	int x, y, width, height;
 	int left, right, top, bottom;
 
-	plugin->priv->iface->frame_get_border_size(plugin, frame, NULL,
-						   &left, &right, &top, &bottom);
-	x = -left;
-	y = -top;
-	width = content_width + left + right;
-	height = content_height + top + bottom;
+	if (frame_has_visible_client_side_decoration(frame) &&
+	    plugin->priv->iface->frame_get_border_size(plugin, frame,
+						       NULL,
+						       &left, &right,
+						       &top, &bottom)) {
+		x = -left;
+		y = -top;
+		width = content_width + left + right;
+		height = content_height + top + bottom;
+	} else {
+		x = 0;
+		y = 0;
+		width = content_width;
+		height = content_height;
+	}
+
 	xdg_surface_set_window_geometry(frame->priv->xdg_surface, x, y, width, height);
 }
 
@@ -1200,10 +1210,7 @@ libdecor_frame_apply_state(struct libdecor_frame *frame,
 	frame_priv->content_width = state->content_width;
 	frame_priv->content_height = state->content_height;
 
-	/* do not set limits in non-floating states */
-	if (state_is_floating(state->window_state)) {
-		libdecor_frame_apply_limits(frame, state->window_state);
-	}
+	libdecor_frame_apply_limits(frame, state->window_state);
 }
 
 LIBDECOR_EXPORT void
