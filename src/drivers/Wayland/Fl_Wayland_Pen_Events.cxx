@@ -95,9 +95,9 @@ extern "C" {
   bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
                                         bool *using_GTK);
 }
-extern struct wl_surface *gtk_shell_surface;
-extern libdecor_frame *gtk_shell_frame;
-extern Fl_Window *gtk_shell_window;
+static struct wl_surface *gtk_shell_surface;
+static libdecor_frame *gtk_shell_frame = nullptr;
+static Fl_Window *gtk_shell_window = nullptr;
 
 // fl_xmousewin tracks which window last received pointer/pen events.
 extern Fl_Window *fl_xmousewin;
@@ -610,7 +610,7 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
 #include "gtk-shell-client-protocol.h"
 
 /*
-  Convert pen evenets over the titlebar or resize area into libdecor actions.
+  Convert pen events over the titlebar or resize area into libdecor actions.
 
   \todo this is just a proof of concept, tested on Ubuntu 26.4. We still
   need to implement actions for resizing, maximizing, minimizing, and closing the window.
