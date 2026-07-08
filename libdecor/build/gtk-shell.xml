@@ -1,7 +1,7 @@
 <!-- found at: https://gitlab.gnome.org/GNOME/gtk/-/blob/main/gdk/wayland/protocol/gtk-shell.xml -->
 <protocol name="gtk">
 
-  <interface name="gtk_shell1" version="5">
+  <interface name="gtk_shell1" version="7">
     <description summary="gtk specific extensions">
       gtk_shell is a protocol extension providing additional features for
       clients implementing it.
@@ -34,9 +34,11 @@
     <request name="notify_launch" since="3">
       <arg name="startup_id" type="string"/>
     </request>
+
+    <!-- Version 6 does not add new API, but asserts that surface offsets are implemented -->
   </interface>
 
-  <interface name="gtk_surface1" version="5">
+  <interface name="gtk_surface1" version="7">
     <request name="set_dbus_properties">
       <arg name="application_id" type="string" allow-null="true"/>
       <arg name="app_menu_path" type="string" allow-null="true"/>
@@ -103,7 +105,13 @@
       <arg name="seat" type="object" interface="wl_seat"/>
       <arg name="gesture" type="uint" enum="gesture"/>
     </request>
+
+    <!-- Version 6 does not add new API, but asserts that surface offsets are implemented -->
+
+    <request name="set_a11y_properties" since="7">
+      <arg name="a11y_dbus_name" type="string" />
+      <arg name="toplevel_object_path" type="string" />
+    </request>
   </interface>
 
 </protocol>
-
