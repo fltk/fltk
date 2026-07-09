@@ -214,9 +214,11 @@ void Group_Node::write_code2(fluid::io::Code_Writer& f) {
 // This is called when o is created.  If it is in the tab group make
 // sure it is visible:
 void Group_Node::add_child(Node* cc, Node* before) {
-  Widget_Node* c = (Widget_Node*)cc;
-  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
-  ((Fl_Group*)o)->insert(*(c->o), b);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
+    ((Fl_Group*)o)->insert(*(c->o), b);
+  }
   o->redraw();
 }
 
@@ -232,9 +234,11 @@ void Group_Node::remove_child(Node* cc) {
 
 // move, don't change selected value:
 void Group_Node::move_child(Node* cc, Node* before) {
-  Widget_Node* c = (Widget_Node*)cc;
-  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
-  ((Fl_Group*)o)->insert(*(c->o), b);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
+    ((Fl_Group*)o)->insert(*(c->o), b);
+  }
   o->redraw();
 }
 

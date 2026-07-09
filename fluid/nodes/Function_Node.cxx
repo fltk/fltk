@@ -504,7 +504,7 @@ Node *Code_Node::make(Strategy strategy) {
   Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
-  while (p && !p->is_code_block()) {
+  while (p && !p->is_code_block() && !p->is_a(Type::Group)) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
