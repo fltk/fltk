@@ -156,7 +156,7 @@ Function {make_image_panel()} {
   Fl_Window image_panel_window {
     label {Image Options}
     callback {propagate_load(o, v);} open
-    xywh {0 0 260 332} type Double modal visible
+    xywh {622 649 260 332} type Double modal visible
   } {
     Fl_Group image_panel_imagegroup {
       callback propagate_load open
@@ -519,7 +519,7 @@ Function {make_widget_panel()} {
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {0 0 420 400} type Double labelsize 11 align 80 resizable hotspot
+    xywh {565 208 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Wizard tabs_wizard {
@@ -528,7 +528,7 @@ Function {make_widget_panel()} {
     } {
       Fl_Tabs widget_tabs {
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);} open
+  propagate_load((Fl_Group *)o,v);} selected
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
@@ -543,7 +543,7 @@ Function {make_widget_panel()} {
             xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
           } {
             Fl_Input wp_gui_label {
-              callback label_cb selected
+              callback label_cb
               tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
             }
@@ -2632,7 +2632,7 @@ if (v == LOAD) {
         } {}
       }
       Fl_Tabs data_tabs {
-        callback {if (current_node && current_node->is_a(Type::Data))
+        callback {if (current_node && (current_node->type() == Type::Data))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -2864,7 +2864,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs comment_tabs {
-        callback {if (current_node && current_node->is_a(Type::Comment))
+        callback {if (current_node && (current_node->type() == Type::Comment))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3042,7 +3042,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs class_tabs {
-        callback {if (current_node && current_node->is_a(Type::Class))
+        callback {if (current_node && (current_node->type() == Type::Class))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3202,7 +3202,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs declblock_tabs {
-        callback {if (current_node && current_node->is_a(Type::DeclBlock))
+        callback {if (current_node && (current_node->type() == Type::DeclBlock))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3364,7 +3364,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs decl_tabs {
-        callback {if (current_node && current_node->is_a(Type::Decl))
+        callback {if (current_node && (current_node->type() == Type::Decl))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3531,7 +3531,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs codeblock_tabs {
-        callback {if (current_node && current_node->is_a(Type::CodeBlock))
+        callback {if (current_node && (current_node->type() == Type::CodeBlock))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3597,7 +3597,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs code_tabs {
-        callback {if (current_node && current_node->is_a(Type::Code))
+        callback {if (current_node && (current_node->type() == Type::Code))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3639,7 +3639,7 @@ o->linenumber_size(o->Fl_Text_Display::textsize());}
         }
       }
       Fl_Tabs func_tabs {
-        callback {if (current_node && current_node->is_a(Type::Function))
+        callback {if (current_node && (current_node->type() == Type::Function))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
       } {
