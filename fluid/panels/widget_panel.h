@@ -1,10 +1,10 @@
 //
-// Widget panel for the Fast Light Tool Kit (FLTK).
+// Widget Panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
+// the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
 //     https://www.fltk.org/COPYING.php

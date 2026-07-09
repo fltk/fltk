@@ -1,10 +1,10 @@
 //
-// Widget panel for the Fast Light Tool Kit (FLTK).
+// Widget Panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
+// the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
 //     https://www.fltk.org/COPYING.php
@@ -2535,11 +2535,20 @@ static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
     menu.get("version", version, -1);
     if (version < 10400) load_comments_preset(menu);
     menu.get("n", n, 0);
+    std::string text;
+    std::string next;
+    i = 0;
+    menu.get(Fl_Preferences::Name(i), text, "");
     for (i=0;i<n;i++) {
-      char *text;
-      menu.get(Fl_Preferences::Name(i), text, "");
-      o->add(text);
-      free(text);
+      menu.get(Fl_Preferences::Name(i+1), next, "");
+      size_t sz = text.size();
+      if (sz && strncmp(text.c_str(), next.c_str(), sz)==0 && next[sz]=='/') {
+        // this is a submenu, don't add it as a menu item
+      } else {
+        // this is a menu item
+        o->add(text.c_str());
+      }
+      text = next;
     }
   } else {
     if (o->value()==1) {
@@ -2566,21 +2575,31 @@ static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
       if (itempath[0]==0 || last_selected_item==0) {
         fl_message("Please select an entry from this menu first.");
       } else if (fl_choice("Are you sure that you want to delete the entry\n"
-                           "\"%s\"\nfrom the database?", "Cancel", "Delete",
-                           nullptr, itempath)) {
+                            "\"%s\"\nfrom the database?", "Cancel", "Delete",
+                            nullptr, itempath)) {
         Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
         db.deleteEntry(itempath);
         o->remove(last_selected_item);
+        // Check if we now have an empty menu and delete that
+        if ((last_selected_item > 0)
+            && ((o->menu()+last_selected_item-1)->submenu())
+            && ((o->menu()+last_selected_item)->label() == nullptr)) {
+          o->remove(last_selected_item-1);
+        }
         Fl_Preferences menu(Fl_Preferences::USER_L, "fltk.org", "fluid_comments_menu");
         int i, n;
         for (i=4, n=0; i<o->size(); i++) {
           const Fl_Menu_Item *mi = o->menu()+i;
-          if (o->item_pathname(itempath, 255, mi)==0) {
+          if (!mi->submenu() && o->item_pathname(itempath, 255, mi)==0) {
             if (itempath[0]=='/') memmove(itempath, itempath+1, 255);
             if (itempath[0]) menu.set(Fl_Preferences::Name(n++), itempath);
           }
         }
+        for (; n<o->size()+4; n++) {
+          menu.deleteEntry(Fl_Preferences::Name(n));
+        }
         menu.set("n", n);
+        last_selected_item = 0;
       }
     } else {
       // load the selected comment from the database
@@ -2594,7 +2613,7 @@ static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
         free(text);
         last_selected_item = o->value();
       }
-     }
+    }
   }
 }
 
