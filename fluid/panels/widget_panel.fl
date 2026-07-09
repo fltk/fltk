@@ -528,13 +528,13 @@ Function {make_widget_panel()} {
     } {
       Fl_Tabs widget_tabs {
         callback {if (current_widget)
-  propagate_load((Fl_Group *)o,v);} selected
+  propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
         Fl_Group wp_gui_tab {
           label GUI
-          callback propagate_load open
+          callback propagate_load open selected
           xywh {10 30 400 330} labelsize 11 when 0 resizable
         } {
           Fl_Group {} {
@@ -2358,7 +2358,7 @@ if (v == LOAD) {
       // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
     }
   }}
-              tooltip {The name of the widget.} xywh {95 65 235 20} labelfont 1 labelsize 11 textsize 11 resizable
+              tooltip {The name of the widget.} xywh {95 65 235 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
             Fl_Choice {} {
               callback {if (v == LOAD) {
@@ -2857,7 +2857,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-            xywh {95 150 310 105} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+            xywh {95 150 310 105} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
           }
@@ -2894,7 +2894,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-            xywh {95 45 310 235} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 textcolor 58 resizable
+            xywh {95 45 310 235} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 58 resizable
             code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
             code1 {o->buffer(new Fl_Text_Buffer());}
           }
@@ -3195,7 +3195,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-            xywh {95 125 305 110} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+            xywh {95 125 305 110} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
           }
@@ -3357,7 +3357,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-            xywh {95 225 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+            xywh {95 225 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
           }
@@ -3492,7 +3492,7 @@ if (v == LOAD) {
 }}
                 tooltip {a declaration: `int x;`, an external symbol: `extern int foo();`,
 a `\#` directive: `\#include <foo.h>`, a typedef `typedef char byte;`,
- or a `using` statement, etc.} xywh {95 75 310 100} labelfont 1 labelsize 11 align 132 textsize 11 resizable
+ or a `using` statement, etc.} xywh {95 75 310 100} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
                 class {fluid::widget::Code_Editor}
@@ -3522,7 +3522,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-                xywh {95 185 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+                xywh {95 185 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
                 code0 {o->buffer(new Fl_Text_Buffer());}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
               }
@@ -3590,7 +3590,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-            tooltip {code block comment} xywh {95 100 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+            tooltip {code block comment} xywh {95 100 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
             code0 {o->buffer(new Fl_Text_Buffer());}
             code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
           }
@@ -3779,7 +3779,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-                tooltip {function name and args, or blank for `main(..)`} xywh {95 100 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
+                tooltip {function name and args, or blank for `main(..)`} xywh {95 100 310 50} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
                 class {fluid::widget::Code_Editor}
@@ -3797,7 +3797,7 @@ update_current(o, v,
   [nd](){return nd->return_type();},
   [nd](std::string s){nd->return_type(s);}
 );}
-                tooltip {return type, or blank to return outermost widget} xywh {95 160 310 50} labelfont 1 labelsize 11 align 132 textsize 11 resizable
+                tooltip {return type, or blank to return outermost widget} xywh {95 160 310 50} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
                 class {fluid::widget::Code_Editor}
@@ -3827,7 +3827,7 @@ if (v == LOAD) {
   }
   free(c);
 }}
-                xywh {95 220 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+                xywh {95 220 310 100} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
                 code0 {o->buffer(new Fl_Text_Buffer());}
                 code1 {o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
               }
