@@ -6,7 +6,7 @@
 // They are somewhat similar to tcl, using matching { and }
 // to quote strings.
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,6 +26,9 @@
 #include "app/shell_command.h"
 #include "proj/undo.h"
 #include "app/Snap_Action.h"
+
+#include "../../src/flstring.h"
+
 
 /// \defgroup flfile .fl Project File Operations
 /// \{
@@ -192,7 +195,7 @@ void Project_Writer::write_string(const char *format, ...) {
   if (needspace && *format != '\n') fputc(' ',fout);
   vfprintf(fout, format, args);
   va_end(args);
-  needspace = !isspace(format[strlen(format)-1] & 255);
+  needspace = !fl_ascii_isspace(format[strlen(format)-1]);
 }
 
 /**

@@ -1,7 +1,7 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include "widgets/Code_Editor.h"
+#include "../../src/flstring.h"
 
 using namespace fluid;
 using namespace fluid::widget;
@@ -175,7 +176,7 @@ int Code_Editor::auto_indent(int, Code_Editor* e) {
   char *text = e->buffer()->text_range(start, pos);
   char *ptr;
 
-  for (ptr = text; isspace(*ptr); ptr ++) {/*empty*/}
+  for (ptr = text; fl_ascii_isspace(*ptr); ptr ++) {/*empty*/}
   *ptr = '\0';
   if (*text) {
     // use only a single 'insert' call to avoid redraw issues

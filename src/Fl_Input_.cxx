@@ -1238,10 +1238,10 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     // strip trailing control characters and spaces before pasting:
     const char* t = Fl::event_text();
     const char* e = t+Fl::event_length();
-    if (input_type() != FL_MULTILINE_INPUT) while (e > t && isspace(*(e-1) & 255)) e--;
+    if (input_type() != FL_MULTILINE_INPUT) while (e > t && fl_ascii_isspace(*(e-1))) e--;
     if (!t || e <= t) return 1; // Int/float stuff will crash without this test
     if (input_type() == FL_INT_INPUT) {
-      while (isspace(*t & 255) && t < e) t ++;
+      while (fl_ascii_isspace(*t) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
       if (strncmp(p, "0x", 2) == 0) {
@@ -1255,7 +1255,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
         return 1;
       } else return replace(0, size(), t, (int) (e-t));
     } else if (input_type() == FL_FLOAT_INPUT) {
-      while (isspace(*t & 255) && t < e) t ++;
+      while (fl_ascii_isspace(*t) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
       while (isdigit(*p & 255) && p < e) p ++;

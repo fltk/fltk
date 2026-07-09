@@ -2,7 +2,7 @@
 // More Fl_File_Chooser routines.
 //
 // Copyright 1999-2007 by Michael Sweet.
-// Copyright 2008-2024 by Bill Spitzak and others.
+// Copyright 2008-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1319,7 +1319,7 @@ Fl_File_Chooser::update_preview()
     for (ptr = preview_text_; *ptr; ptr++) {
       uchar c = uchar(*ptr);
       if ( (c&0x80)==0 ) {
-        if (!isprint(c&255) && !isspace(c&255)) break;
+        if (!isprint(c&255) && !fl_ascii_isspace(c)) break;
       } else if ( (c&0xe0)==0xc0 ) {
         if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
         ptr++;
@@ -1337,13 +1337,13 @@ Fl_File_Chooser::update_preview()
         ptr++;
       }
     }
-//         *ptr && (isprint(*ptr & 255) || isspace(*ptr & 255));
+//         *ptr && (isprint(*ptr & 255) || fl_ascii_isspace(*ptr));
 //       ptr ++);
 
     // Scan the buffer for printable characters in 8 bit
     if (*ptr || ptr == preview_text_) {
       for (ptr = preview_text_;
-         *ptr && (isprint(*ptr & 255) || isspace(*ptr & 255));
+         *ptr && (isprint(*ptr & 255) || fl_ascii_isspace(*ptr));
          ptr ++) {/*empty*/}
     }
 

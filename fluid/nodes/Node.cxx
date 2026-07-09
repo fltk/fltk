@@ -1,7 +1,7 @@
 //
 // Node base class code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -114,7 +114,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
-#include "../src/flstring.h"
+#include "../../src/flstring.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -435,9 +435,9 @@ int storestring(const char *n, const char * & p, int nostrip) {
   Fluid.proj.undo.checkpoint();
   int length = 0;
   if (n) { // see if blank, strip leading & trailing blanks
-    if (!nostrip) while (isspace((int)(unsigned char)*n)) n++;
+    if (!nostrip) while (fl_ascii_isspace(*n)) n++;
     const char *e = n + strlen(n);
-    if (!nostrip) while (e > n && isspace((int)(unsigned char)*(e-1))) e--;
+    if (!nostrip) while (e > n && fl_ascii_isspace(*(e-1))) e--;
     length = int(e-n);
     if (!length) n = nullptr;
   }

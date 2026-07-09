@@ -1,7 +1,7 @@
 //
 // Fluid C++ Code Writer code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,7 +23,7 @@
 #include "nodes/Function_Node.h"
 
 #include <FL/filename.H>
-#include "../src/flstring.h"
+#include "../../src/flstring.h"
 
 #include <zlib.h>
 
@@ -851,7 +851,7 @@ unsigned long Code_Writer::block_crc(fluid::string_view block, unsigned long in_
   for ( ; n>0; --n, ++s) {
     if (line_start) {
       // don't count leading spaces and tabs in a line
-      while (n>0 && *s>0 && isspace(*s)) { s++; n--; }
+      while (n>0 && *s>0 && fl_ascii_isspace(*s)) { s++; n--; }
       if (*s) line_start = false;
     }
     // don't count '\r' that may be introduced by Windows

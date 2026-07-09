@@ -1,7 +1,7 @@
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -126,14 +126,14 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
       // look for "c word", or last word if none:
       const uchar *previous_word = p;
       for (;;) {
-        while (*p && isspace(*p)) p++;
+        while (*p && fl_ascii_isspace(*p)) p++;
         uchar what = *p++;
-        while (*p && !isspace(*p)) p++;
-        while (*p && isspace(*p)) p++;
+        while (*p && !fl_ascii_isspace(*p)) p++;
+        while (*p && fl_ascii_isspace(*p)) p++;
         if (!*p) {p = previous_word; break;}
         if (what == 'c') break;
         previous_word = p;
-        while (*p && !isspace(*p)) p++;
+        while (*p && !fl_ascii_isspace(*p)) p++;
       }
       int parse = fl_parse_color((const char*)p, c[0], c[1], c[2]);
       c[3] = 255;

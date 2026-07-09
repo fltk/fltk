@@ -1,7 +1,7 @@
 //
 // C function Node code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,7 +31,7 @@
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_ask.H>
-#include "../src/flstring.h"
+#include "../../src/flstring.h"
 
 #include <zlib.h>
 
@@ -264,10 +264,6 @@ int Function_Node::is_public() const {
   return public_;
 }
 
-static bool fd_isspace(int c) {
-  return (c>0 && c<128 && isspace(c));
-}
-
 // code duplication: see int is_id(char c) in code.cxx
 static bool fd_iskeyword(int c) {
   return (c>0 && c<128 && (isalnum(c) || c=='_'));
@@ -281,7 +277,7 @@ static void clean_function_for_implementation(char *out, const char *function_na
   int nc=0,plevel=0;
   bool arglist_done = false;
   for (;*nptr; nc++,nptr++) {
-    if (arglist_done && fd_isspace(nptr[0])) {
+    if (arglist_done && fl_ascii_isspace(nptr[0])) {
       // skip `override` and `FL_OVERRIDE` keywords if they are following the list of arguments
       if (strncmp(nptr+1, "override", 8)==0 && !fd_iskeyword(nptr[9])) { nptr += 8; continue; }
       else if (strncmp(nptr+1, "FL_OVERRIDE", 11)==0 && !fd_iskeyword(nptr[12])) { nptr += 11; continue; }
@@ -801,11 +797,11 @@ void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
   const char* c = name();
   if (!c) return;
   // handle a few keywords differently if inside a class
-  if (is_in_class() && (   (!strncmp(c,"class",5) && isspace(c[5]))
-                        || (!strncmp(c,"typedef",7) && isspace(c[7]))
-                        || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
-                        || (!strncmp(c,"struct",6) && isspace(c[6]))
-                        || (!strncmp(c,"enum",4) && isspace(c[4]))
+  if (is_in_class() && (   (!strncmp(c,"class",5) && fl_ascii_isspace(c[5]))
+                        || (!strncmp(c,"typedef",7) && fl_ascii_isspace(c[7]))
+                        || (!strncmp(c,"FL_EXPORT",9) && fl_ascii_isspace(c[9]))
+                        || (!strncmp(c,"struct",6) && fl_ascii_isspace(c[6]))
+                        || (!strncmp(c,"enum",4) && fl_ascii_isspace(c[4]))
                         ) ) {
     f.write_public(public_);
     write_comment_h(f, f.indent(1).c_str());
@@ -814,12 +810,12 @@ void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
   }
   // handle putting #include, extern, using or typedef into decl:
   if (   (!isalpha(*c) && *c != '~')
-      || (!strncmp(c,"extern",6) && isspace(c[6]))
-      || (!strncmp(c,"class",5) && isspace(c[5]))
-      || (!strncmp(c,"typedef",7) && isspace(c[7]))
-      || (!strncmp(c,"using",5) && isspace(c[5]))
-      || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
-      //    || !strncmp(c,"struct",6) && isspace(c[6])
+      || (!strncmp(c,"extern",6) && fl_ascii_isspace(c[6]))
+      || (!strncmp(c,"class",5) && fl_ascii_isspace(c[5]))
+      || (!strncmp(c,"typedef",7) && fl_ascii_isspace(c[7]))
+      || (!strncmp(c,"using",5) && fl_ascii_isspace(c[5]))
+      || (!strncmp(c,"FL_EXPORT",9) && fl_ascii_isspace(c[9]))
+      //    || !strncmp(c,"struct",6) && fl_ascii_isspace(c[6])
       ) {
     if (public_) {
       write_comment_h(f);
@@ -1384,7 +1380,7 @@ void Comment_Node::write_code1(fluid::io::Code_Writer& f) {
   if (!in_c_ && !in_h_) return;
   // find out if there is already a valid comment:
   const char *s = c;
-  while (isspace(*s)) s++;
+  while (fl_ascii_isspace(*s)) s++;
   // if this seems to be a C style comment, copy the block as is
   // (it's up to the user to correctly close the comment)
   if (s[0]=='/' && s[1]=='*') {
@@ -1402,7 +1398,7 @@ void Comment_Node::write_code1(fluid::io::Code_Writer& f) {
     *e = 0;
     // check if there is a C++ style comment at the beginning of the line
     char *s = b;
-    while (isspace(*s)) s++;
+    while (fl_ascii_isspace(*s)) s++;
     if (s!=e && ( s[0]!='/' || s[1]!='/') ) {
       // if no comment marker was found, we add one ourselves
       if (in_h_) f.write_h("// ");

@@ -38,7 +38,7 @@
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Flex.H>
-#include "../src/flstring.h"
+#include "../../src/flstring.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1438,7 +1438,7 @@ const char* array_name(Widget_Node* o) {
 
 // Test to see if extra code is a declaration:
 int isdeclare(const char* c) {
-  while (isspace(*c)) c++;
+  while (fl_ascii_isspace(*c)) c++;
   if (*c == '#') return 1;
   if (!strncmp(c,"extern",6)) return 1;
   if (!strncmp(c,"typedef",7)) return 1;

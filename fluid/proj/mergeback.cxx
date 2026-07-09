@@ -1,7 +1,7 @@
 //
 // MergeBack code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2023-2025 by Bill Spitzak and others.
+// Copyright 2023-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,6 +24,7 @@
 
 #include <FL/Fl_Window.H>
 #include <FL/fl_ask.H>
+#include "../../src/flstring.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -138,8 +139,8 @@ void Mergeback::unindent(char *s) {
   bool line_start = true;
   while (*s) {
     if (line_start) {
-      if (*s>0 && isspace(*s)) s++;
-      if (*s>0 && isspace(*s)) s++;
+      if (*s>0 && fl_ascii_isspace(*s)) s++;
+      if (*s>0 && fl_ascii_isspace(*s)) s++;
       line_start = false;
     }
     if (*s=='\r') s++;

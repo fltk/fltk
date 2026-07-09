@@ -4,7 +4,7 @@
 // KDE icon code donated by Maarten De Boer.
 //
 // Copyright 1999-2010 by Michael Sweet.
-// Copyright 2011-2019 by Bill Spitzak and others.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -121,7 +121,7 @@ Fl_File_Icon::load_fti(const char *fti) // I - File to read from
   while ((ch = getc(fp)) != EOF)
   {
     // Skip whitespace
-    if (isspace(ch))
+    if (fl_ascii_isspace(ch))
       continue;
 
     // Skip comments starting with "#"...
