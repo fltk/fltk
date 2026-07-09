@@ -81,6 +81,8 @@ public:
   int y() FL_OVERRIDE;
   int w() FL_OVERRIDE;
   int h() FL_OVERRIDE;
+  int x_from_right(int x) FL_OVERRIDE;
+  int y_from_bottom(int y) FL_OVERRIDE;
   void screen_xywh(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
   void screen_dpi(float &h, float &v, int n=0) FL_OVERRIDE;
   void screen_work_area(int &X, int &Y, int &W, int &H, int n) FL_OVERRIDE;
