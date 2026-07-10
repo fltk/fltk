@@ -1362,7 +1362,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     ((pair_bool*)user_data)->found_gtk_shell = true;
     //fprintf(stderr, "Running the Mutter compositor\n");
     scr_driver->seat->gtk_shell = (struct gtk_shell1*)wl_registry_bind(wl_registry, id,
-                                  &gtk_shell1_interface, version);
+                                  &gtk_shell1_interface, fl_min(version, 5));
   } else if (strcmp(interface, "weston_desktop_shell") == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::WESTON;
     //fprintf(stderr, "Running the Weston compositor\n");
