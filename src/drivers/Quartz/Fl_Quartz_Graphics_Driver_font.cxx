@@ -54,14 +54,6 @@ static Fl_Fontdesc built_in_table_PS[] = { // PostScript font names preferred wh
   {"ZapfDingbatsITC"}
 };
 
-
-// Bug: older versions calculated the value for *ap as a side effect of
-// making the name, and then forgot about it. To avoid having to change
-// the header files I decided to store this value in the last character
-// of the font name array.
-#define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
-
-// turn a stored font name into a pretty name:
 const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   if (!fl_fonts) fl_fonts = calc_fl_fonts();
   Fl_Fontdesc *f = fl_fonts + fnum;
@@ -69,15 +61,33 @@ const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
     this->set_fontname_in_fontdesc(f);
     const char* thisFont = f->name;
     if (!thisFont || !*thisFont) {if (ap) *ap = 0; return "";}
-    int type = 0;
-    if (strstr(f->name, "Bold")) type |= FL_BOLD;
-    if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;
-    f->fontname[ENDOFBUFFER] = (char)type;
   }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
+
+  if (ap) {
+    *ap = 0;
+
+    if (f->weight == FL_WEIGHT_BOLD)
+      *ap |= FL_BOLD;
+    if (f->style == FL_STYLE_ITALIC)
+      *ap |= FL_ITALIC;
+  }
+
   return f->fontname;
 }
 
+const char* Fl_Quartz_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  const char* p = f->name;
+  if (!p || !*p) {
+    if (weight) *weight = 0;
+    if (style) *style = 0;
+    return "";
+  }
+
+  if (weight) *weight = f->weight;
+  if (style) *style = f->style;
+  return p;
+}
 
 int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   static int array[128];
@@ -94,7 +104,7 @@ int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return cnt;
 }
 
-Fl_Quartz_Font_Descriptor::Fl_Quartz_Font_Descriptor(const char* name, Fl_Fontsize Size) : Fl_Font_Descriptor(name, Size) {
+Fl_Quartz_Font_Descriptor::Fl_Quartz_Font_Descriptor(const char* name, Fl_Fontsize Size, int weight, int style) : Fl_Font_Descriptor(name, Size, weight, style) {
   fontref = NULL;
   Fl_Quartz_Graphics_Driver *driver = (Fl_Quartz_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
   driver->descriptor_init(name, size, this);
@@ -145,7 +155,7 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->size == size) return f;
-  f = new Fl_Quartz_Font_Descriptor(s->name, size);
+  f = new Fl_Quartz_Font_Descriptor(s->name, size, s->weight, s->style);
   f->next = s->first;
   s->first = f;
   return f;
@@ -228,19 +238,114 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
   return width(utf16, l);
 }
 
+static CGFloat ct_weight_from_opentype(int weight)
+{
+    // OpenType weight -> CoreText weight trait
+
+    if (weight <= 100) return -0.8;
+    if (weight <= 200) return -0.6;
+    if (weight <= 300) return -0.4;
+    if (weight <= 400) return  0.0;
+    if (weight <= 500) return  0.23;
+    if (weight <= 600) return  0.30;
+    if (weight <= 700) return  0.40;
+    if (weight <= 800) return  0.56;
+    return 0.62;
+}
+
+CTFontRef create_font(
+    const char* familyName,
+    int weight,
+    int slant,
+    double size)
+{
+    CGFloat ctWeight = ct_weight_from_opentype(weight);
+
+    CFNumberRef weightNumber =
+        CFNumberCreate(
+            kCFAllocatorDefault,
+            kCFNumberCGFloatType,
+            &ctWeight);
+
+    CGFloat slant = slant ? 1.0 : 0.0;
+
+    CFNumberRef slantNumber =
+        CFNumberCreate(
+            kCFAllocatorDefault,
+            kCFNumberCGFloatType,
+            &slant);
+
+    const void* traitKeys[] = {
+        kCTFontWeightTrait,
+        kCTFontSlantTrait
+    };
+
+    const void* traitValues[] = {
+        weightNumber,
+        slantNumber
+    };
+
+    CFDictionaryRef traits =
+        CFDictionaryCreate(
+            kCFAllocatorDefault,
+            traitKeys,
+            traitValues,
+            2,
+            &kCFTypeDictionaryKeyCallBacks,
+            &kCFTypeDictionaryValueCallBacks);
+
+    const void* attrKeys[] = {
+        kCTFontFamilyNameAttribute,
+        kCTFontTraitsAttribute
+    };
+
+    const void* attrValues[] = {
+        familyName,
+        traits
+    };
+
+    CFDictionaryRef attrs =
+        CFDictionaryCreate(
+            kCFAllocatorDefault,
+            attrKeys,
+            attrValues,
+            2,
+            &kCFTypeDictionaryKeyCallBacks,
+            &kCFTypeDictionaryValueCallBacks);
+
+    CTFontDescriptorRef descriptor =
+        CTFontDescriptorCreateWithAttributes(attrs);
+
+    CTFontRef font =
+        CTFontCreateWithFontDescriptor(
+            descriptor,
+            size,
+            nullptr);
+
+    CFRelease(descriptor);
+    CFRelease(attrs);
+    CFRelease(traits);
+    CFRelease(weightNumber);
+    CFRelease(slantNumber);
+    CFRelease(familyName);
+
+    return font;
+}
+
 void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
   CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
-  CTFontRef ctfont = cfname ? CTFontCreateWithName(cfname, 0, NULL) : NULL;
+
+  CTFontRef ctfont = cfname ? create_font(cfname, f->weight, f->style, 0) : NULL;
   if (cfname) { CFRelease(cfname); cfname = NULL; }
   if (ctfont) {
     cfname = CTFontCopyFullName(ctfont);
     CFRelease(ctfont);
     if (cfname) {
-      CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
+      CFStringGetCString(cfname, f->fontname, sizeof(f->fontname), kCFStringEncodingUTF8);
       CFRelease(cfname);
     }
   }
-  if (!cfname) strlcpy(f->fontname, f->name, ENDOFBUFFER);
+  if (!cfname) strlcpy(f->fontname, f->name, sizeof(f->fontname));
 }
 
 const char *Fl_Quartz_Graphics_Driver::font_name(int num) {
@@ -248,9 +353,11 @@ const char *Fl_Quartz_Graphics_Driver::font_name(int num) {
   return fl_fonts[num].name;
 }
 
-void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
+void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name, int weight, int style, bool) {
   Fl_Fontdesc *s = fl_fonts + num;
   if (s->name) {
+    s->weight = weight;
+    s->style = style;
     if (!strcmp(s->name, name)) {s->name = name; return;}
     for (Fl_Font_Descriptor* f = s->first; f;) {
       Fl_Font_Descriptor* n = f->next; delete f; f = n;
@@ -259,6 +366,8 @@ void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
   }
   s->name = name;
   s->fontname[0] = 0;
+  s->weight = weight;
+  s->style = style;
   s->first = 0;
 }
 
@@ -273,7 +382,7 @@ void Fl_Quartz_Graphics_Driver::descriptor_init(const char* name,
                                                       Fl_Fontsize size, Fl_Quartz_Font_Descriptor *d)
 {
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
-  d->fontref = CTFontCreateWithName(str, size, NULL);
+  d->fontref = create_font(str, d->weight, d->style, size);
   CGGlyph glyph[2];
   const UniChar A[2]={'W','.'};
   CTFontGetGlyphsForCharacters(d->fontref, A, glyph, 2);
@@ -285,7 +394,7 @@ void Fl_Quartz_Graphics_Driver::descriptor_init(const char* name,
     // slightly rescale fixed-width fonts so the character width has an integral value
     CFRelease(d->fontref);
     CGFloat fsize = size / ( w/floor(w + 0.5) );
-    d->fontref = CTFontCreateWithName(str, fsize, NULL);
+    d->fontref = create_font(str, d->weight, d->style, fsize);
     w = CTFontGetAdvancesForGlyphs(d->fontref, kCTFontOrientationHorizontal, glyph, NULL, 1);
   }
   CFRelease(str);

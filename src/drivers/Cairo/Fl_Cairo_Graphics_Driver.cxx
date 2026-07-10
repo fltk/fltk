@@ -1044,30 +1044,17 @@ void Fl_Cairo_Graphics_Driver::init_built_in_fonts() {
   }
 }
 
-
-// FIXME: this (static) function should likely be in Fl_Graphics_Driver.
-// The code is the same as in src/drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
-
-static int font_name_process(const char *name, char &face) {
-  int l = strlen(name);
-  face = ' ';
-  if      (l >  8 && !memcmp(name + l -  8, " Regular", 8)) l -= 8;
-  else if (l >  6 && !memcmp(name + l -  6, " Plain", 6)) l -= 6;
-  else if (l > 12 && !memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face = 'P';}
-  else if (l >  7 && !memcmp(name + l -  7, " Italic", 7)) {l -= 7; face = 'I';}
-  else if (l >  5 && !memcmp(name + l -  5, " Bold", 5)) {l -= 5; face = 'B';}
-  return l;
-}
-
 typedef int (*sort_f_type)(const void *aa, const void *bb);
 
 
-static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
-  char face_a, face_b;
-  int la = font_name_process(fa->name, face_a);
-  int lb = font_name_process(fb->name, face_b);
-  int c = strncasecmp(fa->name, fb->name, la >= lb ? lb : la);
-  return (c == 0 ? face_a - face_b : c);
+static int font_sort(const Fl_Fontdesc* fa, const Fl_Fontdesc* fb) {
+  int c = strcasecmp(fa->name, fb->name);
+  if (c != 0) return c;
+
+  if (fa->style != fb->style)
+    return fa->style - fb->style;
+
+  return fa->weight - fb->weight;
 }
 
 
@@ -1130,9 +1117,11 @@ const char *Fl_Cairo_Graphics_Driver::font_name(int num) {
 }
 
 
-void Fl_Cairo_Graphics_Driver::font_name(int num, const char *name) {
+void Fl_Cairo_Graphics_Driver::font_name(int num, const char *name, int weight, int style, bool) {
   Fl_Fontdesc *s = fl_fonts + num;
   if (s->name) {
+    s->weight = weight;
+    s->style = style;
     if (!strcmp(s->name, name)) {s->name = name; return;}
     for (Fl_Font_Descriptor* f = s->first; f;) {
       Fl_Font_Descriptor* n = f->next; delete f; f = n;
@@ -1141,28 +1130,44 @@ void Fl_Cairo_Graphics_Driver::font_name(int num, const char *name) {
   }
   s->name = name;
   s->fontname[0] = 0;
+  s->weight = weight;
+  s->style = style;
   s->first = 0;
 }
-
-
-// turn a stored font name into a pretty name:
-#define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
 
 const char* Fl_Cairo_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
-    strcpy(f->fontname, f->name); // to check
-    const char* thisFont = f->name;
-    if (!thisFont || !*thisFont) {if (ap) *ap = 0; return "";}
-    int type = 0;
-    if (strstr(f->name, "Bold")) type |= FL_BOLD;
-    if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;
-    f->fontname[ENDOFBUFFER] = (char)type;
+    const char* p = f->name;
+    if (!p || !*p) {if (ap) *ap = 0; return "";}
+    strlcpy(f->fontname, p, sizeof(f->fontname));
   }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
+
+  if (ap) {
+    *ap = 0;
+
+    if (f->weight == FL_WEIGHT_BOLD)
+      *ap |= FL_BOLD;
+    if (f->style == FL_STYLE_ITALIC)
+      *ap |= FL_ITALIC;
+  }
+
   return f->fontname;
 }
 
+const char* Fl_Cairo_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  const char* p = f->name;
+  if (!p || !*p) {
+    if (weight) *weight = 0;
+    if (style) *style = 0;
+    return "";
+  }
+
+  if (weight) *weight = f->weight;
+  if (style) *style = f->style;
+  return p;
+}
 
 int Fl_Cairo_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   static int array[128];
@@ -1180,13 +1185,15 @@ int Fl_Cairo_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 
 Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize size,
-                                                   PangoContext *context) :
-                                                      Fl_Font_Descriptor(name, size) {
+                                                   PangoContext *context, int weight, int style) :
+                                                      Fl_Font_Descriptor(name, size, weight, style) {
   char *string = new char[strlen(name) + 10];
   strcpy(string, name);
   snprintf(string + strlen(string), 10, " %dpx", size);
   //A PangoFontDescription describes a font in an implementation-independent manner.
   fontref = pango_font_description_from_string(string);
+  pango_font_description_set_weight(fontref, (PangoWeight)weight);
+  pango_font_description_set_style(fontref, (PangoStyle)style);
   delete[] string;
   width = NULL;
   //A PangoFontset represents a set of PangoFont to use when rendering text.
@@ -1232,7 +1239,7 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, PangoContext *co
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->size == size) return f;
-  f = new Fl_Cairo_Font_Descriptor(s->name, size, context);
+  f = new Fl_Cairo_Font_Descriptor(s->name, size, context, s->weight, s->style);
   f->next = s->first;
   s->first = f;
   return f;

@@ -482,7 +482,7 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   fl_xft_font(this, fnum, size, 0);
 }
 
-static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core, int angle) {
+static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core, int angle, int weight, int style, int legacy) {
   // Check: does it look like we have been passed an old-school XLFD fontname?
   bool is_xlfd = false;
   int hyphen_count = 0;
@@ -500,26 +500,31 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
   if(!is_xlfd) { // Not an XLFD - open as a XFT style name
     XftFont *the_font = NULL; // the font we will return;
     XftPattern *fnt_pat = XftPatternCreate(); // the pattern we will use for matching
-    int slant = XFT_SLANT_ROMAN;
-    int weight = XFT_WEIGHT_MEDIUM;
 
-    /* This "converts" FLTK-style font names back into "regular" names, extracting
-     * the BOLD and ITALIC codes as it does so - all FLTK font names are prefixed
-     * by 'I' (italic) 'B' (bold) 'P' (bold italic) or ' ' (regular) modifiers.
-     * This gives a fairly limited font selection ability, but is retained for
-     * compatibility reasons. If you really need a more complex choice, you are best
-     * calling Fl::set_fonts(*) then selecting the font by font-index rather than by
-     * name anyway. Probably.
-     * If you want to load a font who's name does actually begin with I, B or P, you
-     * MUST use a leading space OR simply use lowercase for the name...
-     */
-    /* This may be efficient, but it is non-obvious. */
-    switch (*name++) {
-    case 'I': slant = XFT_SLANT_ITALIC; break; // italic
-    case 'P': slant = XFT_SLANT_ITALIC;        // bold-italic (falls-through)
-    case 'B': weight = XFT_WEIGHT_BOLD; break; // bold
-    case ' ': break;                           // regular
-    default: name--;                           // no prefix, restore name
+    int slant;
+
+    switch (style) {
+      case FL_STYLE_NORMAL:
+          slant = XFT_SLANT_ROMAN;
+          break;
+        case FL_STYLE_ITALIC:
+          slant = XFT_SLANT_ITALIC;
+          break;
+        case FL_STYLE_OBLIQUE:
+          slant = XFT_SLANT_OBLIQUE;
+          break;
+    };
+
+    weight = FcWeightFromOpenType(weight);
+
+    if (legacy) {
+      switch (*name) {
+        case 'I':
+        case 'P':
+        case 'B':
+        case ' ':
+          name++;
+      }
     }
 
     if(comma_count) { // multiple comma-separated names were passed
@@ -540,12 +545,14 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
         // Now do a cut-down version of the FLTK name conversion.
         // NOTE: we only use the slant and weight of the first name,
         // subsequent names we ignore this for... But we still need to do the check.
-        switch (*curr++) {
-        case 'I': break; // italic
-        case 'P':        // bold-italic (falls-through)
-        case 'B': break; // bold
-        case ' ': break; // regular
-        default: curr--; // no prefix, restore name
+        if (legacy) {
+          switch (*curr++) {
+          case 'I': break; // italic
+          case 'P':        // bold-italic (falls-through)
+          case 'B': break; // bold
+          case ' ': break; // regular
+          default: curr--; // no prefix, restore name
+          }
         }
 
         comma_count--; // decrement name sections count
@@ -669,10 +676,10 @@ puts("Font Opened"); fflush(stdout);
   }
 } // end of fontopen
 
-Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) : Fl_Font_Descriptor(name, fsize) {
+Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle, int weight, int style, bool legacy) : Fl_Font_Descriptor(name, fsize, weight, style) {
 //  encoding = fl_encoding_;
   angle = fangle;
-  font = fontopen(name, fsize, false, angle);
+  font = fontopen(name, fsize, false, angle, weight, style, legacy);
 }
 
 
@@ -885,8 +892,18 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
 
   fl_open_display();
+  const char* p = s->name;
+  if (s->legacy) {
+    switch (*p) {
+      case 'B':
+      case 'I':
+      case 'P':
+      case ' ':
+        p++;
+    }
+  }
   XftFontSet* fs = XftListFonts(fl_display, fl_screen,
-                                XFT_FAMILY, XftTypeString, s->name+1,
+                                XFT_FAMILY, XftTypeString, p,
                                 (void *)0,
                                 XFT_PIXEL_SIZE,
                                 (void *)0);
@@ -920,40 +937,45 @@ float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *des
   return ps_size;
 }
 
-// Bug: older versions calculated the value for *ap as a side effect of
-// making the name, and then forgot about it. To avoid having to change
-// the header files I decided to store this value in the last character
-// of the font name array.
-#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
-
-// turn a stored font name in "fltk format" into a pretty name:
 const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     const char* p = f->name;
-    int type;
-#if USE_PANGO
-    type = 0;
-    if (strstr(p, " Bold")) type = FL_BOLD;
-    if (strstr(p, " Italic") || strstr(p, " Oblique")) type += FL_ITALIC;
-    strlcpy(f->fontname, p, ENDOFBUFFER);
-#else
-    switch (p[0]) {
-      case 'B': type = FL_BOLD; break;
-      case 'I': type = FL_ITALIC; break;
-      case 'P': type = FL_BOLD | FL_ITALIC; break;
-      default:  type = 0; break;
+    if (!p || !*p) {if (ap) *ap = 0; return "";}
+    switch (*p) {
+      case 'B':
+      case 'I':
+      case 'P':
+      case ' ':
+      p++;
+      break;
     }
-  // NOTE: This can cause duplications in fonts that already have Bold or Italic in
-  // their "name". Maybe we need to find a cleverer way?
-    strlcpy(f->fontname, p+1, ENDOFBUFFER);
-    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
-    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
-#endif // USE_PANGO
-    f->fontname[ENDOFBUFFER] = (char)type;
+    strlcpy(f->fontname, p, sizeof(f->fontname));
   }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
+
+  if (ap) {
+    *ap = 0;
+
+    if (f->weight == FL_WEIGHT_BOLD)
+      *ap |= FL_BOLD;
+    if (f->style == FL_STYLE_ITALIC)
+      *ap |= FL_ITALIC;
+  }
   return f->fontname;
+}
+
+const char* Fl_Xlib_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  const char* p = f->name;
+  if (!p || !*p) {
+    if (weight) *weight = 0;
+    if (style) *style = 0;
+    return "";
+  }
+
+  if (weight) *weight = f->weight;
+  if (style) *style = f->style;
+  return p;
 }
 
 Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
@@ -988,7 +1010,7 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
       break;
   }
   if (!f) {
-    f = new Fl_Xlib_Font_Descriptor(font->name, size, angle);
+    f = new Fl_Xlib_Font_Descriptor(font->name, size, angle, font->weight, font->style, font->legacy);
     f->next = font->first;
     font->first = f;
   }
@@ -1040,13 +1062,20 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   while (*p) { *p = tolower(*p); p++; }
 #endif // USE_PANGO
   const char *name = pc;    // keep a handle to the original name for freeing later
-  // Parse the "fltk-name" of the font
-  switch (*name++) {
-    case 'I': slant = 'i'; break;       // italic
-    case 'P': slant = 'i';              // bold-italic (falls-through)
-    case 'B': weight = wt_bold; break;  // bold
-    case ' ': break;                    // regular
-    default: name--;                    // no prefix, restore name
+  if (fl_fonts[fnum].style)
+    slant = 'i';
+
+  if (fl_fonts[fnum].weight >= FL_WEIGHT_BOLD)
+    weight = wt_bold;
+
+  if (fl_fonts[fnum].legacy) {
+    switch (*name) {
+      case 'I':
+      case 'P':
+      case 'B':
+      case ' ':
+        name++;
+    }
   }
 
   // first, we do a query with no prefered size, to see if the font exists at all
@@ -1125,7 +1154,7 @@ static XFontStruct* fl_xxfont(Fl_Graphics_Driver *driver) {
   }
   static XftFont* xftfont;
   if (xftfont) XftFontClose (fl_display, xftfont);
-  xftfont = fontopen(fl_fonts[driver->font()].name, ((Fl_Xlib_Graphics_Driver*)driver)->size_unscaled(), true, 0); // else request XFT to load a suitable "core" font instead.
+  xftfont = fontopen(fl_fonts[driver->font()].name, ((Fl_Xlib_Graphics_Driver*)driver)->size_unscaled(), true, 0, true); // else request XFT to load a suitable "core" font instead.
   return xftfont->u.core.font;
 #  endif // XFT_MAJOR > 1
 }
@@ -1182,7 +1211,11 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
     pfd_array_length = new_length;
   }
   if (!pfd_array[fnum]) {
-    pfd_array[fnum] = pango_font_description_from_string(Fl::get_font_name(fnum));
+    int style, weight;
+    const char* name = Fl::get_font_name2(fnum, &weight, &style);
+    pfd_array[fnum] = pango_font_description_from_string(name);
+    pango_font_description_set_weight(pfd_array[fnum], (PangoWeight)weight);
+    pango_font_description_set_style(pfd_array[fnum], (PangoStyle)style);
   }
   pango_font_description_set_absolute_size(pfd_array[fnum], size*PANGO_SCALE); // 1.8
   if (!pctxt_) context();
@@ -1368,28 +1401,16 @@ int Fl_Xlib_Graphics_Driver::descent_unscaled() {
   else return -1;
 }
 
-// FIXME: this (static) function should likely be in Fl_Graphics_Driver.
-// The code is the same as in src/drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
-
-static int font_name_process(const char *name, char &face) {
-  int l = strlen(name);
-  face = ' ';
-  if      (l >  8 && !memcmp(name + l -  8, " Regular", 8)) l -= 8;
-  else if (l >  6 && !memcmp(name + l -  6, " Plain", 6)) l -= 6;
-  else if (l > 12 && !memcmp(name + l - 12, " Bold Italic", 12)) {l -= 12; face = 'P';}
-  else if (l >  7 && !memcmp(name + l -  7, " Italic", 7)) {l -= 7; face = 'I';}
-  else if (l >  5 && !memcmp(name + l -  5, " Bold", 5)) {l -= 5; face = 'B';}
-  return l;
-}
-
 typedef int (*sort_f_type)(const void *aa, const void *bb);
 
-static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
-  char face_a, face_b;
-  int la = font_name_process(fa->name, face_a);
-  int lb = font_name_process(fb->name, face_b);
-  int c = strncasecmp(fa->name, fb->name, la >= lb ? lb : la);
-  return (c == 0 ? face_a - face_b : c);
+static int font_sort(const Fl_Fontdesc* fa, const Fl_Fontdesc* fb) {
+  int c = strcasecmp(fa->name, fb->name);
+  if (c != 0) return c;
+
+  if (fa->style != fb->style)
+    return fa->style - fb->style;
+
+  return fa->weight - fb->weight;
 }
 
 Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
@@ -1459,7 +1480,7 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return 1;
 }
 
-Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) : Fl_Font_Descriptor(name, fsize) {
+Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle, int weight, int style, bool) : Fl_Font_Descriptor(name, fsize, weight, style) {
   fl_open_display();
   angle = fangle;
   height_ = 0;

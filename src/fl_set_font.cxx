@@ -62,8 +62,58 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
       memset((char*)fl_fonts + i * width, 0, width);
     }
   }
-  d.font_name(fnum, name);
+
+  int weight = FL_WEIGHT_NORMAL;
+  int style = FL_STYLE_NORMAL;
+
+  #if USE_PANGO || defined(__APPLE__)
+    if (strstr(name, "Bold")) {
+      weight = FL_WEIGHT_BOLD;
+    }
+
+    if (strstr(name, "Italic")) {
+      style = FL_STYLE_ITALIC;
+    }
+  #else
+    switch (*name) {
+      case 'B':
+        weight = FL_WEIGHT_BOLD;
+        break;
+      case 'I':
+        style = FL_STYLE_ITALIC;
+        break;
+      case 'P':
+        weight = FL_WEIGHT_BOLD;
+        style = FL_STYLE_ITALIC;
+        break;
+    }
+  #endif
+  d.font_name(fnum, name, weight, style, true);
   d.font(-1, 0);
+}
+
+void Fl::set_font_by_family(Fl_Font fnum, const char* family, int weight, int style) {
+    Fl_Graphics_Driver &d = Fl_Graphics_Driver::default_driver();
+    unsigned width = d.font_desc_size();
+    if (!fl_fonts) fl_fonts = d.calc_fl_fonts();
+    while (fnum >= table_size) {
+      int i = table_size;
+      if (!i) {   // don't realloc the built-in table
+        table_size = 2*FL_FREE_FONT;
+        i = FL_FREE_FONT;
+        Fl_Fontdesc* t = (Fl_Fontdesc*)malloc(table_size*width);
+        memcpy(t, fl_fonts, FL_FREE_FONT*width);
+        fl_fonts = t;
+      } else {
+        table_size = 2*table_size;
+        fl_fonts=(Fl_Fontdesc*)realloc(fl_fonts, table_size*width);
+      }
+      for (; i < table_size; i++) {
+        memset((char*)fl_fonts + i * width, 0, width);
+      }
+    }
+    d.font_name(fnum, family, weight, style, false);
+    d.font(-1, 0);
 }
 
 /** Copies one face to another. */
