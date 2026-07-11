@@ -37,6 +37,8 @@
 #include <FL/Fl_Flex.H>
 #include <FL/fl_message.H>
 
+#undef min
+#undef max
 #include <algorithm>
 
 extern void redraw_browser();

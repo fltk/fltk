@@ -727,7 +727,7 @@ void Node::add(Node *anchor, Strategy strategy) {
  Add `this` list/tree of widgets as a new sibling before `g`.
 
  `This` is not part of the widget browser. `g` must be in the
- widget_browser, so `Fluid.proj.tree.first` and `Fluid.proj.tree.last` are valid for `g .
+ widget_browser, so `Fluid.proj.tree.first` and `Fluid.proj.tree.last` are valid for `g`.
 
  This methods updates the widget_browser.
 
