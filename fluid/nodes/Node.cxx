@@ -273,13 +273,13 @@ void select_all_cb(Fl_Widget *,void *) {
   for (;;) {
     if (p) {
       int foundany = 0;
-      for (Node *t = p->next; t && t->level>p->level; t = t->next) {
+      for (auto *t : p->descendants()) {
         if (!t->new_selected) {widget_browser->select(t,1,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next)
+      for (auto *t : Fluid.proj.tree.all_nodes())
         widget_browser->select(t,1,0);
       break;
     }
@@ -297,13 +297,13 @@ void select_none_cb(Fl_Widget *,void *) {
   for (;;) {
     if (p) {
       int foundany = 0;
-      for (Node *t = p->next; t && t->level>p->level; t = t->next) {
+      for (auto *t : p->descendants()) {
         if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next)
+      for (auto *t : Fluid.proj.tree.all_nodes())
         widget_browser->select(t,0,0);
       break;
     }
@@ -320,9 +320,8 @@ void earlier_cb(Fl_Widget*,void*) {
   for (f = Fluid.proj.tree.first; f; ) {
     Node* nxt = f->next;
     if (f->selected) {
-      Node* g;
-      for (g = f->prev; g && g->level > f->level; g = g->prev) {/*empty*/}
-      if (g && g->level == f->level && !g->selected) {
+      Node* g = f->prev_sibling();
+      if (g && !g->selected) {
         if (!mod) Fluid.proj.undo.checkpoint();
         f->move_before(g);
         if (f->parent) f->parent->layout_widget();
@@ -345,9 +344,8 @@ void later_cb(Fl_Widget*,void*) {
   for (f = Fluid.proj.tree.last; f; ) {
     Node* prv = f->prev;
     if (f->selected) {
-      Node* g;
-      for (g = f->next; g && g->level > f->level; g = g->next) {/*empty*/}
-      if (g && g->level == f->level && !g->selected) {
+      Node* g = f->next_sibling();
+      if (g && !g->selected) {
         if (!mod) Fluid.proj.undo.checkpoint();
         g->move_before(f);
         if (f->parent) f->parent->layout_widget();
@@ -521,15 +519,7 @@ Node::Node() :
   visible(0),
   level(0),
   next(nullptr), prev(nullptr),
-  factory(nullptr),
-  code_static_start(-1), code_static_end(-1),
-  code1_start(-1), code1_end(-1),
-  code2_start(-1), code2_end(-1),
-  header1_start(-1), header1_end(-1),
-  header2_start(-1), header2_end(-1),
-  header_static_start(-1), header_static_end(-1),
-  proj1_start(-1), proj1_end(-1),
-  proj2_start(-1), proj2_end(-1)
+  factory(nullptr)
 {
 }
 
@@ -578,7 +568,7 @@ Node *Node::next_sibling() {
 // Return the first child or nullptr
 Node *Node::first_child() {
   Node *n = next;
-  if (n->level > level)
+  if (n && n->level > level)
     return n;
   return nullptr;
 }
@@ -599,7 +589,7 @@ Window_Node *Node::window() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
-    if (t->is_a(Type::Window))
+    if (dynamic_cast<Window_Node*>(t))
       return (Window_Node*)t;
   return nullptr;
 }
@@ -612,7 +602,7 @@ Group_Node *Node::group() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
-    if (t->is_a(Type::Group))
+    if (dynamic_cast<Group_Node*>(t))
       return (Group_Node*)t;
   return nullptr;
 }
@@ -827,7 +817,7 @@ Node *Node::remove() {
 }
 
 void Node::name(const char *n) {
-  int nostrip = is_a(Type::Comment);
+  int nostrip = dynamic_cast<Comment_Node*>(this) != nullptr;
   if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
@@ -892,8 +882,8 @@ void Node::move_before(Node* g) {
 
 // write a widget and all its children:
 void Node::write(fluid::io::Project_Writer &f) {
-  if (f.write_codeview()) proj1_start = (int)ftell(f.file()) + 1;
-  if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
+  if (f.write_codeview()) proj1.start = (int)ftell(f.file()) + 1;
+  if (f.write_codeview()) proj2.start = (int)ftell(f.file()) + 1;
   f.write_indent(level);
   f.write_word(type_name());
 
@@ -908,19 +898,18 @@ void Node::write(fluid::io::Project_Writer &f) {
   write_properties(f);
   if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
-  if (f.write_codeview()) proj1_end = (int)ftell(f.file());
+  if (f.write_codeview()) proj1.end = (int)ftell(f.file());
   if (!can_have_children()) {
-    if (f.write_codeview()) proj2_end = (int)ftell(f.file());
+    if (f.write_codeview()) proj2.end = (int)ftell(f.file());
     return;
   }
   // now do children:
   f.write_open();
-  Node *child;
-  for (child = next; child && child->level > level; child = child->next)
-    if (child->level == level+1) child->write(f);
-  if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
+  for (auto *child : children())
+    child->write(f);
+  if (f.write_codeview()) proj2.start = (int)ftell(f.file()) + 1;
   f.write_close(level);
-  if (f.write_codeview()) proj2_end = (int)ftell(f.file());
+  if (f.write_codeview()) proj2.end = (int)ftell(f.file());
 }
 
 void Node::write_properties(fluid::io::Project_Writer &f) {
@@ -1198,7 +1187,7 @@ void Node::copy_properties() {
  */
 int Node::user_defined(const char* cbname) const {
   for (Node* p = Fluid.proj.tree.first; p ; p = p->next)
-    if (p->is_a(Type::Function) && p->name() != nullptr)
+    if (dynamic_cast<Function_Node*>(p) && p->name() != nullptr)
       if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
         if (p->name()[strlen(cbname)] == '(')
           return 1;

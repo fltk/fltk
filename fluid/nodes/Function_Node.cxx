@@ -56,7 +56,7 @@ Class_Node *current_class = nullptr;
 int has_toplevel_function(const char *rtype, const char *sig) {
   Node *child;
   for (child = Fluid.proj.tree.first; child; child = child->next) {
-    if (!child->is_in_class() && child->is_a(Type::Function)) {
+    if (!child->is_in_class() && dynamic_cast<Function_Node*>(child)) {
       const Function_Node *fn = (const Function_Node*)child;
       if (fn->has_signature(rtype, sig))
         return 1;
@@ -447,7 +447,7 @@ void Function_Node::write_code2(fluid::io::Code_Writer& f) {
   char havechildren = 0;
   for (child = next; child && child->level > level; child = child->next) {
     havechildren = 1;
-    if (child->is_a(Type::Window) && child->name()) var = child->name();
+    if (dynamic_cast<Window_Node*>(child) && child->name()) var = child->name();
   }
 
   if (ismain()) {
@@ -504,7 +504,7 @@ Node *Code_Node::make(Strategy strategy) {
   Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
-  while (p && !p->is_code_block() && !p->is_a(Type::Group)) {
+  while (p && !p->is_code_block() && !dynamic_cast<Group_Node*>(p)) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
@@ -1526,7 +1526,7 @@ void Class_Node::write_code2(fluid::io::Code_Writer& f) {
 int Node::has_function(const char *rtype, const char *sig) const {
   Node *child;
   for (child = next; child && child->level > level; child = child->next) {
-    if (child->level == level+1 && child->is_a(Type::Function)) {
+    if (child->level == level+1 && dynamic_cast<Function_Node*>(child)) {
       const Function_Node *fn = (const Function_Node*)child;
       if (fn->has_signature(rtype, sig))
         return 1;

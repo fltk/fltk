@@ -23,6 +23,7 @@
 #include "proj/undo.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Grid_Node.h"
+#include "nodes/factory.h"
 #include "io/file_chooser.h"
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
@@ -118,14 +119,12 @@ fluid::widget::Formula_Input* image_panel_imagew = (fluid::widget::Formula_Input
 
 static void cb_image_panel_imagew(fluid::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
-      if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+      if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
         o->value(current_widget->active_image.scale_w);
       }
     } else {
       int mod = 0;
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
-        if (t->selected && t->is_widget()) {
-          Widget_Node* wt = ((Widget_Node*)t);
+      for (Widget_Node *wt : Fluid.proj.tree.all_selected_widgets()) {
           wt->active_image.scale_w = o->value();
           Fl_Image *img = wt->o->image();
           if (img) {
@@ -138,7 +137,6 @@ static void cb_image_panel_imagew(fluid::widget::Formula_Input* o, void* v) {
             if (wt->o->parent()) wt->o->parent()->redraw();
           }
           mod = 1;
-        }
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
@@ -148,14 +146,12 @@ fluid::widget::Formula_Input* image_panel_imageh = (fluid::widget::Formula_Input
 
 static void cb_image_panel_imageh(fluid::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
-      if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+      if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
         o->value(current_widget->active_image.scale_h);
       }
     } else {
       int mod = 0;
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
-        if (t->selected && t->is_widget()) {
-          Widget_Node* wt = ((Widget_Node*)t);
+      for (Widget_Node *wt : Fluid.proj.tree.all_selected_widgets()) {
           wt->active_image.scale_h = o->value();
           Fl_Image *img = wt->o->image();
           if (img) {
@@ -168,7 +164,6 @@ static void cb_image_panel_imageh(fluid::widget::Formula_Input* o, void* v) {
             if (wt->o->parent()) wt->o->parent()->redraw();
           }
           mod = 1;
-        }
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
@@ -185,7 +180,7 @@ static void cb_Reset(Fl_Button*, void* v) {
 
 static void cb_convert(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
       o->activate();
       o->value(!current_widget->active_image.compress);
     } else {
@@ -203,7 +198,7 @@ static void cb_convert(Fl_Check_Button* o, void* v) {
 
 static void cb_bind(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
       o->activate();
       o->value(current_widget->active_image.bind);
     } else {
@@ -246,14 +241,12 @@ fluid::widget::Formula_Input* image_panel_deimagew = (fluid::widget::Formula_Inp
 
 static void cb_image_panel_deimagew(fluid::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
-      if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+      if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
         o->value(current_widget->inactive_image.scale_w);
       }
     } else {
       int mod = 0;
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
-        if (t->selected && t->is_widget()) {
-          Widget_Node* wt = ((Widget_Node*)t);
+      for (Widget_Node *wt : Fluid.proj.tree.all_selected_widgets()) {
           wt->inactive_image.scale_w = o->value();
           Fl_Image *img = wt->o->deimage();
           if (img) {
@@ -266,7 +259,6 @@ static void cb_image_panel_deimagew(fluid::widget::Formula_Input* o, void* v) {
             if (wt->o->parent()) wt->o->parent()->redraw();
           }
           mod = 1;
-        }
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
@@ -276,14 +268,12 @@ fluid::widget::Formula_Input* image_panel_deimageh = (fluid::widget::Formula_Inp
 
 static void cb_image_panel_deimageh(fluid::widget::Formula_Input* o, void* v) {
   if (v == LOAD) {
-      if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+      if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
         o->value(current_widget->inactive_image.scale_h);
       }
     } else {
       int mod = 0;
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
-        if (t->selected && t->is_widget()) {
-          Widget_Node* wt = ((Widget_Node*)t);
+      for (Widget_Node *wt : Fluid.proj.tree.all_selected_widgets()) {
           wt->inactive_image.scale_h = o->value();
           Fl_Image *img = wt->o->deimage();
           if (img) {
@@ -296,7 +286,6 @@ static void cb_image_panel_deimageh(fluid::widget::Formula_Input* o, void* v) {
             if (wt->o->parent()) wt->o->parent()->redraw();
           }
           mod = 1;
-        }
       }
       if (mod) Fluid.proj.set_modflag(1);
     }
@@ -313,7 +302,7 @@ static void cb_Reset1(Fl_Button*, void* v) {
 
 static void cb_convert1(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
       o->activate();
       o->value(!current_widget->inactive_image.compress);
     } else {
@@ -331,7 +320,7 @@ static void cb_convert1(Fl_Check_Button* o, void* v) {
 
 static void cb_bind1(Fl_Check_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
       o->activate();
       o->value(current_widget->inactive_image.bind);
     } else {
@@ -545,15 +534,14 @@ void run_image_panel() {
 
 void flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int)) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Flex)) {
+    if (dynamic_cast<Flex_Node*>(current_widget)) {
       load_margin((Fl_Flex*)current_widget->o, i);
     }
   } else {
     int mod = 0;
     int new_value = (int)i->value();
-    for (Node *o = Fluid.proj.tree.first; o; o = o->next) {
-      if (o->selected && o->is_a(Type::Flex)) {
-        Flex_Node* q = (Flex_Node*)o;
+    for (Widget_Node *o : Fluid.proj.tree.all_selected_widgets()) {
+      if (auto *q = dynamic_cast<Flex_Node*>(o)) {
         Fl_Flex* w = (Fl_Flex*)q->o;
         if (update_margin(w, new_value)) {
           w->layout();
@@ -586,14 +574,14 @@ Fl_Input* widget_image_input = (Fl_Input*)nullptr;
 
 static void cb_widget_image_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
       o->activate();
       o->value(current_widget->active_image.name.c_str());
     } else o->deactivate();
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->active_image.set(o->value(), q->is_a(Type::Window) ? nullptr : q->o, false);
+      q->active_image.set(o->value(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, false);
       q->redraw();
       mod = 1;
     }
@@ -603,7 +591,7 @@ static void cb_widget_image_input(Fl_Input* o, void* v) {
 
 static void cb_Browse(Fl_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window))
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget))
       o->activate();
     else
       o->deactivate();
@@ -613,7 +601,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
     if (image_asset) {
       widget_image_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-        q->active_image.set(image_asset->filename(), q->is_a(Type::Window) ? nullptr : q->o, false);
+        q->active_image.set(image_asset->filename(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, false);
         q->redraw();
         mod = 1;
       }
@@ -632,14 +620,14 @@ Fl_Input* widget_deimage_input = (Fl_Input*)nullptr;
 
 static void cb_widget_deimage_input(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window)) {
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
       o->activate();
       o->value(current_widget->inactive_image.name.c_str());
     } else o->deactivate();
   } else {
     int mod = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      q->inactive_image.set(o->value(), q->is_a(Type::Window) ? nullptr : q->o, true);
+      q->inactive_image.set(o->value(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, true);
       q->redraw();
       mod = 1;
     }
@@ -649,7 +637,7 @@ static void cb_widget_deimage_input(Fl_Input* o, void* v) {
 
 static void cb_Browse1(Fl_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_widget() && !current_widget->is_a(Type::Window))
+    if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget))
       o->activate();
     else
       o->deactivate();
@@ -659,7 +647,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
     if (image_asset) {
       widget_deimage_input->value(image_asset->filename());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-        q->inactive_image.set(image_asset->filename(), q->is_a(Type::Window) ? nullptr : q->o, true);
+        q->inactive_image.set(image_asset->filename(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, true);
         q->redraw();
         mod = 1;
       }
@@ -826,7 +814,7 @@ static void cb_widget_h_input(fluid::widget::Formula_Input* o, void* v) {
 
 static void cb_Children(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Widget_Class)) {
+    if (dynamic_cast<Widget_Class_Node*>(current_widget)) {
       o->show();
       o->value(((Widget_Class_Node *)current_widget)->wc_relative);
     } else {
@@ -836,7 +824,7 @@ static void cb_Children(Fl_Choice* o, void* v) {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Widget_Class)) {
+      if (dynamic_cast<Widget_Class_Node*>(q)) {
         Widget_Class_Node *t = (Widget_Class_Node *)q;
         t->wc_relative = o->value();
         mod = 1;
@@ -941,9 +929,9 @@ Fl_Group* wp_gui_values = (Fl_Group*)nullptr;
 
 static void cb_wp_gui_values(Fl_Group* o, void* v) {
   if (v == LOAD) {
-    if (   current_widget->is_a(Type::Flex)
-        || current_widget->is_a(Type::Grid)
-        || current_widget->is_a(Type::Window))
+    if (   dynamic_cast<Flex_Node*>(current_widget)
+        || dynamic_cast<Grid_Node*>(current_widget)
+        || dynamic_cast<Window_Node*>(current_widget))
     {
       o->hide();
     } else {
@@ -955,7 +943,7 @@ static void cb_wp_gui_values(Fl_Group* o, void* v) {
 
 static void cb_Size(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Slider)) {o->deactivate(); return;}
+    if (!dynamic_cast<Slider_Node*>(current_widget)) {o->deactivate(); return;}
     o->activate();
     o->value(((Fl_Slider*)(current_widget->o))->slider_size());
   } else {
@@ -963,7 +951,7 @@ static void cb_Size(Fl_Value_Input* o, void* v) {
     Fluid.proj.undo.checkpoint();
     double n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Slider)) {
+      if (dynamic_cast<Slider_Node*>(q)) {
         ((Fl_Slider*)(q->o))->slider_size(n);
         q->o->redraw();
         mod = 1;
@@ -975,10 +963,10 @@ static void cb_Size(Fl_Value_Input* o, void* v) {
 
 static void cb_Minimum(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Valuator_)) {
+    if (dynamic_cast<Valuator_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Valuator*)(current_widget->o))->minimum());
-    } else if (current_widget->is_a(Type::Spinner)) {
+    } else if (dynamic_cast<Spinner_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Spinner*)(current_widget->o))->minimum());
     } else {
@@ -990,11 +978,11 @@ static void cb_Minimum(Fl_Value_Input* o, void* v) {
     Fluid.proj.undo.checkpoint();
     double n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Valuator_)) {
+      if (dynamic_cast<Valuator_Node*>(q)) {
         ((Fl_Valuator*)(q->o))->minimum(n);
         q->o->redraw();
         mod = 1;
-      } else if (q->is_a(Type::Spinner)) {
+      } else if (dynamic_cast<Spinner_Node*>(q)) {
         ((Fl_Spinner*)(q->o))->minimum(n);
         q->o->redraw();
         mod = 1;
@@ -1006,10 +994,10 @@ static void cb_Minimum(Fl_Value_Input* o, void* v) {
 
 static void cb_Maximum(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Valuator_)) {
+    if (dynamic_cast<Valuator_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Valuator*)(current_widget->o))->maximum());
-    } else if (current_widget->is_a(Type::Spinner)) {
+    } else if (dynamic_cast<Spinner_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Spinner*)(current_widget->o))->maximum());
     } else {
@@ -1021,11 +1009,11 @@ static void cb_Maximum(Fl_Value_Input* o, void* v) {
     Fluid.proj.undo.checkpoint();
     double n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Valuator_)) {
+      if (dynamic_cast<Valuator_Node*>(q)) {
         ((Fl_Valuator*)(q->o))->maximum(n);
         q->o->redraw();
         mod = 1;
-      } else if (q->is_a(Type::Spinner)) {
+      } else if (dynamic_cast<Spinner_Node*>(q)) {
         ((Fl_Spinner*)(q->o))->maximum(n);
         q->o->redraw();
         mod = 1;
@@ -1037,10 +1025,10 @@ static void cb_Maximum(Fl_Value_Input* o, void* v) {
 
 static void cb_Step(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Valuator_)) {
+    if (dynamic_cast<Valuator_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Valuator*)(current_widget->o))->step());
-    } else if (current_widget->is_a(Type::Spinner)) {
+    } else if (dynamic_cast<Spinner_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Spinner*)(current_widget->o))->step());
     } else {
@@ -1052,11 +1040,11 @@ static void cb_Step(Fl_Value_Input* o, void* v) {
     Fluid.proj.undo.checkpoint();
     double n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Valuator_)) {
+      if (dynamic_cast<Valuator_Node*>(q)) {
         ((Fl_Valuator*)(q->o))->step(n);
         q->o->redraw();
         mod = 1;
-      } else if (q->is_a(Type::Spinner)) {
+      } else if (dynamic_cast<Spinner_Node*>(q)) {
         ((Fl_Spinner*)(q->o))->step(n);
         q->o->redraw();
         mod = 1;
@@ -1068,13 +1056,13 @@ static void cb_Step(Fl_Value_Input* o, void* v) {
 
 static void cb_Value(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Valuator_)) {
+    if (dynamic_cast<Valuator_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Valuator*)(current_widget->o))->value());
     } else if (current_widget->is_button()) {
       o->activate();
       o->value(((Fl_Button*)(current_widget->o))->value());
-    } else if (current_widget->is_a(Type::Spinner)) {
+    } else if (dynamic_cast<Spinner_Node*>(current_widget)) {
       o->activate();
       o->value(((Fl_Spinner*)(current_widget->o))->value());
     } else
@@ -1084,14 +1072,14 @@ static void cb_Value(Fl_Value_Input* o, void* v) {
     Fluid.proj.undo.checkpoint();
     double n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Valuator_)) {
+      if (dynamic_cast<Valuator_Node*>(q)) {
         ((Fl_Valuator*)(q->o))->value(n);
         mod = 1;
       } else if (q->is_button()) {
         ((Fl_Button*)(q->o))->value(n != 0);
-        if (q->is_a(Type::Menu_Item)) q->redraw();
+        if (dynamic_cast<Menu_Item_Node*>(q)) q->redraw();
         mod = 1;
-      } else if (q->is_a(Type::Spinner)) {
+      } else if (dynamic_cast<Spinner_Node*>(q)) {
         ((Fl_Spinner*)(q->o))->value(n);
         mod = 1;
       }
@@ -1104,7 +1092,7 @@ Fl_Group* wp_gui_margins = (Fl_Group*)nullptr;
 
 static void cb_wp_gui_margins(Fl_Group* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Flex)) {
+    if (dynamic_cast<Flex_Node*>(current_widget)) {
       o->show();
       propagate_load(o, v);
     } else {
@@ -1225,7 +1213,7 @@ Fl_Group* wp_gui_sizerange = (Fl_Group*)nullptr;
 
 static void cb_wp_gui_sizerange(Fl_Group* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(current_widget)) {
       o->show();
       propagate_load(o, v);
     } else {
@@ -1236,14 +1224,14 @@ static void cb_wp_gui_sizerange(Fl_Group* o, void* v) {
 
 static void cb_Minimum1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) return;
+    if (!dynamic_cast<Window_Node*>(current_widget)) return;
     o->value(((Window_Node*)current_widget)->sr_min_w);
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     int n = (int)o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         ((Window_Node*)q)->sr_min_w = n;
         mod = 1;
       }
@@ -1254,14 +1242,14 @@ static void cb_Minimum1(Fl_Value_Input* o, void* v) {
 
 static void cb_1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) return;
+    if (!dynamic_cast<Window_Node*>(current_widget)) return;
     o->value(((Window_Node*)current_widget)->sr_min_h);
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     int n = (int)o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         ((Window_Node*)q)->sr_min_h = n;
         mod = 1;
       }
@@ -1276,7 +1264,7 @@ static void cb_set(Fl_Button* o, void* v) {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         Window_Node *win = (Window_Node*)q;
         win->sr_min_w = win->o->w();
         win->sr_min_h = win->o->h();
@@ -1290,14 +1278,14 @@ static void cb_set(Fl_Button* o, void* v) {
 
 static void cb_Maximum1(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) return;
+    if (!dynamic_cast<Window_Node*>(current_widget)) return;
     o->value(((Window_Node*)current_widget)->sr_max_w);
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     int n = (int)o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         ((Window_Node*)q)->sr_max_w = n;
         mod = 1;
       }
@@ -1308,14 +1296,14 @@ static void cb_Maximum1(Fl_Value_Input* o, void* v) {
 
 static void cb_2(Fl_Value_Input* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) return;
+    if (!dynamic_cast<Window_Node*>(current_widget)) return;
     o->value(((Window_Node*)current_widget)->sr_max_h);
   } else {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     int n = (int)o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         ((Window_Node*)q)->sr_max_h = n;
         mod = 1;
       }
@@ -1330,7 +1318,7 @@ static void cb_set1(Fl_Button* o, void* v) {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         Window_Node *win = (Window_Node*)q;
         win->sr_max_w = win->o->w();
         win->sr_max_h = win->o->h();
@@ -1348,11 +1336,11 @@ static void cb_wp_gui_shortcut(Fl_Shortcut_Button* o, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
       o->value( ((Fl_Button*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Type::Input))
+    else if (dynamic_cast<Input_Node*>(current_widget))
       o->value( ((Fl_Input_*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Type::Value_Input))
+    else if (dynamic_cast<Value_Input_Node*>(current_widget))
       o->value( ((Fl_Value_Input*)(current_widget->o))->shortcut() );
-    else if (current_widget->is_a(Type::Text_Display))
+    else if (dynamic_cast<Text_Display_Node*>(current_widget))
       o->value( ((Fl_Text_Display*)(current_widget->o))->shortcut() );
     else {
       o->hide();
@@ -1370,16 +1358,16 @@ static void cb_wp_gui_shortcut(Fl_Shortcut_Button* o, void* v) {
         Fl_Button* b = (Fl_Button*)(q->o);
         if (b->shortcut() != (int)o->value()) mod = 1;
         b->shortcut(o->value());
-        if (q->is_a(Type::Menu_Item)) q->redraw();
-      } else if (q->is_a(Type::Input)) {
+        if (dynamic_cast<Menu_Item_Node*>(q)) q->redraw();
+      } else if (dynamic_cast<Input_Node*>(q)) {
         Fl_Input_* b = (Fl_Input_*)(q->o);
         if (b->shortcut() != (int)o->value()) mod = 1;
         b->shortcut(o->value());
-      } else if (q->is_a(Type::Value_Input)) {
+      } else if (dynamic_cast<Value_Input_Node*>(q)) {
         Fl_Value_Input* b = (Fl_Value_Input*)(q->o);
         if (b->shortcut() != (int)o->value()) mod = 1;
         b->shortcut(o->value());
-      } else if (q->is_a(Type::Text_Display)) {
+      } else if (dynamic_cast<Text_Display_Node*>(q)) {
         Fl_Text_Display* b = (Fl_Text_Display*)(q->o);
         if (b->shortcut() != (int)o->value()) mod = 1;
         b->shortcut(o->value());
@@ -1392,7 +1380,7 @@ Fl_Group* wp_gui_xclass = (Fl_Group*)nullptr;
 
 static void cb_3(Fl_Input* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(current_widget)) {
       o->show();
       o->parent()->show();
       o->value(((Window_Node *)current_widget)->xclass);
@@ -1404,7 +1392,7 @@ static void cb_3(Fl_Input* o, void* v) {
     int mod = 0;
     Fluid.proj.undo.checkpoint();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Window)) {
+      if (dynamic_cast<Window_Node*>(q)) {
         mod = 1;
         Window_Node *wt = (Window_Node *)q;
         storestring(o->value(), wt->xclass);
@@ -1417,7 +1405,7 @@ static void cb_3(Fl_Input* o, void* v) {
 
 static void cb_Border(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
+    if (!dynamic_cast<Window_Node*>(current_widget)) {o->hide(); return;}
     o->show();
     o->value(((Fl_Window*)(current_widget->o))->border());
   } else {
@@ -1429,7 +1417,7 @@ static void cb_Border(Fl_Light_Button* o, void* v) {
 
 static void cb_Modal(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
+    if (!dynamic_cast<Window_Node*>(current_widget)) {o->hide(); return;}
     o->show();
     o->value(((Window_Node *)current_widget)->modal);
   } else {
@@ -1441,7 +1429,7 @@ static void cb_Modal(Fl_Light_Button* o, void* v) {
 
 static void cb_Nonmodal(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Window)) {o->hide(); return;}
+    if (!dynamic_cast<Window_Node*>(current_widget)) {o->hide(); return;}
     o->show();
     o->value(((Window_Node *)current_widget)->non_modal);
   } else {
@@ -1456,7 +1444,7 @@ Fl_Group* wp_gui_attributes = (Fl_Group*)nullptr;
 static void cb_Visible(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
     o->value(current_widget->o->visible());
-    if (current_widget->is_a(Type::Window)) o->deactivate();
+    if (dynamic_cast<Window_Node*>(current_widget)) o->deactivate();
     else o->activate();
   } else {
     int mod = 0;
@@ -1469,9 +1457,9 @@ static void cb_Visible(Fl_Light_Button* o, void* v) {
       n ? q->o->show() : q->o->hide();
       q->redraw();
       if (n && q->parent && q->parent->type_name()) {
-        if (q->parent->is_a(Type::Tabs)) {
+        if (dynamic_cast<Tabs_Node*>(q->parent)) {
           ((Fl_Tabs *)q->o->parent())->value(q->o);
-        } else if (q->parent->is_a(Type::Wizard)) {
+        } else if (dynamic_cast<Wizard_Node*>(q->parent)) {
           ((Fl_Wizard *)q->o->parent())->value(q->o);
         }
       }
@@ -1486,7 +1474,7 @@ static void cb_Visible(Fl_Light_Button* o, void* v) {
 static void cb_Active(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
     o->value(current_widget->o->active());
-    if (current_widget->is_a(Type::Window)) o->deactivate();
+    if (dynamic_cast<Window_Node*>(current_widget)) o->deactivate();
     else o->activate();
   } else {
     int mod = 0;
@@ -1505,7 +1493,7 @@ static void cb_Active(Fl_Light_Button* o, void* v) {
 
 static void cb_Resizable(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       o->hide();
       return;
     }
@@ -1525,7 +1513,7 @@ static void cb_Resizable(Fl_Light_Button* o, void* v) {
 
 static void cb_Headline(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_a(Type::Menu_Item)) {
+    if (!dynamic_cast<Menu_Item_Node*>(current_widget)) {
       o->hide();
       return;
     }
@@ -1536,7 +1524,7 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
     int mod = 0;
     int n = o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Menu_Item)) {
+      if (dynamic_cast<Menu_Item_Node*>(q)) {
         auto nd = dynamic_cast<Menu_Item_Node*>(q);
         if (!mod) {
           mod = 1;
@@ -1553,22 +1541,22 @@ static void cb_Headline(Fl_Light_Button* o, void* v) {
 static void cb_Hotspot(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
     if (numselected > 1) {o->deactivate(); return;}
-    if (current_widget->is_a(Type::Menu_Item)) o->label("divider");
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) o->label("divider");
     else o->label("hotspot");
     o->activate();
     o->value(current_widget->hotspot());
   } else {
     Fluid.proj.undo.checkpoint();
     current_widget->hotspot(o->value());
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       current_widget->redraw();
       return;
     }
     if (o->value()) {
       Node *p = current_widget->parent;
       if (!p || !p->is_widget()) return;
-      while (!p->is_a(Type::Window)) p = p->parent;
-      for (Node *q = p->next; q && q->level > p->level; q = q->next) {
+      while (!dynamic_cast<Window_Node*>(p)) p = p->parent;
+      for (Node *q : p->descendants()) {
         if (q->is_widget() && q != current_widget)
           ((Widget_Node*)q)->hotspot(0);
       }
@@ -1670,7 +1658,7 @@ Fl_Group* wp_style_box = (Fl_Group*)nullptr;
 
 static void cb_7(Fl_Choice* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {o->deactivate(); return;} else o->activate();
     int n = current_widget->o->box();
     if (!n) n = ZERO_ENTRY;
     for (int j = 0; j < 72 /*int(sizeof(boxmenu)/sizeof(*boxmenu))*/; j++)
@@ -1695,7 +1683,7 @@ Fl_Button* w_color = (Fl_Button*)nullptr;
 static void cb_w_color(Fl_Button* o, void* v) {
   Fl_Color c = current_widget->o->color();
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       o->deactivate();
     } else {
       o->activate();
@@ -1714,7 +1702,7 @@ static void cb_w_color(Fl_Button* o, void* v) {
 static void cb_8(Fl_Menu_Button* o, void* v) {
   Fl_Color c = current_widget->o->color();
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {o->deactivate(); return;} else o->activate();
   } else {
     Fl_Color d = (Fl_Color)(o->mvalue()->argument());
     if (d == c) return;
@@ -1731,11 +1719,11 @@ Fl_Group* wp_style_downbox = (Fl_Group*)nullptr;
 static void cb_9(Fl_Choice* o, void* v) {
   if (v == LOAD) {
     int n;
-    if (current_widget->is_a(Type::Button))
+    if (dynamic_cast<Button_Node*>(current_widget))
       n = ((Fl_Button*)(current_widget->o))->down_box();
-    else if (current_widget->is_a(Type::Input_Choice))
+    else if (dynamic_cast<Input_Choice_Node*>(current_widget))
       n = ((Fl_Input_Choice*)(current_widget->o))->down_box();
-    else if (current_widget->is_a(Type::Menu_Manager_))
+    else if (dynamic_cast<Menu_Manager_Node*>(current_widget))
       n = ((Fl_Menu_*)(current_widget->o))->down_box();
     else {
       o->deactivate(); return;
@@ -1751,12 +1739,12 @@ static void cb_9(Fl_Choice* o, void* v) {
     if (!n) return; // should not happen
     if (n == ZERO_ENTRY) n = 0;
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Button)) {
+      if (dynamic_cast<Button_Node*>(q)) {
         ((Fl_Button*)(q->o))->down_box((Fl_Boxtype)n);
         if (((Fl_Button*)(q->o))->value()) q->redraw();
-      } else if (q->is_a(Type::Input_Choice)) {
+      } else if (dynamic_cast<Input_Choice_Node*>(q)) {
         ((Fl_Input_Choice*)(q->o))->down_box((Fl_Boxtype)n);
-      } else if (q->is_a(Type::Menu_Manager_)) {
+      } else if (dynamic_cast<Menu_Manager_Node*>(q)) {
         ((Fl_Menu_*)(q->o))->down_box((Fl_Boxtype)n);
       }
       mod = 1;
@@ -1770,7 +1758,7 @@ Fl_Button* w_selectcolor = (Fl_Button*)nullptr;
 static void cb_w_selectcolor(Fl_Button* o, void* v) {
   Fl_Color c = current_widget->o->selection_color();
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       o->deactivate();
       return;
     } else {
@@ -1790,7 +1778,7 @@ static void cb_w_selectcolor(Fl_Button* o, void* v) {
 static void cb_a(Fl_Menu_Button* o, void* v) {
   Fl_Color c = current_widget->o->selection_color();
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       o->deactivate();
       return;
     } else {
@@ -1978,7 +1966,7 @@ static void cb_Image(Fl_Value_Input* o, void* v) {
 static void cb_Compact(Fl_Light_Button* o, void* v) {
   if (v == LOAD) {
     uchar n;
-    if (current_widget->is_a(Type::Button) && !current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Button_Node*>(current_widget) && !dynamic_cast<Menu_Item_Node*>(current_widget)) {
       n = ((Fl_Button*)(current_widget->o))->compact();
       o->value(n);
       o->show();
@@ -1989,7 +1977,7 @@ static void cb_Compact(Fl_Light_Button* o, void* v) {
     int mod = 0;
     uchar n = (uchar)o->value();
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
-      if (q->is_a(Type::Button) && !q->is_a(Type::Menu_Item)) {
+      if (dynamic_cast<Button_Node*>(q) && !dynamic_cast<Menu_Item_Node*>(q)) {
         uchar v = ((Fl_Button*)(q->o))->compact();
         if (n != v) {
           if (!mod) {
@@ -2011,7 +1999,7 @@ Fl_Group* wp_cpp_class = (Fl_Group*)nullptr;
 
 static void cb_e(Fl_Input* o, void* v) {
   if (v == LOAD) {
-      if (current_widget->is_a(Type::Menu_Item)) {
+      if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
         o->deactivate();
       } else {
         o->activate();
@@ -2044,7 +2032,7 @@ static void cb_f(Fl_Choice* o, void* v) {
         int j;
         for (j = 0;; j++) {
           if (!m[j].text) {j = 0; break;}
-          if (current_widget->is_a(Type::Spinner)) {
+          if (dynamic_cast<Spinner_Node*>(current_widget)) {
             if (m[j].argument() == ((Fl_Spinner*)current_widget->o)->type()) break;
           } else {
             if (m[j].argument() == current_widget->o->type()) break;
@@ -2060,9 +2048,9 @@ static void cb_f(Fl_Choice* o, void* v) {
       Fl_Menu_Item* m = current_widget->subtypes();
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
         if (q->subtypes()==m) {
-          if (q->is_a(Type::Spinner))
+          if (dynamic_cast<Spinner_Node*>(q))
             ((Fl_Spinner*)q->o)->type(n);
-          else if (q->is_a(Type::Flex))
+          else if (dynamic_cast<Flex_Node*>(q))
             ((Flex_Node*)q)->change_subtype_to(n);
           else
             q->o->type(n);
@@ -2237,7 +2225,7 @@ static void cb_13(Fl_Input* o, void* v) {
 
 static void cb_When(Fl_Menu_Button* o, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {o->deactivate(); return;} else o->activate();
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {o->deactivate(); return;} else o->activate();
     int n = current_widget->o->when();
     set_whenmenu(n);
     w_when_box->copy_label(when_symbol_name(n));
@@ -2329,7 +2317,7 @@ static void cb_data_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* data_tabs_data = (Fl_Group*)nullptr;
 
 static void cb_15(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Data)) return;
+  if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
   if (v == LOAD) {
@@ -2359,7 +2347,7 @@ Fl_Menu_Item menu_5[] = {
 };
 
 static void cb_16(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Data)) return;
+  if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
   if (v == LOAD) {
@@ -2388,7 +2376,7 @@ Fl_Menu_Item menu_6[] = {
 };
 
 static void cb_17(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Data)) return;
+  if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
   if (v == LOAD) {
@@ -2412,7 +2400,7 @@ Fl_Menu_Item menu_7[] = {
 };
 
 static void cb_Name(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Data)) return;
+  if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
   if (v == LOAD) {
@@ -2433,7 +2421,7 @@ static void cb_Name(Fl_Input* o, void* v) {
 Fl_Input* wp_data_filename = (Fl_Input*)nullptr;
 
 static void cb_wp_data_filename(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Data)) return;
+  if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
   update_current(o, v,
     [nd](){return nd->filename();},
@@ -2465,7 +2453,7 @@ static void cb_fileopen(Fl_Button*, void* v) {
 }
 
 static void cb_Comment(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Data)) return;
+  if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
   if (v == LOAD) {
@@ -2497,7 +2485,7 @@ Fl_Group* comment_tabs_comment = (Fl_Group*)nullptr;
 Fl_Text_Editor* comment_tabs_name = (Fl_Text_Editor*)nullptr;
 
 static void cb_comment_tabs_name(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
   Comment_Node* nd = (Comment_Node*)current_node;
 
   if (v == LOAD) {
@@ -2521,7 +2509,7 @@ static void cb_comment_tabs_name(Fl_Text_Editor* o, void* v) {
 Fl_Menu_Button* comment_predefined_2 = (Fl_Menu_Button*)nullptr;
 
 static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
 
   static char itempath[256];
   static int last_selected_item { 0 };
@@ -2641,7 +2629,7 @@ static void cb_comment_load_2(Fl_Button*, void* v) {
 }
 
 static void cb_output(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
   Comment_Node* nd = (Comment_Node*)current_node;
 
   if (v == LOAD) {
@@ -2655,7 +2643,7 @@ static void cb_output(Fl_Check_Button* o, void* v) {
 }
 
 static void cb_output1(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Comment)) return;
+  if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
   Comment_Node* nd = (Comment_Node*)current_node;
 
   if (v == LOAD) {
@@ -2678,7 +2666,7 @@ static void cb_class_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* class_tabs_main = (Fl_Group*)nullptr;
 
 static void cb_18(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Class)) return;
+  if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
 
   if (v == LOAD) {
@@ -2707,7 +2695,7 @@ Fl_Menu_Item menu_8[] = {
 };
 
 static void cb_Attribute(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Class)) return;
+  if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
 
   if (v == LOAD) {
@@ -2723,7 +2711,7 @@ static void cb_Attribute(Fl_Input* o, void* v) {
 }
 
 static void cb_Class(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Class)) return;
+  if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
 
   if (v == LOAD) {
@@ -2766,7 +2754,7 @@ static void cb_Class(Fl_Input* o, void* v) {
 }
 
 static void cb_Base(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Class)) return;
+  if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
 
   if (v == LOAD) {
@@ -2781,7 +2769,7 @@ static void cb_Base(Fl_Input* o, void* v) {
 }
 
 static void cb_Comment1(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Class)) return;
+  if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
 
   if (v == LOAD) {
@@ -2811,7 +2799,7 @@ static void cb_declblock_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* declblock_tabs_main = (Fl_Group*)nullptr;
 
 static void cb_Start(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -2830,7 +2818,7 @@ static void cb_Start(Fl_Input* o, void* v) {
 }
 
 static void cb_End(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
   update_current(o, v,
     [nd](){return nd->end_code();},
@@ -2839,7 +2827,7 @@ static void cb_End(Fl_Input* o, void* v) {
 }
 
 static void cb_implementations(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -2858,7 +2846,7 @@ static void cb_implementations(Fl_Check_Button* o, void* v) {
 }
 
 static void cb_static(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -2877,7 +2865,7 @@ static void cb_static(Fl_Check_Button* o, void* v) {
 }
 
 static void cb_forward(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -2896,7 +2884,7 @@ static void cb_forward(Fl_Check_Button* o, void* v) {
 }
 
 static void cb_preprecessor(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -2915,7 +2903,7 @@ static void cb_preprecessor(Fl_Check_Button* o, void* v) {
 }
 
 static void cb_Comment2(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::DeclBlock)) return;
+  if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -2945,7 +2933,7 @@ static void cb_decl_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* decl_tabs_main = (Fl_Group*)nullptr;
 
 static void cb_19(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
   if (v == LOAD) {
@@ -2975,7 +2963,7 @@ Fl_Menu_Item menu_9[] = {
 };
 
 static void cb_1a(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
   if (v == LOAD) {
@@ -3008,7 +2996,7 @@ static void cb_1b(Fl_Tile* o, void* v) {
 }
 
 static void cb_Declaration(fluid::widget::Code_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
   if (v == LOAD) {
@@ -3030,7 +3018,7 @@ static void cb_Declaration(fluid::widget::Code_Editor* o, void* v) {
 }
 
 static void cb_Comment3(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Decl)) return;
+  if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
   if (v == LOAD) {
@@ -3060,7 +3048,7 @@ static void cb_codeblock_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* codeblock_tabs_main = (Fl_Group*)nullptr;
 
 static void cb_Start1(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+  if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
   CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -3079,7 +3067,7 @@ static void cb_Start1(Fl_Input* o, void* v) {
 }
 
 static void cb_End1(Fl_Input* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+  if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
   CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
   update_current(o, v,
     [nd](){return nd->end_code();},
@@ -3088,7 +3076,7 @@ static void cb_End1(Fl_Input* o, void* v) {
 }
 
 static void cb_Comment4(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::CodeBlock)) return;
+  if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
   CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
 
   if (v == LOAD) {
@@ -3118,7 +3106,7 @@ static void cb_code_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* code_tabs_main = (Fl_Group*)nullptr;
 
 static void cb_1c(fluid::widget::Code_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Code)) return;
+  if (!current_node || !dynamic_cast<Code_Node*>(current_node)) return;
   Code_Node* nd = (Code_Node*)current_node;
    if (v == LOAD) {
     the_panel->label("Code Editor");
@@ -3153,7 +3141,7 @@ static void cb_func_tabs(Fl_Tabs* o, void* v) {
 Fl_Group* func_tabs_main = (Fl_Group*)nullptr;
 
 static void cb_1d(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Function)) return;
+  if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
   if (v == LOAD) {
@@ -3182,7 +3170,7 @@ Fl_Menu_Item menu_b[] = {
 };
 
 static void cb_1e(Fl_Choice* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Function)) return;
+  if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
   if (v == LOAD) {
@@ -3211,7 +3199,7 @@ Fl_Menu_Item menu_c[] = {
 };
 
 static void cb_declare(Fl_Check_Button* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Function)) return;
+  if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
   if (v == LOAD) {
@@ -3229,7 +3217,7 @@ static void cb_1f(Fl_Tile* o, void* v) {
 }
 
 static void cb_Function(fluid::widget::Code_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Function)) return;
+  if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
   if (v == LOAD) {
@@ -3251,7 +3239,7 @@ static void cb_Function(fluid::widget::Code_Editor* o, void* v) {
 }
 
 static void cb_Return(fluid::widget::Code_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Function)) return;
+  if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
   update_current(o, v,
     [nd](){return nd->return_type();},
@@ -3260,7 +3248,7 @@ static void cb_Return(fluid::widget::Code_Editor* o, void* v) {
 }
 
 static void cb_Comment5(Fl_Text_Editor* o, void* v) {
-  if (!current_node || !current_node->is_a(Type::Function)) return;
+  if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
   if (v == LOAD) {

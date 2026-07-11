@@ -120,7 +120,7 @@ widget_class Grid_Child_Tab {
       label Horizontal
       callback {if (   !current_widget
       || !current_widget->parent
-      || !current_widget->parent->is_a(Type::Grid))
+      || !dynamic_cast<Grid_Node*>(current_widget->parent))
   {
     return;
   }
@@ -177,7 +177,7 @@ widget_class Grid_Child_Tab {
       label Vertical
       callback {if (   !current_widget
       || !current_widget->parent
-      || !current_widget->parent->is_a(Type::Grid))
+      || !dynamic_cast<Grid_Node*>(current_widget->parent))
   {
     return;
   }
@@ -329,7 +329,7 @@ widget_class Grid_Child_Tab {
   } {
     code {if (   !current_widget
       || !current_widget->parent
-      || !current_widget->parent->is_a(Type::Grid))
+      || !dynamic_cast<Grid_Node*>(current_widget->parent))
   {
     return;
   }

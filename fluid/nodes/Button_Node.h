@@ -37,7 +37,6 @@ public:
   Widget_Node *_make() override { return new Button_Node(); }
   int is_button() const override { return 1; }
   Type type() const override { return Type::Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Button) ? true : super::is_a(inType); }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   void copy_properties() override;
@@ -60,7 +59,6 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Return_Button_Node(); }
   Type type() const override { return Type::Return_Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Return_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Repeat Button ----
@@ -82,7 +80,6 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Repeat_Button_Node(); }
   Type type() const override { return Type::Repeat_Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Repeat_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Light Button ----
@@ -102,7 +99,6 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Light_Button_Node(); }
   Type type() const override { return Type::Light_Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Light_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Check Button ----
@@ -122,7 +118,6 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Check_Button_Node(); }
   Type type() const override { return Type::Check_Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Check_Button) ? true : super::is_a(inType); }
 };
 
 // ---- Round Button ----
@@ -142,7 +137,6 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Round_Button_Node(); }
   Type type() const override { return Type::Round_Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Round_Button) ? true : super::is_a(inType); }
 };
 
 

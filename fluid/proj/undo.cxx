@@ -155,11 +155,9 @@ void Undo::undo() {
     return;
   }
   if (reload_panel) {
-    for (Node *t = Fluid.proj.tree.first; t; t=t->next) {
-      if (t->is_widget() && t->selected) {
-        t->open();
-        break;
-      }
+    for (auto *t : Fluid.proj.tree.all_selected_widgets()) {
+      t->open();
+      break;
     }
   }
   // Restore old browser position.

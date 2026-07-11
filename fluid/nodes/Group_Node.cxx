@@ -26,6 +26,7 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
+#include "nodes/Menu_Node.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
@@ -73,7 +74,7 @@ void Fl_Group_Proxy::draw() {
  \brief Enlarge the group size, so all children fit within.
  */
 void fix_group_size(Node *tt) {
-  if (!tt || !tt->is_a(Type::Group)) return;
+  if (!tt || !dynamic_cast<Group_Node*>(tt)) return;
   Group_Node* t = (Group_Node*)tt;
   int X = t->o->x();
   int Y = t->o->y();
@@ -102,14 +103,14 @@ void group_cb(Fl_Widget *, void *) {
     fl_message("Only widgets and menu items can be grouped.");
     return;
   }
-  if (Fluid.proj.tree.current->is_a(Type::Menu_Item)) {
+  if (dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
     group_selected_menuitems();
     return;
   }
   // The group will be created in the parent group of the current widget
   Node *qq = Fluid.proj.tree.current->parent;
   Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
-  while (qq && !qq->is_a(Type::Group)) {
+  while (qq && !dynamic_cast<Group_Node*>(qq)) {
     qq = qq->parent;
   }
   if (!qq) {
@@ -150,7 +151,7 @@ void ungroup_cb(Fl_Widget *, void *) {
     fl_message("Only widgets and menu items can be ungrouped.");
     return;
   }
-  if (Fluid.proj.tree.current->is_a(Type::Menu_Item)) {
+  if (dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
     ungroup_selected_menuitems();
     return;
   }
@@ -159,7 +160,7 @@ void ungroup_cb(Fl_Widget *, void *) {
   int q_level = q->level;
   Node *qq = Fluid.proj.tree.current->parent;
   while (qq && !qq->is_true_widget()) qq = qq->parent;
-  if (!qq || !qq->is_a(Type::Group)) {
+  if (!qq || !dynamic_cast<Group_Node*>(qq)) {
     fl_message("Only menu widgets inside a group can be ungrouped.");
     return;
   }
@@ -513,7 +514,7 @@ void Flex_Node::change_subtype_to(int n) {
 int Flex_Node::parent_is_flex(Node *t) {
   return (t->is_widget()
           && t->parent
-          && t->parent->is_a(Type::Flex));
+          && dynamic_cast<Flex_Node*>(t->parent));
 }
 
 /**
@@ -579,7 +580,7 @@ void Flex_Node::keyboard_move_child(Widget_Node *child, int key) {
 int Flex_Node::size(Node *t, char fixed_only) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
-  if (!t->parent->is_a(Type::Flex)) return 0;
+  if (!dynamic_cast<Flex_Node*>(t->parent)) return 0;
   Flex_Node* ft = (Flex_Node*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Widget_Node*)t)->o;
@@ -590,7 +591,7 @@ int Flex_Node::size(Node *t, char fixed_only) {
 int Flex_Node::is_fixed(Node *t) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
-  if (!t->parent->is_a(Type::Flex)) return 0;
+  if (!dynamic_cast<Flex_Node*>(t->parent)) return 0;
   Flex_Node* ft = (Flex_Node*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Widget_Node*)t)->o;

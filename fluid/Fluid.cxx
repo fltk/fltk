@@ -51,9 +51,10 @@
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_string_functions.h>
+#include "../src/flstring.h"
 
 #include <locale.h>     // setlocale()..
-#include "../src/flstring.h"
+#include <limits>      // std::numeric_limits<int>::max()
 
 
 fluid::Application Fluid;
@@ -75,7 +76,7 @@ static void external_editor_timer(void*) {
     // Walk tree looking for files modified by external editors.
     int modified = 0;
     for (Node *p: Fluid.proj.tree.all_nodes()) {
-      if ( p->is_a(Type::Code) ) {
+      if ( dynamic_cast<Code_Node*>(p) ) {
         Code_Node *code = static_cast<Code_Node*>(p);
         // Code changed by external editor?
         if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
@@ -782,7 +783,7 @@ void Application::print_snapshots() {
   Fl_Window *win;
 
   for (auto w: proj.tree.all_widgets()) {
-    if (w->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(w)) {
       Window_Node *win_t = static_cast<Window_Node*>(w);
       windows[num_windows] = win_t;
       Fl_Window *win = static_cast<Fl_Window*>(win_t->o);
@@ -996,7 +997,7 @@ void Application::duplicate_selected() {
   flush_text_widgets();
 
   // find the last selected node with the lowest level:
-  int lowest_level = 9999;
+  int lowest_level = std::numeric_limits<int>::max();
   Node *new_insert = nullptr;
   if (proj.tree.current->selected) {
     for (auto t: proj.tree.all_selected_nodes()) {

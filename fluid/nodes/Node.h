@@ -79,6 +79,11 @@ typedef struct Strategy {
   Flags source() { return (Flags)(flags & SOURCE_MASK); }
 } Strategy;
 
+/** A half-open [start, end) character range into a generated text buffer, used by codeview. */
+struct TextSpan {
+  int start = -1, end = -1;
+};
+
 enum class Type {
   // administrative
   Base_, Widget_, Menu_Manager_, Menu_, Browser_, Valuator_,
@@ -137,10 +142,9 @@ bool validate_branch(class Node *root);
  to create a pseudo tree structure. To make walking up the tree faster, Type
  also holds a pointer to the `parent` Type.
 
- Types can be identified using the builtin Type system that works like RTTI. The
- method `type()` returns the exact type, and the method `is_a(Type)` returns true
- if this is the exact type or derived from the type, and a dynamic cast will
- work reliably.
+ The `type()` method returns a node's exact `Type` tag, used where an exact
+ enum value is needed (e.g. icon lookups). To test whether a node is of a
+ given type or a type derived from it, use `dynamic_cast` directly.
 
  \todo it would be nice if we can handle multiple independent trees. To do that
  we must remove static members like `first` and `last`.
@@ -196,18 +200,58 @@ public: // things that should not be public:
   Node *next_sibling();
   Node *first_child();
 
+  /** Range over the direct children of this node (`for (auto *c : n->children())`). */
+  class ChildRange {
+    Node *first_;
+  public:
+    class Iterator {
+      Node *n_;
+    public:
+      explicit Iterator(Node *n) : n_(n) { }
+      Node* operator*() const { return n_; }
+      Iterator& operator++() { n_ = n_->next_sibling(); return *this; }
+      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
+    };
+    explicit ChildRange(Node *first) : first_(first) { }
+    Iterator begin() const { return Iterator(first_); }
+    Iterator end() const { return Iterator(nullptr); }
+  };
+  ChildRange children() { return ChildRange(first_child()); }
+
+  /** Range over all descendants of this node, depth-first (`for (auto *d : n->descendants())`). */
+  class DescendantRange {
+    Node *base_;
+  public:
+    class Iterator {
+      Node *base_;
+      Node *n_;
+    public:
+      Iterator(Node *base, Node *n) : base_(base), n_(n) { }
+      Node* operator*() const { return n_; }
+      Iterator& operator++() {
+        n_ = n_->next;
+        if (n_ && n_->level <= base_->level) n_ = nullptr;
+        return *this;
+      }
+      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
+    };
+    explicit DescendantRange(Node *base) : base_(base) { }
+    Iterator begin() const {
+      Node *n = base_->next;
+      if (n && n->level <= base_->level) n = nullptr;
+      return Iterator(base_, n);
+    }
+    Iterator end() const { return Iterator(base_, nullptr); }
+  };
+  DescendantRange descendants() { return DescendantRange(this); }
+
   Node *factory;
   std::string callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
-  int code_static_start, code_static_end;
-  int code1_start, code1_end;
-  int code2_start, code2_end;
-  int header1_start, header1_end;
-  int header2_start, header2_end;
-  int header_static_start, header_static_end;
-  int proj1_start, proj1_end;
-  int proj2_start, proj2_end;
+  TextSpan code_static, code1, code2;
+  TextSpan header1, header2, header_static;
+  TextSpan proj1, proj2;
 
 protected:
   int user_defined(const char* cbname) const;
@@ -303,8 +347,6 @@ public:
   virtual int is_public() const {return 1;}
   /** Return the type Type for this Type. */
   virtual Type type() const { return Type::Base_; }
-  /** Check if this Type is of the give type Type or derived from that type Type. */
-  virtual bool is_a(Type inType) const { return (inType==Type::Base_); }
 
   const char* class_name(int need_nest) const;
   bool is_in_class() const;

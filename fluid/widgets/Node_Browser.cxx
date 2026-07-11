@@ -18,6 +18,8 @@
 
 #include "Fluid.h"
 #include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 #include "rsrcs/pixmaps.h"
 
 #include <FL/Fl.H>
@@ -380,11 +382,11 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   if (   l->is_widget()
-      && !l->is_a(Type::Window)
+      && !dynamic_cast<Window_Node*>(l)
       && ((Widget_Node*)l)->o
       && !((Widget_Node*)l)->o->visible()
-      && (!l->parent || (   !l->parent->is_a(Type::Tabs)
-                         && !l->parent->is_a(Type::Wizard) ) )
+      && (!l->parent || (   !dynamic_cast<Tabs_Node*>(l->parent)
+                         && !dynamic_cast<Wizard_Node*>(l->parent) ) )
       )
   {
     invisible_pixmap->draw(X - 17, Y);
@@ -425,7 +427,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
       else fl_color(func_color);
       copy_trunc(buf, l->title(), 55, 0, 0);
     } else {
-      if (l->is_a(Type::Comment)) {
+      if (dynamic_cast<Comment_Node*>(l)) {
         // -- comment (in main line, not above entry)
         fl_font(comment_font, textsize());
         if (l->new_selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
@@ -551,7 +553,7 @@ int Node_Browser::handle(int e) {
     if (l) {
       if (!l->folded_) {
         l->folded_ = 1;
-        for (Node*k = l->next; k&&k->level>l->level; k = k->next)
+        for (auto *k : l->descendants())
           k->visible = 0;
       } else {
         l->folded_ = 0;

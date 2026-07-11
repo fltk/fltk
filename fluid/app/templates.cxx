@@ -107,7 +107,7 @@ void fluid::app::save_template() {
 
   for (t = Fluid.proj.tree.first; t; t = t->next) {
     // Find the first window...
-    if (t->is_a(Type::Window)) break;
+    if (dynamic_cast<Window_Node*>(t)) break;
   }
 
   if (!t) return;

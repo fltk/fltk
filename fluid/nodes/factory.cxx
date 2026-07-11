@@ -132,7 +132,6 @@ public:
   }
   Widget_Node *_make() override { return new Browser_Base_Node(); }
   Type type() const override { return Type::Browser_; }
-  bool is_a(Type inType) const override { return (inType==Type::Browser_) ? true : super::is_a(inType); }
 };
 
 Browser_Base_Node Browser_Base_Node::prototype;
@@ -167,7 +166,6 @@ public:
   }
   Widget_Node *_make() override { return new Browser_Node(); }
   Type type() const override { return Type::Browser; }
-  bool is_a(Type inType) const override { return (inType==Type::Browser) ? true : super::is_a(inType); }
 };
 
 Browser_Node Browser_Node::prototype;
@@ -202,7 +200,6 @@ public:
   }
   Widget_Node *_make() override { return new Check_Browser_Node(); }
   Type type() const override { return Type::Check_Browser; }
-  bool is_a(Type inType) const override { return (inType==Type::Check_Browser) ? true : super::is_a(inType); }
 };
 
 Check_Browser_Node Check_Browser_Node::prototype;
@@ -230,7 +227,6 @@ public:
   }
   Widget_Node *_make() override { return new File_Browser_Node(); }
   Type type() const override { return Type::File_Browser; }
-  bool is_a(Type inType) const override { return (inType==Type::File_Browser) ? true : super::is_a(inType); }
 };
 
 File_Browser_Node File_Browser_Node::prototype;
@@ -275,7 +271,6 @@ public:
   }
   Widget_Node *_make() override { return new Tree_Node(); }
   Type type() const override { return Type::Tree; }
-  bool is_a(Type inType) const override { return (inType==Type::Tree) ? true : super::is_a(inType); }
 };
 
 Tree_Node Tree_Node::prototype;
@@ -324,7 +319,6 @@ public:
   }
   Widget_Node *_make() override { return new Help_View_Node(); }
   Type type() const override { return Type::Help_View; }
-  bool is_a(Type inType) const override { return (inType==Type::Help_View) ? true : super::is_a(inType); }
 };
 
 Help_View_Node Help_View_Node::prototype;
@@ -335,25 +329,8 @@ Help_View_Node Help_View_Node::prototype;
 
 
 // ---- Valuator Base ----
-
-/**
- \brief Just a base class for all valuators.
- */
-class Valuator_Node : public Widget_Node
-{
-public:
-  typedef Widget_Node super;
-  static Valuator_Node prototype;
-public:
-  const char *type_name() override { return "Fl_Valuator"; }
-  const char *alt_type_name() override { return "fltk::Valuator"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    return new Fl_Slider(x, y, w, h, "Valuator");
-  }
-  Widget_Node *_make() override { return new Valuator_Node(); }
-  Type type() const override { return Type::Valuator_; }
-  bool is_a(Type inType) const override { return (inType==Type::Valuator_) ? true : super::is_a(inType); }
-};
+// (Valuator_Node is declared in factory.h so other translation units can
+// dynamic_cast to it.)
 
 Valuator_Node Valuator_Node::prototype;
 
@@ -402,7 +379,6 @@ public:
   }
   Widget_Node *_make() override { return new Counter_Node(); }
   Type type() const override { return Type::Counter; }
-  bool is_a(Type inType) const override { return (inType==Type::Counter) ? true : super::is_a(inType); }
 };
 
 Counter_Node Counter_Node::prototype;
@@ -432,7 +408,6 @@ public:
   }
   Widget_Node *_make() override { return new Adjuster_Node(); }
   Type type() const override { return Type::Adjuster; }
-  bool is_a(Type inType) const override { return (inType==Type::Adjuster) ? true : super::is_a(inType); }
 };
 
 Adjuster_Node Adjuster_Node::prototype;
@@ -469,7 +444,6 @@ public:
   }
   Widget_Node *_make() override { return new Dial_Node(); }
   Type type() const override { return Type::Dial; }
-  bool is_a(Type inType) const override { return (inType==Type::Dial) ? true : super::is_a(inType); }
 };
 
 Dial_Node Dial_Node::prototype;
@@ -507,7 +481,6 @@ public:
   }
   Widget_Node *_make() override { return new Roller_Node(); }
   Type type() const override { return Type::Roller; }
-  bool is_a(Type inType) const override { return (inType==Type::Roller) ? true : super::is_a(inType); }
 };
 
 Roller_Node Roller_Node::prototype;
@@ -515,7 +488,11 @@ Roller_Node Roller_Node::prototype;
 
 // ---- Slider ----
 
-static Fl_Menu_Item slider_type_menu[] = {
+// (Slider_Node, its slider_type_menu, Scrollbar_Node, and its
+// scrollbar_type_menu are declared in factory.h so other translation units
+// can dynamic_cast to them.)
+
+Fl_Menu_Item slider_type_menu[] = {
   { "Vertical", 0, nullptr, (void*)nullptr },
   { "Horizontal", 0, nullptr, (void*)FL_HOR_SLIDER },
   { "Vert Fill", 0, nullptr, (void*)FL_VERT_FILL_SLIDER },
@@ -525,65 +502,14 @@ static Fl_Menu_Item slider_type_menu[] = {
   { nullptr }
 };
 
-/**
- \brief Manage Slider widgets.
- They are vertical by default.
- Fl_Value_Slider has its own type.
- */
-class Slider_Node : public Valuator_Node
-{
-public:
-  typedef Valuator_Node super;
-  static Slider_Node prototype;
-private:
-  Fl_Menu_Item *subtypes() override { return slider_type_menu; }
-public:
-  void ideal_size(int &w, int &h) override {
-    auto layout = Fluid.proj.layout;
-    w = layout->labelsize + 8;
-    h = 4 * w;
-    fluid::app::Snap_Action::better_size(w, h);
-  }
-  const char *type_name() override { return "Fl_Slider"; }
-  const char *alt_type_name() override { return "fltk::Slider"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    return new Fl_Slider(x, y, w, h, "slider:");
-  }
-  Widget_Node *_make() override { return new Slider_Node(); }
-  Type type() const override { return Type::Slider; }
-  bool is_a(Type inType) const override { return (inType==Type::Slider) ? true : super::is_a(inType); }
-};
-
 Slider_Node Slider_Node::prototype;
-
 
 // ---- Scrollbar ----
 
-static Fl_Menu_Item scrollbar_type_menu[] = {
+Fl_Menu_Item scrollbar_type_menu[] = {
   { "Vertical", 0, nullptr, (void*)nullptr },
   { "Horizontal", 0, nullptr, (void*)FL_HOR_SLIDER },
   { nullptr }
-};
-
-/**
- \brief Manage Scrollbars which are derived from Sliders.
- */
-class Scrollbar_Node : public Slider_Node
-{
-public:
-  typedef Slider_Node super;
-  static Scrollbar_Node prototype;
-private:
-  Fl_Menu_Item *subtypes() override { return scrollbar_type_menu; }
-public:
-  const char *type_name() override { return "Fl_Scrollbar"; }
-  const char *alt_type_name() override { return "fltk::Scrollbar"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    return new Fl_Scrollbar(x, y, w, h);
-  }
-  Widget_Node *_make() override { return new Scrollbar_Node(); }
-  Type type() const override { return Type::Scrollbar; }
-  bool is_a(Type inType) const override { return (inType==Type::Scrollbar) ? true : super::is_a(inType); }
 };
 
 Scrollbar_Node Scrollbar_Node::prototype;
@@ -619,7 +545,6 @@ public:
   }
   Widget_Node *_make() override { return new Value_Slider_Node(); }
   Type type() const override { return Type::Value_Slider; }
-  bool is_a(Type inType) const override { return (inType==Type::Value_Slider) ? true : super::is_a(inType); }
 };
 
 Value_Slider_Node Value_Slider_Node::prototype;
@@ -627,43 +552,8 @@ Value_Slider_Node Value_Slider_Node::prototype;
 
 // ---- Value Input ----
 
-/**
- \brief Manage Value Inputs and their text settings.
- */
-class Value_Input_Node : public Valuator_Node
-{
-public:
-  typedef Valuator_Node super;
-  static Value_Input_Node prototype;
-private:
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
-    Fl_Value_Input *myo = (Fl_Value_Input*)(w==4 ? ((Widget_Node*)factory)->o : o);
-    switch (w) {
-      case 4:
-      case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
-      case 1: myo->textfont(f); break;
-      case 2: myo->textsize(s); break;
-      case 3: myo->textcolor(c); break;
-    }
-    return 1;
-  }
-public:
-  void ideal_size(int &w, int &h) override {
-    auto layout = Fluid.proj.layout;
-    h = layout->textsize_not_null() + 8;
-    w = layout->textsize_not_null() * 4 + 8;
-    fluid::app::Snap_Action::better_size(w, h);
-  }
-  const char *type_name() override { return "Fl_Value_Input"; }
-  const char *alt_type_name() override { return "fltk::ValueInput"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    Fl_Value_Input *myo = new Fl_Value_Input(x, y, w, h, "value:");
-    return myo;
-  }
-  Widget_Node *_make() override { return new Value_Input_Node(); }
-  Type type() const override { return Type::Value_Input; }
-  bool is_a(Type inType) const override { return (inType==Type::Value_Input) ? true : super::is_a(inType); }
-};
+// (Value_Input_Node is declared in factory.h so other translation units can
+// dynamic_cast to it.)
 
 Value_Input_Node Value_Input_Node::prototype;
 
@@ -705,7 +595,6 @@ public:
   }
   Widget_Node *_make() override { return new Value_Output_Node(); }
   Type type() const override { return Type::Value_Output; }
-  bool is_a(Type inType) const override { return (inType==Type::Value_Output) ? true : super::is_a(inType); }
 };
 
 Value_Output_Node Value_Output_Node::prototype;
@@ -717,63 +606,16 @@ Value_Output_Node Value_Output_Node::prototype;
 
 // ---- Input ----
 
-static Fl_Menu_Item input_type_menu[] = {
+// (Input_Node and its input_type_menu are declared in factory.h so other
+// translation units can dynamic_cast to Input_Node.)
+
+Fl_Menu_Item input_type_menu[] = {
   { "Normal", 0, nullptr, (void*)nullptr },
   { "Multiline", 0, nullptr, (void*)FL_MULTILINE_INPUT },
   { "Secret", 0, nullptr, (void*)FL_SECRET_INPUT },
   { "Int", 0, nullptr, (void*)FL_INT_INPUT },
   { "Float", 0, nullptr, (void*)FL_FLOAT_INPUT },
   {nullptr}
-};
-
-/**
- \brief Manage simple text input widgets.
- The managed class is derived from Fl_Input_, but for simplicity, deriving from
- Widget_Node seems sufficient here.
- */
-class Input_Node : public Widget_Node
-{
-public:
-  typedef Widget_Node super;
-  static Input_Node prototype;
-private:
-  Fl_Menu_Item *subtypes() override { return input_type_menu; }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
-    Fl_Input_ *myo = (Fl_Input_*)(w==4 ? ((Widget_Node*)factory)->o : o);
-    switch (w) {
-      case 4:
-      case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
-      case 1: myo->textfont(f); break;
-      case 2: myo->textsize(s); break;
-      case 3: myo->textcolor(c); break;
-    }
-    return 1;
-  }
-public:
-  void ideal_size(int &w, int &h) override {
-    auto layout = Fluid.proj.layout;
-    h = layout->textsize_not_null() + 8;
-    w = layout->textsize_not_null() * 6 + 8;
-    fluid::app::Snap_Action::better_size(w, h);
-  }
-  const char *type_name() override { return "Fl_Input"; }
-  const char *alt_type_name() override { return "fltk::Input"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    Fl_Input *myo = new Fl_Input(x, y, w, h, "input:");
-    myo->value("Text Input");
-    return myo;
-  }
-  Widget_Node *_make() override { return new Input_Node(); }
-  Type type() const override { return Type::Input; }
-  bool is_a(Type inType) const override { return (inType==Type::Input) ? true : super::is_a(inType); }
-  void copy_properties() override {
-    Widget_Node::copy_properties();
-    Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
-    d->textfont(s->textfont());
-    d->textsize(s->textsize());
-    d->textcolor(s->textcolor());
-    d->shortcut(s->shortcut());
-  }
 };
 
 Input_Node Input_Node::prototype;
@@ -807,7 +649,6 @@ public:
   }
   Widget_Node *_make() override { return new File_Input_Node(); }
   Type type() const override { return Type::File_Input; }
-  bool is_a(Type inType) const override { return (inType==Type::File_Input) ? true : super::is_a(inType); }
 };
 
 File_Input_Node File_Input_Node::prototype;
@@ -841,7 +682,6 @@ public:
   }
   Widget_Node *_make() override { return new Output_Node(); }
   Type type() const override { return Type::Output; }
-  bool is_a(Type inType) const override { return (inType==Type::Output) ? true : super::is_a(inType); }
 };
 
 Output_Node Output_Node::prototype;
@@ -852,51 +692,8 @@ Output_Node Output_Node::prototype;
 
 
 // ---- Text Display ----
-
-/**
- \brief Manage the Text Display as a base class.
- Fl_Text_Display is actually derived from Fl_Group, but for FLUID, deriving
- the type from Widget is better.
- */
-class Text_Display_Node : public Widget_Node
-{
-public:
-  typedef Widget_Node super;
-  static Text_Display_Node prototype;
-private:
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
-    Fl_Text_Display *myo = (Fl_Text_Display*)(w==4 ? ((Widget_Node*)factory)->o : o);
-    switch (w) {
-      case 4:
-      case 0: f = myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
-      case 1: myo->textfont(f); break;
-      case 2: myo->textsize(s); break;
-      case 3: myo->textcolor(c); break;
-    }
-    return 1;
-  }
-public:
-  void ideal_size(int &w, int &h) override {
-    auto layout = Fluid.proj.layout;
-    h = layout->textsize_not_null() * 4 + 8;
-    w = layout->textsize_not_null() * 10 + 8;
-    fluid::app::Snap_Action::better_size(w, h);
-  }
-  const char *type_name() override { return "Fl_Text_Display"; }
-  const char *alt_type_name() override { return "fltk::TextDisplay"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    Fl_Text_Display *myo = new Fl_Text_Display(x, y, w, h);
-    if (!Fluid.batch_mode) {
-      Fl_Text_Buffer *b = new Fl_Text_Buffer();
-      b->text("Lorem ipsum dolor\nsit amet, consetetur\nsadipscing elitr");
-      myo->buffer(b);
-    }
-    return myo;
-  }
-  Widget_Node *_make() override { return new Text_Display_Node(); }
-  Type type() const override { return Type::Text_Display; }
-  bool is_a(Type inType) const override { return (inType==Type::Text_Display) ? true : super::is_a(inType); }
-};
+// (Text_Display_Node is declared in factory.h so other translation units can
+// dynamic_cast to it.)
 
 Text_Display_Node Text_Display_Node::prototype;
 
@@ -925,7 +722,6 @@ public:
   }
   Widget_Node *_make() override { return new Text_Editor_Node(); }
   Type type() const override { return Type::Text_Editor; }
-  bool is_a(Type inType) const override { return (inType==Type::Text_Editor) ? true : super::is_a(inType); }
 };
 
 Text_Editor_Node Text_Editor_Node::prototype;
@@ -1020,7 +816,6 @@ public:
   }
   Widget_Node *_make() override {return new Terminal_Node();}
   Type type() const override { return Type::Terminal; }
-  bool is_a(Type inType) const override { return (inType==Type::Terminal) ? true : super::is_a(inType); }
 };
 
 Terminal_Node Terminal_Node::prototype;
@@ -1052,7 +847,6 @@ public:
   }
   Widget_Node *_make() override { return new Box_Node(); }
   Type type() const override { return Type::Box; }
-  bool is_a(Type inType) const override { return (inType==Type::Box) ? true : super::is_a(inType); }
 };
 
 Box_Node Box_Node::prototype;
@@ -1081,7 +875,6 @@ public:
   }
   Widget_Node *_make() override { return new Clock_Node(); }
   Type type() const override { return Type::Clock; }
-  bool is_a(Type inType) const override { return (inType==Type::Clock) ? true : super::is_a(inType); }
 };
 
 Clock_Node Clock_Node::prototype;
@@ -1115,57 +908,18 @@ public:
   }
   Widget_Node *_make() override { return new Progress_Node(); }
   Type type() const override { return Type::Progress; }
-  bool is_a(Type inType) const override { return (inType==Type::Progress) ? true : super::is_a(inType); }
 };
 
 Progress_Node Progress_Node::prototype;
 
 // ---- Spinner ----
+// (Spinner_Node and its spinner_type_menu are declared in factory.h so other
+// translation units can dynamic_cast to Spinner_Node.)
 
-static Fl_Menu_Item spinner_type_menu[] = {
+Fl_Menu_Item spinner_type_menu[] = {
   { "Integer", 0, nullptr, (void*)FL_INT_INPUT },
   { "Float",  0, nullptr, (void*)FL_FLOAT_INPUT },
   { nullptr }
-};
-
-/**
- \brief Manage Spinner widgets.
- \note Fl_Spinner is derived from Fl_Group, *not* Fl_Valuator as one may expect.
-    For FLUID, this means some special handling and no Group support.
- */
-class Spinner_Node : public Widget_Node
-{
-public:
-  typedef Widget_Node super;
-  static Spinner_Node prototype;
-private:
-  Fl_Menu_Item *subtypes() override { return spinner_type_menu; }
-  int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) override {
-    Fl_Spinner *myo = (Fl_Spinner*)(w==4 ? ((Widget_Node*)factory)->o : o);
-    switch (w) {
-      case 4:
-      case 0: f = (Fl_Font)myo->textfont(); s = myo->textsize(); c = myo->textcolor(); break;
-      case 1: myo->textfont(f); break;
-      case 2: myo->textsize(s); break;
-      case 3: myo->textcolor(c); break;
-    }
-    return 1;
-  }
-public:
-  void ideal_size(int &w, int &h) override {
-    auto layout = Fluid.proj.layout;
-    h = layout->textsize_not_null() + 8;
-    w = layout->textsize_not_null() * 4 + 8;
-    fluid::app::Snap_Action::better_size(w, h);
-  }
-  const char *type_name() override { return "Fl_Spinner"; }
-  const char *alt_type_name() override { return "fltk::Spinner"; }
-  Fl_Widget *widget(int x, int y, int w, int h) override {
-    return new Fl_Spinner(x, y, w, h, "spinner:");
-  }
-  Widget_Node *_make() override { return new Spinner_Node(); }
-  Type type() const override { return Type::Spinner; }
-  bool is_a(Type inType) const override { return (inType==Type::Spinner) ? true : super::is_a(inType); }
 };
 
 Spinner_Node Spinner_Node::prototype;
@@ -1285,7 +1039,7 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
   auto layout = Fluid.proj.layout;
   Node *t = ((Node*)inPrototype)->make(strategy);
   if (t) {
-    if (t->is_widget() && !t->is_a(Type::Window)) {
+    if (t->is_widget() && !dynamic_cast<Window_Node*>(t)) {
       auto layout = Fluid.proj.layout;
       Widget_Node *wt = (Widget_Node *)t;
       bool changed = false;
@@ -1312,14 +1066,14 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
         wt->textstuff(2, f, s, c);
       }
 
-      if (changed && t->is_a(Type::Menu_Item)) {
+      if (changed && dynamic_cast<Menu_Item_Node*>(t)) {
         Node * tt = t->parent;
-        while (tt && !tt->is_a(Type::Menu_Manager_)) tt = tt->parent;
+        while (tt && !dynamic_cast<Menu_Manager_Node*>(tt)) tt = tt->parent;
         if (tt)
           ((Menu_Manager_Node*)tt)->build_menu();
       }
     }
-    if (t->is_true_widget() && !t->is_a(Type::Window)) {
+    if (t->is_true_widget() && !dynamic_cast<Window_Node*>(t)) {
       // Resize and/or reposition new widget...
       Widget_Node *wt = (Widget_Node *)t;
 
@@ -1328,13 +1082,13 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
       int w = 0, h = 0;
       wt->ideal_size(w, h);
 
-      if ((t->parent && t->parent->is_a(Type::Flex))) {
+      if ((t->parent && dynamic_cast<Flex_Node*>(t->parent))) {
         if (Window_Node::popupx != 0x7FFFFFFF)
           ((Flex_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         t->parent->layout_widget();
-      } else if (   wt->is_a(Type::Group)
+      } else if (   dynamic_cast<Group_Node*>(wt)
                  && wt->parent
-                 && wt->parent->is_a(Type::Tabs)
+                 && dynamic_cast<Tabs_Node*>(wt->parent)
                  //&& (Window_Node::popupx == 0x7FFFFFFF)
                  && (layout->top_tabs_margin > 0)) {
         // If the widget is a group and the parent is tabs and the top tabs
@@ -1343,9 +1097,9 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
         Fl_Widget *po = ((Tabs_Node*)wt->parent)->o;
         wt->o->resize(po->x(), po->y() + layout->top_tabs_margin,
                       po->w(), po->h() - layout->top_tabs_margin);
-      } else if (   wt->is_a(Type::Menu_Bar)
+      } else if (   dynamic_cast<Menu_Bar_Node*>(wt)
                  && wt->parent
-                 && wt->parent->is_a(Type::Window)
+                 && dynamic_cast<Window_Node*>(wt->parent)
                  && (wt->prev == wt->parent)) {
         // If this is the first child of a window, make the menu bar as wide as
         // the window and drop it at 0, 0. Otherwise just use the suggested size.
@@ -1362,7 +1116,7 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
           wt->o->size(w, h);
         }
       }
-      if (t->parent && t->parent->is_a(Type::Grid)) {
+      if (t->parent && dynamic_cast<Grid_Node*>(t->parent)) {
         if (Window_Node::popupx != 0x7FFFFFFF) {
           ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
@@ -1370,7 +1124,7 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
         }
       }
     }
-    if (t->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(t)) {
       int x = 0, y = 0, w = 480, h = 320;
       Window_Node *wt = (Window_Node *)t;
       wt->ideal_size(w, h);

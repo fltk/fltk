@@ -56,7 +56,6 @@ public:
   Widget_Node *_make() override { return new Grid_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) override;
   Type type() const override { return Type::Grid; }
-  bool is_a(Type inType) const override { return (inType==Type::Grid) ? true : super::is_a(inType); }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   void write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate) override;

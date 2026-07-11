@@ -27,6 +27,8 @@
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
 #include "nodes/Window_Node.h"
+#include "nodes/Grid_Node.h"
+#include "nodes/factory.h"
 #include "panels/widget_panel.h"
 
 #include <FL/Fl.H>
@@ -67,7 +69,7 @@ int Widget_Node::is_public() const {
 }
 
 std::string subclassname(Node* l) {
-  if (l->is_a(Type::Menu_Bar)) {
+  if (dynamic_cast<Menu_Bar_Node*>(l)) {
     Menu_Bar_Node* mb = static_cast<Menu_Bar_Node*>(l);
     if (mb->is_sys_menu_bar())
       return mb->sys_menubar_name();
@@ -107,7 +109,7 @@ Node* Widget_Node::make(Strategy strategy) {
   Node* anchor = Fluid.proj.tree.current, *pp = anchor;
   if (pp && (strategy.placement() == Strategy::AFTER_CURRENT))
     pp = pp->parent;
-  while (pp && !pp->is_a(Type::Group)) {
+  while (pp && !dynamic_cast<Group_Node*>(pp)) {
     anchor = pp;
     strategy.placement(Strategy::AFTER_CURRENT);
     pp = pp->parent;
@@ -128,7 +130,7 @@ Node* Widget_Node::make(Strategy strategy) {
     B = 25;
 
   int ULX,ULY; // parent's origin in window
-  if (!p->is_a(Type::Window)) { // if it is a group, add corner
+  if (!dynamic_cast<Window_Node*>(p)) { // if it is a group, add corner
     ULX = p->o->x(); ULY = p->o->y();
   } else {
     ULX = ULY = 0;
@@ -136,7 +138,7 @@ Node* Widget_Node::make(Strategy strategy) {
 
   // Figure out a position and size for the widget
   int X,Y,W,H;
-  if (is_a(Type::Group)) {     // fill the parent with the widget
+  if (dynamic_cast<Group_Node*>(this)) {     // fill the parent with the widget
     X = ULX+B;
     W = p->o->w()-B;
     Y = ULY+B;
@@ -213,11 +215,11 @@ void Widget_Node::tooltip(const std::string& text) {
 
 void Widget_Node::redraw() {
   Node* t = this;
-  if (is_a(Type::Menu_Item)) {
+  if (dynamic_cast<Menu_Item_Node*>(this)) {
     // find the menu button that parents this menu:
     do {
       t = t->parent;
-    } while (t && t->is_a(Type::Menu_Item));
+    } while (t && dynamic_cast<Menu_Item_Node*>(t));
     // kludge to cause build_menu to be called again:
     if (t)
       t->add_child(nullptr, nullptr);
@@ -702,7 +704,7 @@ void set_whenmenu(int n) {
 
 
 uchar Widget_Node::resizable() const {
-  if (is_a(Type::Window))
+  if (dynamic_cast<const Window_Node*>(this))
     return ((Fl_Window*)o)->resizable() != nullptr;
   Fl_Group* p = (Fl_Group*)o->parent();
   if (p)
@@ -715,7 +717,7 @@ void Widget_Node::resizable(uchar v) {
   if (v) {
     if (resizable())
       return;
-    if (is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(this)) {
       ((Fl_Window*)o)->resizable(o);
     } else {
       Fl_Group* p = (Fl_Group*)o->parent();
@@ -724,7 +726,7 @@ void Widget_Node::resizable(uchar v) {
   } else {
     if (!resizable())
       return;
-    if (is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(this)) {
       ((Fl_Window*)o)->resizable(nullptr);
     } else {
       Fl_Group* p = (Fl_Group*)o->parent();
@@ -842,7 +844,7 @@ void color_common(Fl_Color c) {
     if (o->selected && o->is_widget()) {
       Widget_Node* q = (Widget_Node*)o;
       q->o->color(c); q->o->redraw();
-      if (q->parent && q->parent->is_a(Type::Tabs)) {
+      if (q->parent && dynamic_cast<Tabs_Node*>(q->parent)) {
         if (q->o->parent()) {
           q->o->parent()->redraw();
         }
@@ -914,7 +916,7 @@ static Fl_Menu_Item alignmenu[] = {
 void align_cb(Fl_Button* i, void* v) {
   Fl_Align b = Fl_Align(fl_uintptr_t(i->user_data()));
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       i->deactivate();
       return;
     } else {
@@ -957,7 +959,7 @@ void align_cb(Fl_Button* i, void* v) {
 
 void align_position_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       i->deactivate();
       return;
     } else {
@@ -992,7 +994,7 @@ void align_position_cb(Fl_Choice* i, void* v) {
 
 void align_text_image_cb(Fl_Choice* i, void* v) {
   if (v == LOAD) {
-    if (current_widget->is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
       i->deactivate();
       return;
     } else {
@@ -1071,14 +1073,14 @@ void textcolor_common(Fl_Color c) {
 //                           void (*load_margin)(Fl_Flex*,Fl_Value_Input*),
 //                           int (*update_margin)(Fl_Flex*,int)) {
 //  if (v == LOAD) {
-//    if (current_widget->is_a(Type::Flex)) {
+//    if (dynamic_cast<Flex_Node*>(current_widget)) {
 //      load_margin((Fl_Flex*)current_widget->o, i);
 //    }
 //  } else {
 //    int mod = 0;
 //    int new_value = (int)i->value();
 //    for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
-//      if (o->selected && o->is_a(Type::Flex)) {
+//      if (o->selected && dynamic_cast<Flex_Node*>(o)) {
 //        Flex_Node* q = (Flex_Node*)o;
 //        Fl_Flex* w = (Fl_Flex*)q->o;
 //        if (update_margin(w, new_value)) {
@@ -1216,7 +1218,7 @@ void live_mode_cb(Fl_Button* o, void *) {
         live_window->resizable(live_widget);
         live_window->set_modal(); // block all other UI
         live_window->callback(leave_live_mode_cb);
-        if (current_widget->is_a(Type::Window)) {
+        if (dynamic_cast<Window_Node*>(current_widget)) {
           Window_Node* w = (Window_Node*)current_widget;
           int mw = w->sr_min_w; if (mw>0) mw += 20;
           int mh = w->sr_min_h; if (mh>0) mh += 55;
@@ -1250,35 +1252,35 @@ void load_panel() {
   numselected = 0;
   current_widget = nullptr;
   if (Fluid.proj.tree.current) {
-    if (Fluid.proj.tree.current->is_a(Type::Data)) {
+    if (dynamic_cast<Data_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(data_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::Comment)) {
+    } else if (dynamic_cast<Comment_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(comment_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::Class)) {
+    } else if (dynamic_cast<Class_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(class_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::DeclBlock)) {
+    } else if (dynamic_cast<DeclBlock_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(declblock_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::Decl)) {
+    } else if (dynamic_cast<Decl_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(decl_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::CodeBlock)) {
+    } else if (dynamic_cast<CodeBlock_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(codeblock_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::Code)) {
+    } else if (dynamic_cast<Code_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(code_tabs);
       numselected = 1;
-    } else if (Fluid.proj.tree.current->is_a(Type::Function)) {
+    } else if (dynamic_cast<Function_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(func_tabs);
       numselected = 1;
@@ -1296,7 +1298,7 @@ void load_panel() {
   }
   if (current_widget) {
     tabs_wizard->value(widget_tabs);
-    if (current_widget && current_widget->is_a(Type::Grid)) {
+    if (current_widget && dynamic_cast<Grid_Node*>(current_widget)) {
       if (widget_tab_grid->parent()!=widget_tabs)
         widget_tabs->add(widget_tab_grid);
     } else {
@@ -1304,7 +1306,7 @@ void load_panel() {
         widget_tabs_repo->add(widget_tab_grid);
       }
     }
-    if (current_widget && current_widget->parent && current_widget->parent->is_a(Type::Grid)) {
+    if (current_widget && current_widget->parent && dynamic_cast<Grid_Node*>(current_widget->parent)) {
       if (widget_tab_grid_child->parent()!=widget_tabs)
         widget_tabs->add(widget_tab_grid_child);
     } else {
@@ -1521,7 +1523,7 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
       Node* q = nullptr;
       for (Node* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
-      if (!q || !q->is_a(Type::Widget_Class))
+      if (!q || !dynamic_cast<Widget_Class_Node*>(q))
         f.write_c("->user_data()");
       f.write_c("))->" + std::string(cn) + "_i(o,v);\n}\n");
     }
@@ -1547,7 +1549,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
     f.write_h(f.indent(1) + "static void " + cn + "(" + t + "*, " + ut + ");\n");
   }
   // figure out if local variable will be used (prevent compiler warnings):
-  int wused = !name() && is_a(Type::Window);
+  int wused = !name() && dynamic_cast<Window_Node*>(this);
   const char* ptr;
 
   f.varused = wused;
@@ -1609,14 +1611,14 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   write_comment_inline_c(f);
   if (f.varused) f.write_c(t + "* o = ");
   if (name()) f.write_c(std::string(name()) + " = ");
-  if (is_a(Type::Window)) {
+  if (dynamic_cast<Window_Node*>(this)) {
     // Handle special case where user is faking a Fl_Group type as a window,
     // there is no 2-argument constructor in that case:
     if (t.find("Window")==t.npos)
       f.write_c("new " + t + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()));
     else
       f.write_c("new " + t + "(" + std::to_string(o->w()) + ", " + std::to_string(o->h()));
-  } else if (is_a(Type::Menu_Bar)
+  } else if (dynamic_cast<Menu_Bar_Node*>(this)
              && ((Menu_Bar_Node*)this)->is_sys_menu_bar()
              && is_in_class()) {
     f.write_c("(" + t + "*)new " + ((Menu_Bar_Node*)this)->sys_menubar_proxy_name()
@@ -1724,9 +1726,9 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     f.write_c(");\n");
   }
 
-  if (is_a(Type::Spinner) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
+  if (dynamic_cast<Spinner_Node*>(this) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type())
     f.write_c(f.indent() + var + "->type(" + std::to_string(((Fl_Spinner*)o)->type()) + ");\n");
-  else if (o->type() != tplate->type() && !is_a(Type::Window))
+  else if (o->type() != tplate->type() && !dynamic_cast<Window_Node*>(this))
     f.write_c(f.indent() + var + "->type(" + std::to_string(o->type()) + ");\n");
   if (o->box() != tplate->box() || !subclass().empty())
     f.write_c(f.indent() + var + "->box(FL_" + boxname(o->box()) + ");\n");
@@ -1734,9 +1736,9 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   // write shortcut command if needed
   int shortcut = 0;
   if (is_button()) shortcut = ((Fl_Button*)o)->shortcut();
-  else if (is_a(Type::Input)) shortcut = ((Fl_Input_*)o)->shortcut();
-  else if (is_a(Type::Value_Input)) shortcut = ((Fl_Value_Input*)o)->shortcut();
-  else if (is_a(Type::Text_Display)) shortcut = ((Fl_Text_Display*)o)->shortcut();
+  else if (dynamic_cast<Input_Node*>(this)) shortcut = ((Fl_Input_*)o)->shortcut();
+  else if (dynamic_cast<Value_Input_Node*>(this)) shortcut = ((Fl_Value_Input*)o)->shortcut();
+  else if (dynamic_cast<Text_Display_Node*>(this)) shortcut = ((Fl_Text_Display*)o)->shortcut();
   if (shortcut) {
     int s = shortcut;
     f.write_c(f.indent() + var + "->shortcut(");
@@ -1756,7 +1758,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     }
   }
 
-  if (is_a(Type::Button)) {
+  if (dynamic_cast<Button_Node*>(this)) {
     Fl_Button* b = (Fl_Button*)o;
     if (b->down_box())
       f.write_c(f.indent() + var + "->down_box(FL_" + boxname(b->down_box()) + ");\n");
@@ -1764,11 +1766,11 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
       f.write_c(f.indent() + var + "->value(1);\n");
     if (b->compact())
       f.write_c(f.indent() + var + "->compact(" + std::to_string(b->compact()) + ");\n");
-  } else if (is_a(Type::Input_Choice)) {
+  } else if (dynamic_cast<Input_Choice_Node*>(this)) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box())
       f.write_c(f.indent() + var + "->down_box(FL_" + boxname(b->down_box()) + ");\n");
-  } else if (is_a(Type::Menu_Manager_)) {
+  } else if (dynamic_cast<Menu_Manager_Node*>(this)) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box())
       f.write_c(f.indent() + var + "->down_box(FL_" + boxname(b->down_box()) + ");\n");
@@ -1793,7 +1795,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     f.write_c(f.indent() + var + "->vertical_label_margin(" + std::to_string(o->vertical_label_margin()) + ");\n");
   if (o->label_image_spacing() != tplate->label_image_spacing())
     f.write_c(f.indent() + var + "->label_image_spacing(" + std::to_string(o->label_image_spacing()) + ");\n");
-  if (is_a(Type::Valuator_)) {
+  if (dynamic_cast<Valuator_Node*>(this)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
     if (v->minimum()!=t->minimum())
@@ -1803,19 +1805,19 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     if (v->step()!=t->step())
       f.write_c(f.indent() + var + "->step(" + fluid::io::to_string_g(v->step()) + ");\n");
     if (v->value()) {
-      if (is_a(Type::Scrollbar)) { // Fl_Scrollbar::value(double) is not available
+      if (dynamic_cast<Scrollbar_Node*>(this)) { // Fl_Scrollbar::value(double) is not available
         f.write_c(f.indent() + var + "->Fl_Slider::value(" + fluid::io::to_string_g(v->value()) + ");\n");
       } else {
         f.write_c(f.indent() + var + "->value(" + fluid::io::to_string_g(v->value()) + ");\n");
       }
     }
-    if (is_a(Type::Slider)) {
+    if (dynamic_cast<Slider_Node*>(this)) {
       double x = ((Fl_Slider*)v)->slider_size();
       double y = ((Fl_Slider*)t)->slider_size();
       if (x != y) f.write_c(f.indent() + var + "->slider_size(" + fluid::io::to_string_g(x) + ");\n");
     }
   }
-  if (is_a(Type::Spinner)) {
+  if (dynamic_cast<Spinner_Node*>(this)) {
     Fl_Spinner* v = (Fl_Spinner*)o;
     Fl_Spinner* t = (Fl_Spinner*)(tplate);
     if (v->minimum()!=t->minimum())
@@ -1868,12 +1870,12 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     f.write_c(f.indent() + var + "->hide();\n");
   if (!o->active())
     f.write_c(f.indent() + var + "->deactivate();\n");
-  if (!is_a(Type::Group) && resizable())
+  if (!dynamic_cast<Group_Node*>(this) && resizable())
     f.write_c(f.indent() + "Fl_Group::current()->resizable(" + var + ");\n");
   if (hotspot()) {
     if (is_class())
       f.write_c(f.indent() + "hotspot(" + var + ");\n");
-    else if (is_a(Type::Window))
+    else if (dynamic_cast<Window_Node*>(this))
       f.write_c(f.indent() + var + "->hotspot(" + var + ");\n");
     else
       f.write_c(f.indent() + var + "->window()->hotspot(" + var + ");\n");
@@ -1915,38 +1917,38 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   inactive_image.write_properties(f, true);
   f.write_string("xywh {%d %d %d %d}", o->x(), o->y(), o->w(), o->h());
   Fl_Widget* tplate = ((Widget_Node*)factory)->o;
-  if (is_a(Type::Spinner) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
+  if (dynamic_cast<Spinner_Node*>(this) && ((Fl_Spinner*)o)->type() != ((Fl_Spinner*)tplate)->type()) {
     f.write_string("type");
     f.write_word(item_name(subtypes(), ((Fl_Spinner*)o)->type()));
-  } else if (subtypes() && (o->type() != tplate->type() || is_a(Type::Window))) {
+  } else if (subtypes() && (o->type() != tplate->type() || dynamic_cast<Window_Node*>(this))) {
     f.write_string("type");
     f.write_word(item_name(subtypes(), o->type()));
   }
   if (o->box() != tplate->box()) {
     f.write_string("box"); f.write_word(boxname(o->box()));}
-  if (is_a(Type::Input)) {
+  if (dynamic_cast<Input_Node*>(this)) {
     Fl_Input_* b = (Fl_Input_*)o;
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
-  if (is_a(Type::Value_Input)) {
+  if (dynamic_cast<Value_Input_Node*>(this)) {
     Fl_Value_Input* b = (Fl_Value_Input*)o;
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
-  if (is_a(Type::Text_Display)) {
+  if (dynamic_cast<Text_Display_Node*>(this)) {
     Fl_Text_Display* b = (Fl_Text_Display*)o;
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
   }
-  if (is_a(Type::Button)) {
+  if (dynamic_cast<Button_Node*>(this)) {
     Fl_Button* b = (Fl_Button*)o;
     if (b->down_box()) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
     if (b->shortcut()) f.write_string("shortcut 0x%x", b->shortcut());
     if (b->value()) f.write_string("value 1");
-  } else if (is_a(Type::Input_Choice)) {
+  } else if (dynamic_cast<Input_Choice_Node*>(this)) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
-  } else if (is_a(Type::Menu_)) {
+  } else if (dynamic_cast<Menu_Base_Node*>(this)) {
     Fl_Menu_* b = (Fl_Menu_*)o;
     if (b->down_box()) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
@@ -1975,20 +1977,20 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
     f.write_string("image_spacing %d", o->label_image_spacing());
   if (o->when() != tplate->when())
     f.write_string("when %d", o->when());
-  if (is_a(Type::Valuator_)) {
+  if (dynamic_cast<Valuator_Node*>(this)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
     if (v->minimum()!=t->minimum()) f.write_string("minimum %g",v->minimum());
     if (v->maximum()!=t->maximum()) f.write_string("maximum %g",v->maximum());
     if (v->step()!=t->step()) f.write_string("step %g",v->step());
     if (v->value()!=0.0) f.write_string("value %g",v->value());
-    if (is_a(Type::Slider)) {
+    if (dynamic_cast<Slider_Node*>(this)) {
       double x = ((Fl_Slider*)v)->slider_size();
       double y = ((Fl_Slider*)t)->slider_size();
       if (x != y) f.write_string("slider_size %g", x);
     }
   }
-  if (is_a(Type::Spinner)) {
+  if (dynamic_cast<Spinner_Node*>(this)) {
     Fl_Spinner* v = (Fl_Spinner*)o;
     Fl_Spinner* t = (Fl_Spinner*)(tplate);
     if (v->minimum()!=t->minimum()) f.write_string("minimum %g",v->minimum());
@@ -2005,8 +2007,8 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   if (!o->visible() && !override_visible_) f.write_string("hide");
   if (!o->active()) f.write_string("deactivate");
   if (resizable()) f.write_string("resizable");
-  if (hotspot()) f.write_string(is_a(Type::Menu_Item) ? "divider" : "hotspot");
-  if (is_a(Type::Menu_Item)) {
+  if (hotspot()) f.write_string(dynamic_cast<Menu_Item_Node*>(this) ? "divider" : "hotspot");
+  if (dynamic_cast<Menu_Item_Node*>(this)) {
     auto nd = dynamic_cast<Menu_Item_Node*>(this);
     if (nd && nd->headline()) f.write_string("headline");
   }
@@ -2047,8 +2049,8 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
       active_image.scale_h = h;
     }
   } else if (!strcmp(c,"image")) {
-    active_image.set(f.read_word(), is_a(Type::Window) ? nullptr : o, false);
-    if (!is_a(Type::Window)) redraw();
+    active_image.set(f.read_word(), dynamic_cast<Window_Node*>(this) ? nullptr : o, false);
+    if (!dynamic_cast<Window_Node*>(this)) redraw();
     // starting in 2023, `image` is always followed by `compress_image`
     // the code below is for compatibility with older .fl files
     std::string ext = fl_filename_ext_str(active_image.name);
@@ -2067,8 +2069,8 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
       inactive_image.scale_h = h;
     }
   } else if (!strcmp(c,"deimage")) {
-    inactive_image.set(f.read_word(), is_a(Type::Window) ? nullptr : o, true);
-    if (!is_a(Type::Window)) redraw();
+    inactive_image.set(f.read_word(), dynamic_cast<Window_Node*>(this) ? nullptr : o, true);
+    if (!dynamic_cast<Window_Node*>(this)) redraw();
     // starting in 2023, `deimage` is always followed by `compress_deimage`
     // the code below is for compatibility with older .fl files
     std::string ext = fl_filename_ext_str(inactive_image.name);
@@ -2082,7 +2084,7 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"compress_deimage")) {
     inactive_image.compress = (int)atol(f.read_word());
   } else if (!strcmp(c,"type")) {
-    if (is_a(Type::Spinner))
+    if (dynamic_cast<Spinner_Node*>(this))
       ((Fl_Spinner*)o)->type(item_number(subtypes(), f.read_word()));
     else
       o->type(item_number(subtypes(), f.read_word()));
@@ -2092,19 +2094,19 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
       if (x == ZERO_ENTRY) x = 0;
       o->box((Fl_Boxtype)x);
     } else if (sscanf(value,"%d",&x) == 1) o->box((Fl_Boxtype)x);
-  } else if (is_a(Type::Button) && !strcmp(c,"down_box")) {
+  } else if (dynamic_cast<Button_Node*>(this) && !strcmp(c,"down_box")) {
     const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Button*)o)->down_box((Fl_Boxtype)x);
     }
-  } else if (is_a(Type::Input_Choice) && !strcmp(c,"down_box")) {
+  } else if (dynamic_cast<Input_Choice_Node*>(this) && !strcmp(c,"down_box")) {
     const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
       ((Fl_Input_Choice*)o)->down_box((Fl_Boxtype)x);
     }
-  } else if (is_a(Type::Menu_) && !strcmp(c,"down_box")) {
+  } else if (dynamic_cast<Menu_Base_Node*>(this) && !strcmp(c,"down_box")) {
     const char* value = f.read_word();
     if ((x = boxnumber(value))) {
       if (x == ZERO_ENTRY) x = 0;
@@ -2134,8 +2136,8 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
     if (!strcmp(c,"image")) {
       if (!Fluid.proj.image_assets.find_or_create(label()))
         f.read_error("Image file '%s' not found", label());
-      active_image.set(label(), is_a(Type::Window) ? nullptr : o, false);
-      if (!is_a(Type::Window)) redraw();
+      active_image.set(label(), dynamic_cast<Window_Node*>(this) ? nullptr : o, false);
+      if (!dynamic_cast<Window_Node*>(this)) redraw();
       label("");
     } else {
       o->labeltype((Fl_Labeltype)item_number(labeltypemenu,c));
@@ -2157,18 +2159,18 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"when")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) o->when(x);
   } else if (!strcmp(c,"minimum")) {
-    if (is_a(Type::Valuator_)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),nullptr));
-    if (is_a(Type::Spinner)) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Valuator_Node*>(this)) ((Fl_Valuator*)o)->minimum(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Spinner_Node*>(this)) ((Fl_Spinner*)o)->minimum(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"maximum")) {
-    if (is_a(Type::Valuator_)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),nullptr));
-    if (is_a(Type::Spinner)) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Valuator_Node*>(this)) ((Fl_Valuator*)o)->maximum(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Spinner_Node*>(this)) ((Fl_Spinner*)o)->maximum(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"step")) {
-    if (is_a(Type::Valuator_)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),nullptr));
-    if (is_a(Type::Spinner)) ((Fl_Spinner*)o)->step(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Valuator_Node*>(this)) ((Fl_Valuator*)o)->step(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Spinner_Node*>(this)) ((Fl_Spinner*)o)->step(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"value")) {
-    if (is_a(Type::Valuator_)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),nullptr));
-    if (is_a(Type::Spinner)) ((Fl_Spinner*)o)->value(strtod(f.read_word(),nullptr));
-  } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) && is_a(Type::Slider)) {
+    if (dynamic_cast<Valuator_Node*>(this)) ((Fl_Valuator*)o)->value(strtod(f.read_word(),nullptr));
+    if (dynamic_cast<Spinner_Node*>(this)) ((Fl_Spinner*)o)->value(strtod(f.read_word(),nullptr));
+  } else if ( (!strcmp(c,"slider_size") || !strcmp(c,"size")) && dynamic_cast<Slider_Node*>(this)) {
     ((Fl_Slider*)o)->slider_size(strtod(f.read_word(),nullptr));
   } else if (!strcmp(c,"textfont")) {
     if (sscanf(f.read_word(),"%d",&x) == 1) {ft=(Fl_Font)x; textstuff(1,ft,s,cc);}
@@ -2185,7 +2187,7 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"hotspot") || !strcmp(c, "divider")) {
     hotspot(1);
   } else if (!strcmp(c,"headline")) {
-    if (is_a(Type::Menu_Item)) {
+    if (dynamic_cast<Menu_Item_Node*>(this)) {
       auto nd = dynamic_cast<Menu_Item_Node*>(this);
       if (nd) nd->headline(true);
     }
@@ -2194,9 +2196,9 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
   } else if (!strcmp(c,"shortcut")) {
     int shortcut = (int)strtol(f.read_word(),nullptr,0);
     if (is_button()) ((Fl_Button*)o)->shortcut(shortcut);
-    else if (is_a(Type::Input)) ((Fl_Input_*)o)->shortcut(shortcut);
-    else if (is_a(Type::Value_Input)) ((Fl_Value_Input*)o)->shortcut(shortcut);
-    else if (is_a(Type::Text_Display)) ((Fl_Text_Display*)o)->shortcut(shortcut);
+    else if (dynamic_cast<Input_Node*>(this)) ((Fl_Input_*)o)->shortcut(shortcut);
+    else if (dynamic_cast<Value_Input_Node*>(this)) ((Fl_Value_Input*)o)->shortcut(shortcut);
+    else if (dynamic_cast<Text_Display_Node*>(this)) ((Fl_Text_Display*)o)->shortcut(shortcut);
   } else {
     if (!strncmp(c,"code",4)) {
       int n = atoi(c+4);
@@ -2242,7 +2244,7 @@ int Widget_Node::read_fdesign(const char* propname, const char* value) {
     if (sscanf(value,"%f %f %f %f",&x,&y,&w,&h) == 4) {
       if (fluid::io::fdesign_flip) {
         Node* p;
-        for (p = parent; p && !p->is_a(Type::Window); p = p->parent) {/*empty*/}
+        for (p = parent; p && !dynamic_cast<Window_Node*>(p); p = p->parent) {/*empty*/}
         if (p && p->is_widget()) y = ((Widget_Node*)p)->o->h()-(y+h);
       }
       x += Fluid.pasteoffset;
@@ -2398,7 +2400,7 @@ void Widget_Node::copy_properties() {
   }
 
   // copy all attributes specific to widgets derived from Fl_Input_
-  if (is_a(Type::Input)) {
+  if (dynamic_cast<Input_Node*>(this)) {
     Fl_Input_* d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
     d->shortcut(s->shortcut());
     d->textfont(ff);
@@ -2407,7 +2409,7 @@ void Widget_Node::copy_properties() {
   }
 
   // copy all attributes specific to widgets derived from Fl_Value_Input
-  if (is_a(Type::Value_Input)) {
+  if (dynamic_cast<Value_Input_Node*>(this)) {
     Fl_Value_Input* d = (Fl_Value_Input*)live_widget, *s = (Fl_Value_Input*)o;
     d->shortcut(s->shortcut());
     d->textfont(ff);
@@ -2416,7 +2418,7 @@ void Widget_Node::copy_properties() {
   }
 
   // copy all attributes specific to widgets derived from Fl_Text_Display
-  if (is_a(Type::Text_Display)) {
+  if (dynamic_cast<Text_Display_Node*>(this)) {
     Fl_Text_Display* d = (Fl_Text_Display*)live_widget, *s = (Fl_Text_Display*)o;
     d->shortcut(s->shortcut());
     d->textfont(ff);
@@ -2425,20 +2427,20 @@ void Widget_Node::copy_properties() {
   }
 
   // copy all attributes specific to Fl_Valuator and derived classes
-  if (is_a(Type::Valuator_)) {
+  if (dynamic_cast<Valuator_Node*>(this)) {
     Fl_Valuator* d = (Fl_Valuator*)live_widget, *s = (Fl_Valuator*)o;
     d->minimum(s->minimum());
     d->maximum(s->maximum());
     d->step(s->step());
     d->value(s->value());
-    if (is_a(Type::Slider)) {
+    if (dynamic_cast<Slider_Node*>(this)) {
       Fl_Slider* d = (Fl_Slider*)live_widget, *s = (Fl_Slider*)o;
       d->slider_size(s->slider_size());
     }
   }
 
   // copy all attributes specific to Fl_Spinner and derived classes
-  if (is_a(Type::Spinner)) {
+  if (dynamic_cast<Spinner_Node*>(this)) {
     Fl_Spinner* d = (Fl_Spinner*)live_widget, *s = (Fl_Spinner*)o;
     d->minimum(s->minimum());
     d->maximum(s->maximum());

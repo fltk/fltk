@@ -63,7 +63,6 @@ public:
   void remove_child(Node*) override;
   int can_have_children() const override {return 1;}
   Type type() const override { return Type::Group; }
-  bool is_a(Type inType) const override { return (inType==Type::Group) ? true : super::is_a(inType); }
   Fl_Widget *enter_live_mode(int top=0) override;
   void leave_live_mode() override;
   void copy_properties() override;
@@ -86,7 +85,6 @@ public:
   const char *alt_type_name() override {return "fltk::PackedGroup";}
   Widget_Node *_make() override {return new Pack_Node();}
   Type type() const override { return Type::Pack; }
-  bool is_a(Type inType) const override { return (inType==Type::Pack) ? true : super::is_a(inType); }
   Fl_Widget *enter_live_mode(int top=0) override;
   void copy_properties() override;
 };
@@ -121,7 +119,6 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Type type() const override { return Type::Flex; }
-  bool is_a(Type inType) const override { return (inType==Type::Flex) ? true : super::is_a(inType); }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   Fl_Widget *enter_live_mode(int top=0) override;
@@ -155,7 +152,6 @@ public:
   Widget_Node *_make() override { return new Table_Node(); }
   Fl_Widget *widget(int X, int Y, int W, int H) override;
   Type type() const override { return Type::Table; }
-  bool is_a(Type inType) const override { return (inType==Type::Table) ? true : super::is_a(inType); }
   Fl_Widget *enter_live_mode(int top=0) override;
   void add_child(Node*, Node*) override;
   void move_child(Node*, Node*) override;
@@ -188,7 +184,6 @@ public:
   void add_child(Node*, Node*) override;
   void remove_child(Node*) override;
   Type type() const override { return Type::Tabs; }
-  bool is_a(Type inType) const override { return (inType==Type::Tabs) ? true : super::is_a(inType); }
   Fl_Widget *enter_live_mode(int top=0) override;
 };
 
@@ -209,7 +204,6 @@ public:
   const char *alt_type_name() override {return "fltk::ScrollGroup";}
   Widget_Node *_make() override {return new Scroll_Node();}
   Type type() const override { return Type::Scroll; }
-  bool is_a(Type inType) const override { return (inType==Type::Scroll) ? true : super::is_a(inType); }
   Fl_Widget *enter_live_mode(int top=0) override;
   void copy_properties() override;
 };
@@ -228,7 +222,6 @@ public:
   const char *alt_type_name() override {return "fltk::TileGroup";}
   Widget_Node *_make() override {return new Tile_Node();}
   Type type() const override { return Type::Tile; }
-  bool is_a(Type inType) const override { return (inType==Type::Tile) ? true : super::is_a(inType); }
   Fl_Widget *enter_live_mode(int top=0) override;
   void leave_live_mode() override;
   void copy_properties() override;
@@ -257,7 +250,6 @@ public:
     Fl_Wizard_Proxy *g = new Fl_Wizard_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Widget_Node *_make() override {return new Wizard_Node();}
   Type type() const override { return Type::Wizard; }
-  bool is_a(Type inType) const override { return (inType==Type::Wizard) ? true : super::is_a(inType); }
 };
 
 #endif // FLUID_NODES_GROUP_NODE_H

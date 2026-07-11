@@ -31,6 +31,7 @@
 #include "nodes/Widget_Node.h"
 #include "nodes/Grid_Node.h"
 #include "nodes/Window_Node.h"
+#include "nodes/Menu_Node.h"
 #include "widgets/Node_Browser.h"
 #include "../../src/flstring.h"
 
@@ -351,7 +352,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
       // FIXME: this has no business in the file reader!
       // TODO: this is called whenever something is pasted from the top level into a grid
       //    It makes sense to make this more universal for other widget types too.
-      if (merge && t && t->parent && t->parent->is_a(Type::Grid)) {
+      if (merge && t && t->parent && dynamic_cast<Grid_Node*>(t->parent)) {
         if (Window_Node::popupx != 0x7FFFFFFF) {
           ((Grid_Node*)t->parent)->insert_child_at(((Widget_Node*)t)->o, Window_Node::popupx, Window_Node::popupy);
         } else {
@@ -404,7 +405,7 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
   Fluid.proj.tree.current = nullptr;
   // Force menu items to be rebuilt...
   for (o = Fluid.proj.tree.first; o; o = o->next) {
-    if (o->is_a(Type::Menu_Manager_)) {
+    if (dynamic_cast<Menu_Manager_Node*>(o)) {
       o->add_child(nullptr,nullptr);
     }
   }

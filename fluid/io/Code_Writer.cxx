@@ -461,12 +461,12 @@ void Code_Writer::write_c_indented(const std::string& codeblock, int additional_
  members of the class itself.
  */
 bool is_class_member(Node *t) {
-  return    t->is_a(Type::Function)
-         || t->is_a(Type::Decl)
-         || t->is_a(Type::Data);
-//         || t->is_a(Type::Class)          // FLUID can't handle a class inside a class
-//         || t->is_a(Type::Widget_Class)   // ???
-//         || t->is_a(Type::DeclBlock)      // Declaration blocks are generally not handled well
+  return    dynamic_cast<Function_Node*>(t)
+         || dynamic_cast<Decl_Node*>(t)
+         || dynamic_cast<Data_Node*>(t);
+//         || dynamic_cast<Class_Node*>(t)          // FLUID can't handle a class inside a class
+//         || dynamic_cast<Widget_Class_Node*>(t)   // ???
+//         || dynamic_cast<DeclBlock_Node*>(t)      // Declaration blocks are generally not handled well
 }
 
 /**
@@ -482,8 +482,8 @@ bool is_class_member(Node *t) {
  \see is_class_member(Node *t)
  */
 bool is_comment_before_class_member(Node *q) {
-  if (q->is_a(Type::Comment) && q->next && q->next->level==q->level) {
-    if (q->next->is_a(Type::Comment))
+  if (dynamic_cast<Comment_Node*>(q) && q->next && q->next->level==q->level) {
+    if (dynamic_cast<Comment_Node*>(q->next))
       return is_comment_before_class_member(q->next);
     if (is_class_member(q->next))
       return true;
@@ -497,11 +497,11 @@ bool is_comment_before_class_member(Node *q) {
  \return pointer to the next sibling
  */
 Node* Code_Writer::write_static(Node* p) {
-  if (write_codeview) p->header_static_start = header_pos();
-  if (write_codeview) p->code_static_start = code_pos();
+  if (write_codeview) p->header_static.start = header_pos();
+  if (write_codeview) p->code_static.start = code_pos();
   p->write_static(*this);
-  if (write_codeview) p->code_static_end = code_pos();
-  if (write_codeview) p->header_static_end = header_pos();
+  if (write_codeview) p->code_static.end = code_pos();
+  if (write_codeview) p->header_static.end = header_pos();
 
   Node* q;
   for (q = p->next; q && q->level > p->level;) {
@@ -521,12 +521,12 @@ Node* Code_Writer::write_static(Node* p) {
 Node* Code_Writer::write_code(Node* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
-  if (!(p==Fluid.proj.tree.last && p->is_a(Type::Comment))) {
-    if (write_codeview) p->code1_start = code_pos();
-    if (write_codeview) p->header1_start = header_pos();
+  if (!(p==Fluid.proj.tree.last && dynamic_cast<Comment_Node*>(p))) {
+    if (write_codeview) p->code1.start = code_pos();
+    if (write_codeview) p->header1.start = header_pos();
     p->write_code1(*this);
-    if (write_codeview) p->code1_end = code_pos();
-    if (write_codeview) p->header1_end = header_pos();
+    if (write_codeview) p->code1.end = code_pos();
+    if (write_codeview) p->header1.end = header_pos();
   }
   // recursively write the code of all children
   Node* q;
@@ -545,11 +545,11 @@ Node* Code_Writer::write_code(Node* p) {
     }
 
     // write all code that come after the children
-    if (write_codeview) p->code2_start = code_pos();
-    if (write_codeview) p->header2_start = header_pos();
+    if (write_codeview) p->code2.start = code_pos();
+    if (write_codeview) p->header2.start = header_pos();
     p->write_code2(*this);
-    if (write_codeview) p->code2_end = code_pos();
-    if (write_codeview) p->header2_end = header_pos();
+    if (write_codeview) p->code2.end = code_pos();
+    if (write_codeview) p->header2.end = header_pos();
 
     for (q = p->next; q && q->level > p->level;) {
       if (is_class_member(q) || is_comment_before_class_member(q)) {
@@ -567,11 +567,11 @@ Node* Code_Writer::write_code(Node* p) {
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children
-    if (write_codeview) p->code2_start = code_pos();
-    if (write_codeview) p->header2_start = header_pos();
+    if (write_codeview) p->code2.start = code_pos();
+    if (write_codeview) p->header2.start = header_pos();
     p->write_code2(*this);
-    if (write_codeview) p->code2_end = code_pos();
-    if (write_codeview) p->header2_end = header_pos();
+    if (write_codeview) p->code2.end = code_pos();
+    if (write_codeview) p->header2.end = header_pos();
   }
   return q;
 }
@@ -613,16 +613,16 @@ int Code_Writer::write_code(const std::string& code_arg, const std::string& head
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
   Node* first_node = Fluid.proj.tree.first;
-  if (first_node && first_node->is_a(Type::Comment)) {
+  if (first_node && dynamic_cast<Comment_Node*>(first_node)) {
     if (write_codeview) {
-      first_node->code1_start = first_node->code2_start = code_pos();
-      first_node->header1_start = first_node->header2_start = header_pos();
+      first_node->code1.start = first_node->code2.start = code_pos();
+      first_node->header1.start = first_node->header2.start = header_pos();
     }
     // it is ok to write non-recursive code here, because comments have no children or code2 blocks
     first_node->write_code1(*this);
     if (write_codeview) {
-      first_node->code1_end = first_node->code2_end = code_pos();
-      first_node->header1_end = first_node->header2_end = header_pos();
+      first_node->code1.end = first_node->code2.end = code_pos();
+      first_node->header1.end = first_node->header2.end = header_pos();
     }
     first_node = first_node->next;
   }
@@ -753,15 +753,15 @@ int Code_Writer::write_code(const std::string& code_arg, const std::string& head
   write_h("#endif\n");
 
   Node* last_node = Fluid.proj.tree.last;
-  if (last_node && (last_node != Fluid.proj.tree.first) && last_node->is_a(Type::Comment)) {
+  if (last_node && (last_node != Fluid.proj.tree.first) && dynamic_cast<Comment_Node*>(last_node)) {
     if (write_codeview) {
-      last_node->code1_start = last_node->code2_start = code_pos();
-      last_node->header1_start = last_node->header2_start = header_pos();
+      last_node->code1.start = last_node->code2.start = code_pos();
+      last_node->header1.start = last_node->header2.start = header_pos();
     }
     last_node->write_code1(*this);
     if (write_codeview) {
-      last_node->code1_end = last_node->code2_end = code_pos();
-      last_node->header1_end = last_node->header2_end = header_pos();
+      last_node->code1.end = last_node->code2.end = code_pos();
+      last_node->header1.end = last_node->header2.end = header_pos();
     }
   }
 

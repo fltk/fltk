@@ -77,7 +77,6 @@ protected:
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
   Type type() const override { return Type::Window; }
-  bool is_a(Type inType) const override { return (inType==Type::Window) ? true : super::is_a(inType); }
   void open_();
 
 public:
@@ -127,7 +126,7 @@ public:
   static int popupx, popupy;
 };
 
-class Widget_Class_Node : private Window_Node
+class Widget_Class_Node : public Window_Node
 {
 public:
   typedef Window_Node super;
@@ -153,7 +152,6 @@ public:
   Node *make(Strategy strategy) override;
   const char *type_name() override {return "widget_class";}
   Type type() const override { return Type::Widget_Class; }
-  bool is_a(Type inType) const override { return (inType==Type::Widget_Class) ? true : super::is_a(inType); }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_decl_block() const override {return 1;}

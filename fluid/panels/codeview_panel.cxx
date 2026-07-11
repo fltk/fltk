@@ -50,24 +50,24 @@ void update_codeview_position() {
       if (cv_source->visible_r()) {
         switch (cv_code_choice) {
           case 0: // prolog: not yet (include statements)
-            pos0 = Fluid.proj.tree.current->code1_start;
-            pos1 = Fluid.proj.tree.current->code2_end;
+            pos0 = Fluid.proj.tree.current->code1.start;
+            pos1 = Fluid.proj.tree.current->code2.end;
             break;
           case 1: // static: callbacks, menu declarations
-            pos0 = Fluid.proj.tree.current->code_static_start;
-            pos1 = Fluid.proj.tree.current->code_static_end;
+            pos0 = Fluid.proj.tree.current->code_static.start;
+            pos1 = Fluid.proj.tree.current->code_static.end;
             break;
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->code1_start;
-            pos1 = Fluid.proj.tree.current->code2_end;
+            pos0 = Fluid.proj.tree.current->code1.start;
+            pos1 = Fluid.proj.tree.current->code2.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->code1_start;
-            pos1 = Fluid.proj.tree.current->code1_end;
+            pos0 = Fluid.proj.tree.current->code1.start;
+            pos1 = Fluid.proj.tree.current->code1.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->code2_start;
-            pos1 = Fluid.proj.tree.current->code2_end;
+            pos0 = Fluid.proj.tree.current->code2.start;
+            pos1 = Fluid.proj.tree.current->code2.end;
             break;
         }
         if (pos0>=0) {
@@ -82,20 +82,20 @@ void update_codeview_position() {
         switch (cv_code_choice) {
           case 0: // prolog: not yet (include statements)
           case 1: // static: callbacks, menu declarations
-            pos0 = Fluid.proj.tree.current->header_static_start;
-            pos1 = Fluid.proj.tree.current->header_static_end;
+            pos0 = Fluid.proj.tree.current->header_static.start;
+            pos1 = Fluid.proj.tree.current->header_static.end;
             break;
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->header1_start;
-            pos1 = Fluid.proj.tree.current->header2_end;
+            pos0 = Fluid.proj.tree.current->header1.start;
+            pos1 = Fluid.proj.tree.current->header2.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->header1_start;
-            pos1 = Fluid.proj.tree.current->header1_end;
+            pos0 = Fluid.proj.tree.current->header1.start;
+            pos1 = Fluid.proj.tree.current->header1.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->header2_start;
-            pos1 = Fluid.proj.tree.current->header2_end;
+            pos0 = Fluid.proj.tree.current->header2.start;
+            pos1 = Fluid.proj.tree.current->header2.end;
             break;
         }
         if (pos0>=0) {
@@ -111,16 +111,16 @@ void update_codeview_position() {
           case 0: // prolog: not yet (include statements)
           case 1: // static: callbacks, menu declarations
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->proj1_start;
-            pos1 = Fluid.proj.tree.current->proj2_end;
+            pos0 = Fluid.proj.tree.current->proj1.start;
+            pos1 = Fluid.proj.tree.current->proj2.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->proj1_start;
-            pos1 = Fluid.proj.tree.current->proj1_end;
+            pos0 = Fluid.proj.tree.current->proj1.start;
+            pos1 = Fluid.proj.tree.current->proj1.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->proj2_start;
-            pos1 = Fluid.proj.tree.current->proj2_end;
+            pos0 = Fluid.proj.tree.current->proj2.start;
+            pos1 = Fluid.proj.tree.current->proj2.end;
             break;
         }
         if (pos0>=0) {

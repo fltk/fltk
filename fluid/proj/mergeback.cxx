@@ -264,7 +264,7 @@ void Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_crc, 
  */
 void Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, int uid) {
   Node *tp = proj_.tree.find_by_uid(uid);
-  if (tp && tp->is_a(Type::Code)) {
+  if (tp && dynamic_cast<Code_Node*>(tp)) {
     std::string code = tp->name(); code += "\n";
     unsigned long project_crc = fluid::io::Code_Writer::block_crc(code);
     // check if the code and project crc are the same, so this modification was already applied
@@ -507,7 +507,7 @@ int Mergeback::apply_callback(long block_end, long block_start, unsigned long co
  */
 int Mergeback::apply_code(long block_end, long block_start, unsigned long code_crc, int uid) {
   Node *tp = proj_.tree.find_by_uid(uid);
-  if (tp && tp->is_a(Type::Code)) {
+  if (tp && dynamic_cast<Code_Node*>(tp)) {
     std::string cb = tp->name(); cb += "\n";
     unsigned long project_crc = fluid::io::Code_Writer::block_crc(cb);
     if (project_crc!=code_crc) {
