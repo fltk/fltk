@@ -141,6 +141,7 @@ set(CPPFILES
   panels/settings_panel.cxx
   panels/template_panel.cxx
   panels/widget_panel.cxx
+  panels/widget_panel_callbacks.cxx
   panels/widget_panel/Grid_Tab.cxx
   panels/widget_panel/Grid_Child_Tab.cxx
   proj/align_widget.cxx

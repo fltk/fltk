@@ -54,6 +54,8 @@
 #include "../src/flstring.h"
 
 #include <locale.h>     // setlocale()..
+#undef min
+#undef max
 #include <limits>      // std::numeric_limits<int>::max()
 
 

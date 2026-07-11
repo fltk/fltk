@@ -195,7 +195,7 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {FLUID Settings} open
-    xywh {0 0 360 585} type Double align 80 resizable size_range {340 580 0 0} visible
+    xywh {499 208 360 585} type Double align 80 resizable size_range {340 580 0 0} visible
   } {
     Fl_Tabs w_settings_tabs {
       callback {propagate_load(o, v);} open
