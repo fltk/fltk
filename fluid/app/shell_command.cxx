@@ -130,8 +130,7 @@ bool shell_command_running() {
 /**
  Create a process manager
  */
-Fl_Process::Fl_Process() {
-}
+Fl_Process::Fl_Process() = default;
 
 /**
  Destroy the project manager.
@@ -634,9 +633,7 @@ void Fd_Shell_Command::write(class fluid::io::Project_Writer *out) {
 /**
  Manage a list of shell commands and their parameters.
  */
-Fd_Shell_Command_List::Fd_Shell_Command_List()
-{
-}
+Fd_Shell_Command_List::Fd_Shell_Command_List() = default;
 
 /**
  Release all shell commands and destroy this class.

@@ -194,7 +194,7 @@ public:
       \todo Fl_Grid's cell destructor should remove the cell from the grid.
             Currently it does nothing!
     */
-    ~Cell() {}
+    ~Cell() = default;
 
     /**
       Returns the next widget cell of the same row of this cell.
