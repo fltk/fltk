@@ -612,7 +612,7 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
     if (filename.empty()) return;
 
     Fluid.layout_list.filename_ = filename;
-    Fluid.layout_list.load(filename.c_str());
+    Fluid.layout_list.load(filename);
     //Fluid.layout_list.current_suite(n);
     Fluid.layout_list.update_dialogs();
 }
@@ -635,7 +635,7 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     if (filename.empty()) return;
 
     Fluid.layout_list.filename_ = filename;
-    Fluid.layout_list.save(filename.c_str());
+    Fluid.layout_list.save(filename);
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
