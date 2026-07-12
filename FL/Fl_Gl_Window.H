@@ -134,7 +134,7 @@ public:
    \see Fl_Gl_Window::mode(const int *a) */
   static int can_do(const int *m) {return can_do(0, m);}
   /**  Returns non-zero if the hardware supports the current OpenGL mode. */
-  int can_do() {return can_do(mode_,alist);}
+  int can_do() const { return can_do(mode_,alist);}
   /** Returns the current OpenGL capabilities of the window.
    Don't use this if capabilities were set through Fl_Gl_Window::mode(const int *a).
    */
