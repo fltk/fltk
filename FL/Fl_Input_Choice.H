@@ -111,7 +111,7 @@ public:
     mb->add("More..",    0, FontDialog_CB, (void*)mydata);
     \endcode
   */
-  void add(const char *s) { menu_->add(s); }
+  void add(const char *s) const { menu_->add(s); }
 
   /** Returns the combined changed() state of the input and menu button widget. */
   int changed() const { return inp_->changed() | Fl_Widget::changed(); }
@@ -129,31 +129,31 @@ public:
   Fl_Boxtype down_box() const { return (menu_->down_box()); }
 
   /** Sets the box type of the menu button */
-  void down_box(Fl_Boxtype b) { menu_->down_box(b); }
+  void down_box(Fl_Boxtype b) const { menu_->down_box(b); }
 
   /** Gets the Fl_Menu_Item array used for the menu. */
-  const Fl_Menu_Item *menu() { return (menu_->menu()); }
+  const Fl_Menu_Item *menu() const { return (menu_->menu()); }
 
   /** Sets the Fl_Menu_Item array used for the menu. */
-  void menu(const Fl_Menu_Item *m) { menu_->menu(m); }
+  void menu(const Fl_Menu_Item *m) const { menu_->menu(m); }
 
   /// Gets the Fl_Input text field's text color.
   Fl_Color textcolor() const { return (inp_->textcolor());}
 
   /// Sets the Fl_Input text field's text color to \p c.
-  void textcolor(Fl_Color c) { inp_->textcolor(c);}
+  void textcolor(Fl_Color c) const { inp_->textcolor(c);}
 
   /// Gets the Fl_Input text field's font style.
   Fl_Font textfont() const { return (inp_->textfont());}
 
   /// Sets the Fl_Input text field's font style to \p f.
-  void textfont(Fl_Font f) { inp_->textfont(f);}
+  void textfont(Fl_Font f) const { inp_->textfont(f);}
 
   /// Gets the Fl_Input text field's font size
   Fl_Fontsize textsize() const { return (inp_->textsize()); }
 
   /// Sets the Fl_Input text field's font size to \p s.
-  void textsize(Fl_Fontsize s) { inp_->textsize(s); }
+  void textsize(Fl_Fontsize s) const { inp_->textsize(s); }
 
   /// Returns the Fl_Input text field's current contents.
   const char* value() const { return (inp_->value()); }
@@ -168,7 +168,7 @@ public:
 
     \see void value(int val), update_menubutton()
   */
-  void value(const char *val) { inp_->value(val); }
+  void value(const char *val) const { inp_->value(val); }
 
   /* Chooses item# \p val in the menu, and sets the Fl_Input text field
     to that value. Any previous text is cleared. */
@@ -188,12 +188,12 @@ public:
     }
     \endcode
   */
-  Fl_Menu_Button *menubutton() { return menu_; }
+  Fl_Menu_Button *menubutton() const { return menu_; }
 
   /** Returns a pointer to the internal Fl_Input widget.
     This can be used to directly access all of the Fl_Input widget's methods.
   */
-  Fl_Input *input() { return inp_; }
+  Fl_Input *input() const { return inp_; }
 };
 
 #endif // !Fl_Input_Choice_H
