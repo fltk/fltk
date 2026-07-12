@@ -1253,7 +1253,7 @@ bool Fl_Wayland_Window_Driver::in_flush_ = false;
 static const char *get_prog_name() {
   pid_t pid = getpid();
   char fname[100];
-  snprintf(fname, 100, "/proc/%u/cmdline", pid);
+  snprintf(fname, 100, "/proc/%u/cmdline", (unsigned int)pid);
   FILE *in = fopen(fname, "r");
   if (in) {
     static char line[200];
