@@ -44,10 +44,10 @@ void Fl_Zenity_Native_File_Chooser_Driver::append_filter(std::string& ret_comman
   command[0] = 0;
   char *parsed_filter_copy = strdup(_parsedfilt); // keep _parsedfilt unchanged for re-use
   char *p = strtok(parsed_filter_copy, "\n");
+  l = 0; // Initialize l to 0, as command is empty
   while (p) {
     char *op = strchr(p, '(');
-    l = strlen(command);
-    snprintf(command+l, lcommand-l, " --file-filter='%s|", p);
+    l += snprintf(command+l, lcommand-l, " --file-filter='%s|", p);
     char *cp = strchr(p, ')');
     *cp = 0;
     char *ob = strchr(op+1, '[');
@@ -61,13 +61,12 @@ void Fl_Zenity_Native_File_Chooser_Driver::append_filter(std::string& ret_comman
         aux[la++] = *q;
         if (cb < cp-1) { strcpy(aux+la, cb+1); la += strlen(cb+1); }
         aux[la] = 0;
-        l = strlen(command);
-        snprintf(command+l, lcommand-l, " %s", aux);
+        l += snprintf(command+l, lcommand-l, " %s", aux);
       }
       strcat(command, "'");
+      l = strlen(command); // Update l after strcat
     } else {
-      l = strlen(command);
-      snprintf(command+l, lcommand-l, "%s'", op+1);
+      l += snprintf(command+l, lcommand-l, "%s'", op+1);
     }
     p = strtok(NULL, "\n");
   }
