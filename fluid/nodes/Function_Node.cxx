@@ -525,8 +525,8 @@ Node *Code_Node::make(Strategy strategy) {
  */
 void Code_Node::open() {
   // Using an external code editor? Open it..
-  if ( Fluid.use_external_editor && Fluid.external_editor_command[0] ) {
-    const char *cmd = Fluid.external_editor_command;
+  if ( Fluid.use_external_editor && !Fluid.external_editor_command.empty() ) {
+    const char *cmd = Fluid.external_editor_command.c_str();
     const char *code = name();
     if (!code) code = "";
     if ( editor_.open_editor(cmd, code) == 0 )

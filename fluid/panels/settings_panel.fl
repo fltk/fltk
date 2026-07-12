@@ -205,8 +205,8 @@ Function {make_settings_window()} {open
       xywh {10 10 340 530} selection_color 12 labelsize 12 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {
-        label General open
-        scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 hide resizable
+        label General open selected
+        scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -290,8 +290,7 @@ Fluid.history.load();}
         }
         Fl_Input editor_command_input {
           label {External Editor:}
-          callback {strncpy(Fluid.external_editor_command, editor_command_input->value(), sizeof(Fluid.external_editor_command)-1);
-Fluid.external_editor_command[sizeof(Fluid.external_editor_command)-1] = 0;
+          callback {Fluid.external_editor_command = editor_command_input->value();
 Fluid.preferences.set("external_editor_command", Fluid.external_editor_command);
 redraw_browser();}
           tooltip {The editor command to open your external text editor.
@@ -300,8 +299,8 @@ Examples:
     gvim -f
     gedit
  emacs} xywh {130 255 210 20} labelfont 1 labelsize 12 when 1 textfont 4 textsize 12
-          code1 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "", sizeof(Fluid.external_editor_command)-1);}
-          code2 {editor_command_input->value(Fluid.external_editor_command);}
+          code1 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");}
+          code2 {editor_command_input->value(Fluid.external_editor_command.c_str());}
         }
         Fl_Check_Button use_external_editor_button {
           label {Use for Code Nodes}
@@ -475,7 +474,7 @@ an include guard in header file:
       Fl_Group w_settings_layout_tab {
         label Layout
         callback {propagate_load(o, v);} open
-        scale_image {36 24} image {../icons/layout_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12
+        scale_image {36 24} image {../icons/layout_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 hide
       } {
         Fl_Box {} {
           label {Layout:}
@@ -616,7 +615,7 @@ Fluid.layout_list.update_dialogs();}
   if (filename.empty()) return;
 
   Fluid.layout_list.filename_ = filename;
-  Fluid.layout_list.save(filename);} selected
+  Fluid.layout_list.save(filename);}
             xywh {0 0 31 20} divider
           }
           MenuItem w_layout_menu_delete {
