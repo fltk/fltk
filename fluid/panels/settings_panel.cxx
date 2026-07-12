@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -613,7 +613,7 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
     if (filename.empty()) return;
 
     Fluid.layout_list.filename_ = filename;
-    Fluid.layout_list.load(filename.c_str());
+    Fluid.layout_list.load(filename);
     //Fluid.layout_list.current_suite(n);
     Fluid.layout_list.update_dialogs();
 }
@@ -636,7 +636,7 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     if (filename.empty()) return;
 
     Fluid.layout_list.filename_ = filename;
-    Fluid.layout_list.save(filename.c_str());
+    Fluid.layout_list.save(filename);
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
@@ -2496,6 +2496,7 @@ Fl_Double_Window* make_settings_window() {
         w_settings_general_tab->image( image_general_64() );
         w_settings_general_tab->image()->scale(36, 24, 0, 1);
         w_settings_general_tab->labelsize(12);
+        w_settings_general_tab->hide();
         { Fl_Group* o = new Fl_Group(130, 78, 210, 25);
           o->callback((Fl_Callback*)cb_);
           { scheme_choice = new Fl_Scheme_Choice(130, 78, 120, 25, "Scheme: ");
@@ -2742,7 +2743,6 @@ Fl_Double_Window* make_settings_window() {
         w_settings_layout_tab->image()->scale(36, 24, 0, 1);
         w_settings_layout_tab->labelsize(12);
         w_settings_layout_tab->callback((Fl_Callback*)cb_w_settings_layout_tab);
-        w_settings_layout_tab->hide();
         { Fl_Box* o = new Fl_Box(20, 78, 75, 24, "Layout:");
           o->labelfont(1);
           o->labelsize(12);

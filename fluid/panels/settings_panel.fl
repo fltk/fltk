@@ -35,7 +35,7 @@ snap {
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -205,8 +205,8 @@ Function {make_settings_window()} {open
       xywh {10 10 340 530} selection_color 12 labelsize 12 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {
-        label General open selected
-        scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 resizable
+        label General open
+        scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 hide resizable
       } {
         Fl_Group {} {
           callback {propagate_load(o, v);} open
@@ -475,7 +475,7 @@ an include guard in header file:
       Fl_Group w_settings_layout_tab {
         label Layout
         callback {propagate_load(o, v);} open
-        scale_image {36 24} image {../icons/layout_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 hide
+        scale_image {36 24} image {../icons/layout_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12
       } {
         Fl_Box {} {
           label {Layout:}
@@ -592,7 +592,7 @@ Fluid.layout_list.update_dialogs();}
   if (filename.empty()) return;
 
   Fluid.layout_list.filename_ = filename;
-  Fluid.layout_list.load(filename.c_str());
+  Fluid.layout_list.load(filename);
   //Fluid.layout_list.current_suite(n);
   Fluid.layout_list.update_dialogs();}
             xywh {0 0 31 20}
@@ -616,7 +616,7 @@ Fluid.layout_list.update_dialogs();}
   if (filename.empty()) return;
 
   Fluid.layout_list.filename_ = filename;
-  Fluid.layout_list.save(filename.c_str());}
+  Fluid.layout_list.save(filename);} selected
             xywh {0 0 31 20} divider
           }
           MenuItem w_layout_menu_delete {
