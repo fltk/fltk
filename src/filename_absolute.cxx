@@ -312,7 +312,7 @@ std::string fl_filename_path_str(const std::string &filename) {
   const char *base = filename.c_str();
   const char *name = fl_filename_name(base);
   if (name) {
-    return std::string(base, (int)(name-base));
+    return std::string(base, (size_t)(name-base));
   } else {
     return std::string();
   }
