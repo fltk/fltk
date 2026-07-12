@@ -102,6 +102,7 @@
 #include "io/file_chooser.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
+#include "nodes/Widget_Node.h"
 #include "panels/settings_panel.h"
 #include "widgets/App_Menu_Bar.h"
 

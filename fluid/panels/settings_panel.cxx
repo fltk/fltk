@@ -20,6 +20,7 @@
 #include "Project.h"
 #include "io/file_chooser.h"
 #include "proj/undo.h"
+#include "nodes/Widget_Node.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_ask.H>

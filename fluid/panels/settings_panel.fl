@@ -62,6 +62,9 @@ decl {\#include "io/file_chooser.h"} {private local
 decl {\#include "proj/undo.h"} {private global
 }
 
+decl {\#include "nodes/Widget_Node.h"} {private global
+}
+
 decl {\#include "app/Snap_Action.h"} {public global
 }
 

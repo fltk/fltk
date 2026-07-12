@@ -18,6 +18,7 @@
 #define FLUID_NODES_NODE_H
 
 #include "io/Code_Writer.h"
+#include "nodes/iterators.h"
 
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
@@ -201,49 +202,10 @@ public: // things that should not be public:
   Node *first_child();
 
   /** Range over the direct children of this node (`for (auto *c : n->children())`). */
-  class ChildRange {
-    Node *first_;
-  public:
-    class Iterator {
-      Node *n_;
-    public:
-      explicit Iterator(Node *n) : n_(n) { }
-      Node* operator*() const { return n_; }
-      Iterator& operator++() { n_ = n_->next_sibling(); return *this; }
-      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
-    };
-    explicit ChildRange(Node *first) : first_(first) { }
-    Iterator begin() const { return Iterator(first_); }
-    Iterator end() const { return Iterator(nullptr); }
-  };
-  ChildRange children() { return ChildRange(first_child()); }
+  Child_Range children() { return Child_Range(first_child()); }
 
   /** Range over all descendants of this node, depth-first (`for (auto *d : n->descendants())`). */
-  class DescendantRange {
-    Node *base_;
-  public:
-    class Iterator {
-      Node *base_;
-      Node *n_;
-    public:
-      Iterator(Node *base, Node *n) : base_(base), n_(n) { }
-      Node* operator*() const { return n_; }
-      Iterator& operator++() {
-        n_ = n_->next;
-        if (n_ && n_->level <= base_->level) n_ = nullptr;
-        return *this;
-      }
-      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
-    };
-    explicit DescendantRange(Node *base) : base_(base) { }
-    Iterator begin() const {
-      Node *n = base_->next;
-      if (n && n->level <= base_->level) n = nullptr;
-      return Iterator(base_, n);
-    }
-    Iterator end() const { return Iterator(base_, nullptr); }
-  };
-  DescendantRange descendants() { return DescendantRange(this); }
+  Descendant_Range descendants() { return Descendant_Range(this); }
 
   Node *factory;
   std::string callback_name(fluid::io::Code_Writer& f);

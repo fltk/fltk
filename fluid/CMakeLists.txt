@@ -128,6 +128,7 @@ set(CPPFILES
   nodes/Function_Node.cxx
   nodes/Grid_Node.cxx
   nodes/Group_Node.cxx
+  nodes/iterators.cxx
   nodes/Menu_Node.cxx
   nodes/Node.cxx
   nodes/Widget_Image.cxx
@@ -186,6 +187,7 @@ set(HEADERFILES
   nodes/Function_Node.h
   nodes/Grid_Node.h
   nodes/Group_Node.h
+  nodes/iterators.h
   nodes/Menu_Node.h
   nodes/Node.h
   nodes/Widget_Image.h

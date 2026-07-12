@@ -19,6 +19,7 @@
 
 #include "io/String_Writer.h"
 #include "nodes/Node.h"
+#include "nodes/Widget_Node.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
 
