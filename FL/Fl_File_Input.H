@@ -77,7 +77,7 @@ public:
     \deprecated Will be removed in FLTK 1.5.0 or higher.
     \todo Remove Fl_File_Input::errorcolor() in FLTK 1.5.0 or higher.
   */
-  Fl_Color      errorcolor() const { return FL_RED; }
+  static Fl_Color      errorcolor() { return FL_RED; }
 
   /**
     Sets the current error color to \p c.
@@ -87,7 +87,7 @@ public:
     \deprecated Will be removed in FLTK 1.5.0 or higher.
     \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
     */
-  void          errorcolor(Fl_Color c) {(void)c;}
+  static void          errorcolor(Fl_Color c) {(void)c;}
 
   int   value(const char *str);
   int   value(const char *str, int len);
