@@ -1186,10 +1186,11 @@ void Node::copy_properties() {
   the parameter types match.
  */
 int Node::user_defined(const char* cbname) const {
+  size_t cbname_len = strlen(cbname);
   for (Node* p = Fluid.proj.tree.first; p ; p = p->next)
     if (dynamic_cast<Function_Node*>(p) && p->name() != nullptr)
-      if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
-        if (p->name()[strlen(cbname)] == '(')
+      if (strncmp(p->name(), cbname, cbname_len) == 0)
+        if (p->name()[cbname_len] == '(')
           return 1;
   return 0;
 }
