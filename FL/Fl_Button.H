@@ -173,7 +173,7 @@ public:
   /// Return true if buttons are rendered as compact buttons.
   /// \return 0 if compact mode is off, 1 if it is on
   /// \see compact(bool)
-  uchar compact() { return compact_; }
+  uchar compact() const { return compact_; }
 };
 
 #endif
