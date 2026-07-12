@@ -1029,7 +1029,7 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
 void text_input_delete_surrounding_text(void *data,
                                         struct zwp_text_input_v3 *zwp_text_input_v3,
                                         uint32_t before_length, uint32_t after_length) {
-  fprintf(stderr, "delete_surrounding_text before=%d adfter=%d\n",
+  fprintf(stderr, "delete_surrounding_text before=%u adfter=%u\n",
           before_length,after_length);
 }
 
