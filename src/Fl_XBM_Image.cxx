@@ -55,7 +55,7 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
         fclose(f);
         return;
       }
-      int r = sscanf(buffer,"#define %s %d",junk,&wh[i]);
+      int r = sscanf(buffer,"#define %1023s %d",junk,&wh[i]);
       if (r >= 2) break;
     }
   }
