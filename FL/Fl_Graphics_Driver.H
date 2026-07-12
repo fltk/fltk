@@ -251,7 +251,7 @@ public:
   double transform_dx(double x, double y);
   double transform_dy(double x, double y);
   /** Return the current Fl_Font_Descriptor */
-  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
+  inline Fl_Font_Descriptor *font_descriptor() const { return font_descriptor_;}
   /** Set the current Fl_Font_Descriptor */
   inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** Current scale factor between FLTK and drawing units: drawing = FLTK * scale() */
