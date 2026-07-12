@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,6 +20,7 @@
 #include "Project.h"
 #include "io/file_chooser.h"
 #include "proj/undo.h"
+#include "nodes/Widget_Node.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_ask.H>
@@ -292,8 +293,7 @@ static void cb_recent_spinner(Fl_Spinner*, void*) {
 Fl_Input* editor_command_input = (Fl_Input*)nullptr;
 
 static void cb_editor_command_input(Fl_Input*, void*) {
-  strncpy(Fluid.external_editor_command, editor_command_input->value(), sizeof(Fluid.external_editor_command)-1);
-  Fluid.external_editor_command[sizeof(Fluid.external_editor_command)-1] = 0;
+  Fluid.external_editor_command = editor_command_input->value();
   Fluid.preferences.set("external_editor_command", Fluid.external_editor_command);
   redraw_browser();
 }
@@ -612,7 +612,7 @@ static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
     if (filename.empty()) return;
 
     Fluid.layout_list.filename_ = filename;
-    Fluid.layout_list.load(filename.c_str());
+    Fluid.layout_list.load(filename);
     //Fluid.layout_list.current_suite(n);
     Fluid.layout_list.update_dialogs();
 }
@@ -635,7 +635,7 @@ static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
     if (filename.empty()) return;
 
     Fluid.layout_list.filename_ = filename;
-    Fluid.layout_list.save(filename.c_str());
+    Fluid.layout_list.save(filename);
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
@@ -2593,8 +2593,8 @@ Fl_Double_Window* make_settings_window() {
           editor_command_input->textsize(12);
           editor_command_input->callback((Fl_Callback*)cb_editor_command_input);
           editor_command_input->when(FL_WHEN_CHANGED);
-          Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "", sizeof(Fluid.external_editor_command)-1);
-          editor_command_input->value(Fluid.external_editor_command);
+          Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");
+          editor_command_input->value(Fluid.external_editor_command.c_str());
         } // Fl_Input* editor_command_input
         { use_external_editor_button = new Fl_Check_Button(130, 278, 210, 20, "Use for Code Nodes");
           use_external_editor_button->down_box(FL_DOWN_BOX);

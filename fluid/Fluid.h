@@ -114,8 +114,7 @@ public: // Member Variables
   /// Debugging help for external Code_Node editor.
   int debug_external_editor { 0 };
   /// Run this command to load an Code_Node into an external editor, save in app preferences.
-  // TODO: make this into a std::string
-  char external_editor_command[512] { };
+  std::string external_editor_command;
 
   // TODO: make this into a class: app::GUI
   Fl_Window *main_window { nullptr };
@@ -141,7 +140,7 @@ public: // Methods
   /// Destructor.
   ~Application() = default;
   // Launch the application.
-  int run(int argc,char **argv);
+  int run(int argc, char **argv);
   // Quit the application and clean up.
   void quit();
   /// Quick access to the current project. Make sure it stays synched to current_project_.

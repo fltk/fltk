@@ -23,6 +23,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "nodes/Node.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
 #include "app/Snap_Action.h"

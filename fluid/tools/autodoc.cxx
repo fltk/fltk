@@ -503,33 +503,33 @@ void run_autodoc(const std::string &target_dir) {
   t_win->open();
   t_win->open();
 
-  // -- Type::Function
+  // -- Function
   select_only(t_func);
   fl_snapshot((target_dir + "function_panel.png").c_str(), func_tabs_main, tab_margin, row_blend);
 
-  // -- Type::Code
+  // -- Code
   select_only(t_code);
   fl_snapshot((target_dir + "code_panel.png").c_str(), code_tabs_main, tab_margin, row_blend);
 
-  // -- Type::CodeBlock
+  // -- CodeBlock
   select_only(t_codeblock);
   fl_snapshot((target_dir + "codeblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
-  // -- Type::Decl
+  // -- Decl
   select_only(t_decl);
   fl_snapshot((target_dir + "decl_panel.png").c_str(), decl_tabs_main, tab_margin, row_blend);
 
-  // -- Type::DeclBlock
+  // -- DeclBlock
   select_only(t_declblock);
   fl_snapshot((target_dir + "declblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
 
-  // -- Type::Class
+  // -- Class
   select_only(t_class);
   fl_snapshot((target_dir + "class_panel.png").c_str(), class_tabs_main, tab_margin, row_blend);
 
-  // -- Type::Widget_Class is handled like Window_Node
+  // -- Widget_Class is handled like Window_Node
 
-  // -- Type::Comment
+  // -- Comment
   select_only(t_comment);
   fl_snapshot((target_dir + "comment_panel.png").c_str(), comment_tabs_comment, tab_margin, row_blend);
 
@@ -596,7 +596,7 @@ void run_autodoc(const std::string &target_dir) {
   widget_tabs->value(widget_tab_grid_child);
   fl_snapshot((target_dir + "wp_gridc_tab.png").c_str(), widget_tab_grid_child, tab_margin, row_blend);
 
-  // -- Type::Data
+  // -- Data
   select_only(t_data);
   fl_snapshot((target_dir + "data_panel.png").c_str(), data_tabs_data, tab_margin, row_blend);
 

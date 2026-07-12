@@ -62,7 +62,6 @@ public:
     return new Fl_Slider(x, y, w, h, "Valuator");
   }
   Widget_Node *_make() override { return new Valuator_Node(); }
-  Type type() const override { return Type::Valuator_; }
 };
 
 /**
@@ -90,7 +89,6 @@ public:
     return new Fl_Slider(x, y, w, h, "slider:");
   }
   Widget_Node *_make() override { return new Slider_Node(); }
-  Type type() const override { return Type::Slider; }
 };
 
 /**
@@ -110,7 +108,6 @@ public:
     return new Fl_Scrollbar(x, y, w, h);
   }
   Widget_Node *_make() override { return new Scrollbar_Node(); }
-  Type type() const override { return Type::Scrollbar; }
 };
 
 /**
@@ -147,7 +144,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Value_Input_Node(); }
-  Type type() const override { return Type::Value_Input; }
 };
 
 /**
@@ -188,7 +184,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Input_Node(); }
-  Type type() const override { return Type::Input; }
   void copy_properties() override {
     Widget_Node::copy_properties();
     Fl_Input_ *d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
@@ -240,7 +235,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Text_Display_Node(); }
-  Type type() const override { return Type::Text_Display; }
 };
 
 /**
@@ -279,7 +273,6 @@ public:
     return new Fl_Spinner(x, y, w, h, "spinner:");
   }
   Widget_Node *_make() override { return new Spinner_Node(); }
-  Type type() const override { return Type::Spinner; }
 };
 
 #endif // FLUID_NODES_FACTORY_H

@@ -55,7 +55,6 @@ public:
   const char *alt_type_name() override {return "fltk::GridGroup";}
   Widget_Node *_make() override { return new Grid_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) override;
-  Type type() const override { return Type::Grid; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   void write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate) override;

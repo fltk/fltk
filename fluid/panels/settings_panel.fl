@@ -35,7 +35,7 @@ snap {
 comment {//
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,6 +60,9 @@ decl {\#include "io/file_chooser.h"} {private local
 }
 
 decl {\#include "proj/undo.h"} {private global
+}
+
+decl {\#include "nodes/Widget_Node.h"} {private global
 }
 
 decl {\#include "app/Snap_Action.h"} {public global
@@ -287,8 +290,7 @@ Fluid.history.load();}
         }
         Fl_Input editor_command_input {
           label {External Editor:}
-          callback {strncpy(Fluid.external_editor_command, editor_command_input->value(), sizeof(Fluid.external_editor_command)-1);
-Fluid.external_editor_command[sizeof(Fluid.external_editor_command)-1] = 0;
+          callback {Fluid.external_editor_command = editor_command_input->value();
 Fluid.preferences.set("external_editor_command", Fluid.external_editor_command);
 redraw_browser();}
           tooltip {The editor command to open your external text editor.
@@ -297,8 +299,8 @@ Examples:
     gvim -f
     gedit
  emacs} xywh {130 255 210 20} labelfont 1 labelsize 12 when 1 textfont 4 textsize 12
-          code1 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "", sizeof(Fluid.external_editor_command)-1);}
-          code2 {editor_command_input->value(Fluid.external_editor_command);}
+          code1 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");}
+          code2 {editor_command_input->value(Fluid.external_editor_command.c_str());}
         }
         Fl_Check_Button use_external_editor_button {
           label {Use for Code Nodes}
@@ -589,7 +591,7 @@ Fluid.layout_list.update_dialogs();}
   if (filename.empty()) return;
 
   Fluid.layout_list.filename_ = filename;
-  Fluid.layout_list.load(filename.c_str());
+  Fluid.layout_list.load(filename);
   //Fluid.layout_list.current_suite(n);
   Fluid.layout_list.update_dialogs();}
             xywh {0 0 31 20}
@@ -613,7 +615,7 @@ Fluid.layout_list.update_dialogs();}
   if (filename.empty()) return;
 
   Fluid.layout_list.filename_ = filename;
-  Fluid.layout_list.save(filename.c_str());}
+  Fluid.layout_list.save(filename);}
             xywh {0 0 31 20} divider
           }
           MenuItem w_layout_menu_delete {

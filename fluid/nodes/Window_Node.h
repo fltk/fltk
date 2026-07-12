@@ -76,7 +76,6 @@ protected:
   Fl_Widget *widget(int,int,int,int) override {return nullptr;}
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
-  Type type() const override { return Type::Window; }
   void open_();
 
 public:
@@ -151,7 +150,6 @@ public:
   void write_code2(fluid::io::Code_Writer& f) override;
   Node *make(Strategy strategy) override;
   const char *type_name() override {return "widget_class";}
-  Type type() const override { return Type::Widget_Class; }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_decl_block() const override {return 1;}

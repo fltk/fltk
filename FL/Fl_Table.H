@@ -485,8 +485,7 @@ public:
     - leftcol = 100
     - rightcol = 120
   */
-  inline void visible_cells(int& r1, int& r2, int& c1, int& c2) const
-  {
+  inline void visible_cells(int& r1, int& r2, int& c1, int& c2) const {
     r1 = toprow;
     r2 = botrow;
     c1 = leftcol;
@@ -554,7 +553,7 @@ public:
   /**
     Returns the current row minimum resize value.
   */
-  inline int row_resize_min() const {           // column minimum resizing width
+  inline int row_resize_min() const {          // column minimum resizing width
     return(_row_resize_min);
   }
 
@@ -570,7 +569,7 @@ public:
   /**
     Returns if row headers are enabled or not.
   */
-  inline int row_header() const {              // set/get row header enable flag
+  inline int row_header() const {               // set/get row header enable flag
     return(_row_header);
   }
 
@@ -587,7 +586,7 @@ public:
   /**
     Returns if column headers are enabled or not.
   */
-  inline int col_header() const {              // set/get col header enable flag
+  inline int col_header() const {               // set/get col header enable flag
     return(_col_header);
   }
 

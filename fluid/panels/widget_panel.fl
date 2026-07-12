@@ -2622,7 +2622,7 @@ if (v == LOAD) {
         } {}
       }
       Fl_Tabs data_tabs {
-        callback {if (current_node && (current_node->type() == Type::Data))
+        callback {if (current_node && (dynamic_cast<Data_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -2854,7 +2854,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs comment_tabs {
-        callback {if (current_node && (current_node->type() == Type::Comment))
+        callback {if (current_node && (dynamic_cast<Comment_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3051,7 +3051,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs class_tabs {
-        callback {if (current_node && (current_node->type() == Type::Class))
+        callback {if (current_node && (dynamic_cast<Class_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3211,7 +3211,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs declblock_tabs {
-        callback {if (current_node && (current_node->type() == Type::DeclBlock))
+        callback {if (current_node && (dynamic_cast<DeclBlock_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3373,7 +3373,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs decl_tabs {
-        callback {if (current_node && (current_node->type() == Type::Decl))
+        callback {if (current_node && (dynamic_cast<Decl_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3540,7 +3540,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs codeblock_tabs {
-        callback {if (current_node && (current_node->type() == Type::CodeBlock))
+        callback {if (current_node && (dynamic_cast<CodeBlock_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3606,7 +3606,7 @@ if (v == LOAD) {
         }
       }
       Fl_Tabs code_tabs {
-        callback {if (current_node && (current_node->type() == Type::Code))
+        callback {if (current_node && (dynamic_cast<Code_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
@@ -3648,7 +3648,7 @@ o->linenumber_size(o->Fl_Text_Display::textsize());}
         }
       }
       Fl_Tabs func_tabs {
-        callback {if (current_node && (current_node->type() == Type::Function))
+        callback {if (current_node && (dynamic_cast<Function_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
       } {

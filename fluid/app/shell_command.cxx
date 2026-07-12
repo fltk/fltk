@@ -102,6 +102,7 @@
 #include "io/file_chooser.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
+#include "nodes/Widget_Node.h"
 #include "panels/settings_panel.h"
 #include "widgets/App_Menu_Bar.h"
 
@@ -130,8 +131,7 @@ bool shell_command_running() {
 /**
  Create a process manager
  */
-Fl_Process::Fl_Process() {
-}
+Fl_Process::Fl_Process() = default;
 
 /**
  Destroy the project manager.
@@ -634,9 +634,7 @@ void Fd_Shell_Command::write(class fluid::io::Project_Writer *out) {
 /**
  Manage a list of shell commands and their parameters.
  */
-Fd_Shell_Command_List::Fd_Shell_Command_List()
-{
-}
+Fd_Shell_Command_List::Fd_Shell_Command_List() = default;
 
 /**
  Release all shell commands and destroy this class.

@@ -17,65 +17,11 @@
 
 #include "nodes/Tree.h"
 
+#include "nodes/Node.h"
 #include "Project.h"
 
 using namespace fluid;
 using namespace fluid::node;
-
-
-Tree::Iterator::Iterator(Node *t, bool only_selected)
-: type_(t)
-, only_selected_(only_selected)
-{
-  if (t) {
-    if (only_selected_) {
-      if (!type_->selected) {
-        operator++();
-      }
-    }
-  }
-}
-
-Tree::Iterator &Tree::Iterator::operator++() {
-  if (only_selected_) {
-    do {
-      type_ = type_->next;
-    } while (type_ && !type_->selected);
-  } else {
-    type_ = type_->next;
-  }
-  return *this;
-}
-
-Tree::WIterator::WIterator(Node *t, bool only_selected)
-: type_(t)
-, only_selected_(only_selected)
-{
-  if (t) {
-    if (only_selected_) {
-      if (!type_->selected || !type_->is_widget()) {
-        operator++();
-      }
-    } else {
-      if (!type_->is_widget()) {
-        operator++();
-      }
-    }
-  }
-}
-
-Tree::WIterator& Tree::WIterator::operator++() {
-  if (only_selected_) {
-    do {
-      type_ = type_->next;
-    } while (type_ && (!type_->selected || !type_->is_widget()));
-  } else {
-    do {
-      type_ = type_->next;
-    } while (type_ && !type_->is_widget());
-  }
-  return *this;
-}
 
 
 Tree::Tree(Project &proj)

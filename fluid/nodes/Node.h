@@ -18,6 +18,7 @@
 #define FLUID_NODES_NODE_H
 
 #include "io/Code_Writer.h"
+#include "nodes/iterators.h"
 
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
@@ -84,39 +85,6 @@ struct TextSpan {
   int start = -1, end = -1;
 };
 
-enum class Type {
-  // administrative
-  Base_, Widget_, Menu_Manager_, Menu_, Browser_, Valuator_,
-  // non-widget
-  Function, Code, CodeBlock,
-  Decl, DeclBlock, Class,
-  Widget_Class, Comment, Data,
-  // groups
-  Window, Group, Pack,
-  Flex, Tabs, Scroll,
-  Tile, Wizard, Grid,
-  // buttons
-  Button, Return_Button, Light_Button,
-  Check_Button, Repeat_Button, Round_Button,
-  // valuators
-  Slider, Scrollbar, Value_Slider,
-  Adjuster, Counter, Spinner,
-  Dial, Roller, Value_Input, Value_Output,
-  // text
-  Input, Output, Text_Editor,
-  Text_Display, File_Input, Terminal,
-  // menus
-  Menu_Bar, Menu_Button, Choice,
-  Input_Choice, Submenu, Menu_Item,
-  Checkbox_Menu_Item, Radio_Menu_Item,
-  // browsers
-  Browser, Check_Browser, File_Browser,
-  Tree, Help_View, Table,
-  // misc
-  Box, Clock, Progress,
-  Max_
-};
-
 void update_visibility_flag(Node *p);
 void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
@@ -142,9 +110,11 @@ bool validate_branch(class Node *root);
  to create a pseudo tree structure. To make walking up the tree faster, Type
  also holds a pointer to the `parent` Type.
 
- The `type()` method returns a node's exact `Type` tag, used where an exact
- enum value is needed (e.g. icon lookups). To test whether a node is of a
- given type or a type derived from it, use `dynamic_cast` directly.
+ To test whether a node is of a given type or a type derived from it, use
+ `dynamic_cast` directly. To test for a node's exact type, compare `typeid(*node)`
+ against `typeid(SomeNode)`. `type_name()` returns a unique string per concrete
+ class (e.g. "Fl_Button"), used where a stable string key is needed (e.g. icon
+ lookups, code output).
 
  \todo it would be nice if we can handle multiple independent trees. To do that
  we must remove static members like `first` and `last`.
@@ -201,49 +171,10 @@ public: // things that should not be public:
   Node *first_child();
 
   /** Range over the direct children of this node (`for (auto *c : n->children())`). */
-  class ChildRange {
-    Node *first_;
-  public:
-    class Iterator {
-      Node *n_;
-    public:
-      explicit Iterator(Node *n) : n_(n) { }
-      Node* operator*() const { return n_; }
-      Iterator& operator++() { n_ = n_->next_sibling(); return *this; }
-      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
-    };
-    explicit ChildRange(Node *first) : first_(first) { }
-    Iterator begin() const { return Iterator(first_); }
-    Iterator end() const { return Iterator(nullptr); }
-  };
-  ChildRange children() { return ChildRange(first_child()); }
+  Child_Range children() { return Child_Range(first_child()); }
 
   /** Range over all descendants of this node, depth-first (`for (auto *d : n->descendants())`). */
-  class DescendantRange {
-    Node *base_;
-  public:
-    class Iterator {
-      Node *base_;
-      Node *n_;
-    public:
-      Iterator(Node *base, Node *n) : base_(base), n_(n) { }
-      Node* operator*() const { return n_; }
-      Iterator& operator++() {
-        n_ = n_->next;
-        if (n_ && n_->level <= base_->level) n_ = nullptr;
-        return *this;
-      }
-      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
-    };
-    explicit DescendantRange(Node *base) : base_(base) { }
-    Iterator begin() const {
-      Node *n = base_->next;
-      if (n && n->level <= base_->level) n = nullptr;
-      return Iterator(base_, n);
-    }
-    Iterator end() const { return Iterator(base_, nullptr); }
-  };
-  DescendantRange descendants() { return DescendantRange(this); }
+  Descendant_Range descendants() { return Descendant_Range(this); }
 
   Node *factory;
   std::string callback_name(fluid::io::Code_Writer& f);
@@ -345,8 +276,6 @@ public:
   virtual int is_class() const {return 0;}
   /** Return 1 if the type browser shall draw a padlock over the icon. */
   virtual int is_public() const {return 1;}
-  /** Return the type Type for this Type. */
-  virtual Type type() const { return Type::Base_; }
 
   const char* class_name(int need_nest) const;
   bool is_in_class() const;

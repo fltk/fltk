@@ -72,7 +72,6 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   int is_true_widget() const override { return 0; }
-  Type type() const override { return Type::Menu_Item; }
 
   bool headline() const { return headline_; }
   void headline(bool v) { headline_ = v; }
@@ -89,7 +88,6 @@ public:
 public:
   const char* type_name() override {return "RadioMenuItem";}
   Node* make(Strategy strategy) override;
-  Type type() const override { return Type::Radio_Menu_Item; }
 };
 
 /**
@@ -103,7 +101,6 @@ public:
 public:
   const char* type_name() override {return "CheckMenuItem";}
   Node* make(Strategy strategy) override;
-  Type type() const override { return Type::Checkbox_Menu_Item; }
 };
 
 /**
@@ -130,7 +127,6 @@ public:
   void add_child(Node*a, Node*b) override {parent->add_child(a,b);}
   void move_child(Node*a, Node*b) override {parent->move_child(a,b);}
   void remove_child(Node*a) override {parent->remove_child(a);}
-  Type type() const override { return Type::Submenu; }
 };
 
 // -----------------------------------------------------------------------------
@@ -160,7 +156,6 @@ public:
   Node* click_test(int x, int y) override = 0;
   void write_code2(fluid::io::Code_Writer& f) override;
   void copy_properties() override = 0;
-  Type type() const override { return Type::Menu_Manager_; }
 };
 
 /**
@@ -201,7 +196,6 @@ public:
   }
   Widget_Node *_make() override {return new Input_Choice_Node();}
   void build_menu() override;
-  Type type() const override { return Type::Input_Choice; }
   void copy_properties() override;
 };
 
@@ -230,7 +224,6 @@ public:
   }
   Node* click_test(int x, int y) override;
   void copy_properties() override;
-  Type type() const override { return Type::Menu_; }
 };
 
 extern Fl_Menu_Item button_type_menu[];
@@ -251,7 +244,6 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     return new Fl_Menu_Button(X,Y,W,H,"menu");}
   Widget_Node *_make() override {return new Menu_Button_Node();}
-  Type type() const override { return Type::Menu_Button; }
 };
 
 
@@ -272,7 +264,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override {return new Choice_Node();}
-  Type type() const override { return Type::Choice; }
 };
 
 
@@ -296,7 +287,6 @@ public:
   void write_static(fluid::io::Code_Writer& f) override;
   void write_code1(fluid::io::Code_Writer& f) override;
 //  void write_code2(fluid::io::Code_Writer& f) override;
-  Type type() const override { return Type::Menu_Bar; }
   bool is_sys_menu_bar();
   std::string sys_menubar_name() const;
   std::string sys_menubar_proxy_name() const;
