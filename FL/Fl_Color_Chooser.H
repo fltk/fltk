@@ -133,7 +133,7 @@ public:
    Returns which Fl_Color_Chooser variant is currently active
    \return color modes are rgb(0), byte(1), hex(2), or hsv(3)
    */
-  int mode() {return choice.value();}
+  int mode() const { return choice.value();}
 
   /**
    Set which Fl_Color_Chooser variant is currently active
