@@ -25,6 +25,7 @@
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
 #include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 #include "widgets/Formula_Input.h"
 #include "widgets/Node_Browser.h"
 
@@ -322,8 +323,17 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
-  if (callback() && is_name(callback()) && !user_defined(callback()))
-    f.write_h_once("extern void " + std::string(callback()) + "(Fl_Menu_*, " + user_data_type_or_voidp() + ");");
+  if (callback() && is_name(callback())) {
+    std::string callback_name_pattern = std::string(callback()) + "(*)";
+    Node* pClass = find_parent_class_node();
+    if (pClass && pClass->has_function("static void", callback_name_pattern)) {
+      // nothing to do, method already exists
+    } else if (has_toplevel_function("*void", callback_name_pattern)) {
+      // nothing to do, function already exists
+    } else {
+      f.write_h_once("extern void " + std::string(callback()) + "(Fl_Menu_*, " + user_data_type_or_voidp() + ");");
+    }
+  }
   for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
       f.write_h_once(extra_code(n));

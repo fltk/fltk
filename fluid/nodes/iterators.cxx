@@ -92,6 +92,13 @@ Child_Range::Iterator& Child_Range::Iterator::operator++() {
   return *this;
 }
 
+// ---- Const_Child_Range -------------------------------------------- MARK: -
+
+Const_Child_Range::Iterator& Const_Child_Range::Iterator::operator++() {
+  n_ = n_->next_sibling();
+  return *this;
+}
+
 // ---- Descendant_Range -------------------------------------------- MARK: -
 
 Descendant_Range::Iterator& Descendant_Range::Iterator::operator++() {

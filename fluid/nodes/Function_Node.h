@@ -38,7 +38,7 @@
 
 extern class Class_Node *current_class;
 
-int has_toplevel_function(const char *rtype, const char *sig);
+bool has_toplevel_function(const std::string& return_type_regex, const std::string& function_sig_regex);
 
 const char *c_check(const char *c, int type = 0);
 
@@ -73,7 +73,7 @@ public:
   int is_public() const override;
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
-  int has_signature(const char *, const char*) const;
+  bool has_signature(const std::string& return_type_regex, const std::string& function_sig_regex) const;
   std::string return_type() const { return return_type_; }
   void return_type(const std::string& t) { storestring(t, return_type_); }
   char visibility() { return public_; }

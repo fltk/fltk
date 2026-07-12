@@ -94,6 +94,26 @@ public:
 };
 
 /**
+ Range over the direct children of a const Node
+ (`for (const auto *c : n->children())`).
+ */
+class Const_Child_Range {
+  const Node *first_;
+public:
+  class Iterator {
+    const Node *n_;
+  public:
+    explicit Iterator(const Node *n) : n_(n) { }
+    const Node* operator*() const { return n_; }
+    Iterator& operator++();
+    bool operator!=(const Iterator& other) const { return n_ != other.n_; }
+  };
+  explicit Const_Child_Range(const Node *first) : first_(first) { }
+  Iterator begin() const { return Iterator(first_); }
+  Iterator end() const { return Iterator(nullptr); }
+};
+
+/**
  Range over all descendants of a Node, depth-first
  (`for (auto *d : n->descendants())`).
  */

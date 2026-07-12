@@ -611,17 +611,15 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
       f.write_h_once(extra_code(n));
   }
   if (callback() && is_name(callback())) {
-    int write_extern_declaration = 1;
-    char buf[1024]; snprintf(buf, 1023, "%s(*)",  callback());
-    if (is_in_class()) {
-      if (has_function("static void", buf))
-        write_extern_declaration = 0;
+    std::string callback_name_pattern = std::string(callback()) + "(*)";
+    Node* pClass = find_parent_class_node();
+    if (pClass && pClass->has_function("static void", callback_name_pattern)) {
+      // nothing to do, method already exists
+    } else if (has_toplevel_function("*void", callback_name_pattern)) {
+      // nothing to do, function already exists
     } else {
-      if (has_toplevel_function(nullptr, buf))
-        write_extern_declaration = 0;
-    }
-    if (write_extern_declaration)
       f.write_h_once("extern void " + std::string(callback()) + "(" + t + "*, " + user_data_type_or_voidp() + ");");
+    }
   }
   const char* k = class_name(1);
   const char* c = array_name(this);

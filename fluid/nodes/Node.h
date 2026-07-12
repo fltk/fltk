@@ -122,9 +122,6 @@ bool validate_branch(class Node *root);
  \todo add virtual methods to handle events, draw widgets, and draw overlays.
  It may also make sense to have a virtual method that returns a boolean if
  a specific type can be added as a child.
-
- \todo it may make sense to have a readable iterator class instead of relying
- on pointer manipulation. Or use std in future releases.
  */
 class Node {
   /** Copy the label text to Widgets and Windows, does nothing in Type. */
@@ -132,51 +129,55 @@ class Node {
 
 protected:
 
-  Node();
+  Node() = default;
 
   /** Name of a widget, or code some non-widget Types. */
-  const char *name_;
+  const char *name_ { nullptr };
   /** Label text of a widget. */
-  const char *label_;
+  const char *label_ { nullptr };
   /** If it is just a word, it's the name of the callback function. If it starts
    with a '[', it's a lambda function. Otherwise it is the full callback
    C++ code. Can be nullptr. */
-  const char *callback_;
+  const char *callback_ { nullptr };
   /** Widget user data field as C++ text. */
   std::string user_data_;
   /** Widget user data type as C++ text, usually `void*` or `long`. */
   std::string user_data_type_;
   /** Optional comment for every node in the graph. Visible in browser and
    panels, and will also be copied to the source code. */
-  const char *comment_;
+  const char *comment_ { nullptr };
   /** a unique ID within the project */
-  unsigned short uid_;
+  unsigned short uid_ { 0 };
 
 public: // things that should not be public:
   // TODO: reference back to the tree
   /** Quick link to the parent Type instead of walking up the linked list. */
-  Node *parent;
+  Node *parent { nullptr };
   /** This type is rendered "selected" in the tree browser. */
-  char new_selected; // browser highlight
+  char new_selected { 0 }; // browser highlight
   /** Backup storage for selection if an error occurred during some operation
    (see `haderror`). It seems that this is often confused with new_selected
    which seems to hold the true and visible selection state. */
-  char selected; // copied here by selection_changed()
-  char folded_;  // if set, children are not shown in browser
-  char visible; // true if all parents are open
-  int level;    // number of parents over this
-  Node *next, *prev;
+  char selected { 0 }; // copied here by selection_changed()
+  char folded_ { 0 };  // if set, children are not shown in browser
+  char visible { 0 }; // true if all parents are open
+  int level { 0 };    // number of parents over this
+  Node *next { nullptr }, *prev { nullptr };
   Node *prev_sibling();
   Node *next_sibling();
   Node *first_child();
+  const Node *next_sibling() const { return const_cast<Node*>(this)->next_sibling(); }
+  const Node *first_child() const { return const_cast<Node*>(this)->first_child(); }
 
   /** Range over the direct children of this node (`for (auto *c : n->children())`). */
   Child_Range children() { return Child_Range(first_child()); }
+  /** Const range over the direct children of this node (`for (const auto *c : n->children())`). */
+  Const_Child_Range children() const { return Const_Child_Range(first_child()); }
 
   /** Range over all descendants of this node, depth-first (`for (auto *d : n->descendants())`). */
   Descendant_Range descendants() { return Descendant_Range(this); }
 
-  Node *factory;
+  Node *factory { nullptr };
   std::string callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
@@ -184,12 +185,14 @@ public: // things that should not be public:
   TextSpan header1, header2, header_static;
   TextSpan proj1, proj2;
 
-protected:
-  int user_defined(const char* cbname) const;
-
 public:
 
+  Node(const Node &) = delete;
+  Node &operator=(const Node &) = delete;
+  Node(Node &&) = delete;
+  Node &operator=(Node &&) = delete;
   virtual ~Node();
+
   virtual Node *make(Strategy strategy) = 0;
 
   Window_Node *window();
@@ -279,8 +282,9 @@ public:
 
   const char* class_name(int need_nest) const;
   bool is_in_class() const;
+  Node* find_parent_class_node() const;
 
-  int has_function(const char*, const char*) const;
+  bool has_function(const std::string& return_type_regex, const std::string& function_sig_regex) const;
 
   unsigned short set_uid(unsigned short suggested_uid=0);
   unsigned short ensure_unique_uid() { return set_uid(uid_); }
