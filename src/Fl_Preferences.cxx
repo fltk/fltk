@@ -853,9 +853,9 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue ) 
  */
 char Fl_Preferences::set( const char *key, double value ) {
   if (rootNode->root() & C_LOCALE) {
-    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%lg", value );
+    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%g", value );
   } else {
-    snprintf( nameBuffer, sizeof(nameBuffer), "%lg", value );
+    snprintf( nameBuffer, sizeof(nameBuffer), "%g", value );
   }
   node->set( key, nameBuffer );
   return 1;
@@ -873,9 +873,9 @@ char Fl_Preferences::set( const char *key, double value ) {
  */
 char Fl_Preferences::set( const char *key, double value, int precision ) {
   if (rootNode->root() & C_LOCALE) {
-    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%.*lg", precision, value );
+    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%.*g", precision, value );
   } else {
-    snprintf( nameBuffer, sizeof(nameBuffer), "%.*lg", precision, value );
+    snprintf( nameBuffer, sizeof(nameBuffer), "%.*g", precision, value );
   }
   node->set( key, nameBuffer );
   return 1;
