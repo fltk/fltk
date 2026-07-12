@@ -296,7 +296,8 @@ Submenu_Node Submenu_Node::prototype;
 // Writing the C code:
 
 // test functions in Widget_Node.C:
-int is_name(const char *c);
+bool is_function_name(const std::string& name);
+bool is_lambda(const std::string& name);
 const char *array_name(Widget_Node *o);
 int isdeclare(const char *c);
 
@@ -323,7 +324,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
-  if (callback() && is_name(callback())) {
+  if (callback() && is_function_name(callback())) {
     std::string callback_name_pattern = std::string(callback()) + "(*)";
     Node* pClass = find_parent_class_node();
     if (pClass && pClass->has_function("static void", callback_name_pattern)) {
@@ -338,7 +339,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
       f.write_h_once(extra_code(n));
   }
-  if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
+  if (callback() && !is_function_name(callback()) && !is_lambda(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
@@ -536,7 +537,7 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
 
   // Write callback or nullptr
   if (callback()) {
-    if (callback()[0] == '[') {
+    if (is_lambda(callback())) {
       // Write lambda expressions inline, allow mergeback
       f.write_c("\n");
       f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
@@ -546,7 +547,7 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
       f.write_c(f.indent_plus(1) + ", ");
     } else {
       // Write named callback, try to qualify it with the class name if possible
-      const char* k = is_name(callback()) ? nullptr : class_name(1);
+      const char* k = is_function_name(callback()) ? nullptr : class_name(1);
       if (k) {
         f.write_c(" (Fl_Callback*)" + std::string(k) + "::" + std::string(callback_name(f)) + ",");
       } else {
@@ -603,7 +604,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
   }
 
   if (callback()) {
-    if (!is_name(callback()) && (callback()[0] != '[') && class_name(1)) {
+    if (!is_function_name(callback()) && !is_lambda(callback()) && class_name(1)) {
       std::string cn = callback_name(f);
       std::string ut = user_data_type_or_voidp();
       f.write_public(0);

@@ -1157,7 +1157,7 @@ void Node::copy_properties() {
 }
 
 std::string Node::callback_name(fluid::io::Code_Writer& f) {
-  if (is_name(callback())) return callback();
+  if (is_function_name(callback())) return callback();
   return f.unique_id(this, "cb", (name()?name():""), (label()?label():""));
 }
 

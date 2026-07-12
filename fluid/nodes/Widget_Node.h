@@ -32,7 +32,8 @@ extern Widget_Node* current_widget; // one of the selected ones
 extern Fl_Window* the_panel;
 
 extern std::string subclassname(Node* l);
-extern int is_name(const char* c);
+extern bool is_function_name(const std::string& name);
+extern bool is_lambda(const std::string& name);
 extern void selection_changed(Node* new_current);
 extern Node* sort(Node* parent);
 
