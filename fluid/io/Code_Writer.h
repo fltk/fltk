@@ -63,6 +63,18 @@ struct string_view {
     }
 };
 
+class CRC32 {
+  uint32_t crc_;
+  bool multi_space_ = false;
+  bool line_start_ = true;
+public:
+  CRC32() : crc_(0) {}
+  void update(fluid::string_view block);
+  uint32_t value() const { return crc_; }
+  void reset() { crc_ = 0; multi_space_ = false; line_start_ = true; }
+  static uint32_t block(fluid::string_view block);
+};
+
 namespace io {
 
 extern std::string to_string_8x(uint32_t value);
@@ -89,7 +101,7 @@ private:
   std::set<void*> ptr_in_code { };
 
   /// crc32 for blocks of text written to the code file
-  unsigned long block_crc_ = 0;
+  fluid::CRC32 crc_;
   /// if set, we are at the start of a line and can ignore leading spaces in crc
   bool block_line_start_ = true;
 
@@ -105,7 +117,6 @@ private:
   int header_pos() { return (int)header_buffer.tellp(); }
 
 protected:
-  void crc_add(fluid::string_view block);
   int crc_puts(const std::string& text);
   int crc_putc(int c);
 
@@ -163,8 +174,6 @@ public:
   std::string header_string() const { return header_buffer.str(); }
 
   void tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_type, unsigned short uid);
-
-  static unsigned long block_crc(fluid::string_view block, unsigned long in_crc=0, bool *inout_line_start=nullptr);
 };
 
 } // namespace io

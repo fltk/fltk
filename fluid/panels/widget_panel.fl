@@ -8,6 +8,7 @@ snap {
   current_suite FLTK
   current_preset 1
 }
+mergeback 1
 comment {//
 // Widget Panel for the Fast Light Tool Kit (FLTK).
 //
@@ -23,79 +24,79 @@ comment {//
 //
 //     https://www.fltk.org/bugs.php
 //
-} {in_source in_header
+} {uid a7b3 in_source in_header
 }
 
-decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {public global
+decl {\#include "panels/widget_panel/Grid_Child_Tab.h"} {uid 0573 public global
 }
 
-decl {\#include "panels/widget_panel/Grid_Tab.h"} {public global
+decl {\#include "panels/widget_panel/Grid_Tab.h"} {uid ce7e public global
 }
 
-decl {\#include "widgets/Formula_Input.h"} {public global
+decl {\#include "widgets/Formula_Input.h"} {uid e91b public global
 }
 
-decl {class Fl_Flex;} {public global
+decl {class Fl_Flex;} {uid 1a27 public global
 }
 
-decl {\#include "Fluid.h"} {private global
+decl {\#include "Fluid.h"} {uid 2cd9 private global
 }
 
-decl {\#include "app/Snap_Action.h"} {private global
+decl {\#include "app/Snap_Action.h"} {uid 60c4 private global
 }
 
-decl {\#include "proj/Image_Asset.h"} {private global
+decl {\#include "proj/Image_Asset.h"} {uid e939 private global
 }
 
-decl {\#include "proj/undo.h"} {private global
+decl {\#include "proj/undo.h"} {uid cf57 private global
 }
 
-decl {\#include "nodes/Window_Node.h"} {private global
+decl {\#include "nodes/Window_Node.h"} {uid 8216 private global
 }
 
-decl {\#include "nodes/Grid_Node.h"} {private global
+decl {\#include "nodes/Grid_Node.h"} {uid 8064 private global
 }
 
-decl {\#include "nodes/factory.h"} {private global
+decl {\#include "nodes/factory.h"} {uid 3341 private global
 }
 
-decl {\#include "io/file_chooser.h"} {private global
+decl {\#include "io/file_chooser.h"} {uid f5b9 private global
 }
 
-decl {\#include "nodes/Menu_Node.h"} {private global
+decl {\#include "nodes/Menu_Node.h"} {uid 5e35 private global
 }
 
-decl {\#include "nodes/Function_Node.h"} {private global
+decl {\#include "nodes/Function_Node.h"} {uid 2815 private global
 }
 
-decl {\#include <FL/Fl_Spinner.H>} {private global
+decl {\#include <FL/Fl_Spinner.H>} {uid b8e8 private global
 }
 
-decl {\#include <FL/Fl_Grid.H>} {private global
+decl {\#include <FL/Fl_Grid.H>} {uid a0f0 private global
 }
 
-decl {\#include <FL/Fl_Flex.H>} {private global
+decl {\#include <FL/Fl_Flex.H>} {uid fe3c private global
 }
 
-decl {\#include <FL/fl_ask.H>} {private global
+decl {\#include <FL/fl_ask.H>} {uid 4295 private global
 }
 
-decl {\#include <FL/Fl_Menu_Item.H>} {private global
+decl {\#include <FL/Fl_Menu_Item.H>} {uid 56d8 private global
 }
 
-decl {\#include <FL/Fl_File_Chooser.H>} {private global
+decl {\#include <FL/Fl_File_Chooser.H>} {uid b1e8 private global
 }
 
-decl {\#include <ctype.h>} {private global
+decl {\#include <ctype.h>} {uid 29ce private global
 }
 
-decl {\#include <stdlib.h>    // free()} {private global
+decl {\#include <stdlib.h>    // free()} {uid af1e private global
 }
 
-decl {\#include <functional>    // std::function} {private global
+decl {\#include <functional>    // std::function} {uid ed18 private global
 }
 
-decl {\#define ZERO_ENTRY 1000} {private global
+decl {\#define ZERO_ENTRY 1000} {uid cf64 private global
 }
 
 decl {extern const char* when_symbol_name(int n);
@@ -107,25 +108,26 @@ extern void color_common(Fl_Color c);
 extern void color2_common(Fl_Color c);
 extern void textcolor_common(Fl_Color c);
 extern int widget_i;
-extern fluid::widget::Formula_Input_Vars widget_vars[];} {private global
+extern fluid::widget::Formula_Input_Vars widget_vars[];} {uid aefa private global
 }
 
 decl {extern int numselected;
-extern Fl_Menu_Item boxmenu[];} {private global
+extern Fl_Menu_Item boxmenu[];} {uid abad private global
 }
 
-decl {extern int haderror;} {private global
+decl {extern int haderror;} {uid 2b68 private global
 }
 
-Function {use_tab_navigation(int, Fl_Text_Editor*)} {
+Function {use_tab_navigation(int, Fl_Text_Editor*)} {uid c8dd
   comment {Allow widget navigation on text fields with Tab.} private return_type int
 } {
-  code {return 0;} {}
+  code {return 0;} {uid 5afc
+  }
 }
 
 Function {update_current(Fl_Input* o, void *v,
   std::function<std::string()> getter,
-  std::function<void(std::string)> setter)} {open private return_type void
+  std::function<void(std::string)> setter)} {uid 5f59 open private return_type void
 } {
   code {if (v == LOAD) {
   o->value( getter().c_str() );
@@ -135,12 +137,13 @@ Function {update_current(Fl_Input* o, void *v,
     setter(v);
     Fluid.proj.set_modflag(1);
   }
-}} {}
+}} {uid e632
+  }
 }
 
 Function {update_current(Fl_Text_Editor* o, void *v,
   std::function<std::string()> getter,
-  std::function<void(std::string)> setter)} {open private return_type void
+  std::function<void(std::string)> setter)} {uid 0413 open private return_type void
 } {
   code {if (v == LOAD) {
   o->buffer()->text( getter().c_str() );
@@ -150,26 +153,27 @@ Function {update_current(Fl_Text_Editor* o, void *v,
     setter(v);
     Fluid.proj.set_modflag(1);
   }
-}} {}
+}} {uid 8701
+  }
 }
 
-Function {make_image_panel()} {
+Function {make_image_panel()} {uid 8909
   comment {Create a panel for editing widget image data}
 } {
-  Fl_Window image_panel_window {
+  Fl_Window image_panel_window {uid b839
     label {Image Options}
     callback {propagate_load(o, v);} open
     xywh {622 649 260 332} type Double modal visible
   } {
-    Fl_Group image_panel_imagegroup {
+    Fl_Group image_panel_imagegroup {uid e70b
       callback propagate_load open
       xywh {10 15 235 125}
     } {
-      Fl_Box {} {
+      Fl_Box {} {uid 940f
         label { ---- Active Image ----}
         xywh {75 15 170 20} labelfont 1 labelsize 11 align 20
       }
-      Fl_Box image_panel_data {
+      Fl_Box image_panel_data {uid 741f
         label {... x ... pixels, ...}
         callback {if (v == LOAD) {
   Fl_Shared_Image *img = Fl_Shared_Image::get(widget_image_input->value());
@@ -190,11 +194,11 @@ Function {make_image_panel()} {
         xywh {75 35 170 20} labelsize 11 align 20
         code0 {\#include <FL/Fl_Shared_Image.H>}
       }
-      Fl_Group {} {
+      Fl_Group {} {uid a5e5
         callback propagate_load open
         xywh {75 75 170 20}
       } {
-        Fl_Input image_panel_imagew {
+        Fl_Input image_panel_imagew {uid 6bca
           label {Width:}
           callback {if (v == LOAD) {
     if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -221,7 +225,7 @@ Function {make_image_panel()} {
           tooltip {Scale image to this width in pixel units} xywh {75 75 55 20} labelsize 11 align 5 textsize 11
           class {fluid::widget::Formula_Input}
         }
-        Fl_Input image_panel_imageh {
+        Fl_Input image_panel_imageh {uid c471
           label {Height:}
           callback {if (v == LOAD) {
     if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -248,7 +252,7 @@ Function {make_image_panel()} {
           tooltip {Scale image to this height in pixel units} xywh {135 75 55 20} labelsize 11 align 5 textsize 11
           class {fluid::widget::Formula_Input}
         }
-        Fl_Button {} {
+        Fl_Button {} {uid 0468
           label Reset
           callback {if (v != LOAD) {
   image_panel_imagew->value(0);
@@ -259,15 +263,15 @@ Function {make_image_panel()} {
           tooltip {Reset scale to original size} xywh {195 75 50 20} labelsize 11
         }
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 7c05
         label {Scale:}
         xywh {10 75 60 20} labelfont 1 labelsize 11 align 24
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 59f8
         label {Storage:}
         xywh {10 100 60 20} labelfont 1 labelsize 11 align 24
       }
-      Fl_Check_Button {} {
+      Fl_Check_Button {} {uid da36
         label {convert to raw pixel data}
         callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -286,7 +290,7 @@ Function {make_image_panel()} {
 }}
         tooltip {if unchecked, keep the image in its original format and store the data as is; if checked, convert the image and store it as uncompressed RGB or grayscale pixel data} xywh {75 100 170 20} down_box DOWN_BOX labelsize 11
       }
-      Fl_Check_Button {} {
+      Fl_Check_Button {} {uid 3b2e
         label {bind to widget}
         callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -306,15 +310,15 @@ Function {make_image_panel()} {
         tooltip {bind the image to the widget, so it will be deleted with the widget} xywh {75 120 170 20} down_box DOWN_BOX labelsize 11 hotspot
       }
     }
-    Fl_Group image_panel_deimagegroup {
+    Fl_Group image_panel_deimagegroup {uid 7298
       callback propagate_load open
       xywh {10 155 235 125}
     } {
-      Fl_Box {} {
+      Fl_Box {} {uid 5cdc
         label { ---- Inactive Image ----}
         xywh {75 155 170 20} labelfont 1 labelsize 11 align 20
       }
-      Fl_Box image_panel_dedata {
+      Fl_Box image_panel_dedata {uid 96ca
         label {... x ... pixels, ...}
         callback {if (v == LOAD) {
   Fl_Shared_Image *img = Fl_Shared_Image::get(widget_deimage_input->value());
@@ -334,11 +338,11 @@ Function {make_image_panel()} {
 }}
         xywh {75 175 170 20} labelsize 11 align 20
       }
-      Fl_Group {} {
+      Fl_Group {} {uid b6ad
         callback propagate_load open
         xywh {75 215 170 20}
       } {
-        Fl_Input image_panel_deimagew {
+        Fl_Input image_panel_deimagew {uid 2cc8
           label {Width:}
           callback {if (v == LOAD) {
     if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -365,7 +369,7 @@ Function {make_image_panel()} {
           tooltip {Scale image to this width in pixel units} xywh {75 215 55 20} labelsize 11 align 5 textsize 11
           class {fluid::widget::Formula_Input}
         }
-        Fl_Input image_panel_deimageh {
+        Fl_Input image_panel_deimageh {uid 2c6a
           label {Height:}
           callback {if (v == LOAD) {
     if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -392,7 +396,7 @@ Function {make_image_panel()} {
           tooltip {Scale image to this height in pixel units} xywh {135 215 55 20} labelsize 11 align 5 textsize 11
           class {fluid::widget::Formula_Input}
         }
-        Fl_Button {} {
+        Fl_Button {} {uid eadb
           label Reset
           callback {if (v != LOAD) {
   image_panel_deimagew->value(0);
@@ -403,15 +407,15 @@ Function {make_image_panel()} {
           tooltip {Reset scale to original size} xywh {195 215 50 20} labelsize 11
         }
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 01ed
         label {Scale:}
         xywh {10 215 60 20} labelfont 1 labelsize 11 align 24
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 9125
         label {Storage:}
         xywh {10 240 60 20} labelfont 1 labelsize 11 align 24
       }
-      Fl_Check_Button {} {
+      Fl_Check_Button {} {uid 3880
         label {convert to raw pixel data}
         callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -430,7 +434,7 @@ Function {make_image_panel()} {
 }}
         tooltip {if unchecked, keep the image in its original format and store the data as is; if checked, convert the image and store it as uncompressed RGB or grayscale pixel data} xywh {75 240 170 20} down_box DOWN_BOX labelsize 11
       }
-      Fl_Check_Button {} {
+      Fl_Check_Button {} {uid 821a
         label {bind to widget}
         callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
@@ -450,7 +454,7 @@ Function {make_image_panel()} {
         tooltip {bind the image to the widget, so it will be deleted with the widget} xywh {75 260 170 20} down_box DOWN_BOX labelsize 11
       }
     }
-    Fl_Button image_panel_close {
+    Fl_Button image_panel_close {uid 8e9a
       label Close
       callback {if (v != LOAD)
   image_panel_window->hide();}
@@ -459,7 +463,7 @@ Function {make_image_panel()} {
   }
 }
 
-Function {run_image_panel()} {return_type void
+Function {run_image_panel()} {uid 4e9d return_type void
 } {
   code {if (!image_panel_window)
   make_image_panel();
@@ -479,10 +483,11 @@ Fl_Shared_Image *img = (Fl_Shared_Image*)image_panel_data->user_data();
 if (img) {
   img->release();
   image_panel_data->user_data(nullptr);
-}} {}
+}} {uid 2ecf
+  }
 }
 
-Function {flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int))} {return_type void
+Function {flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex*,Fl_Value_Input*), int (*update_margin)(Fl_Flex*,int))} {uid 22a6 return_type void
 } {
   code {if (v == LOAD) {
   if (dynamic_cast<Flex_Node*>(current_widget)) {
@@ -501,55 +506,56 @@ Function {flex_margin_cb(Fl_Value_Input* i, void* v, void (*load_margin)(Fl_Flex
     }
   }
   if (mod) Fluid.proj.set_modflag(1);
-}} {}
+}} {uid e026
+  }
 }
 
-Function {make_widget_panel()} {
+Function {make_widget_panel()} {uid 1743
   comment {Create a panel that can be used with all known widgets} open
 } {
-  Fl_Window {} {
+  Fl_Window {} {uid 6519
     comment {Use a Double Window to avoid flickering.} open
     xywh {565 208 420 400} type Double labelsize 11 align 80 resizable hotspot
     code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
-    Fl_Wizard tabs_wizard {
+    Fl_Wizard tabs_wizard {uid 70dd
       callback {propagate_load((Fl_Group *)o,v);} open
       xywh {10 10 400 350} box NO_BOX labelsize 11 resizable
     } {
-      Fl_Tabs widget_tabs {
+      Fl_Tabs widget_tabs {uid edaf
         callback {if (current_widget)
   propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0
         code0 {o->show();}
       } {
-        Fl_Group wp_gui_tab {
+        Fl_Group wp_gui_tab {uid 90e8
           label GUI
           callback propagate_load open selected
           xywh {10 30 400 330} labelsize 11 when 0 resizable
         } {
-          Fl_Group {} {
+          Fl_Group {} {uid 783a
             label {Label:}
             callback propagate_load open
             xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input wp_gui_label {
+            Fl_Input wp_gui_label {uid 4a89
               callback label_cb
               tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 textsize 11 resizable
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 7cc5
               callback labeltype_cb open
               tooltip {The label style for the widget.} xywh {285 40 119 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
               code0 {extern Fl_Menu_Item labeltypemenu[];}
               code1 {o->menu(labeltypemenu);}
             } {}
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 901f
             label {Image:}
             callback propagate_load open
             xywh {95 65 309 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input widget_image_input {
+            Fl_Input widget_image_input {uid 053c
               callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
     o->activate();
@@ -566,7 +572,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
 }}
               tooltip {The active image for the widget.} xywh {95 65 200 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
-            Fl_Button {} {
+            Fl_Button {} {uid c26d
               label {Browse...}
               callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget))
@@ -588,7 +594,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
 }}
               tooltip {Click to choose the active image.} xywh {295 65 89 20} labelsize 11 align 256
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 9319
               label {...}
               callback {if (v != LOAD) {
   run_image_panel();
@@ -596,12 +602,12 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               tooltip {more image options} bind_image 1 xywh {384 65 20 20}
             }
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 669d
             label {Inactive:}
             callback propagate_load open
             xywh {95 90 309 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input widget_deimage_input {
+            Fl_Input widget_deimage_input {uid e738
               callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget)) {
     o->activate();
@@ -618,7 +624,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
 }}
               tooltip {The inactive image for the widget.} xywh {95 90 200 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 2ade
               label {Browse...}
               callback {if (v == LOAD) {
   if (current_widget->is_widget() && !dynamic_cast<Window_Node*>(current_widget))
@@ -641,178 +647,178 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
               tooltip {Click to choose the inactive image.} xywh {295 90 89 20} labelsize 11
             }
           }
-          Fl_Group wp_gui_alignment {
+          Fl_Group wp_gui_alignment {uid 7410
             label {Alignment:}
             callback propagate_load open
             xywh {95 115 312 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Button {} {
+            Fl_Button {} {uid dfe6
               label Clip
               user_data {(fl_intptr_t)FL_ALIGN_CLIP}
               callback align_cb
               tooltip {Clip the label to the inside of the widget.} xywh {95 115 30 20} type Toggle selection_color 8 labelsize 11 align 16
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 8760
               label Wrap
               user_data {(fl_intptr_t)FL_ALIGN_WRAP}
               callback align_cb
               tooltip {Wrap the label text.} xywh {130 115 38 20} type Toggle selection_color 8 labelsize 11
             }
-            Fl_Button {} {
+            Fl_Button {} {uid b4c3
               label {@-1<-}
               user_data {(fl_intptr_t)FL_ALIGN_LEFT}
               callback align_cb
               tooltip {Left-align the label.} xywh {278 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 867b
               label {@-1->}
               user_data {(fl_intptr_t)FL_ALIGN_RIGHT}
               callback align_cb
               tooltip {Right-align the label.} xywh {303 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 05e8
               label {@-18}
               user_data {(fl_intptr_t)FL_ALIGN_TOP}
               callback align_cb
               tooltip {Top-align the label.} xywh {328 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
             }
-            Fl_Button {} {
+            Fl_Button {} {uid ee72
               label {@-12}
               user_data {(fl_intptr_t)FL_ALIGN_BOTTOM}
               callback align_cb
               tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid aac3
               callback align_text_image_cb
               xywh {172 115 116 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 09f2
                 label {   Image Alignment   }
                 user_data {(fl_intptr_t)-1}
                 xywh {145 145 100 20} labelfont 1 labelsize 10
               }
-              MenuItem {} {
+              MenuItem {} {uid 1eb3
                 label {image over text}
                 user_data {(fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT}
                 xywh {25 25 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid a916
                 label {text over image}
                 user_data {(fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE}
                 xywh {15 15 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 2160
                 label {text next to image}
                 user_data {(fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE}
                 xywh {35 35 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 43de
                 label {image next to text}
                 user_data {(fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT}
                 xywh {45 45 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid e18b
                 label {image is backdrop}
                 user_data {(fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP}
                 xywh {55 55 100 20} labelsize 9
               }
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 81c9
               callback align_position_cb
               xywh {293 115 86 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid d159
                 label {   Inside && Outside   }
                 user_data {(fl_intptr_t)-1}
                 xywh {135 135 100 20} labelfont 1 labelsize 10
               }
-              MenuItem {} {
+              MenuItem {} {uid 4c02
                 label {top left}
                 user_data {(fl_intptr_t)FL_ALIGN_TOP_LEFT}
                 xywh {45 45 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 42b9
                 label top
                 user_data {(fl_intptr_t)FL_ALIGN_TOP}
                 xywh {55 55 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 9a10
                 label {top right}
                 user_data {(fl_intptr_t)FL_ALIGN_TOP_RIGHT}
                 xywh {65 65 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid b832
                 label left
                 user_data {(fl_intptr_t)FL_ALIGN_LEFT}
                 xywh {75 75 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 1b62
                 label center
                 user_data {(fl_intptr_t)FL_ALIGN_CENTER}
                 xywh {35 35 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid c8cd
                 label right
                 user_data {(fl_intptr_t)FL_ALIGN_RIGHT}
                 xywh {85 85 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 36b9
                 label {bottom left}
                 user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_LEFT}
                 xywh {95 95 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid c241
                 label bottom
                 user_data {(fl_intptr_t)FL_ALIGN_BOTTOM}
                 xywh {105 105 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 5cf7
                 label {bottom right}
                 user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT}
                 xywh {115 115 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 7e73
                 label {   Outside Alignment   }
                 user_data {(fl_intptr_t)-1}
                 xywh {125 125 100 20} labelfont 1 labelsize 10
               }
-              MenuItem {} {
+              MenuItem {} {uid e676
                 label {left top}
                 user_data {(fl_intptr_t)FL_ALIGN_LEFT_TOP}
                 xywh {135 135 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 4df5
                 label {right top}
                 user_data {(fl_intptr_t)FL_ALIGN_RIGHT_TOP}
                 xywh {145 145 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid 21d3
                 label {left bottom}
                 user_data {(fl_intptr_t)FL_ALIGN_LEFT_BOTTOM}
                 xywh {155 155 100 20} labelsize 9
               }
-              MenuItem {} {
+              MenuItem {} {uid cddb
                 label {right bottom}
                 user_data {(fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM}
                 xywh {45 45 100 20} labelsize 9
               }
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 08b7
               label {@-3square}
               user_data {(fl_intptr_t)FL_ALIGN_INSIDE}
               callback align_cb
               tooltip {Show the label inside the widget.} xywh {384 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 62a3
               xywh {406 115 1 20} labelsize 11 resizable
             }
           }
-          Fl_Group {} {
+          Fl_Group {} {uid ccd5
             label {Position:}
             callback position_group_cb open
             xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input widget_x_input {
+            Fl_Input widget_x_input {uid f3a3
               label {X:}
               callback {if (v == LOAD) {
   if (current_widget->is_true_widget()) {
@@ -846,7 +852,7 @@ Formulas can be simple math, including the variables
 x, px, sx, cx, and i} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
               class {fluid::widget::Formula_Input}
             }
-            Fl_Input widget_y_input {
+            Fl_Input widget_y_input {uid 6287
               label {Y:}
               callback {if (v == LOAD) {
   if (current_widget->is_true_widget()) {
@@ -879,7 +885,7 @@ Formulas can be simple math, including the variables
 y, py, sy, cy, and i} xywh {155 150 55 20} labelsize 11 align 5 textsize 11
               class {fluid::widget::Formula_Input}
             }
-            Fl_Input widget_w_input {
+            Fl_Input widget_w_input {uid c479
               label {Width:}
               callback {if (v == LOAD) {
   if (current_widget->is_true_widget()) {
@@ -912,7 +918,7 @@ Formulas can be simple math, including the variables
 w, pw, sw, cw, and i} xywh {215 150 55 20} labelsize 11 align 5 textsize 11
               class {fluid::widget::Formula_Input}
             }
-            Fl_Input widget_h_input {
+            Fl_Input widget_h_input {uid 117f
               label {Height:}
               callback {if (v == LOAD) {
   if (current_widget->is_true_widget()) {
@@ -945,7 +951,7 @@ Formulas can be simple math, including the variables
 h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
               class {fluid::widget::Formula_Input}
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid c6c4
               label {Children:}
               callback {if (v == LOAD) {
   if (dynamic_cast<Widget_Class_Node*>(current_widget)) {
@@ -968,24 +974,24 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {When instantiating a widget class, the children can either be fixed in their original position, automatically be repositioned, or both repsositioned and resized to fit the container.} xywh {335 150 64 20} down_box BORDER_BOX labelsize 11 align 5 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid a381
                 label Fixed
                 xywh {0 0 31 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 6b9a
                 label Reposition
                 xywh {0 0 31 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 5603
                 label Resize
                 xywh {0 0 31 20} labelsize 11
               }
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 0d5e
               xywh {399 150 1 20} hide resizable
             }
           }
-          Fl_Group wp_gui_flexp {
+          Fl_Group wp_gui_flexp {uid c4ca
             label {Flex Parent:}
             callback {if (v == LOAD) {
   if (Flex_Node::parent_is_flex(current_widget)) {
@@ -998,7 +1004,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             comment {This group is only visible if the parent is an Fl_Flex widget}
             xywh {95 150 314 20} labelfont 1 labelsize 11 align 4 hide
           } {
-            Fl_Value_Input widget_flex_size {
+            Fl_Value_Input widget_flex_size {uid c670
               label {Size:}
               callback {if (v == LOAD) {
   if (Flex_Node::parent_is_flex(current_widget)) {
@@ -1034,7 +1040,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.} xywh {95 150 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Check_Button widget_flex_fixed {
+            Fl_Check_Button widget_flex_fixed {uid 094c
               label fixed
               callback {if (v == LOAD) {
   if (Flex_Node::parent_is_flex(current_widget)) {
@@ -1067,11 +1073,11 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {If checked, the size of the widget stays fixed.} xywh {155 150 55 20} down_box DOWN_BOX labelsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 8ded
               xywh {398 150 1 20} resizable
             }
           }
-          Fl_Group wp_gui_values {
+          Fl_Group wp_gui_values {uid 03b3
             label {Values:}
             callback {if (v == LOAD) {
   if (   dynamic_cast<Flex_Node*>(current_widget)
@@ -1086,7 +1092,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }} open
             xywh {95 185 300 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 0a71
               label {Size:}
               callback {if (v == LOAD) {
   if (!dynamic_cast<Slider_Node*>(current_widget)) {o->deactivate(); return;}
@@ -1107,7 +1113,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 9310
               label {Minimum:}
               callback {if (v == LOAD) {
   if (dynamic_cast<Valuator_Node*>(current_widget)) {
@@ -1139,7 +1145,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The minimum value of the widget.} xywh {155 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 30ee
               label {Maximum:}
               callback {if (v == LOAD) {
   if (dynamic_cast<Valuator_Node*>(current_widget)) {
@@ -1171,7 +1177,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The maximum value of the widget.} xywh {215 185 55 20} labelsize 11 align 5 value 1 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 647f
               label {Step:}
               callback {if (v == LOAD) {
   if (dynamic_cast<Valuator_Node*>(current_widget)) {
@@ -1203,7 +1209,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The resolution of the widget value.} xywh {275 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid ce20
               label {Value:}
               callback {if (v == LOAD) {
   if (dynamic_cast<Valuator_Node*>(current_widget)) {
@@ -1238,11 +1244,11 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The current widget value.} xywh {335 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid b76b
               xywh {395 185 0 20} resizable
             }
           }
-          Fl_Group wp_gui_margins {
+          Fl_Group wp_gui_margins {uid d70c
             label {Margins:}
             callback {if (v == LOAD) {
   if (dynamic_cast<Flex_Node*>(current_widget)) {
@@ -1255,7 +1261,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
             comment {This group is only visible for Fl_Flex widgets}
             xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
           } {
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 5f88
               label {Left:}
               callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
@@ -1278,7 +1284,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 );}
               tooltip {Left margin in group.} xywh {95 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 1505
               label {Top:}
               callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
@@ -1301,7 +1307,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 );}
               tooltip {Top margin in group.} xywh {155 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 2eaa
               label {Right:}
               callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
@@ -1324,7 +1330,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 );}
               tooltip {Right margin in group.} xywh {215 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid cbeb
               label {Bottom:}
               callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* i) -> void
@@ -1347,7 +1353,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 );}
               tooltip {Bottom margin in group.} xywh {275 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid cdf4
               label {Gap:}
               callback {flex_margin_cb(o, v,
   [](Fl_Flex *w, Fl_Value_Input* o) -> void
@@ -1368,11 +1374,11 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 );}
               tooltip {Gap between children.} xywh {335 185 55 20} labelsize 11 align 5 textsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 4e96
               xywh {395 185 0 20} resizable
             }
           }
-          Fl_Group wp_gui_sizerange {
+          Fl_Group wp_gui_sizerange {uid 803e
             label {Size Range:}
             callback {if (v == LOAD) {
   if (dynamic_cast<Window_Node*>(current_widget)) {
@@ -1384,7 +1390,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
             xywh {95 185 300 20} labelfont 1 labelsize 11 align 4 hide
           } {
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 887c
               label {Minimum Size:}
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) return;
@@ -1403,7 +1409,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The size of the slider.} xywh {95 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 8947
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) return;
   o->value(((Window_Node*)current_widget)->sr_min_h);
@@ -1421,7 +1427,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The minimum value of the widget.} xywh {155 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
             }
-            Fl_Button {} {
+            Fl_Button {} {uid b808
               label set
               callback {if (v == LOAD) {
 } else {
@@ -1440,7 +1446,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               xywh {215 185 25 20} labelsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 2ece
               label {Maximum Size:}
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) return;
@@ -1459,7 +1465,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The maximum value of the widget.} xywh {245 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid e48d
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) return;
   o->value(((Window_Node*)current_widget)->sr_max_h);
@@ -1477,7 +1483,7 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               tooltip {The resolution of the widget value.} xywh {305 185 55 20} labelsize 11 align 5 maximum 2048 step 1 textsize 11
             }
-            Fl_Button {} {
+            Fl_Button {} {uid fe4e
               label set
               callback {if (v == LOAD) {
 } else {
@@ -1496,16 +1502,16 @@ h, ph, sh, ch, and i} xywh {275 150 55 20} labelsize 11 align 5 textsize 11
 }}
               xywh {365 185 25 20} labelsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid dc09
               xywh {395 185 0 20} resizable
             }
           }
-          Fl_Group {} {
+          Fl_Group {} {uid fe23
             label {Shortcut:}
             callback propagate_load
             xywh {95 210 310 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Button wp_gui_shortcut {
+            Fl_Button wp_gui_shortcut {uid da66
               callback {if (v == LOAD) {
   if (current_widget->is_button())
     o->value( ((Fl_Button*)(current_widget->o))->shortcut() );
@@ -1554,12 +1560,12 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
               class Fl_Shortcut_Button
             }
           }
-          Fl_Group wp_gui_xclass {
+          Fl_Group wp_gui_xclass {uid 81e7
             label {X Class:}
             callback propagate_load open
             xywh {95 235 300 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input {} {
+            Fl_Input {} {uid 7717
               label {:}
               callback {if (v == LOAD) {
   if (dynamic_cast<Window_Node*>(current_widget)) {
@@ -1585,7 +1591,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 }}
               tooltip {The X resource class.} xywh {95 235 95 20} labelfont 1 labelsize 11 textsize 11 resizable
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid bc92
               label Border
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) {o->hide(); return;}
@@ -1598,7 +1604,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 }}
               tooltip {Add a border around the window.} xywh {195 235 60 20} selection_color 1 labelsize 11
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid 2da8
               label Modal
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) {o->hide(); return;}
@@ -1611,7 +1617,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 }}
               tooltip {Make the window modal.} xywh {260 235 55 20} selection_color 1 labelsize 11
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid 9da3
               label Nonmodal
               callback {if (v == LOAD) {
   if (!dynamic_cast<Window_Node*>(current_widget)) {o->hide(); return;}
@@ -1625,12 +1631,12 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
               tooltip {Make the window non-modal.} xywh {320 235 75 20} selection_color 1 labelsize 11 align 148
             }
           }
-          Fl_Group wp_gui_attributes {
+          Fl_Group wp_gui_attributes {uid 4cb2
             label {Attributes:}
             callback propagate_load
             xywh {95 260 305 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid 3abb
               label Visible
               callback {if (v == LOAD) {
   o->value(current_widget->o->visible());
@@ -1661,7 +1667,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 }}
               tooltip {Show the widget.} xywh {95 260 60 20} selection_color 1 labelsize 11
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid d1cd
               label Active
               callback {if (v == LOAD) {
   o->value(current_widget->o->active());
@@ -1682,7 +1688,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 }}
               tooltip {Activate the widget.} xywh {160 260 60 20} selection_color 1 labelsize 11
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid 0bee
               label Resizable
               callback {if (v == LOAD) {
   if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
@@ -1703,7 +1709,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
 }}
               tooltip {Make the widget resizable.} xywh {225 260 75 20} selection_color 1 labelsize 11 when 1
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid 6932
               label Headline
               callback {if (v == LOAD) {
   if (!dynamic_cast<Menu_Item_Node*>(current_widget)) {
@@ -1732,7 +1738,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
               tooltip {Make a menu item the headline of a menu
 unselectable, but not grayed out} xywh {225 260 75 20} selection_color 1 labelsize 11 when 1 hide
             }
-            Fl_Light_Button {} {
+            Fl_Light_Button {} {uid 601b
               label Hotspot
               callback {if (v == LOAD) {
   if (numselected > 1) {o->deactivate(); return;}
@@ -1760,11 +1766,11 @@ unselectable, but not grayed out} xywh {225 260 75 20} selection_color 1 labelsi
 }}
               tooltip {Center the window under this widget.} xywh {305 260 70 20} selection_color 1 labelsize 11 when 1
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 903e
               xywh {395 260 0 20} labelsize 11 resizable
             }
           }
-          Fl_Input wp_gui_tooltip {
+          Fl_Input wp_gui_tooltip {uid db15
             label {Tooltip:}
             callback {if (v == LOAD) {
   if (current_widget->is_widget()) {
@@ -1784,21 +1790,21 @@ unselectable, but not grayed out} xywh {225 260 75 20} selection_color 1 labelsi
             tooltip {The tooltip text for the widget.
 Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize 11
           }
-          Fl_Box {} {
+          Fl_Box {} {uid 4a38
             xywh {95 305 300 5} hide resizable
           }
         }
-        Fl_Group wp_style_tab {
+        Fl_Group wp_style_tab {uid d20c
           label Style
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 when 0 hide
         } {
-          Fl_Group wp_style_label {
+          Fl_Group wp_style_label {uid 2554
             label {Label Font:}
             callback propagate_load open
             xywh {99 40 305 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid b11e
               callback {if (v == LOAD) {
   int n = current_widget->o->labelfont();
   if (n > 15) n = 0;
@@ -1819,7 +1825,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
               code0 {extern Fl_Menu_Item fontmenu[];}
               code1 {o->menu(fontmenu);}
             } {}
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 47f0
               callback {int n;
 if (v == LOAD) {
   n = current_widget->o->labelsize();
@@ -1837,7 +1843,7 @@ if (v == LOAD) {
 o->value(n);}
               tooltip {The size of the label text.} xywh {247 40 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
             }
-            Fl_Button w_labelcolor {
+            Fl_Button w_labelcolor {uid fb93
               label {Label Color}
               callback {Fl_Color c = current_widget->o->labelcolor();
 if (v != LOAD) {
@@ -1851,7 +1857,7 @@ o->labelcolor(fl_contrast(FL_BLACK,c));
 o->redraw();}
               tooltip {The color of the label text.} xywh {296 40 90 20} labelsize 11
             }
-            Fl_Menu_Button {} {
+            Fl_Menu_Button {} {uid 9208
               callback {Fl_Color c = current_widget->o->labelcolor();
 if (v != LOAD) {
   Fl_Color d = (Fl_Color)(o->mvalue()->argument());
@@ -1867,12 +1873,12 @@ if (v != LOAD) {
               code1 {o->menu(colormenu);}
             } {}
           }
-          Fl_Group wp_style_box {
+          Fl_Group wp_style_box {uid 6888
             label {Box:}
             callback propagate_load open
             xywh {99 65 305 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid c296
               callback {if (v == LOAD) {
   if (dynamic_cast<Menu_Item_Node*>(current_widget)) {o->deactivate(); return;} else o->activate();
   int n = current_widget->o->box();
@@ -1896,7 +1902,7 @@ if (v != LOAD) {
               code0 {extern Fl_Menu_Item boxmenu[];}
               code1 {o->menu(boxmenu);}
             } {}
-            Fl_Button w_color {
+            Fl_Button w_color {uid 189f
               label Color
               callback {Fl_Color c = current_widget->o->color();
 if (v == LOAD) {
@@ -1916,7 +1922,7 @@ o->labelcolor(fl_contrast(FL_BLACK,c));
 o->redraw();}
               tooltip {The background color of the widget.} xywh {296 65 90 20} labelsize 11
             }
-            Fl_Menu_Button {} {
+            Fl_Menu_Button {} {uid a574
               callback {Fl_Color c = current_widget->o->color();
 if (v == LOAD) {
   if (dynamic_cast<Menu_Item_Node*>(current_widget)) {o->deactivate(); return;} else o->activate();
@@ -1934,12 +1940,12 @@ if (v == LOAD) {
               code1 {o->menu(colormenu);}
             } {}
           }
-          Fl_Group wp_style_downbox {
+          Fl_Group wp_style_downbox {uid 9057
             label {Down Box:}
             callback propagate_load open
             xywh {99 90 305 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid 65af
               callback {if (v == LOAD) {
   int n;
   if (dynamic_cast<Button_Node*>(current_widget))
@@ -1978,7 +1984,7 @@ if (v == LOAD) {
               code0 {extern Fl_Menu_Item boxmenu[];}
               code1 {o->menu(boxmenu);}
             } {}
-            Fl_Button w_selectcolor {
+            Fl_Button w_selectcolor {uid f0e1
               label {Select Color}
               callback {Fl_Color c = current_widget->o->selection_color();
 if (v == LOAD) {
@@ -1999,7 +2005,7 @@ o->labelcolor(fl_contrast(FL_BLACK,c));
 o->redraw();}
               tooltip {The selection color of the widget.} xywh {296 90 90 20} labelsize 11
             }
-            Fl_Menu_Button {} {
+            Fl_Menu_Button {} {uid 5985
               callback {Fl_Color c = current_widget->o->selection_color();
 if (v == LOAD) {
   if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
@@ -2022,12 +2028,12 @@ if (v == LOAD) {
               code1 {o->menu(colormenu);}
             } {}
           }
-          Fl_Group wp_style_text {
+          Fl_Group wp_style_text {uid 2e88
             label {Text Font:}
             callback propagate_load open
             xywh {99 115 305 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid 2382
               callback {Fl_Font n; int s; Fl_Color c;
 if (v == LOAD) {
   if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
@@ -2049,7 +2055,7 @@ if (v == LOAD) {
               code0 {extern Fl_Menu_Item fontmenu[];}
               code1 {o->menu(fontmenu);}
             } {}
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 4f6a
               callback {Fl_Font n; int s; Fl_Color c;
 if (v == LOAD) {
   if (!current_widget->textstuff(0,n,s,c)) {o->deactivate(); return;}
@@ -2069,7 +2075,7 @@ if (v == LOAD) {
 o->value(s);}
               tooltip {The value text size.} xywh {247 115 49 20} labelsize 11 maximum 100 step 1 value 14 textsize 11
             }
-            Fl_Button w_textcolor {
+            Fl_Button w_textcolor {uid b841
               label {Text Color}
               callback {Fl_Font n; int s; Fl_Color c;
 if (v == LOAD) {
@@ -2090,7 +2096,7 @@ o->labelcolor(fl_contrast(FL_BLACK,c));
 o->redraw();}
               tooltip {The value text color.} xywh {296 115 90 20} labelsize 11
             }
-            Fl_Menu_Button {} {
+            Fl_Menu_Button {} {uid eb9d
               callback {Fl_Font n; int s; Fl_Color c;
 if (v == LOAD) {
   if (!current_widget->textstuff(0,n,s,c)) {
@@ -2113,12 +2119,12 @@ if (v == LOAD) {
               code1 {o->menu(colormenu);}
             } {}
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 9258
             label {Label Margin:}
             callback propagate_load open
             xywh {99 150 242 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid e831
               label {Horizontal:}
               callback {int s;
 if (v == LOAD) {
@@ -2147,7 +2153,7 @@ if (v == LOAD) {
 }}
               tooltip {Spacing between label and the horizontally aligned side of the widget.} xywh {99 150 55 20} labelsize 11 align 5 minimum -127 maximum 128 step 1 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 091c
               label {Vertical:}
               callback {int s;
 if (v == LOAD) {
@@ -2176,7 +2182,7 @@ if (v == LOAD) {
 }}
               tooltip {Spacing between label and the vertically aligned side of the widget.} xywh {159 150 55 20} labelsize 11 align 5 minimum -127 maximum 127 step 1 textsize 11
             }
-            Fl_Value_Input {} {
+            Fl_Value_Input {} {uid 3317
               label {Image Gap:}
               callback {int s;
 if (v == LOAD) {
@@ -2205,11 +2211,11 @@ if (v == LOAD) {
 }}
               tooltip {Gap between label image and text in pixels} xywh {219 150 55 20} labelsize 11 align 5 maximum 255 step 1 textsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 5b84
               xywh {281 150 60 20} labelsize 11 hide resizable
             }
           }
-          Fl_Light_Button {} {
+          Fl_Light_Button {} {uid 63b5
             label Compact
             callback {if (v == LOAD) {
   uchar n;
@@ -2240,21 +2246,21 @@ if (v == LOAD) {
 }}
             tooltip {use compact box types for closely set buttons} xywh {99 175 90 20} selection_color 1 labelsize 11
           }
-          Fl_Box {} {
+          Fl_Box {} {uid 2348
             xywh {195 205 40 40} labelsize 11 resizable
           }
         }
-        Fl_Group wp_cpp_tab {
+        Fl_Group wp_cpp_tab {uid 4e4e
           label {C++}
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 when 0 hide
         } {
-          Fl_Group wp_cpp_class {
+          Fl_Group wp_cpp_class {uid eaec
             label {Class:}
             callback propagate_load open
             xywh {95 40 310 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input {} {
+            Fl_Input {} {uid 6bdb
               user_data 4
               callback {if (v == LOAD) {
     if (dynamic_cast<Menu_Item_Node*>(current_widget)) {
@@ -2274,7 +2280,7 @@ if (v == LOAD) {
   }}
               tooltip {The widget subclass.} xywh {95 40 172 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 0339
               callback {static Fl_Menu_Item empty_type_menu[] = {
     {"Normal",0,nullptr,(void*)nullptr},
     {nullptr}};
@@ -2321,12 +2327,12 @@ if (v == LOAD) {
               tooltip {The widget subtype.} xywh {267 40 138 20} box THIN_UP_BOX down_box BORDER_BOX labelsize 11 textsize 11
             } {}
           }
-          Fl_Group wp_cpp_name {
+          Fl_Group wp_cpp_name {uid aa3f
             label {Name:}
             callback propagate_load open
             xywh {95 65 310 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input {} {
+            Fl_Input {} {uid 366a
               callback {if (v == LOAD) {
     static char buf[1024];
     if (numselected != 1) {
@@ -2350,7 +2356,7 @@ if (v == LOAD) {
   }}
               tooltip {The name of the widget.} xywh {95 65 235 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 910a
               callback {if (v == LOAD) {
   o->value(current_widget->public_);
   if (current_widget->is_in_class()) o->show(); else o->hide();
@@ -2372,39 +2378,39 @@ if (v == LOAD) {
 }} open
               tooltip {Change member access attribute.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 2fca
                 label private
                 user_data 0 user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 9b11
                 label public
                 user_data 1 user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid b7b9
                 label protected
                 user_data 2 user_data_type long
                 xywh {0 0 100 20} labelsize 11
               }
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid ea1d
               callback name_public_cb open
               tooltip {Change widget accessibility.} xywh {330 65 75 20} down_box BORDER_BOX labelsize 11 when 1 textsize 11 hide
             } {
-              MenuItem {} {
+              MenuItem {} {uid 4cf0
                 label local
                 user_data 0 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 6086
                 label global
                 user_data 1 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
             }
           }
-          Fl_Input {v_input[0]} {
+          Fl_Input {v_input[0]} {uid 0e6b
             label {Extra Code:}
             user_data 0
             callback {int n = fl_int(o->user_data());
@@ -2423,30 +2429,30 @@ if (v == LOAD) {
   }}
             tooltip {Extra initialization code for the widget.} xywh {95 90 310 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {v_input[1]} {
+          Fl_Input {v_input[1]} {uid a350
             user_data 1
             callback {cb_v_input(o, v);}
             tooltip {Extra initialization code for the widget.} xywh {95 110 310 20} labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {v_input[2]} {
+          Fl_Input {v_input[2]} {uid f50b
             user_data 2
             callback {cb_v_input(o, v);}
             tooltip {Extra initialization code for the widget.} xywh {95 130 310 20} labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {v_input[3]} {
+          Fl_Input {v_input[3]} {uid da8d
             user_data 3
             callback {cb_v_input(o, v);}
             tooltip {Extra initialization code for the widget.} xywh {95 150 310 20} labelsize 11 textfont 4 textsize 11
           }
-          Fl_Tile {} {
+          Fl_Tile {} {uid 99ee
             callback {wComment->do_callback(wComment, v);
 wCallback->do_callback(wCallback, v);} open
             xywh {95 175 310 130} resizable
           } {
-            Fl_Group {} {open
+            Fl_Group {} {uid e850 open
               xywh {95 175 310 48} box FLAT_BOX
             } {
-              Fl_Text_Editor wComment {
+              Fl_Text_Editor wComment {uid 0e1f
                 label {Comment:}
                 callback {if (v == LOAD) {
     const char *cmttext = current_widget->comment();
@@ -2465,10 +2471,10 @@ wCallback->do_callback(wCallback, v);} open
                 code0 {wComment->buffer(new Fl_Text_Buffer());}
               }
             }
-            Fl_Group {} {open
+            Fl_Group {} {uid 42d7 open
               xywh {95 223 310 82} box FLAT_BOX
             } {
-              Fl_Text_Editor wCallback {
+              Fl_Text_Editor wCallback {uid 4eeb
                 label {Callback:}
                 callback {if (v == LOAD) {
     const char *cbtext = current_widget->callback();
@@ -2495,12 +2501,12 @@ wCallback->do_callback(wCallback, v);} open
               }
             }
           }
-          Fl_Group wp_cpp_callback {
+          Fl_Group wp_cpp_callback {uid 379b
             label {User Data:}
             callback propagate_load open
             xywh {95 310 310 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input {} {
+            Fl_Input {} {uid ccce
               callback {if (v == LOAD) {
   o->value(current_widget->user_data().c_str());
 } else {
@@ -2520,7 +2526,7 @@ wCallback->do_callback(wCallback, v);} open
 }}
               tooltip {The user data to pass into the callback code.} xywh {95 310 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             }
-            Fl_Menu_Button {} {
+            Fl_Menu_Button {} {uid f009
               label When
               callback {if (v == LOAD) {
   if (dynamic_cast<Menu_Item_Node*>(current_widget)) {o->deactivate(); return;} else o->activate();
@@ -2552,12 +2558,12 @@ wCallback->do_callback(wCallback, v);} open
               code1 {o->menu(whenmenu);}
             } {}
           }
-          Fl_Group {} {
+          Fl_Group {} {uid eca1
             label {Type:}
             callback propagate_load open
             xywh {95 332 310 26} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Input_Choice {} {
+            Fl_Input_Choice {} {uid 457d
               callback {static const char *dflt = "void*";
 if (v == LOAD) {
   std::string c = current_widget->user_data_type();
@@ -2593,50 +2599,50 @@ if (v == LOAD) {
 }} open
               tooltip {The type of the user data.} xywh {95 335 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
             } {
-              MenuItem {} {
+              MenuItem {} {uid 3574
                 label {void*}
                 xywh {0 0 31 20} labelfont 4 labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 5312
                 label long
                 xywh {0 0 31 20} labelfont 4 labelsize 11
               }
             }
-            Fl_Box w_when_box {
+            Fl_Box w_when_box {uid ce4b
               label FL_WHEN_NEVER
               xywh {260 332 145 26} box FLAT_BOX selection_color 1 labelsize 8 align 209
             }
           }
         }
-        Fl_Group widget_tab_grid {
+        Fl_Group widget_tab_grid {uid c546
           label Grid
           callback {o->callback((Fl_Callback*)propagate_load);} open
           xywh {10 30 400 330} labelsize 11 hide
           class Grid_Tab
         } {}
-        Fl_Group widget_tab_grid_child {
+        Fl_Group widget_tab_grid_child {uid 9305
           label {Grid Child}
           callback {o->callback((Fl_Callback*)propagate_load);} open
           xywh {10 30 400 330} labelsize 11 hide
           class Grid_Child_Tab
         } {}
       }
-      Fl_Tabs data_tabs {
+      Fl_Tabs data_tabs {uid 32ad
         callback {if (current_node && (dynamic_cast<Data_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group data_tabs_data {
+        Fl_Group data_tabs_data {uid 28fc
           label {Inline Data}
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Group {} {
+          Fl_Group {} {uid d107
             label {Visibility:}
             callback propagate_load open
             xywh {95 49 310 21} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid 5977
               callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
 
@@ -2658,24 +2664,24 @@ if (v == LOAD) {
 }} open
               xywh {95 50 210 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 9bbe
                 label {in source file only}
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 16d9
                 label {in header file only}
                 xywh {10 10 100 20} labelsize 11 hide
               }
-              MenuItem {} {
+              MenuItem {} {uid 0281
                 label {"static" in source file}
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 686d
                 label {in source and "extern" in header}
                 xywh {10 10 100 20} labelsize 11
               }
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid ec8d
               callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
 
@@ -2697,29 +2703,29 @@ if (v == LOAD) {
 }} open
               xywh {95 50 75 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 4f7e
                 label private
                 xywh {20 20 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 1684
                 label public
                 xywh {20 20 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 4488
                 label protected
                 xywh {20 20 100 20} labelsize 11
               }
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 5454
               xywh {363 49 42 20} resizable
             }
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 894a
             label {Output: }
             callback propagate_load open
             xywh {95 75 310 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid 7a18
               callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
 
@@ -2733,42 +2739,42 @@ if (v == LOAD) {
 }} open
               tooltip {text mode generates a "const char*" and a trailing NUL, compressed mode uses zlib to generate a binary block} xywh {95 75 210 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid eed8
                 label {binary: unsigned char[]}
                 user_data 0 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid d304
                 label {text: const char*}
                 user_data 1 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid d85c
                 label {compressed: unsigned char[]}
                 user_data 2 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid b1b3
                 label {binary: std::vector<uint8_t>}
                 user_data 3 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 6128
                 label {text: std::string}
                 user_data 4 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 983b
                 label {compressed: std::vector<uint8_t>}
                 user_data 5 user_data_type long
                 xywh {10 10 100 20} labelsize 11
               }
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 580a
               xywh {363 75 42 20} resizable
             }
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 1d75
             label {Name:}
             callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
@@ -2788,11 +2794,11 @@ if (v == LOAD) {
 }}
             tooltip {Inline Data variables are declared "const unsigned char []" in binary mode and "const char*" in text mode.} xywh {95 100 310 20} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 172b
             callback propagate_load open
             xywh {95 125 310 20}
           } {
-            Fl_Input wp_data_filename {
+            Fl_Input wp_data_filename {uid 3088
               label {Filename:}
               callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
@@ -2802,7 +2808,7 @@ update_current(o, v,
 );}
               tooltip {name and path of file that will be inlined} xywh {95 125 270 20} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11 resizable
             }
-            Fl_Button {} {
+            Fl_Button {} {uid 491b
               label {@fileopen}
               callback {if (v != LOAD) {
    Fluid.proj.enter_project_dir();
@@ -2827,7 +2833,7 @@ update_current(o, v,
               xywh {365 125 40 20} labelcolor 134
             }
           }
-          Fl_Text_Editor {} {
+          Fl_Text_Editor {} {uid 9a5f
             label {Comment:}
             callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
@@ -2853,17 +2859,17 @@ if (v == LOAD) {
           }
         }
       }
-      Fl_Tabs comment_tabs {
+      Fl_Tabs comment_tabs {uid e250
         callback {if (current_node && (dynamic_cast<Comment_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);} open
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group comment_tabs_comment {
+        Fl_Group comment_tabs_comment {uid 1d0f
           label Comment
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Text_Editor comment_tabs_name {
+          Fl_Text_Editor comment_tabs_name {uid cead
             label {Comment:}
             callback {if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
 Comment_Node* nd = (Comment_Node*)current_node;
@@ -2888,11 +2894,11 @@ if (v == LOAD) {
             code0 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);}
             code1 {o->buffer(new Fl_Text_Buffer());}
           }
-          Fl_Group {} {
+          Fl_Group {} {uid f0b5
             callback propagate_load open
             xywh {95 285 310 65}
           } {
-            Fl_Menu_Button comment_predefined_2 {
+            Fl_Menu_Button comment_predefined_2 {uid 0590
               label Predefined
               callback {if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
 
@@ -2992,7 +2998,7 @@ if (v == LOAD) {
               code0 {extern void load_comments_preset(Fl_Preferences &menu);}
               code1 {\#include <FL/fl_string_functions.h>}
             } {}
-            Fl_Button comment_load_2 {
+            Fl_Button comment_load_2 {uid 3410
               label {Import...}
               callback {// load a comment from disk
 if (v != LOAD) {
@@ -3014,7 +3020,7 @@ if (v != LOAD) {
 }}
               xywh {190 285 90 20} labelsize 11
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid 31e6
               label {output to header file}
               callback {if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
 Comment_Node* nd = (Comment_Node*)current_node;
@@ -3029,7 +3035,7 @@ if (v == LOAD) {
 }}
               tooltip {write the comment into the header (.h) file} xywh {95 310 120 20} down_box DOWN_BOX labelsize 11 when 1
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid fb3d
               label {output to source file}
               callback {if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
 Comment_Node* nd = (Comment_Node*)current_node;
@@ -3044,30 +3050,30 @@ if (v == LOAD) {
 }}
               tooltip {write the comment into the source (.cxx) file} xywh {95 330 120 20} down_box DOWN_BOX labelsize 11 when 1
             }
-            Fl_Box {} {
+            Fl_Box {} {uid a01b
               xywh {404 285 1 65} labelsize 11 resizable
             }
           }
         }
       }
-      Fl_Tabs class_tabs {
+      Fl_Tabs class_tabs {uid 6c66
         callback {if (current_node && (dynamic_cast<Class_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group class_tabs_main {
+        Fl_Group class_tabs_main {uid c54f
           label Class
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Group {} {
+          Fl_Group {} {uid 018b
             label {Visibility:}
             callback propagate_load
             comment {This elemnt is hidden because we don't
 support a class inside a class at this point} open
             xywh {95 50 310 21} labelfont 1 labelsize 11 align 4 hide
           } {
-            Fl_Choice {} {
+            Fl_Choice {} {uid 4dda
               callback {if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
 Class_Node* nd = (Class_Node*)current_node;
 
@@ -3089,24 +3095,24 @@ if (v == LOAD) {
 }} open
               tooltip {visibility for a class inside a class} xywh {95 50 75 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 4a2d
                 label private
                 xywh {30 30 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid ffbf
                 label public
                 xywh {30 30 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 7533
                 label protected
                 xywh {30 30 100 20} labelsize 11
               }
             }
-            Fl_Box {} {
+            Fl_Box {} {uid 6acb
               xywh {363 50 42 20} resizable
             }
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 526b
             label {Attribute:}
             callback {if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
 Class_Node* nd = (Class_Node*)current_node;
@@ -3123,7 +3129,7 @@ if (v == LOAD) {
 }}
             tooltip {class attribute or `alignas()`} xywh {95 50 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 10e2
             label {Class Name:}
             callback {if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
 Class_Node* nd = (Class_Node*)current_node;
@@ -3167,7 +3173,7 @@ if (v == LOAD) {
 }}
             tooltip {class name, must be a single C++ keyword} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 981c
             label {Base Class:}
             callback {if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
 Class_Node* nd = (Class_Node*)current_node;
@@ -3184,7 +3190,7 @@ if (v == LOAD) {
             tooltip {visibility and name of base class or classes
 e.g. `public Fl_Widget`} xywh {95 100 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Text_Editor {} {
+          Fl_Text_Editor {} {uid 5a8e
             label {Comment:}
             callback {if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
 Class_Node* nd = (Class_Node*)current_node;
@@ -3210,17 +3216,17 @@ if (v == LOAD) {
           }
         }
       }
-      Fl_Tabs declblock_tabs {
+      Fl_Tabs declblock_tabs {uid 3db3
         callback {if (current_node && (dynamic_cast<DeclBlock_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group declblock_tabs_main {
+        Fl_Group declblock_tabs_main {uid f2ec
           label {Declaration Block}
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Input {} {
+          Fl_Input {} {uid 82a9
             label {Start Code:}
             callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3240,7 +3246,7 @@ if (v == LOAD) {
 }}
             tooltip {`\#ifdef` or similar conditional declaration block} xywh {95 50 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 3ad9
             label {End Code:}
             callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3250,15 +3256,15 @@ update_current(o, v,
 );}
             tooltip {`\#endif` or similar declaration code block} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Group {} {
+          Fl_Group {} {uid 99d5
             callback propagate_load open
             xywh {95 100 305 120}
           } {
-            Fl_Box {} {
+            Fl_Box {} {uid 9fbf
               label {Enclose code generated by children in source file:}
               xywh {95 100 270 20} labelsize 11 align 20
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid c214
               label implementations
               callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3278,7 +3284,7 @@ if (v == LOAD) {
 }}
               xywh {105 120 260 20} down_box DOWN_BOX labelsize 11
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid ba4c
               label {static initializations and callbacks}
               callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3298,11 +3304,11 @@ if (v == LOAD) {
 }}
               xywh {105 140 260 20} down_box DOWN_BOX labelsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid ec08
               label {Enclose code in header file:}
               xywh {95 160 270 20} labelsize 11 align 20
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid 3ee9
               label {forward declarations}
               callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3322,7 +3328,7 @@ if (v == LOAD) {
 }}
               xywh {105 180 260 20} down_box DOWN_BOX labelsize 11
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid 7257
               label {preprecessor and callback declarations}
               callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3342,11 +3348,11 @@ if (v == LOAD) {
 }}
               xywh {105 200 260 20} down_box DOWN_BOX labelsize 11
             }
-            Fl_Box {} {
+            Fl_Box {} {uid be7e
               xywh {365 100 35 120} labelsize 11 hide resizable
             }
           }
-          Fl_Text_Editor {} {
+          Fl_Text_Editor {} {uid 46d0
             label {Comment:}
             callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
@@ -3372,28 +3378,28 @@ if (v == LOAD) {
           }
         }
       }
-      Fl_Tabs decl_tabs {
+      Fl_Tabs decl_tabs {uid 09d1
         callback {if (current_node && (dynamic_cast<Decl_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group decl_tabs_main {
+        Fl_Group decl_tabs_main {uid 9ae5
           label Declaration
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Group {} {
+          Fl_Group {} {uid 3ae5
             callback propagate_load open
             xywh {15 50 390 20} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Box {} {
+            Fl_Box {} {uid b260
               xywh {404 50 1 20} hide resizable
             }
-            Fl_Box {} {
+            Fl_Box {} {uid c387
               label {Visibility:}
               xywh {95 50 1 20} labelfont 1 labelsize 11 align 4
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 0b51
               callback {if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
 Decl_Node* nd = (Decl_Node*)current_node;
 
@@ -3415,24 +3421,24 @@ if (v == LOAD) {
 }}
               xywh {95 50 185 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 0b09
                 label {in source file only}
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 97b3
                 label {in header file only}
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 7e40
                 label {"static" in source file}
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid ca98
                 label {in source and "extern" in header}
                 xywh {10 10 100 20} labelsize 11
               }
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid e705
               callback {if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
 Decl_Node* nd = (Decl_Node*)current_node;
 
@@ -3454,31 +3460,31 @@ if (v == LOAD) {
 }}
               xywh {95 50 75 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 3280
                 label private
                 xywh {20 20 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid a347
                 label public
                 xywh {20 20 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid c13d
                 label protected
                 xywh {20 20 100 20} labelsize 11
               }
             }
           }
-          Fl_Tile {} {
+          Fl_Tile {} {uid b9bc
             callback {propagate_load(o, v);} open
             xywh {15 75 390 210} resizable
             code0 {o->size_range(0, 25, 55);}
             code1 {o->size_range(1, 25, 55);}
           } {
-            Fl_Group {} {
+            Fl_Group {} {uid ff2e
               callback propagate_load open
               xywh {15 75 390 105} box FLAT_BOX labelfont 1 labelsize 11 align 4
             } {
-              Fl_Text_Editor {} {
+              Fl_Text_Editor {} {uid 6268
                 label {Declaration:}
                 callback {if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
 Decl_Node* nd = (Decl_Node*)current_node;
@@ -3507,11 +3513,11 @@ a `\#` directive: `\#include <foo.h>`, a typedef `typedef char byte;`,
                 class {fluid::widget::Code_Editor}
               }
             }
-            Fl_Group {} {
+            Fl_Group {} {uid c19a
               callback propagate_load open
               xywh {15 180 390 105} box FLAT_BOX
             } {
-              Fl_Text_Editor {} {
+              Fl_Text_Editor {} {uid 7d3b
                 label {Comment:}
                 callback {if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
 Decl_Node* nd = (Decl_Node*)current_node;
@@ -3539,17 +3545,17 @@ if (v == LOAD) {
           }
         }
       }
-      Fl_Tabs codeblock_tabs {
+      Fl_Tabs codeblock_tabs {uid cfe8
         callback {if (current_node && (dynamic_cast<CodeBlock_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group codeblock_tabs_main {
+        Fl_Group codeblock_tabs_main {uid a638
           label {Code Block}
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Input {} {
+          Fl_Input {} {uid c0e7
             label {Start Code:}
             callback {if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
 CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
@@ -3569,7 +3575,7 @@ if (v == LOAD) {
 }}
             tooltip {condition statement: `if (x==1)`, or empty} xywh {95 50 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Input {} {
+          Fl_Input {} {uid 8d7a
             label {End Code:}
             callback {if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
 CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
@@ -3579,7 +3585,7 @@ update_current(o, v,
 );}
             tooltip {condition end: `while (x==1);`, or empty} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
           }
-          Fl_Text_Editor {} {
+          Fl_Text_Editor {} {uid 4a0a
             label {Comment:}
             callback {if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
 CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
@@ -3605,17 +3611,17 @@ if (v == LOAD) {
           }
         }
       }
-      Fl_Tabs code_tabs {
+      Fl_Tabs code_tabs {uid f233
         callback {if (current_node && (dynamic_cast<Code_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
       } {
-        Fl_Group code_tabs_main {
+        Fl_Group code_tabs_main {uid 1148
           label Code
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Text_Editor {} {
+          Fl_Text_Editor {} {uid a0fe
             callback {if (!current_node || !dynamic_cast<Code_Node*>(current_node)) return;
 Code_Node* nd = (Code_Node*)current_node;
  if (v == LOAD) {
@@ -3647,28 +3653,28 @@ o->linenumber_size(o->Fl_Text_Display::textsize());}
           }
         }
       }
-      Fl_Tabs func_tabs {
+      Fl_Tabs func_tabs {uid 8a96
         callback {if (current_node && (dynamic_cast<Function_Node*>(current_node)))
   propagate_load((Fl_Group *)o,v);}
         xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide resizable
       } {
-        Fl_Group func_tabs_main {
+        Fl_Group func_tabs_main {uid 8c0e
           label Function
           callback propagate_load open
           xywh {10 30 400 330} labelsize 11 resizable
         } {
-          Fl_Group {} {
+          Fl_Group {} {uid 1fc9
             callback propagate_load open
             xywh {15 50 390 45} labelfont 1 labelsize 11 align 4
           } {
-            Fl_Box {} {
+            Fl_Box {} {uid e7bf
               xywh {404 50 1 20} hide resizable
             }
-            Fl_Box {} {
+            Fl_Box {} {uid d881
               label {Visibility:}
               xywh {95 50 1 20} labelfont 1 labelsize 11 align 4
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 35da
               callback {if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
 Function_Node* nd = (Function_Node*)current_node;
 
@@ -3690,20 +3696,20 @@ if (v == LOAD) {
 }} open
               xywh {95 50 80 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 8b36
                 label static
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid b4f1
                 label global
                 xywh {10 10 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 4b86
                 label local
                 xywh {10 10 100 20} labelsize 11
               }
             }
-            Fl_Choice {} {
+            Fl_Choice {} {uid 638c
               callback {if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
 Function_Node* nd = (Function_Node*)current_node;
 
@@ -3725,20 +3731,20 @@ if (v == LOAD) {
 }} open
               xywh {95 50 75 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
-              MenuItem {} {
+              MenuItem {} {uid 81a5
                 label private
                 xywh {20 20 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 95d2
                 label public
                 xywh {20 20 100 20} labelsize 11
               }
-              MenuItem {} {
+              MenuItem {} {uid 1d47
                 label protected
                 xywh {20 20 100 20} labelsize 11
               }
             }
-            Fl_Check_Button {} {
+            Fl_Check_Button {} {uid 5488
               label {declare "C"}
               callback {if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
 Function_Node* nd = (Function_Node*)current_node;
@@ -3754,18 +3760,18 @@ if (v == LOAD) {
               xywh {95 75 90 20} down_box DOWN_BOX labelsize 11
             }
           }
-          Fl_Tile {} {
+          Fl_Tile {} {uid ccfa
             callback {propagate_load(o, v);} open
             xywh {15 100 390 220} resizable
             code0 {o->size_range(0, 25, 50);}
             code1 {o->size_range(1, 25, 50);}
             code2 {o->size_range(2, 25, 50);}
           } {
-            Fl_Group {} {
+            Fl_Group {} {uid 314c
               callback propagate_load open
               xywh {15 100 390 55} box FLAT_BOX labelfont 1 labelsize 11 align 4
             } {
-              Fl_Text_Editor {} {
+              Fl_Text_Editor {} {uid 860c
                 label {Function
 Name and
 Args:}
@@ -3794,11 +3800,11 @@ if (v == LOAD) {
                 class {fluid::widget::Code_Editor}
               }
             }
-            Fl_Group {} {
+            Fl_Group {} {uid a977
               callback propagate_load open
               xywh {15 155 390 60} box FLAT_BOX labelfont 1 labelsize 11 align 4
             } {
-              Fl_Text_Editor {} {
+              Fl_Text_Editor {} {uid df8b
                 label {Return Type:}
                 callback {if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
 Function_Node* nd = (Function_Node*)current_node;
@@ -3812,11 +3818,11 @@ update_current(o, v,
                 class {fluid::widget::Code_Editor}
               }
             }
-            Fl_Group {} {
+            Fl_Group {} {uid 2af0
               callback propagate_load open
               xywh {15 215 390 105} box FLAT_BOX
             } {
-              Fl_Text_Editor {} {
+              Fl_Text_Editor {} {uid 31d1
                 label {Comment:}
                 callback {if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
 Function_Node* nd = (Function_Node*)current_node;
@@ -3845,32 +3851,32 @@ if (v == LOAD) {
         }
       }
     }
-    Fl_Tabs widget_tabs_repo {
+    Fl_Tabs widget_tabs_repo {uid 9923
       xywh {10 10 400 350} hide
       code0 {o->hide();}
     } {
-      Fl_Group {} {
+      Fl_Group {} {uid fd14
         xywh {10 30 400 330} resizable
       } {}
     }
-    Fl_Group {} {open
+    Fl_Group {} {uid 6a28 open
       xywh {10 370 400 20} labelsize 11
     } {
-      Fl_Button wLiveMode {
+      Fl_Button wLiveMode {uid 7354
         label {Live &Resize}
         callback live_mode_cb
         tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {10 370 80 20} type Toggle labelsize 10
       }
-      Fl_Button overlay_button {
+      Fl_Button overlay_button {uid b795
         label {Hide &Overlays}
         callback overlay_cb
         tooltip {Hide the widget overlay box.} xywh {94 370 80 20} labelsize 10
       }
-      Fl_Box {} {
+      Fl_Box {} {uid 9b63
         comment {Hidden resizable box}
         xywh {258 370 72 20} labelsize 11 hide resizable
       }
-      Fl_Return_Button {} {
+      Fl_Return_Button {} {uid 9765
         label Close
         callback ok_cb
         xywh {330 370 80 20} labelsize 11
