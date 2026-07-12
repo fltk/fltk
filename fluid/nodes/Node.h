@@ -207,11 +207,11 @@ public:
   virtual const char* type_name() = 0; // type for code output
   virtual const char* alt_type_name() { return type_name(); } // alternate type for FLTK2 code output
 
-  const char* name() const {return name_;}
+  const char* name() const { return name_; }
   void name(const char*);
-  const char* label() const {return label_;}
+  const char* label() const { return label_; }
   void label(const char*);
-  const char* callback() const {return callback_;}
+  const char* callback() const { return callback_; }
   void callback(const char*);
   std::string user_data() const { return user_data_; }
   void user_data(const std::string&);
