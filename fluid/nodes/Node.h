@@ -132,27 +132,27 @@ protected:
   Node() = default;
 
   /** Name of a widget, or code some non-widget Types. */
-  const char *name_ { nullptr };
+  const char* name_ { nullptr };
   /** Label text of a widget. */
-  const char *label_ { nullptr };
+  const char* label_ { nullptr };
   /** If it is just a word, it's the name of the callback function. If it starts
    with a '[', it's a lambda function. Otherwise it is the full callback
    C++ code. Can be nullptr. */
-  const char *callback_ { nullptr };
+  const char* callback_ { nullptr };
   /** Widget user data field as C++ text. */
-  std::string user_data_;
+  std::string user_data_ { };
   /** Widget user data type as C++ text, usually `void*` or `long`. */
-  std::string user_data_type_;
+  std::string user_data_type_ { };
   /** Optional comment for every node in the graph. Visible in browser and
    panels, and will also be copied to the source code. */
-  const char *comment_ { nullptr };
+  const char* comment_ { nullptr };
   /** a unique ID within the project */
   unsigned short uid_ { 0 };
 
 public: // things that should not be public:
   // TODO: reference back to the tree
   /** Quick link to the parent Type instead of walking up the linked list. */
-  Node *parent { nullptr };
+  Node* parent { nullptr };
   /** This type is rendered "selected" in the tree browser. */
   char new_selected { 0 }; // browser highlight
   /** Backup storage for selection if an error occurred during some operation
@@ -162,12 +162,12 @@ public: // things that should not be public:
   char folded_ { 0 };  // if set, children are not shown in browser
   char visible { 0 }; // true if all parents are open
   int level { 0 };    // number of parents over this
-  Node *next { nullptr }, *prev { nullptr };
-  Node *prev_sibling();
-  Node *next_sibling();
-  Node *first_child();
-  const Node *next_sibling() const { return const_cast<Node*>(this)->next_sibling(); }
-  const Node *first_child() const { return const_cast<Node*>(this)->first_child(); }
+  Node* next { nullptr }, *prev { nullptr };
+  Node* prev_sibling();
+  Node* next_sibling();
+  Node* first_child();
+  const Node* next_sibling() const { return const_cast<Node*>(this)->next_sibling(); }
+  const Node* first_child() const { return const_cast<Node*>(this)->first_child(); }
 
   /** Range over the direct children of this node (`for (auto *c : n->children())`). */
   Child_Range children() { return Child_Range(first_child()); }
@@ -177,7 +177,7 @@ public: // things that should not be public:
   /** Range over all descendants of this node, depth-first (`for (auto *d : n->descendants())`). */
   Descendant_Range descendants() { return Descendant_Range(this); }
 
-  Node *factory { nullptr };
+  Node* factory { nullptr };
   std::string callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
@@ -193,38 +193,38 @@ public:
   Node &operator=(Node &&) = delete;
   virtual ~Node();
 
-  virtual Node *make(Strategy strategy) = 0;
+  virtual Node* make(Strategy strategy) = 0;
 
-  Window_Node *window();
-  Group_Node *group();
+  Window_Node* window();
+  Group_Node* group();
 
-  void add(Node *parent, Strategy strategy);
-  void insert(Node *n); // insert into list before n
+  void add(Node* parent, Strategy strategy);
+  void insert(Node* n); // insert into list before n
   Node* remove();    // remove from list
   void move_before(Node*); // move before a sibling
 
-  virtual const char *title(); // string for browser
-  virtual const char *type_name() = 0; // type for code output
-  virtual const char *alt_type_name() { return type_name(); } // alternate type for FLTK2 code output
+  virtual const char* title(); // string for browser
+  virtual const char* type_name() = 0; // type for code output
+  virtual const char* alt_type_name() { return type_name(); } // alternate type for FLTK2 code output
 
-  const char *name() const {return name_;}
-  void name(const char *);
-  const char *label() const {return label_;}
-  void label(const char *);
-  const char *callback() const {return callback_;}
-  void callback(const char *);
+  const char* name() const {return name_;}
+  void name(const char*);
+  const char* label() const {return label_;}
+  void label(const char*);
+  const char* callback() const {return callback_;}
+  void callback(const char*);
   std::string user_data() const { return user_data_; }
   void user_data(const std::string&);
   std::string user_data_type() const { return user_data_type_; }
   std::string user_data_type_or_voidp() const { return user_data_type_.empty() ? "void*" : user_data_type_; }
   void user_data_type(const std::string&);
-  const char *comment() { return comment_; }
-  void comment(const char *);
+  const char* comment() { return comment_; }
+  void comment(const char*);
 
   virtual Node* click_test(int,int) { return nullptr; }
 
-  virtual void add_child(Node *, Node *beforethis) { (void)beforethis; }
-  virtual void move_child(Node *, Node *beforethis) { (void)beforethis; }
+  virtual void add_child(Node* , Node* beforethis) { (void)beforethis; }
+  virtual void move_child(Node* , Node* beforethis) { (void)beforethis; }
   virtual void remove_child(Node*) { }
 
   /** Give widgets a chance to arrange their children after all children were added.
@@ -237,11 +237,11 @@ public:
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
-  virtual void write(fluid::io::Project_Writer &f);
-  virtual void write_properties(fluid::io::Project_Writer &f);
-  virtual void read_property(fluid::io::Project_Reader &f, const char *);
-  virtual void write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate);
-  virtual void read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property);
+  virtual void write(fluid::io::Project_Writer& f);
+  virtual void write_properties(fluid::io::Project_Writer& f);
+  virtual void read_property(fluid::io::Project_Reader& f, const char *);
+  virtual void write_parent_properties(fluid::io::Project_Writer& f, Node *child, bool encapsulate);
+  virtual void read_parent_property(fluid::io::Project_Reader& f, Node *child, const char *property);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 
@@ -264,21 +264,21 @@ public:
   int msgnum();
 
   /** Return 1 if the Type can have children. */
-  virtual int can_have_children() const {return 0;}
+  virtual int can_have_children() const { return 0; }
   /** Return 1 if the type is a widget or menu item. */
-  virtual int is_widget() const {return 0;}
+  virtual int is_widget() const { return 0; }
   /** Return 1 if the type is a widget but not a menu item. */
-  virtual int is_true_widget() const {return 0;}
+  virtual int is_true_widget() const { return 0; }
   /** Return 1 if a type behaves like a button (Fl_Button and Fl_Menu_Item and derived, but not Submenu_Node. */
-  virtual int is_button() const {return 0;}
+  virtual int is_button() const { return 0; }
   /** Return 1 if this is a Widget_Class_Node, CodeBlock_Node, or Function_Node */
-  virtual int is_code_block() const {return 0;}
+  virtual int is_code_block() const { return 0; }
   /** Return 1 if this is a Widget_Class_Node, Class_Node, or DeclBlock_Node */
-  virtual int is_decl_block() const {return 0;}
+  virtual int is_decl_block() const { return 0; }
   /** Return 1 if this is a Class_Node or Widget_Class_Node. */
-  virtual int is_class() const {return 0;}
+  virtual int is_class() const { return 0; }
   /** Return 1 if the type browser shall draw a padlock over the icon. */
-  virtual int is_public() const {return 1;}
+  virtual int is_public() const { return 1; }
 
   const char* class_name(int need_nest) const;
   bool is_in_class() const;
