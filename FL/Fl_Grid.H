@@ -199,7 +199,7 @@ public:
     /**
       Returns the next widget cell of the same row of this cell.
     */
-    Cell *next() {
+    Cell *next() const {
       return next_;
     }
 
