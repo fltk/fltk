@@ -39,7 +39,7 @@ class Fl_Grid::Col {
     weight_ = 50;
     gap_    = -1;
   }
-  ~Col() {}
+  ~Col() = default;
 };
 
 // private class Row for row management
