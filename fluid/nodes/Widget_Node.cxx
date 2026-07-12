@@ -1106,9 +1106,9 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
       f.write_string("down_box"); f.write_word(boxname(b->down_box()));}
   }
   if (o->color()!=tplate->color())
-    f.write_string("color %d", o->color());
+    f.write_string("color %u", o->color());
   if (o->selection_color()!=tplate->selection_color())
-    f.write_string("selection_color %d", o->selection_color());
+    f.write_string("selection_color %u", o->selection_color());
   if (o->labeltype()!=tplate->labeltype()) {
     f.write_string("labeltype");
     f.write_word(item_name(labeltypemenu, o->labeltype()));
@@ -1118,9 +1118,9 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   if (o->labelsize()!=tplate->labelsize())
     f.write_string("labelsize %d", o->labelsize());
   if (o->labelcolor()!=tplate->labelcolor())
-    f.write_string("labelcolor %d", o->labelcolor());
+    f.write_string("labelcolor %u", o->labelcolor());
   if (o->align()!=tplate->align())
-    f.write_string("align %d", o->align());
+    f.write_string("align %u", o->align());
   if (o->horizontal_label_margin()!=tplate->horizontal_label_margin())
     f.write_string("h_label_margin %d", o->horizontal_label_margin());
   if (o->vertical_label_margin()!=tplate->vertical_label_margin())
@@ -1128,7 +1128,7 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   if (o->label_image_spacing()!=tplate->label_image_spacing())
     f.write_string("image_spacing %d", o->label_image_spacing());
   if (o->when() != tplate->when())
-    f.write_string("when %d", o->when());
+    f.write_string("when %u", o->when());
   if (dynamic_cast<Valuator_Node*>(this)) {
     Fl_Valuator* v = (Fl_Valuator*)o;
     Fl_Valuator* t = (Fl_Valuator*)(tplate);
@@ -1154,7 +1154,7 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
     Fl_Font ft; int s; Fl_Color c; textstuff(0,ft,s,c);
     if (ft != ff) f.write_string("textfont %d", ft);
     if (s != fs) f.write_string("textsize %d", s);
-    if (c != fc) f.write_string("textcolor %d", c);
+    if (c != fc) f.write_string("textcolor %u", c);
   }}
   if (!o->visible() && !override_visible_) f.write_string("hide");
   if (!o->active()) f.write_string("deactivate");
