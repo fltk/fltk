@@ -83,7 +83,7 @@ std::string subclassname(Node* l) {
       return "Fl_Group";
     if (p->o->type() == FL_DOUBLE_WINDOW)
       return "Fl_Double_Window";
-    if (p->type() == Type::Input) {
+    if (typeid(*p) == typeid(Input_Node)) {
       if (p->o->type() == FL_FLOAT_INPUT)
         return "Fl_Float_Input";
       if (p->o->type() == FL_INT_INPUT)

@@ -85,39 +85,6 @@ struct TextSpan {
   int start = -1, end = -1;
 };
 
-enum class Type {
-  // administrative
-  Base_, Widget_, Menu_Manager_, Menu_, Browser_, Valuator_,
-  // non-widget
-  Function, Code, CodeBlock,
-  Decl, DeclBlock, Class,
-  Widget_Class, Comment, Data,
-  // groups
-  Window, Group, Pack,
-  Flex, Tabs, Scroll,
-  Tile, Wizard, Grid,
-  // buttons
-  Button, Return_Button, Light_Button,
-  Check_Button, Repeat_Button, Round_Button,
-  // valuators
-  Slider, Scrollbar, Value_Slider,
-  Adjuster, Counter, Spinner,
-  Dial, Roller, Value_Input, Value_Output,
-  // text
-  Input, Output, Text_Editor,
-  Text_Display, File_Input, Terminal,
-  // menus
-  Menu_Bar, Menu_Button, Choice,
-  Input_Choice, Submenu, Menu_Item,
-  Checkbox_Menu_Item, Radio_Menu_Item,
-  // browsers
-  Browser, Check_Browser, File_Browser,
-  Tree, Help_View, Table,
-  // misc
-  Box, Clock, Progress,
-  Max_
-};
-
 void update_visibility_flag(Node *p);
 void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
@@ -143,9 +110,11 @@ bool validate_branch(class Node *root);
  to create a pseudo tree structure. To make walking up the tree faster, Type
  also holds a pointer to the `parent` Type.
 
- The `type()` method returns a node's exact `Type` tag, used where an exact
- enum value is needed (e.g. icon lookups). To test whether a node is of a
- given type or a type derived from it, use `dynamic_cast` directly.
+ To test whether a node is of a given type or a type derived from it, use
+ `dynamic_cast` directly. To test for a node's exact type, compare `typeid(*node)`
+ against `typeid(SomeNode)`. `type_name()` returns a unique string per concrete
+ class (e.g. "Fl_Button"), used where a stable string key is needed (e.g. icon
+ lookups, code output).
 
  \todo it would be nice if we can handle multiple independent trees. To do that
  we must remove static members like `first` and `last`.
@@ -307,8 +276,6 @@ public:
   virtual int is_class() const {return 0;}
   /** Return 1 if the type browser shall draw a padlock over the icon. */
   virtual int is_public() const {return 1;}
-  /** Return the type Type for this Type. */
-  virtual Type type() const { return Type::Base_; }
 
   const char* class_name(int need_nest) const;
   bool is_in_class() const;

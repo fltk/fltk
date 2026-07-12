@@ -372,7 +372,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   // Width=18: Draw the icon associated with the type.
-  Fl_Pixmap *pm = pixmap[(int)l->type()];
+  Fl_Pixmap *pm = pixmap_for(l->type_name());
   if (pm) pm->draw(X-18, Y);
 
   // Add tags on top of the icon for locked and protected types.

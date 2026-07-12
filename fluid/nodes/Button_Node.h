@@ -36,7 +36,6 @@ public:
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Button_Node(); }
   int is_button() const override { return 1; }
-  Type type() const override { return Type::Button; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   void copy_properties() override;
@@ -58,7 +57,6 @@ public:
   const char *alt_type_name() override { return "fltk::ReturnButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Return_Button_Node(); }
-  Type type() const override { return Type::Return_Button; }
 };
 
 // ---- Repeat Button ----
@@ -79,7 +77,6 @@ public:
   const char *alt_type_name() override { return "fltk::RepeatButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Repeat_Button_Node(); }
-  Type type() const override { return Type::Repeat_Button; }
 };
 
 // ---- Light Button ----
@@ -98,7 +95,6 @@ public:
   const char *alt_type_name() override { return "fltk::LightButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Light_Button_Node(); }
-  Type type() const override { return Type::Light_Button; }
 };
 
 // ---- Check Button ----
@@ -117,7 +113,6 @@ public:
   const char *alt_type_name() override { return "fltk::CheckButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Check_Button_Node(); }
-  Type type() const override { return Type::Check_Button; }
 };
 
 // ---- Round Button ----
@@ -136,7 +131,6 @@ public:
   const char *alt_type_name() override { return "fltk::RadioButton"; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Round_Button_Node(); }
-  Type type() const override { return Type::Round_Button; }
 };
 
 

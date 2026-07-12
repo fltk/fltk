@@ -113,7 +113,6 @@ public:
 
   virtual Fl_Menu_Item* subtypes();
 
-  Type type() const override { return Type::Widget_; }
   int is_widget() const override;
   int is_true_widget() const override { return 1; }
   int is_public() const override;

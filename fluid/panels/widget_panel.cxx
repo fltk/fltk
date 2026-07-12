@@ -2310,7 +2310,7 @@ static void cb_widget_tab_grid_child(Grid_Child_Tab* o, void*) {
 Fl_Tabs* data_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_data_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::Data))
+  if (current_node && (dynamic_cast<Data_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -2476,7 +2476,7 @@ static void cb_Comment(Fl_Text_Editor* o, void* v) {
 Fl_Tabs* comment_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_comment_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::Comment))
+  if (current_node && (dynamic_cast<Comment_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -2659,7 +2659,7 @@ static void cb_output1(Fl_Check_Button* o, void* v) {
 Fl_Tabs* class_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_class_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::Class))
+  if (current_node && (dynamic_cast<Class_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -2792,7 +2792,7 @@ static void cb_Comment1(Fl_Text_Editor* o, void* v) {
 Fl_Tabs* declblock_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_declblock_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::DeclBlock))
+  if (current_node && (dynamic_cast<DeclBlock_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -2926,7 +2926,7 @@ static void cb_Comment2(Fl_Text_Editor* o, void* v) {
 Fl_Tabs* decl_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_decl_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::Decl))
+  if (current_node && (dynamic_cast<Decl_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -3041,7 +3041,7 @@ static void cb_Comment3(Fl_Text_Editor* o, void* v) {
 Fl_Tabs* codeblock_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_codeblock_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::CodeBlock))
+  if (current_node && (dynamic_cast<CodeBlock_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -3099,7 +3099,7 @@ static void cb_Comment4(Fl_Text_Editor* o, void* v) {
 Fl_Tabs* code_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_code_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::Code))
+  if (current_node && (dynamic_cast<Code_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 
@@ -3134,7 +3134,7 @@ static void cb_1c(fluid::widget::Code_Editor* o, void* v) {
 Fl_Tabs* func_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_func_tabs(Fl_Tabs* o, void* v) {
-  if (current_node && (current_node->type() == Type::Function))
+  if (current_node && (dynamic_cast<Function_Node*>(current_node)))
     propagate_load((Fl_Group *)o,v);
 }
 

@@ -52,31 +52,31 @@ Fl_Window* make_widgetbin() {
         o->tooltip("Function");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Function"));
-        o->image(pixmap[(int)Type::Function]);
+        o->image(pixmap_for("Function"));
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(30, 21, 24, 24);
         o->tooltip("Class");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Class"));
-        o->image(pixmap[(int)Type::Class]);
+        o->image(pixmap_for("class"));
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(55, 21, 24, 24);
         o->tooltip("Comment");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("comment"));
-        o->image(pixmap[(int)Type::Comment]);
+        o->image(pixmap_for("comment"));
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(5, 46, 24, 24);
         o->tooltip("Code");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Code"));
-        o->image(pixmap[(int)Type::Code]);
+        o->image(pixmap_for("code"));
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(30, 46, 24, 24);
         o->tooltip("Code Block");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("CodeBlock"));
-        o->image(pixmap[(int)Type::CodeBlock]);
+        o->image(pixmap_for("codeblock"));
       } // Fl_Button* o
       { fluid::widget::Bin_Window_Button* o = new fluid::widget::Bin_Window_Button(55, 46, 24, 24);
         o->tooltip("Widget Class");
@@ -90,25 +90,25 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("widget_class"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Widget_Class]);
+        o->image(pixmap_for("widget_class"));
       } // fluid::widget::Bin_Window_Button* o
       { Fl_Button* o = new Fl_Button(5, 71, 24, 24);
         o->tooltip("Declaration");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("decl"));
-        o->image(pixmap[(int)Type::Decl]);
+        o->image(pixmap_for("decl"));
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(30, 71, 24, 24);
         o->tooltip("Declaration Block");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("declblock"));
-        o->image(pixmap[(int)Type::DeclBlock]);
+        o->image(pixmap_for("declblock"));
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(55, 71, 24, 24);
         o->tooltip("Inline Data");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("data"));
-        o->image(pixmap[(int)Type::Data]);
+        o->image(pixmap_for("data"));
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
@@ -126,7 +126,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Window"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Window]);
+        o->image(pixmap_for("Fl_Window"));
       } // fluid::widget::Bin_Window_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(114, 21, 24, 24);
         o->tooltip("Group");
@@ -140,7 +140,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Group"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Group]);
+        o->image(pixmap_for("Fl_Group"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(139, 21, 24, 24);
         o->tooltip("Pack");
@@ -154,7 +154,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Pack"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Pack]);
+        o->image(pixmap_for("Fl_Pack"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(89, 46, 24, 24);
         o->tooltip("Tabs");
@@ -168,7 +168,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tabs"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Tabs]);
+        o->image(pixmap_for("Fl_Tabs"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(114, 46, 24, 24);
         o->tooltip("Scroll");
@@ -182,7 +182,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Scroll"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Scroll]);
+        o->image(pixmap_for("Fl_Scroll"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(139, 46, 24, 24);
         o->tooltip("Flex");
@@ -196,7 +196,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Flex"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Flex]);
+        o->image(pixmap_for("Fl_Flex"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(89, 71, 24, 24);
         o->tooltip("Tile");
@@ -210,7 +210,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tile"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Tile]);
+        o->image(pixmap_for("Fl_Tile"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(114, 71, 24, 24);
         o->tooltip("Wizard");
@@ -224,7 +224,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Wizard"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Wizard]);
+        o->image(pixmap_for("Fl_Wizard"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(139, 71, 24, 24);
         o->tooltip("Grid");
@@ -238,7 +238,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Grid"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Grid]);
+        o->image(pixmap_for("Fl_Grid"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
@@ -256,7 +256,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Button]);
+        o->image(pixmap_for("Fl_Button"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(198, 21, 24, 24);
         o->tooltip("Return Button");
@@ -270,7 +270,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Return_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Return_Button]);
+        o->image(pixmap_for("Fl_Return_Button"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(173, 46, 24, 24);
         o->tooltip("Light Button");
@@ -284,7 +284,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Light_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Light_Button]);
+        o->image(pixmap_for("Fl_Light_Button"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(198, 46, 24, 24);
         o->tooltip("Repeat Button");
@@ -298,7 +298,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Repeat_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Repeat_Button]);
+        o->image(pixmap_for("Fl_Repeat_Button"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(173, 71, 24, 24);
         o->tooltip("Check Button");
@@ -312,7 +312,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Check_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Check_Button]);
+        o->image(pixmap_for("Fl_Check_Button"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(198, 71, 24, 24);
         o->tooltip("Round Button");
@@ -326,7 +326,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Round_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Round_Button]);
+        o->image(pixmap_for("Fl_Round_Button"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
@@ -344,7 +344,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Slider"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Slider]);
+        o->image(pixmap_for("Fl_Slider"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(257, 21, 24, 24);
         o->tooltip("Scroll Bar");
@@ -358,7 +358,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Scrollbar"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Scrollbar]);
+        o->image(pixmap_for("Fl_Scrollbar"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(282, 21, 24, 24);
         o->tooltip("Value Slider");
@@ -372,7 +372,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Slider"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Value_Slider]);
+        o->image(pixmap_for("Fl_Value_Slider"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(307, 21, 24, 24);
         o->tooltip("Value Output");
@@ -386,7 +386,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Output"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Value_Output]);
+        o->image(pixmap_for("Fl_Value_Output"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(232, 46, 24, 24);
         o->tooltip("Adjuster");
@@ -400,7 +400,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Adjuster"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Adjuster]);
+        o->image(pixmap_for("Fl_Adjuster"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(257, 46, 24, 24);
         o->tooltip("Counter");
@@ -414,7 +414,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Counter"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Counter]);
+        o->image(pixmap_for("Fl_Counter"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(282, 46, 24, 24);
         o->tooltip("Dial");
@@ -428,7 +428,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Dial"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Dial]);
+        o->image(pixmap_for("Fl_Dial"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(232, 71, 24, 24);
         o->tooltip("Roller");
@@ -442,7 +442,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Roller"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Roller]);
+        o->image(pixmap_for("Fl_Roller"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(257, 71, 24, 24);
         o->tooltip("Spinner");
@@ -456,7 +456,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Spinner"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Spinner]);
+        o->image(pixmap_for("Fl_Spinner"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(282, 71, 24, 24);
         o->tooltip("Value Input");
@@ -470,7 +470,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Value_Input"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Value_Input]);
+        o->image(pixmap_for("Fl_Value_Input"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
@@ -488,7 +488,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Input"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Input]);
+        o->image(pixmap_for("Fl_Input"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(366, 21, 24, 24);
         o->tooltip("Output");
@@ -502,7 +502,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Output"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Output]);
+        o->image(pixmap_for("Fl_Output"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(341, 46, 24, 24);
         o->tooltip("Text Edit");
@@ -516,7 +516,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Text_Editor"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Text_Editor]);
+        o->image(pixmap_for("Fl_Text_Editor"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(366, 46, 24, 24);
         o->tooltip("Text Display");
@@ -530,7 +530,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Text_Display"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Text_Display]);
+        o->image(pixmap_for("Fl_Text_Display"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(341, 71, 24, 24);
         o->tooltip("File Input");
@@ -544,7 +544,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Input"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::File_Input]);
+        o->image(pixmap_for("Fl_File_Input"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(366, 71, 24, 24);
         o->tooltip("Terminal");
@@ -558,7 +558,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Terminal"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Terminal]);
+        o->image(pixmap_for("Fl_Terminal"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
@@ -576,7 +576,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Input_Choice"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Input_Choice]);
+        o->image(pixmap_for("Fl_Input_Choice"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(425, 21, 24, 24);
         o->tooltip("Menu Item");
@@ -590,7 +590,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("menuitem"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Menu_Item]);
+        o->image(pixmap_for("MenuItem"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(450, 21, 24, 24);
         o->tooltip("Menu Bar");
@@ -604,7 +604,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Menu_Bar"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Menu_Bar]);
+        o->image(pixmap_for("Fl_Menu_Bar"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(400, 46, 24, 24);
         o->tooltip("Menu Button");
@@ -618,7 +618,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Menu_Button"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Menu_Button]);
+        o->image(pixmap_for("Fl_Menu_Button"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(425, 46, 24, 24);
         o->tooltip("Checkbox Menu Item");
@@ -632,7 +632,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("checkmenuitem"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Checkbox_Menu_Item]);
+        o->image(pixmap_for("CheckMenuItem"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(450, 46, 24, 24);
         o->tooltip("Sub Menu");
@@ -646,7 +646,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("submenu"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Submenu]);
+        o->image(pixmap_for("Submenu"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(400, 71, 24, 24);
         o->tooltip("Choice");
@@ -660,7 +660,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Choice"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Choice]);
+        o->image(pixmap_for("Fl_Choice"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(425, 71, 24, 24);
         o->tooltip("Radio Menu Item");
@@ -674,7 +674,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("radiomenuitem"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Radio_Menu_Item]);
+        o->image(pixmap_for("RadioMenuItem"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
@@ -692,7 +692,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Browser"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Browser]);
+        o->image(pixmap_for("Fl_Browser"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(509, 21, 24, 24);
         o->tooltip("Tree");
@@ -706,7 +706,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tree"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Tree]);
+        o->image(pixmap_for("Fl_Tree"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(484, 46, 24, 24);
         o->tooltip("Check Browser");
@@ -720,7 +720,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Check_Browser"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Check_Browser]);
+        o->image(pixmap_for("Fl_Check_Browser"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(509, 46, 24, 24);
         o->tooltip("Help Browser");
@@ -734,7 +734,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Help_View"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Help_View]);
+        o->image(pixmap_for("Fl_Help_View"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(484, 71, 24, 24);
         o->tooltip("File Browser");
@@ -748,7 +748,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Browser"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::File_Browser]);
+        o->image(pixmap_for("Fl_File_Browser"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(509, 71, 24, 24);
         o->tooltip("Table");
@@ -762,7 +762,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Table"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Table]);
+        o->image(pixmap_for("Fl_Table"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
@@ -780,7 +780,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Box"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Box]);
+        o->image(pixmap_for("Fl_Box"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(567, 21, 24, 24);
         o->tooltip("Clock");
@@ -794,7 +794,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Clock"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Clock]);
+        o->image(pixmap_for("Fl_Clock"));
       } // fluid::widget::Bin_Button* o
       { fluid::widget::Bin_Button* o = new fluid::widget::Bin_Button(542, 46, 24, 24);
         o->tooltip("Progress");
@@ -808,7 +808,7 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Progress"));
         o->align(Fl_Align(FL_ALIGN_CENTER));
         o->when(FL_WHEN_RELEASE);
-        o->image(pixmap[(int)Type::Progress]);
+        o->image(pixmap_for("Fl_Progress"));
       } // fluid::widget::Bin_Button* o
       o->end();
     } // Fl_Group* o
