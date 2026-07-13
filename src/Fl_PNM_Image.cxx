@@ -92,14 +92,14 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
   lineptr ++;
 
   format = atoi(lineptr);
-  while (isdigit(*lineptr)) lineptr ++;
+  while (fl_ascii_isdigit(*lineptr)) lineptr ++;
 
   if (format == 7) lineptr = (char *)"";
 
   while (lineptr != NULL && w() == 0) {
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
-    } else if (isdigit(*lineptr)) {
+    } else if (fl_ascii_isdigit(*lineptr)) {
       w((int)strtol(lineptr, &lineptr, 10));
     } else lineptr ++;
   }
@@ -107,7 +107,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
   while (lineptr != NULL && h() == 0) {
     if (*lineptr == '\0' || *lineptr == '#') {
       lineptr = fgets(line, sizeof(line), fp);
-    } else if (isdigit(*lineptr)) {
+    } else if (fl_ascii_isdigit(*lineptr)) {
       h((int)strtol(lineptr, &lineptr, 10));
     } else lineptr ++;
   }
@@ -118,7 +118,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *filename)        // I - File to read
     while (lineptr != NULL && maxval == 0) {
       if (*lineptr == '\0' || *lineptr == '#') {
         lineptr = fgets(line, sizeof(line), fp);
-      } else if (isdigit(*lineptr)) {
+      } else if (fl_ascii_isdigit(*lineptr)) {
         maxval = (int)strtol(lineptr, &lineptr, 10);
       } else lineptr ++;
     }

@@ -887,7 +887,7 @@ static char *decodeText( const char *src ) {
   const char *s = src;
   for ( ; *s; s++, len++ ) {
     if ( *s == '\\' ) {
-      if ( isdigit( s[1] ) ) {
+      if ( fl_ascii_isdigit( s[1] ) ) {
         s+=3;
       } else {
         s+=1;
@@ -901,7 +901,7 @@ static char *decodeText( const char *src ) {
       if ( s[1] == '\\' ) { *d++ = c; s++; }
       else if ( s[1] == 'n' ) { *d++ = '\n'; s++; }
       else if ( s[1] == 'r' ) { *d++ = '\r'; s++; }
-      else if ( isdigit( s[1] ) ) { *d++ = ((s[1]-'0')<<6) + ((s[2]-'0')<<3) + (s[3]-'0'); s+=3; }
+      else if ( fl_ascii_isdigit( s[1] ) ) { *d++ = ((s[1]-'0')<<6) + ((s[2]-'0')<<3) + (s[3]-'0'); s+=3; }
       else s++; // error
     }
     else

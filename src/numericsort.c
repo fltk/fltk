@@ -14,7 +14,7 @@
  *     https://www.fltk.org/bugs.php
  */
 
-#include <ctype.h>
+#include "flstring.h"
 #include <stdlib.h>
 #include <string.h>
 #include <FL/platform_types.h>
@@ -43,21 +43,21 @@ static int numericsort(struct dirent **A, struct dirent **B, int cs) {
     a += len_a;
     UTF_B = fl_utf8decode(b, end_b, &len_b);
     b += len_b;
-    if (UTF_A <= 255 && UTF_B <= 255 && isdigit(UTF_A) && isdigit(UTF_B)) {
+    if (UTF_A <= 255 && UTF_B <= 255 && fl_ascii_isdigit(UTF_A) && fl_ascii_isdigit(UTF_B)) {
       int diff,magdiff;
       while (UTF_A == '0') {UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;}
       while (UTF_B == '0') {UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;}
-      while (UTF_A <= 255 && isdigit(UTF_A) && UTF_A == UTF_B) {
+      while (UTF_A <= 255 && fl_ascii_isdigit(UTF_A) && UTF_A == UTF_B) {
         UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;
         UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;
       }
-      diff = (UTF_A <= 255 && UTF_B <= 255 && isdigit(UTF_A) && isdigit(UTF_B)) ? UTF_A - UTF_B : 0;
+      diff = (UTF_A <= 255 && UTF_B <= 255 && fl_ascii_isdigit(UTF_A) && fl_ascii_isdigit(UTF_B)) ? UTF_A - UTF_B : 0;
       magdiff = 0;
-      while (UTF_A <= 255 && isdigit(UTF_A)) {
+      while (UTF_A <= 255 && fl_ascii_isdigit(UTF_A)) {
         magdiff++;
         UTF_A = fl_utf8decode(a, end_a, &len_a); a += len_a;
       }
-      while (UTF_B <= 255 && isdigit(UTF_B)) {
+      while (UTF_B <= 255 && fl_ascii_isdigit(UTF_B)) {
         magdiff--;
         UTF_B = fl_utf8decode(b, end_b, &len_b); b += len_b;
       }

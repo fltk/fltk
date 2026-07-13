@@ -22,6 +22,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
+#include "src/flstring.h"
+
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
@@ -77,7 +80,7 @@ public:
     bool operator()(const Row &a, const Row &b) {
         const char *ap = ( _col < (int)a.cols.size() ) ? a.cols[_col].c_str() : "",
                    *bp = ( _col < (int)b.cols.size() ) ? b.cols[_col].c_str() : "";
-        if ( isdigit(*ap) && isdigit(*bp) ) {           // cheezy detection of numeric data
+        if ( fl_ascii_isdigit(*ap) && fl_ascii_isdigit(*bp) ) {           // cheezy detection of numeric data
             // Numeric sort
             int av=0; sscanf(ap, "%d", &av);
             int bv=0; sscanf(bp, "%d", &bv);
