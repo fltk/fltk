@@ -1187,7 +1187,7 @@ static int ms2fltk(WPARAM vk, int extended) {
   if (!vklut[1]) { // init the table
     unsigned int i;
     for (i = 0; i < 256; i++)
-      vklut[i] = tolower(i);
+      vklut[i] = fl_ascii_tolower(i);
     for (i = VK_F1; i <= VK_F16; i++)
       vklut[i] = i + (FL_F - (VK_F1 - 1));
     for (i = VK_NUMPAD0; i <= VK_NUMPAD9; i++)
