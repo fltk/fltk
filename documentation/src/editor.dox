@@ -1212,13 +1212,13 @@ style_parse(const char *text,
         continue;
       } else if (*text == '\"') {
         current = 'D';
-      } else if (!last && islower(*text)) {
+      } else if (!last && fl_ascii_islower(*text)) {
         // Might be a keyword...
         for (temp = text, bufptr = buf;
-             islower(*temp) && bufptr < (buf + sizeof(buf) - 1);
+             fl_ascii_islower(*temp) && bufptr < (buf + sizeof(buf) - 1);
              *bufptr++ = *temp++);
 
-        if (!islower(*temp)) {
+        if (!fl_ascii_islower(*temp)) {
           *bufptr = '\0';
 
           bufptr = buf;

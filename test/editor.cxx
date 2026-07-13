@@ -20,6 +20,7 @@
 // Enable tutorial code for each chapter by adjusting this macro to match
 // the chapter number.
 #define TUTORIAL_CHAPTER 10
+#include "src/flstring.h"
 
 // ---- Tutorial Chapter 1 -----------------------------------------------------
 #if TUTORIAL_CHAPTER >= 1
@@ -846,15 +847,15 @@ style_parse(const char *text,
         continue;
       } else if (*text == '\"') {
         current = 'D';
-      } else if (!last && (islower((*text)&255) || *text == '_')) {
+      } else if (!last && (fl_ascii_islower((*text)&255) || *text == '_')) {
         // Might be a keyword...
         for (temp = text, bufptr = buf;
-             (islower((*temp)&255) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
+             (fl_ascii_islower((*temp)&255) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
              *bufptr++ = *temp++) {
           // nothing
         }
 
-        if (!islower((*temp)&255) && *temp != '_') {
+        if (!fl_ascii_islower((*temp)&255) && *temp != '_') {
           *bufptr = '\0';
 
           bufptr = buf;

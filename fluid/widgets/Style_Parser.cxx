@@ -17,6 +17,8 @@
 
 #include "Style_Parser.h"
 
+#include "src/flstring.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -210,7 +212,7 @@ void Style_Parser::buffer_keyword() {
   char *key  = keyword;
   char *kend = key + sizeof(keyword) - 1; // end of buffer
   for ( const char *s=tbuff;
-        (islower(*s) || *s=='_') && (key < kend);
+        (fl_ascii_islower(*s) || *s=='_') && (key < kend);
         *key++ = *s++ ) { }
   *key = 0;     // terminate
 }
