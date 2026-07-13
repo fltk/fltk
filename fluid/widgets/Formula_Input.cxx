@@ -68,7 +68,7 @@ int Formula_Input::eval_var(uchar *&s) const {
     return 0;
   // find the end of the variable name
   uchar *v = s;
-  while (isalpha(*s)) s++;
+  while (fl_ascii_isalpha(*s)) s++;
   int n = (int)(s-v);
   // find the variable in the list
   for (Formula_Input_Vars *vars = vars_; vars->name_; vars++) {
@@ -105,7 +105,7 @@ int Formula_Input::eval(uchar *&s, int prio) const {
       v = v*10 + (c-'0');
       c = *s++;
     }
-  } else if (isalpha(c)) {
+  } else if (fl_ascii_isalpha(c)) {
     v = eval_var(--s);
     c = *s++;
   } else if (c=='(') {

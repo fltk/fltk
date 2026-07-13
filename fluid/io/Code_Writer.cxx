@@ -659,7 +659,7 @@ int Code_Writer::write_code(const std::string& code_arg, const std::string& head
       const char* b = a + strlen(a);
       int len = 0;
       unsigned ucs = fl_utf8decode(a, b, &len);
-      if ((ucs > 127) || (!isalpha(ucs) && (ucs != '_')))
+      if ((ucs > 127) || (!fl_ascii_isalpha(ucs) && (ucs != '_')))
         macro_name << '_';
       while (a < b) {
         ucs = fl_utf8decode(a, b, &len);
@@ -667,7 +667,7 @@ int Code_Writer::write_code(const std::string& code_arg, const std::string& head
           macro_name << "\\U" << std::setw(8) << std::setfill('0') << std::hex << ucs;
         } else if (ucs > 127) { // small unicode character or not an ASCI letter or digit
           macro_name << "\\u" << std::setw(4) << std::setfill('0') << std::hex << ucs;
-        } else if (!isalnum(ucs)) {
+        } else if (!fl_ascii_isalnum(ucs)) {
           macro_name << '_';
         } else {
           macro_name << (char)ucs;
