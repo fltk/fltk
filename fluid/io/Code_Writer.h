@@ -101,9 +101,7 @@ private:
   std::set<void*> ptr_in_code { };
 
   /// crc32 for blocks of text written to the code file
-  fluid::CRC32 crc_;
-  /// if set, we are at the start of a line and can ignore leading spaces in crc
-  bool block_line_start_ = true;
+  fluid::CRC32 crc_ { };
 
   /// current level of source code indentation
   int indentation = 0;
