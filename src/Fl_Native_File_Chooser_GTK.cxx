@@ -710,8 +710,6 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
 {
   int result = 1;
   char *p;
-  char preset[FL_PATH_MAX];
-  size_t len = 0;
 
   if(gtkw_ptr) { // discard the previous dialog widget
     fl_gtk_widget_destroy (gtkw_ptr);
