@@ -482,7 +482,7 @@ protected:
       if (charflags() & BG_XTERM) bgcolor_xterm(defaultbgcolor_);
       else                        bgcolor(defaultbgcolor_);
     }
-    int  onoff(bool flag, Attrib a) { return (flag ? (attrib_ | a) : (attrib_ & ~a)); }
+    int  onoff(bool flag, Attrib a) const { return (flag ? (attrib_ | a) : (attrib_ & ~a)); }
     void sgr_bold(bool val)      { attrib_ = (uchar)onoff(val, Fl_Terminal::BOLD);      } // e.g. ESC[1m
     void sgr_dim(bool val)       { attrib_ = (uchar)onoff(val, Fl_Terminal::DIM);       } // e.g. ESC[2m
     void sgr_italic(bool val)    { attrib_ = (uchar)onoff(val, Fl_Terminal::ITALIC);    } // e.g. ESC[3m
@@ -706,7 +706,7 @@ private:
     void push_rowcol(int row,int col,bool char_right) {
       push_row_ = row; push_col_ = col; push_char_right_ = char_right; }
     void start_push() { start(push_row_, push_col_, push_char_right_); }
-    bool dragged_off(int row,int col,bool char_right) {
+    bool dragged_off(int row,int col,bool char_right) const {
       return (push_row_ != row) || (push_col_+push_char_right_ != col+char_right); }
     void selectionfgcolor(Fl_Color val) { selectionfgcolor_ = val; }
     void selectionbgcolor(Fl_Color val) { selectionbgcolor_ = val; }
@@ -1168,7 +1168,7 @@ public:
   RedrawStyle redraw_style(void) const;
   void  redraw_style(RedrawStyle val);
 private:
-  bool  is_redraw_style(RedrawStyle val) { return redraw_style_ == val; }
+  bool  is_redraw_style(RedrawStyle val) const { return redraw_style_ == val; }
 public:
   float redraw_rate(void) const;
   void  redraw_rate(float val);
