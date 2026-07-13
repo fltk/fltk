@@ -1246,9 +1246,9 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       if (*p == '+' || *p == '-') p ++;
       if (strncmp(p, "0x", 2) == 0) {
         p += 2;
-        while (isxdigit(*p & 255) && p < e) p ++;
+        while (fl_ascii_isxdigit(*p & 255) && p < e) p ++;
       } else {
-        while (isdigit(*p & 255) && p < e) p ++;
+        while (fl_ascii_isdigit(*p & 255) && p < e) p ++;
       }
       if (p < e) {
         fl_beep(FL_BEEP_ERROR);
@@ -1258,14 +1258,14 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       while (fl_ascii_isspace(*t) && t < e) t ++;
       const char *p = t;
       if (*p == '+' || *p == '-') p ++;
-      while (isdigit(*p & 255) && p < e) p ++;
+      while (fl_ascii_isdigit(*p & 255) && p < e) p ++;
       if (*p == '.') {
         p ++;
-        while (isdigit(*p & 255) && p < e) p ++;
+        while (fl_ascii_isdigit(*p & 255) && p < e) p ++;
         if (*p == 'e' || *p == 'E') {
           p ++;
           if (*p == '+' || *p == '-') p ++;
-          while (isdigit(*p & 255) && p < e) p ++;
+          while (fl_ascii_isdigit(*p & 255) && p < e) p ++;
         }
       }
       if (p < e) {

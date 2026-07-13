@@ -131,6 +131,40 @@ inline int fl_ascii_isspace(int ch) {
   if (ch < 0 || ch > 0x7f) return 0;
   return isspace(ch);
 }
+
+/*
+  This function can be used to replace isxdigit(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isxdigit() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isxdigit(int ch) {
+  return (ch >= '0' && ch <= '9') ||
+         (ch >= 'a' && ch <= 'f') ||
+         (ch >= 'A' && ch <= 'F');
+}
+
+/*
+  This function can be used to replace isdigit(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isdigit() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isdigit(int ch) {
+  return (ch >= '0' && ch <= '9');
+}
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */

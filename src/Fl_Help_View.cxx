@@ -1219,7 +1219,7 @@ void Fl_Help_View::Impl::format() {
             column = 0;
           }
 
-          if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+          if (tolower(buf[0]) == 'h' && fl_ascii_isdigit(buf[1]))
           {
             font  = FL_HELVETICA_BOLD;
             fsize = textsize_ + '7' - buf[1];
@@ -1246,7 +1246,7 @@ void Fl_Help_View::Impl::format() {
           yy = block->y + block->h;
           hh = 0;
 
-          if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
+          if ((tolower(buf[0]) == 'h' && fl_ascii_isdigit(buf[1])) ||
               buf.cmp("DD") ||
               buf.cmp("DT") ||
               buf.cmp("P"))
@@ -1488,7 +1488,7 @@ void Fl_Help_View::Impl::format() {
           }
 
           if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-            if (isdigit(attr[0] & 255)) {
+            if (fl_ascii_isdigit(attr[0] & 255)) {
               // Absolute size
               fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
             } else {
@@ -1828,7 +1828,7 @@ void Fl_Help_View::Impl::format_table(
         width     = 0;
         needspace = 0;
 
-        if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+        if (tolower(buf[0]) == 'h' && fl_ascii_isdigit(buf[1]))
         {
           font  = FL_HELVETICA_BOLD;
           fsize = textsize_ + '7' - buf[1];
@@ -2934,7 +2934,7 @@ void Fl_Help_View::Impl::draw()
             }
 
             if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-              if (isdigit(attr[0] & 255)) {
+              if (fl_ascii_isdigit(attr[0] & 255)) {
                 // Absolute size
                 fsize = (int)(textsize_ * pow(1.2, atof(attr) - 3.0));
               } else {
