@@ -266,7 +266,7 @@ int Function_Node::is_public() const {
 
 // code duplication: see int is_id(char c) in code.cxx
 static bool fd_iskeyword(int c) {
-  return (c>0 && c<128 && (isalnum(c) || c=='_'));
+  return (c>0 && c<128 && (fl_ascii_isalnum(c) || c=='_'));
 }
 
 // remove all function default parameters and `override` keyword
@@ -809,7 +809,7 @@ void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
     return;
   }
   // handle putting #include, extern, using or typedef into decl:
-  if (   (!isalpha(*c) && *c != '~')
+  if (   (!fl_ascii_isalpha(*c) && *c != '~')
       || (!strncmp(c,"extern",6) && fl_ascii_isspace(c[6]))
       || (!strncmp(c,"class",5) && fl_ascii_isspace(c[5]))
       || (!strncmp(c,"typedef",7) && fl_ascii_isspace(c[7]))

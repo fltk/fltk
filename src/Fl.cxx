@@ -1623,7 +1623,7 @@ int Fl::handle_(int e, Fl_Window* window)
     // changing the text and falling through to FL_SHORTCUT case:
     {
       unsigned char* c = (unsigned char*)event_text(); // cast away const
-      if (!isalpha(*c)) return 0;
+      if (!fl_ascii_isalpha(*c)) return 0;
       *c = isupper(*c) ? tolower(*c) : toupper(*c);
     }
     e_number = e = FL_SHORTCUT;

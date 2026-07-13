@@ -3139,7 +3139,7 @@ if (v == LOAD) {
   char *s = (char*)nv;
   char *d = (char*)nv;
   while (*s) {
-    if (isalnum((unsigned char)*s) || *s == '_') {
+    if (fl_ascii_isalnum((unsigned char)*s) || *s == '_') {
       *d++ = *s;
     }
     s++;

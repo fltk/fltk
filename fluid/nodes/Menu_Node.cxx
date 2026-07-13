@@ -516,7 +516,7 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
     }
     if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
     if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
-    if ((s < 127) && isprint(s))
+    if ((s < 127) && fl_ascii_isprint(s))
       f.write_c("'" + std::string(1, (char)s) + "'");
     else
       f.write_c("0x" + fluid::io::to_string_8x(s) + ", ");

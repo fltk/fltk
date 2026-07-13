@@ -554,7 +554,7 @@ void Widget_Node::open() {
 
 int is_name(const char* c) {
   for (; *c; c++)
-    if ((ispunct(*c)||*c=='\n') && *c!='_' && *c!=':') return 0;
+    if ((fl_ascii_ispunct(*c)||*c=='\n') && *c!='_' && *c!=':') return 0;
   return 1;
 }
 
@@ -567,7 +567,7 @@ const char* array_name(Widget_Node* o) {
   const char* d;
   for (d = c; *d != '['; d++) {
     if (!*d) return c;
-    if (ispunct(*d) && *d!='_') return nullptr;
+    if (fl_ascii_ispunct(*d) && *d!='_') return nullptr;
   }
   int num = atoi(d+1);
   int sawthis = 0;
@@ -729,7 +729,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
           if (instring) {
             if (*ptr == '\\') ptr++;
             else if (*ptr == '\"') instring = 0;
-          } else if (inname && !isalnum(*ptr & 255)) {
+          } else if (inname && !fl_ascii_isalnum(*ptr & 255)) {
             inname = 0;
           } else if (*ptr == '/' && ptr[1]=='*') {
             incomment = 1; ptr++;
@@ -744,7 +744,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
               incppcomment = 0;
           } else if (*ptr == '\"') {
             instring = 1;
-          } else if (isalnum(*ptr & 255) || *ptr == '_') {
+          } else if (fl_ascii_isalnum(*ptr & 255) || *ptr == '_') {
             size_t len = strspn(ptr, "0123456789_"
                                      "abcdefghijklmnopqrstuvwxyz"
                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -903,7 +903,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     }
     if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
     if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
-    if ((s < 127) && isprint(s))
+    if ((s < 127) && fl_ascii_isprint(s))
       f.write_c("'" + std::string(1, s) + "');\n");
     else {
       f.write_c("0x" + fluid::io::to_string_8x(s) + ");\n");

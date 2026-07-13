@@ -241,7 +241,7 @@ int Fl_Shortcut_Button::handle(int e) {
           // MacOS returns special characters when the alt modifier is held down.
           // FLTK handles shortcuts as ASCII keys, so let's convert the keystroke.
           int c = Fl::event_key();
-          if ( (c>32) && (c<128) && (isalnum(c)) ) {
+          if ( (c>32) && (c<128) && (fl_ascii_isalnum(c)) ) {
             v = c;
             if (Fl::event_state(FL_SHIFT)) {
               v = toupper(c);

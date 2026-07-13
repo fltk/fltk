@@ -347,7 +347,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   if (c == ls)
     return 1;
   // On macOS, we need to simulate the upper case keystroke as well
-  if (extra_test && Fl::event_state(FL_ALT) && c<128 && isalpha(c) && (unsigned)toupper(c)==ls)
+  if (extra_test && Fl::event_state(FL_ALT) && c<128 && fl_ascii_isalpha(c) && (unsigned)toupper(c)==ls)
     return 1;
   return 0;
 }
