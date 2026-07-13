@@ -1287,7 +1287,7 @@ style_parse(const char *text,
     else *style++ = current;
     col ++;
 
-    last = isalnum(*text) || *text == '.';
+    last = fl_ascii_isalnum(*text) || *text == '.';
 
     if (*text == '\n') {
       // Reset column and possibly reset the style

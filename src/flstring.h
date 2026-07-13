@@ -116,6 +116,77 @@ FL_EXPORT extern int fl_ascii_strcasecmp(const char *s, const char *t);
 // AlbrechtS, June 2026
 
 /*
+  This function can be used to replace isalnum(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isalnum() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isalnum(int ch) {
+  return (ch >= 'a' && ch <= 'z') ||
+         (ch >= 'A' && ch <= 'Z') ||
+         (ch >= '0' && ch <= '9');
+}
+
+/*
+  This function can be used to replace isalpha(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isalpha() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isalpha(int ch) {
+  return (ch >= 'a' && ch <= 'z') ||
+         (ch >= 'A' && ch <= 'Z');
+}
+
+/*
+  This function can be used to replace isprint(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isprint() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isprint(int ch) {
+  if (ch < 0 || ch > 0x7f) return 0;
+  return isprint(ch);
+}
+
+/*
+  This function can be used to replace ispunct(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note ispunct() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_ispunct(int ch) {
+  return (ch >= 33 && ch <= 47) ||
+         (ch >= 58 && ch <= 64) ||
+         (ch >= 91 && ch <= 96) ||
+         (ch >= 123 && ch <= 126);
+}
+
+/*
   This function can be used to replace isspace(int) in FLTK.
 
   This function is \b NOT UTF-8 aware and \b should only be used where only ASCII

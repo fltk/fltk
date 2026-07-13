@@ -522,7 +522,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H, bool draw_active) {
   \todo This function is not UTF-8-aware.
 */
 static int isword(char c) {
-  return (c&128 || isalnum(c) || strchr("#%-@_~", c));
+  return (c&128 || fl_ascii_isalnum(c) || strchr("#%-@_~", c));
 }
 
 /**

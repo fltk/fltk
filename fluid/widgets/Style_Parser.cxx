@@ -172,7 +172,7 @@ int Style_Parser::parse_over_white() {
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
 int Style_Parser::parse_over_alpha() {
-  while ( len > 0 && isalpha(*tbuff) )
+  while ( len > 0 && fl_ascii_isalpha(*tbuff) )
     { if ( !parse_over_char() ) return 0; }
   return 1;
 }
@@ -328,6 +328,6 @@ int Style_Parser::parse_escape() {
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
 int Style_Parser::parse_all_else() {
-  last = isalnum(*tbuff) || *tbuff == '_' || *tbuff == '.';
+  last = fl_ascii_isalnum(*tbuff) || *tbuff == '_' || *tbuff == '.';
   return parse_over_char();
 }

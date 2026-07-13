@@ -1078,7 +1078,7 @@ int Fl_Text_Buffer::line_end(int pos) const {
 bool Fl_Text_Buffer::is_word_separator(int pos) const {
   int c = char_at(pos);
   if (c < 128) {
-    return !(isalnum(c) || c == '_');  // non alphanumeric ASCII
+    return !(fl_ascii_isalnum(c) || c == '_');  // non alphanumeric ASCII
   }
   return (c == 0xA0 ||                 // NO-BREAK SPACE
           (c >= 0x3000 && c <= 0x301F) // IDEOGRAPHIC punctuation
