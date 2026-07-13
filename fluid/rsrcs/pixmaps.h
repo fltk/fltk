@@ -25,7 +25,9 @@ extern Fl_Pixmap *protected_pixmap;
 extern Fl_Pixmap *invisible_pixmap;
 extern Fl_Pixmap *compressed_pixmap;
 
-extern Fl_Pixmap *pixmap[];
+/** Look up the icon for a node by its `type_name()` (e.g. "Fl_Button").
+    Returns nullptr if no icon is registered for that type name. */
+Fl_Pixmap *pixmap_for(const char *type_name);
 
 void loadPixmaps();
 

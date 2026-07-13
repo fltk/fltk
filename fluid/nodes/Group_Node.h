@@ -62,7 +62,6 @@ public:
   void move_child(Node*, Node*) override;
   void remove_child(Node*) override;
   int can_have_children() const override {return 1;}
-  Type type() const override { return Type::Group; }
   Fl_Widget *enter_live_mode(int top=0) override;
   void leave_live_mode() override;
   void copy_properties() override;
@@ -84,7 +83,6 @@ public:
   const char *type_name() override {return pack_type_name;}
   const char *alt_type_name() override {return "fltk::PackedGroup";}
   Widget_Node *_make() override {return new Pack_Node();}
-  Type type() const override { return Type::Pack; }
   Fl_Widget *enter_live_mode(int top=0) override;
   void copy_properties() override;
 };
@@ -118,7 +116,6 @@ public:
   Widget_Node *_make() override { return new Flex_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
-  Type type() const override { return Type::Flex; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   Fl_Widget *enter_live_mode(int top=0) override;
@@ -151,7 +148,6 @@ public:
   const char *alt_type_name() override { return "fltk::TableGroup"; }
   Widget_Node *_make() override { return new Table_Node(); }
   Fl_Widget *widget(int X, int Y, int W, int H) override;
-  Type type() const override { return Type::Table; }
   Fl_Widget *enter_live_mode(int top=0) override;
   void add_child(Node*, Node*) override;
   void move_child(Node*, Node*) override;
@@ -183,7 +179,6 @@ public:
   Node* click_test(int,int) override;
   void add_child(Node*, Node*) override;
   void remove_child(Node*) override;
-  Type type() const override { return Type::Tabs; }
   Fl_Widget *enter_live_mode(int top=0) override;
 };
 
@@ -203,7 +198,6 @@ public:
   const char *type_name() override {return scroll_type_name;}
   const char *alt_type_name() override {return "fltk::ScrollGroup";}
   Widget_Node *_make() override {return new Scroll_Node();}
-  Type type() const override { return Type::Scroll; }
   Fl_Widget *enter_live_mode(int top=0) override;
   void copy_properties() override;
 };
@@ -221,7 +215,6 @@ public:
   const char *type_name() override {return tile_type_name;}
   const char *alt_type_name() override {return "fltk::TileGroup";}
   Widget_Node *_make() override {return new Tile_Node();}
-  Type type() const override { return Type::Tile; }
   Fl_Widget *enter_live_mode(int top=0) override;
   void leave_live_mode() override;
   void copy_properties() override;
@@ -249,7 +242,6 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Wizard_Proxy *g = new Fl_Wizard_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Widget_Node *_make() override {return new Wizard_Node();}
-  Type type() const override { return Type::Wizard; }
 };
 
 #endif // FLUID_NODES_GROUP_NODE_H

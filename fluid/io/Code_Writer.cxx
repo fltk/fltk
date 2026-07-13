@@ -813,7 +813,6 @@ void Code_Writer::write_public(int state) {
 Code_Writer::Code_Writer(Project &proj)
 : proj_ { proj }
 {
-  block_crc_ = crc32(0, nullptr, 0);
 }
 
 /**
@@ -826,51 +825,9 @@ Code_Writer::Code_Writer(Project &proj)
  */
 void Code_Writer::tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_type, unsigned short uid) {
   if (proj_.write_mergeback_data) {
-    code_buffer << Mergeback::format_tag(prev_type, next_type, uid, (uint32_t)block_crc_);
+    code_buffer << Mergeback::format_tag(prev_type, next_type, uid, crc_.value());
   }
-  block_crc_ = crc32(0, nullptr, 0);
-}
-
-/**
- Static function to calculate the CRC32 of a block of C source code.
- Calculation of the CRC ignores leading whitespace in a line and all linefeed
- characters ('\\r').
- \param[in] data a pointer to the data block
- \param[in] n the size of the data in bytes, or -1 to use strlen()
- \param[in] in_crc add to this CRC, 0 by default to start a new block
- \param[inout] inout_line_start optional pointer to flag that determines
-            if we are the start of a line, used to find leading whitespace
- \return the new CRC
- */
-unsigned long Code_Writer::block_crc(fluid::string_view block, unsigned long in_crc, bool *inout_line_start) {
-  if (block.empty()) return 0;
-  bool line_start = true;
-  if (inout_line_start) line_start = *inout_line_start;
-  const char *s = block.data();
-  int n = (int)block.size();
-  for ( ; n>0; --n, ++s) {
-    if (line_start) {
-      // don't count leading spaces and tabs in a line
-      while (n>0 && *s>0 && fl_ascii_isspace(*s)) { s++; n--; }
-      if (*s) line_start = false;
-    }
-    // don't count '\r' that may be introduced by Windows
-    if (n>0 && *s=='\r') { s++; n--; }
-    if (n>0 && *s=='\n') line_start = true;
-    if (n>0) {
-      in_crc = crc32(in_crc, (const Bytef*)s, 1);
-    }
-  }
-  if (inout_line_start) *inout_line_start = line_start;
-  return in_crc;
-}
-
-/** Add the following block of text to the CRC of this class.
- \param[in] data a pointer to the data block
- \param[in] n the size of the data in bytes, or -1 to use strlen()
- */
-void Code_Writer::crc_add(fluid::string_view block) {
-  block_crc_ = block_crc(block, block_crc_, &block_line_start_);
+  crc_.reset();
 }
 
 /** Write some text to the code buffer.
@@ -880,7 +837,7 @@ void Code_Writer::crc_add(fluid::string_view block) {
  */
 int Code_Writer::crc_puts(const std::string& text) {
   if (proj_.write_mergeback_data) {
-    crc_add(text);
+    crc_.update(text);
   }
   code_buffer << text;
   return 0;
@@ -894,8 +851,8 @@ int Code_Writer::crc_puts(const std::string& text) {
  */
 int Code_Writer::crc_putc(int c) {
   if (proj_.write_mergeback_data) {
-    uchar uc = (uchar)c;
-    crc_add(fluid::string_view((const char*)&uc, 1));
+    char cc = (char)c;
+    crc_.update(fluid::string_view((const char*)&cc, 1));
   }
   code_buffer << (char)c;
   return c;
@@ -972,3 +929,61 @@ bool Code_Writer::write_file_if_changed(const std::string& filename, const std::
   return (written == content.size()) && (result == 0);
 }
 
+
+/**
+ Add a block of text to the CRC32 calculation.
+
+ Ignore leading whitespace and linefeed characters.
+ All spaces and tabs are treated as a single space.
+ This is to avoid differences in whitespace affecting the CRC, which can
+ happen when code blocks are indented while writing code.
+
+ This class can be used without the Code_Writer class, for example to
+ calculate a CRC of a string or file.
+
+ \param block The text to add to the CRC calculation.
+ */
+void fluid::CRC32::update(fluid::string_view block) {
+  const char *s = block.data();
+  size_t n = block.size();
+  for ( ; n>0; --n, ++s)
+  {
+    // don't count leading spaces and tabs in a line
+    if (line_start_) {
+      while (n>0 && fl_ascii_isspace(*s)) { s++; n--; }
+      if (n==0) return;
+      line_start_ = false;
+    }
+    if (*s=='\n') line_start_ = true;
+
+    // skip '\r' that may be introduced by Windows
+    if (*s=='\r') continue;
+
+    // skip multiple spaces in a row, but only if the previous character was a space
+    if (multi_space_) {
+      // skip all further spaces
+      if (fl_ascii_isspace(*s)) continue;
+      multi_space_ = false;
+    } else if (fl_ascii_isspace(*s)) {
+      multi_space_ = true;
+      crc_ = crc32(crc_, (const Bytef*)" ", 1);
+      continue;
+    }
+
+    crc_ = crc32(crc_, (const Bytef*)s, 1);
+  }
+}
+
+/**
+ Calculate the CRC32 of a block of text.
+ This is a convenience function that creates a CRC32 object, adds the block of
+ text, and returns the resulting CRC32 value.
+
+ \param block The text to calculate the CRC32 for.
+ \return The CRC32 value of the block of text.
+ */
+uint32_t fluid::CRC32::block(fluid::string_view block) {
+  fluid::CRC32 crc;
+  crc.update(block);
+  return crc.value();
+}

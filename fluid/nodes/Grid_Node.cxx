@@ -533,7 +533,7 @@ void Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, 
     int align = atoi(f.read_word());
     Fl_Grid::Cell *cell = grid->cell(child_widget);
     if (cell) cell->align((Fl_Grid_Align)align);
-  } if (!strcmp(property, "minsize")) {
+  } else if (!strcmp(property, "minsize")) {
     int min_w = 20, min_h = 20;
     const char *value = f.read_word();
     sscanf(value, "%d %d", &min_w, &min_h);

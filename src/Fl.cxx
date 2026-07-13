@@ -2014,7 +2014,14 @@ void Fl::watch_widget_pointer(Fl_Widget *&w)
   }
   if (num_widget_watch==max_widget_watch) {
     max_widget_watch += 8;
-    widget_watch = (Fl_Widget***)realloc(widget_watch, sizeof(Fl_Widget**)*max_widget_watch);
+    Fl_Widget*** new_widget_watch = (Fl_Widget***)realloc(widget_watch, sizeof(Fl_Widget**)*max_widget_watch);
+    if (new_widget_watch) {
+      widget_watch = new_widget_watch;
+    } else {
+      // realloc failed, original widget_watch is still valid.
+      // Return to avoid using a potentially invalid pointer.
+      return;
+    }
   }
   widget_watch[num_widget_watch++] = wp;
 #ifdef DEBUG_WATCH

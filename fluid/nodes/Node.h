@@ -18,6 +18,7 @@
 #define FLUID_NODES_NODE_H
 
 #include "io/Code_Writer.h"
+#include "nodes/iterators.h"
 
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
@@ -84,39 +85,6 @@ struct TextSpan {
   int start = -1, end = -1;
 };
 
-enum class Type {
-  // administrative
-  Base_, Widget_, Menu_Manager_, Menu_, Browser_, Valuator_,
-  // non-widget
-  Function, Code, CodeBlock,
-  Decl, DeclBlock, Class,
-  Widget_Class, Comment, Data,
-  // groups
-  Window, Group, Pack,
-  Flex, Tabs, Scroll,
-  Tile, Wizard, Grid,
-  // buttons
-  Button, Return_Button, Light_Button,
-  Check_Button, Repeat_Button, Round_Button,
-  // valuators
-  Slider, Scrollbar, Value_Slider,
-  Adjuster, Counter, Spinner,
-  Dial, Roller, Value_Input, Value_Output,
-  // text
-  Input, Output, Text_Editor,
-  Text_Display, File_Input, Terminal,
-  // menus
-  Menu_Bar, Menu_Button, Choice,
-  Input_Choice, Submenu, Menu_Item,
-  Checkbox_Menu_Item, Radio_Menu_Item,
-  // browsers
-  Browser, Check_Browser, File_Browser,
-  Tree, Help_View, Table,
-  // misc
-  Box, Clock, Progress,
-  Max_
-};
-
 void update_visibility_flag(Node *p);
 void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
@@ -142,9 +110,11 @@ bool validate_branch(class Node *root);
  to create a pseudo tree structure. To make walking up the tree faster, Type
  also holds a pointer to the `parent` Type.
 
- The `type()` method returns a node's exact `Type` tag, used where an exact
- enum value is needed (e.g. icon lookups). To test whether a node is of a
- given type or a type derived from it, use `dynamic_cast` directly.
+ To test whether a node is of a given type or a type derived from it, use
+ `dynamic_cast` directly. To test for a node's exact type, compare `typeid(*node)`
+ against `typeid(SomeNode)`. `type_name()` returns a unique string per concrete
+ class (e.g. "Fl_Button"), used where a stable string key is needed (e.g. icon
+ lookups, code output).
 
  \todo it would be nice if we can handle multiple independent trees. To do that
  we must remove static members like `first` and `last`.
@@ -152,9 +122,6 @@ bool validate_branch(class Node *root);
  \todo add virtual methods to handle events, draw widgets, and draw overlays.
  It may also make sense to have a virtual method that returns a boolean if
  a specific type can be added as a child.
-
- \todo it may make sense to have a readable iterator class instead of relying
- on pointer manipulation. Or use std in future releases.
  */
 class Node {
   /** Copy the label text to Widgets and Windows, does nothing in Type. */
@@ -162,90 +129,55 @@ class Node {
 
 protected:
 
-  Node();
+  Node() = default;
 
   /** Name of a widget, or code some non-widget Types. */
-  const char *name_;
+  const char* name_ { nullptr };
   /** Label text of a widget. */
-  const char *label_;
+  const char* label_ { nullptr };
   /** If it is just a word, it's the name of the callback function. If it starts
    with a '[', it's a lambda function. Otherwise it is the full callback
    C++ code. Can be nullptr. */
-  const char *callback_;
+  const char* callback_ { nullptr };
   /** Widget user data field as C++ text. */
-  std::string user_data_;
+  std::string user_data_ { };
   /** Widget user data type as C++ text, usually `void*` or `long`. */
-  std::string user_data_type_;
+  std::string user_data_type_ { };
   /** Optional comment for every node in the graph. Visible in browser and
    panels, and will also be copied to the source code. */
-  const char *comment_;
+  const char* comment_ { nullptr };
   /** a unique ID within the project */
-  unsigned short uid_;
+  unsigned short uid_ { 0 };
 
 public: // things that should not be public:
   // TODO: reference back to the tree
   /** Quick link to the parent Type instead of walking up the linked list. */
-  Node *parent;
+  Node* parent { nullptr };
   /** This type is rendered "selected" in the tree browser. */
-  char new_selected; // browser highlight
+  char new_selected { 0 }; // browser highlight
   /** Backup storage for selection if an error occurred during some operation
    (see `haderror`). It seems that this is often confused with new_selected
    which seems to hold the true and visible selection state. */
-  char selected; // copied here by selection_changed()
-  char folded_;  // if set, children are not shown in browser
-  char visible; // true if all parents are open
-  int level;    // number of parents over this
-  Node *next, *prev;
-  Node *prev_sibling();
-  Node *next_sibling();
-  Node *first_child();
+  char selected { 0 }; // copied here by selection_changed()
+  char folded_ { 0 };  // if set, children are not shown in browser
+  char visible { 0 }; // true if all parents are open
+  int level { 0 };    // number of parents over this
+  Node* next { nullptr }, *prev { nullptr };
+  Node* prev_sibling();
+  Node* next_sibling();
+  Node* first_child();
+  const Node* next_sibling() const { return const_cast<Node*>(this)->next_sibling(); }
+  const Node* first_child() const { return const_cast<Node*>(this)->first_child(); }
 
   /** Range over the direct children of this node (`for (auto *c : n->children())`). */
-  class ChildRange {
-    Node *first_;
-  public:
-    class Iterator {
-      Node *n_;
-    public:
-      explicit Iterator(Node *n) : n_(n) { }
-      Node* operator*() const { return n_; }
-      Iterator& operator++() { n_ = n_->next_sibling(); return *this; }
-      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
-    };
-    explicit ChildRange(Node *first) : first_(first) { }
-    Iterator begin() const { return Iterator(first_); }
-    Iterator end() const { return Iterator(nullptr); }
-  };
-  ChildRange children() { return ChildRange(first_child()); }
+  Child_Range children() { return Child_Range(first_child()); }
+  /** Const range over the direct children of this node (`for (const auto *c : n->children())`). */
+  Const_Child_Range children() const { return Const_Child_Range(first_child()); }
 
   /** Range over all descendants of this node, depth-first (`for (auto *d : n->descendants())`). */
-  class DescendantRange {
-    Node *base_;
-  public:
-    class Iterator {
-      Node *base_;
-      Node *n_;
-    public:
-      Iterator(Node *base, Node *n) : base_(base), n_(n) { }
-      Node* operator*() const { return n_; }
-      Iterator& operator++() {
-        n_ = n_->next;
-        if (n_ && n_->level <= base_->level) n_ = nullptr;
-        return *this;
-      }
-      bool operator!=(const Iterator& other) const { return n_ != other.n_; }
-    };
-    explicit DescendantRange(Node *base) : base_(base) { }
-    Iterator begin() const {
-      Node *n = base_->next;
-      if (n && n->level <= base_->level) n = nullptr;
-      return Iterator(base_, n);
-    }
-    Iterator end() const { return Iterator(base_, nullptr); }
-  };
-  DescendantRange descendants() { return DescendantRange(this); }
+  Descendant_Range descendants() { return Descendant_Range(this); }
 
-  Node *factory;
+  Node* factory { nullptr };
   std::string callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
@@ -253,44 +185,46 @@ public: // things that should not be public:
   TextSpan header1, header2, header_static;
   TextSpan proj1, proj2;
 
-protected:
-  int user_defined(const char* cbname) const;
-
 public:
 
+  Node(const Node &) = delete;
+  Node &operator=(const Node &) = delete;
+  Node(Node &&) = delete;
+  Node &operator=(Node &&) = delete;
   virtual ~Node();
-  virtual Node *make(Strategy strategy) = 0;
 
-  Window_Node *window();
-  Group_Node *group();
+  virtual Node* make(Strategy strategy) = 0;
 
-  void add(Node *parent, Strategy strategy);
-  void insert(Node *n); // insert into list before n
+  Window_Node* window();
+  Group_Node* group();
+
+  void add(Node* parent, Strategy strategy);
+  void insert(Node* n); // insert into list before n
   Node* remove();    // remove from list
   void move_before(Node*); // move before a sibling
 
-  virtual const char *title(); // string for browser
-  virtual const char *type_name() = 0; // type for code output
-  virtual const char *alt_type_name() { return type_name(); } // alternate type for FLTK2 code output
+  virtual const char* title(); // string for browser
+  virtual const char* type_name() = 0; // type for code output
+  virtual const char* alt_type_name() { return type_name(); } // alternate type for FLTK2 code output
 
-  const char *name() const {return name_;}
-  void name(const char *);
-  const char *label() const {return label_;}
-  void label(const char *);
-  const char *callback() const {return callback_;}
-  void callback(const char *);
+  const char* name() const { return name_; }
+  void name(const char*);
+  const char* label() const { return label_; }
+  void label(const char*);
+  const char* callback() const { return callback_; }
+  void callback(const char*);
   std::string user_data() const { return user_data_; }
   void user_data(const std::string&);
   std::string user_data_type() const { return user_data_type_; }
   std::string user_data_type_or_voidp() const { return user_data_type_.empty() ? "void*" : user_data_type_; }
   void user_data_type(const std::string&);
-  const char *comment() { return comment_; }
-  void comment(const char *);
+  const char* comment() { return comment_; }
+  void comment(const char*);
 
   virtual Node* click_test(int,int) { return nullptr; }
 
-  virtual void add_child(Node *, Node *beforethis) { (void)beforethis; }
-  virtual void move_child(Node *, Node *beforethis) { (void)beforethis; }
+  virtual void add_child(Node* , Node* beforethis) { (void)beforethis; }
+  virtual void move_child(Node* , Node* beforethis) { (void)beforethis; }
   virtual void remove_child(Node*) { }
 
   /** Give widgets a chance to arrange their children after all children were added.
@@ -303,11 +237,11 @@ public:
   virtual void open();  // what happens when you double-click
 
   // read and write data to a saved file:
-  virtual void write(fluid::io::Project_Writer &f);
-  virtual void write_properties(fluid::io::Project_Writer &f);
-  virtual void read_property(fluid::io::Project_Reader &f, const char *);
-  virtual void write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate);
-  virtual void read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property);
+  virtual void write(fluid::io::Project_Writer& f);
+  virtual void write_properties(fluid::io::Project_Writer& f);
+  virtual void read_property(fluid::io::Project_Reader& f, const char *);
+  virtual void write_parent_properties(fluid::io::Project_Writer& f, Node *child, bool encapsulate);
+  virtual void read_parent_property(fluid::io::Project_Reader& f, Node *child, const char *property);
   virtual int read_fdesign(const char*, const char*);
   virtual void postprocess_read() { }
 
@@ -330,28 +264,27 @@ public:
   int msgnum();
 
   /** Return 1 if the Type can have children. */
-  virtual int can_have_children() const {return 0;}
+  virtual int can_have_children() const { return 0; }
   /** Return 1 if the type is a widget or menu item. */
-  virtual int is_widget() const {return 0;}
+  virtual int is_widget() const { return 0; }
   /** Return 1 if the type is a widget but not a menu item. */
-  virtual int is_true_widget() const {return 0;}
+  virtual int is_true_widget() const { return 0; }
   /** Return 1 if a type behaves like a button (Fl_Button and Fl_Menu_Item and derived, but not Submenu_Node. */
-  virtual int is_button() const {return 0;}
+  virtual int is_button() const { return 0; }
   /** Return 1 if this is a Widget_Class_Node, CodeBlock_Node, or Function_Node */
-  virtual int is_code_block() const {return 0;}
+  virtual int is_code_block() const { return 0; }
   /** Return 1 if this is a Widget_Class_Node, Class_Node, or DeclBlock_Node */
-  virtual int is_decl_block() const {return 0;}
+  virtual int is_decl_block() const { return 0; }
   /** Return 1 if this is a Class_Node or Widget_Class_Node. */
-  virtual int is_class() const {return 0;}
+  virtual int is_class() const { return 0; }
   /** Return 1 if the type browser shall draw a padlock over the icon. */
-  virtual int is_public() const {return 1;}
-  /** Return the type Type for this Type. */
-  virtual Type type() const { return Type::Base_; }
+  virtual int is_public() const { return 1; }
 
   const char* class_name(int need_nest) const;
   bool is_in_class() const;
+  Node* find_parent_class_node() const;
 
-  int has_function(const char*, const char*) const;
+  bool has_function(const std::string& return_type_regex, const std::string& function_sig_regex) const;
 
   unsigned short set_uid(unsigned short suggested_uid=0);
   unsigned short ensure_unique_uid() { return set_uid(uid_); }

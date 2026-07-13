@@ -83,7 +83,7 @@ std::string subclassname(Node* l) {
       return "Fl_Group";
     if (p->o->type() == FL_DOUBLE_WINDOW)
       return "Fl_Double_Window";
-    if (p->type() == Type::Input) {
+    if (typeid(*p) == typeid(Input_Node)) {
       if (p->o->type() == FL_FLOAT_INPUT)
         return "Fl_Float_Input";
       if (p->o->type() == FL_INT_INPUT)
@@ -556,6 +556,29 @@ int is_name(const char* c) {
   for (; *c; c++)
     if ((fl_ascii_ispunct(*c)||*c=='\n') && *c!='_' && *c!=':') return 0;
   return 1;
+  
+/**
+ Check if the string is a valid function name.
+ \return true if no punctuation characters (except '_' and ':') are present
+    in the string, false otherwise.
+ */
+bool is_function_name(const std::string& name) {
+  if (name.empty()) return false;
+  for (char c : name) {
+    if ((ispunct(c) || c == '\n') && c != '_' && c != ':') return false;
+  }
+  return true;
+}
+
+/**
+ Check if the string is the start of a lambda function.
+ \return true if the string starts with '[' (minimal test)
+    or starts with "std::bind(" (alternative lambda syntax).
+ \note FLTK 1.5 does not support std::bind() or lambdas with capture yet
+ */
+bool is_lambda(const std::string& name) {
+  if (name.empty()) return false;
+  return (name[0] == '[' || name.substr(0, 10) == "std::bind(");
 }
 
 // Test to see if name() is an array entry.  If so, and this is the
@@ -610,18 +633,16 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
       f.write_h_once(extra_code(n));
   }
-  if (callback() && is_name(callback())) {
-    int write_extern_declaration = 1;
-    char buf[1024]; snprintf(buf, 1023, "%s(*)",  callback());
-    if (is_in_class()) {
-      if (has_function("static void", buf))
-        write_extern_declaration = 0;
+  if (callback() && is_function_name(callback())) {
+    std::string callback_name_pattern = std::string(callback()) + "(*)";
+    Node* pClass = find_parent_class_node();
+    if (pClass && pClass->has_function("static void", callback_name_pattern)) {
+      // nothing to do, method already exists
+    } else if (has_toplevel_function("*void", callback_name_pattern)) {
+      // nothing to do, function already exists
     } else {
-      if (has_toplevel_function(nullptr, buf))
-        write_extern_declaration = 0;
-    }
-    if (write_extern_declaration)
       f.write_h_once("extern void " + std::string(callback()) + "(" + t + "*, " + user_data_type_or_voidp() + ");");
+    }
   }
   const char* k = class_name(1);
   const char* c = array_name(this);
@@ -634,7 +655,7 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     else
       f.write_c(t + "* " + c + " = {(" + t + "*)nullptr};\n");
   }
-  if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
+  if (callback() && !is_function_name(callback()) && !is_lambda(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
@@ -693,7 +714,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_h(f.indent(1) + t + "* " + c + ";\n");
     }
   }
-  if (class_name(1) && callback() && !is_name(callback())) {
+  if (class_name(1) && callback() && !is_function_name(callback())) {
     std::string cn = callback_name(f);
     std::string ut = user_data_type_or_voidp();
     f.write_public(0);
@@ -991,7 +1012,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   std::string ud = user_data();
   if (class_name(1) && !parent->is_widget()) ud = "this";
   if (callback()) {
-    if (callback()[0] == '[') { // lambda callback function
+    if (is_lambda(callback())) { // lambda callback function
       f.write_c(f.indent() + var + "->callback(\n");
       f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
       f.write_c_indented(callback(), 1, 0);

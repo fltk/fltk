@@ -504,27 +504,6 @@ void update_visibility_flag(Node *p) {
  */
 
 /**
- Constructor and base for any node in the widget tree.
- */
-Node::Node() :
-  name_(nullptr),
-  label_(nullptr),
-  callback_(nullptr),
-  comment_(nullptr),
-  uid_(0),
-  parent(nullptr),
-  new_selected(0),
-  selected(0),
-  folded_(0),
-  visible(0),
-  level(0),
-  next(nullptr), prev(nullptr),
-  factory(nullptr)
-{
-}
-
-
-/**
  Destructor for any node in the tree.
 
  The destructor removes itself from the doubly linked list. This is dangerous,
@@ -1177,25 +1156,8 @@ void Node::leave_live_mode() {
 void Node::copy_properties() {
 }
 
-/**
-  Check whether callback \p cbname is declared anywhere else by the user.
-
-  \b Warning: this just checks that the name is declared somewhere,
-  but it should probably also check that the name corresponds to a
-  plain function or a member function within the same class and that
-  the parameter types match.
- */
-int Node::user_defined(const char* cbname) const {
-  for (Node* p = Fluid.proj.tree.first; p ; p = p->next)
-    if (dynamic_cast<Function_Node*>(p) && p->name() != nullptr)
-      if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
-        if (p->name()[strlen(cbname)] == '(')
-          return 1;
-  return 0;
-}
-
 std::string Node::callback_name(fluid::io::Code_Writer& f) {
-  if (is_name(callback())) return callback();
+  if (is_function_name(callback())) return callback();
   return f.unique_id(this, "cb", (name()?name():""), (label()?label():""));
 }
 
@@ -1247,6 +1209,19 @@ bool Node::is_in_class() const {
   return false;
 }
 
+/**
+ Find the nearest parent Class_Node or Widget_Class_Node.
+ \return the nearest parent class node, or nullptr if none is found
+ */
+Node* Node::find_parent_class_node() const {
+  Node* p = parent;
+  while (p) {
+    if (p->is_class()) return static_cast<Class_Node*>(p);
+    p = p->parent;
+  }
+  return nullptr;
+}
+
 void Node::write_static(fluid::io::Code_Writer&) {
 }
 
@@ -1293,6 +1268,32 @@ unsigned short Node::set_uid(unsigned short suggested_uid) {
   }
   uid_ = suggested_uid;
   return suggested_uid;
+}
+
+/**
+ Check if this class has a function with the given return type and signature.
+ This node must be of type Class_Node, Widget_Class_Node, of DeclBlock_Node.
+ \param[in] return_type_regex regex for the return type of the function,
+    or empty for any type
+ \param[in] function_sig_regex regex for the name and arguments of the function
+ \return true if a matching function is found, false otherwise
+ */
+bool Node::has_function(const std::string& return_type_regex, const std::string& function_sig_regex) const
+{
+  for (const Node *child : children()) {
+    // Check for direct children
+    if (dynamic_cast<const Function_Node*>(child)) {
+      const Function_Node *fn = (const Function_Node*)child;
+      if (fn->has_signature(return_type_regex, function_sig_regex))
+        return true;
+    }
+    // Recursive search into declaration block
+    if (dynamic_cast<const DeclBlock_Node*>(child)) {
+      if (child->has_function(return_type_regex, function_sig_regex))
+        return true;
+    }
+  }
+  return false;
 }
 
 

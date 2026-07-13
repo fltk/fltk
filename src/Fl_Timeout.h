@@ -73,7 +73,7 @@ protected:
   }
 
   // destructor
-  ~Fl_Timeout() {}
+  ~Fl_Timeout() = default;
 
   // get a new timer entry from the pool or allocate a new one
   static Fl_Timeout *get(double time, Fl_Timeout_Handler cb, void *data);

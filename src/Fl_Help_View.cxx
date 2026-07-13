@@ -555,7 +555,7 @@ void Fl_Help_View::Impl::Font_Stack::top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c
   \param[in] c color to apply
  */
 void Fl_Help_View::Impl::Font_Stack::push(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
-  elts_.push_back(Font_Style(f, s, c));
+  elts_.emplace_back(f, s, c);
   fl_font(f, s);
   fl_color(c);
 }

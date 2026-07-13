@@ -131,7 +131,6 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Browser_Base_Node(); }
-  Type type() const override { return Type::Browser_; }
 };
 
 Browser_Base_Node Browser_Base_Node::prototype;
@@ -165,7 +164,6 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Browser_Node(); }
-  Type type() const override { return Type::Browser; }
 };
 
 Browser_Node Browser_Node::prototype;
@@ -199,7 +197,6 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Check_Browser_Node(); }
-  Type type() const override { return Type::Check_Browser; }
 };
 
 Check_Browser_Node Check_Browser_Node::prototype;
@@ -226,7 +223,6 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new File_Browser_Node(); }
-  Type type() const override { return Type::File_Browser; }
 };
 
 File_Browser_Node File_Browser_Node::prototype;
@@ -270,7 +266,6 @@ public:
     return b;
   }
   Widget_Node *_make() override { return new Tree_Node(); }
-  Type type() const override { return Type::Tree; }
 };
 
 Tree_Node Tree_Node::prototype;
@@ -318,7 +313,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Help_View_Node(); }
-  Type type() const override { return Type::Help_View; }
 };
 
 Help_View_Node Help_View_Node::prototype;
@@ -378,7 +372,6 @@ public:
     return new Fl_Counter(x, y, w, h, "counter:");
   }
   Widget_Node *_make() override { return new Counter_Node(); }
-  Type type() const override { return Type::Counter; }
 };
 
 Counter_Node Counter_Node::prototype;
@@ -407,7 +400,6 @@ public:
     return new Fl_Adjuster(x, y, w, h);
   }
   Widget_Node *_make() override { return new Adjuster_Node(); }
-  Type type() const override { return Type::Adjuster; }
 };
 
 Adjuster_Node Adjuster_Node::prototype;
@@ -443,7 +435,6 @@ public:
     return new Fl_Dial(x, y, w, h);
   }
   Widget_Node *_make() override { return new Dial_Node(); }
-  Type type() const override { return Type::Dial; }
 };
 
 Dial_Node Dial_Node::prototype;
@@ -480,7 +471,6 @@ public:
     return new Fl_Roller(x, y, w, h);
   }
   Widget_Node *_make() override { return new Roller_Node(); }
-  Type type() const override { return Type::Roller; }
 };
 
 Roller_Node Roller_Node::prototype;
@@ -544,7 +534,6 @@ public:
     return new Fl_Value_Slider(x, y, w, h, "slider:");
   }
   Widget_Node *_make() override { return new Value_Slider_Node(); }
-  Type type() const override { return Type::Value_Slider; }
 };
 
 Value_Slider_Node Value_Slider_Node::prototype;
@@ -594,7 +583,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Value_Output_Node(); }
-  Type type() const override { return Type::Value_Output; }
 };
 
 Value_Output_Node Value_Output_Node::prototype;
@@ -648,7 +636,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new File_Input_Node(); }
-  Type type() const override { return Type::File_Input; }
 };
 
 File_Input_Node File_Input_Node::prototype;
@@ -681,7 +668,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Output_Node(); }
-  Type type() const override { return Type::Output; }
 };
 
 Output_Node Output_Node::prototype;
@@ -721,7 +707,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Text_Editor_Node(); }
-  Type type() const override { return Type::Text_Editor; }
 };
 
 Text_Editor_Node Text_Editor_Node::prototype;
@@ -815,7 +800,6 @@ public:
     return 1;
   }
   Widget_Node *_make() override {return new Terminal_Node();}
-  Type type() const override { return Type::Terminal; }
 };
 
 Terminal_Node Terminal_Node::prototype;
@@ -846,7 +830,6 @@ public:
     return new Fl_Box(x, y, w, h, "label");
   }
   Widget_Node *_make() override { return new Box_Node(); }
-  Type type() const override { return Type::Box; }
 };
 
 Box_Node Box_Node::prototype;
@@ -874,7 +857,6 @@ public:
     return new Fl_Clock(x, y, w, h);
   }
   Widget_Node *_make() override { return new Clock_Node(); }
-  Type type() const override { return Type::Clock; }
 };
 
 Clock_Node Clock_Node::prototype;
@@ -907,7 +889,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override { return new Progress_Node(); }
-  Type type() const override { return Type::Progress; }
 };
 
 Progress_Node Progress_Node::prototype;
@@ -1319,12 +1300,12 @@ void fill_in_New_Menu() {
     if (m->user_data()) {
       Node *t = (Node*)m->user_data();
       if (m->text) {
-        make_iconlabel( m, pixmap[(int)t->type()], m->label() );
+        make_iconlabel( m, pixmap_for(t->type_name()), m->label() );
       } else {
         const char *n = t->type_name();
         if (!strncmp(n,"Fl_",3)) n += 3;
         if (!strncmp(n,"fltk::",6)) n += 6;
-        make_iconlabel( m, pixmap[(int)t->type()], n );
+        make_iconlabel( m, pixmap_for(t->type_name()), n );
       }
     }
   }

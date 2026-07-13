@@ -17,7 +17,7 @@
 #ifndef FLUID_NODES_TREE_H
 #define FLUID_NODES_TREE_H
 
-#include "nodes/Widget_Node.h"
+#include "nodes/iterators.h"
 
 class Node;
 
@@ -28,48 +28,6 @@ class Project;
 namespace node {
 
 class Tree {
-
-  // A class that can iterate over the entire scene graph.
-  class Iterator {
-    Node *type_ = nullptr;
-    bool only_selected_ = false;
-  public:
-    explicit Iterator(Node *t, bool only_selected);
-    Node* operator*() { return type_; }
-    Iterator& operator++();
-    bool operator!=(const Iterator& other) const { return type_ != other.type_; }
-  };
-
-  // A container for a node iterator
-  class Container {
-    Tree &tree_;
-    bool only_selected_ = false;
-  public:
-    Container(Tree &tree, bool only_selected) : tree_(tree), only_selected_(only_selected) { }
-    Iterator begin() { return Iterator(tree_.first, only_selected_); }
-    Iterator end() { return Iterator(nullptr, only_selected_); }
-  };
-
-  // A class that iterate over the scene graph, but returns only nodes of type widget.
-  class WIterator {
-    Node *type_ = nullptr;
-    bool only_selected_ = false;
-  public:
-    explicit WIterator(Node *t, bool only_selected);
-    Widget_Node* operator*() { return static_cast<Widget_Node*>(type_); }
-    WIterator& operator++();
-    bool operator!=(const WIterator& other) const { return type_ != other.type_; }
-  };
-
-  // A container for a widget node iterator
-  class WContainer {
-    Tree &tree_;
-    bool only_selected_ = false;
-  public:
-    WContainer(Tree &tree, bool only_selected) : tree_(tree), only_selected_(only_selected) { }
-    WIterator begin() { return WIterator(tree_.first, only_selected_); }
-    WIterator end() { return WIterator(nullptr, only_selected_); }
-  };
 
   /// Link Tree class to the project.
   Project &proj_;
@@ -90,10 +48,10 @@ public:
   bool empty() { return first == nullptr; }
 
   // Iterators: `for (auto &n: tree.all_nodes()) { n.print(); }
-  Container all_nodes() { return Container(*this, false); }
-  WContainer all_widgets() { return WContainer(*this, false); }
-  Container all_selected_nodes() { return Container(*this, true); }
-  WContainer all_selected_widgets() { return WContainer(*this, true); }
+  Node_Range all_nodes() { return Node_Range(*this, false); }
+  Widget_Node_Range all_widgets() { return Widget_Node_Range(*this, false); }
+  Node_Range all_selected_nodes() { return Node_Range(*this, true); }
+  Widget_Node_Range all_selected_widgets() { return Widget_Node_Range(*this, true); }
 
   Node *find_by_uid(unsigned short uid);
   Node *find_in_text(int text_type, int crsr);

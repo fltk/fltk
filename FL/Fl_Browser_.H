@@ -378,7 +378,7 @@ public:
    \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed in 1.4+
   */
-  int scrollbar_width() const {
+  static int scrollbar_width() {
       return(Fl::scrollbar_size());
   }
   /**

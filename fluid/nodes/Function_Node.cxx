@@ -45,26 +45,22 @@ using namespace fluid::proj;
 Class_Node *current_class = nullptr;
 
 /**
- \brief Return 1 if the list contains a function with the given signature at the top level.
- Widget_Node uses this to check if a callback by a certain signature is
- already defined by the user within this file. If not, Widget_Node will
- generate an `extern $sig$;` statement.
- \param[in] rtype return type, can be nullptr to avoid checking (not used by Widget_Node)
- \param[in] sig function signature
- \return 1 if found.
+ Check if the node tree has a top-level function with the given return type and signature.
+ \param[in] return_type_regex regex for the return type of the function,
+    or empty for any type
+ \param[in] function_sig_regex regex for the name and arguments of the function
+ \return true if a matching function is found, false otherwise
  */
-int has_toplevel_function(const char *rtype, const char *sig) {
-  Node *child;
-  for (child = Fluid.proj.tree.first; child; child = child->next) {
-    if (!child->is_in_class() && dynamic_cast<Function_Node*>(child)) {
+bool has_toplevel_function(const std::string& return_type_regex, const std::string& function_sig_regex) {
+  for (Node* child: Fluid.proj.tree.all_nodes()) {
+    if (dynamic_cast<Function_Node*>(child) && !child->is_in_class()) {
       const Function_Node *fn = (const Function_Node*)child;
-      if (fn->has_signature(rtype, sig))
-        return 1;
+      if (fn->has_signature(return_type_regex, function_sig_regex))
+        return true;
     }
   }
-  return 0;
+  return false;
 }
-
 
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
@@ -464,20 +460,23 @@ void Function_Node::write_code2(fluid::io::Code_Writer& f) {
 }
 
 /**
- Check if the return type and signatures match.
- \param[in] rtype function return type
- \param[in] sig function name followed by arguments
- \return 1 if they match, 0 if not
+ Check if this function matches the given return type and signature.
+ \param[in] return_type_regex regex for the return type of the function,
+    or empty for any type
+ \param[in] function_sig_regex regex for the name and arguments of the function
+ \return true if the function matches, false otherwise
  */
-int Function_Node::has_signature(const char *rtype, const char *sig) const {
-  if (rtype && return_type().empty())
-    return 0;
+bool Function_Node::has_signature(const std::string& return_type_regex, const std::string& function_sig_regex) const {
+  if (!return_type_regex.empty() && return_type().empty())
+    return false;
   if (!name())
-    return 0;
-  if ( (rtype==nullptr || (return_type() == rtype)) && fl_filename_match(name(), sig)) {
-    return 1;
+    return false;
+  bool return_type_matches = return_type_regex.empty() || fl_filename_match(return_type().c_str(), return_type_regex.c_str());
+  bool signature_matches = fl_filename_match(name(), function_sig_regex.c_str());
+  if (return_type_matches && signature_matches) {
+    return true;
   }
-  return 0;
+  return false;
 }
 
 // ---- Code_Node declaration
@@ -525,8 +524,8 @@ Node *Code_Node::make(Strategy strategy) {
  */
 void Code_Node::open() {
   // Using an external code editor? Open it..
-  if ( Fluid.use_external_editor && Fluid.external_editor_command[0] ) {
-    const char *cmd = Fluid.external_editor_command;
+  if ( Fluid.use_external_editor && !Fluid.external_editor_command.empty() ) {
+    const char *cmd = Fluid.external_editor_command.c_str();
     const char *code = name();
     if (!code) code = "";
     if ( editor_.open_editor(cmd, code) == 0 )
@@ -1520,17 +1519,3 @@ void Class_Node::write_code2(fluid::io::Code_Writer& f) {
   current_class = parent_class;
 }
 
-/**
- Return 1 if this class contains a function with the given signature.
- */
-int Node::has_function(const char *rtype, const char *sig) const {
-  Node *child;
-  for (child = next; child && child->level > level; child = child->next) {
-    if (child->level == level+1 && dynamic_cast<Function_Node*>(child)) {
-      const Function_Node *fn = (const Function_Node*)child;
-      if (fn->has_signature(rtype, sig))
-        return 1;
-    }
-  }
-  return 0;
-}

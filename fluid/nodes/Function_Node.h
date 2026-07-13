@@ -38,7 +38,7 @@
 
 extern class Class_Node *current_class;
 
-int has_toplevel_function(const char *rtype, const char *sig);
+bool has_toplevel_function(const std::string& return_type_regex, const std::string& function_sig_regex);
 
 const char *c_check(const char *c, int type = 0);
 
@@ -71,10 +71,9 @@ public:
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_public() const override;
-  Type type() const override { return Type::Function; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
-  int has_signature(const char *, const char*) const;
+  bool has_signature(const std::string& return_type_regex, const std::string& function_sig_regex) const;
   std::string return_type() const { return return_type_; }
   void return_type(const std::string& t) { storestring(t, return_type_); }
   char visibility() { return public_; }
@@ -108,7 +107,6 @@ public:
   void open() override;
   const char *type_name() override {return "code";}
   int is_code_block() const override {return 0;}
-  Type type() const override { return Type::Code; }
   int is_public() const override { return -1; }
   int is_editing();
   int reap_editor();
@@ -144,7 +142,6 @@ public:
   int is_code_block() const override {return 1;}
   int can_have_children() const override {return 1;}
   int is_public() const override { return -1; }
-  Type type() const override { return Type::CodeBlock; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   std::string end_code() const { return end_code_; }
@@ -175,7 +172,6 @@ public:
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   int is_public() const override;
-  Type type() const override { return Type::Decl; }
   char visibility() { return public_; }
   void visibility(char v) { public_ = v; }
   char output_file() { return (public_&1)|((static_&1)<<1); }
@@ -205,7 +201,6 @@ public:
   const char *type_name() override {return "data";}
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
-  Type type() const override { return Type::Data; }
   void filename(const std::string& fn) { storestring(fn, filename_); }
   std::string filename() const { return filename_; }
   int output_format() { return output_format_; }
@@ -246,7 +241,6 @@ public:
   int can_have_children() const override {return 1;}
   int is_decl_block() const override {return 1;}
   int is_public() const override;
-  Type type() const override { return Type::DeclBlock; }
   std::string end_code() const { return end_code_; }
   void end_code(const std::string& p) { storestring(p, end_code_); }
   int write_map() { return write_map_; }
@@ -278,7 +272,6 @@ public:
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   int is_public() const override { return 1; }
-  Type type() const override { return Type::Comment; }
   bool in_h() { return in_h_; }
   void in_h(bool v) { in_h_ = v; }
   bool in_c() { return in_c_; }
@@ -315,7 +308,6 @@ public:
   int is_decl_block() const override {return 1;}
   int is_class() const override {return 1;}
   int is_public() const override;
-  Type type() const override { return Type::Class; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
 
