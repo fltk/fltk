@@ -488,7 +488,7 @@ protected:
     void sgr_italic(bool val)    { attrib_ = (uchar)onoff(val, Fl_Terminal::ITALIC);    } // e.g. ESC[3m
     void sgr_underline(bool val) { attrib_ = (uchar)onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[3m
     void sgr_dbl_under(bool val) { attrib_ = (uchar)onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[21m (TODO!)
-    void sgr_blink(bool val)     { (void)val; /* NOT IMPLEMENTED */                     } // e.g. ESC[5m
+    static void sgr_blink(bool val) { (void)val; /* NOT IMPLEMENTED */                    } // e.g. ESC[5m
     void sgr_inverse(bool val)   { attrib_ = (uchar)onoff(val, Fl_Terminal::INVERSE);   } // e.g. ESC[7m
     void sgr_strike(bool val)    { attrib_ = (uchar)onoff(val, Fl_Terminal::STRIKEOUT); } // e.g. ESC[9m
   };
@@ -553,7 +553,7 @@ protected:
     Utf8Char(const Utf8Char& o);                // copy ctor
     ~Utf8Char(void);                            // dtor
     Utf8Char& operator=(const Utf8Char& o);     // assignment
-    inline int max_utf8() const { return max_utf8_; }
+    static inline int max_utf8() { return max_utf8_; }
     void text_utf8(const char *text, int len, const CharStyle& style);
     void text_ascii(char c, const CharStyle& style);
     void fl_font_set(const CharStyle& style) const;
@@ -635,7 +635,7 @@ private:
     //
     inline int ring_rows(void) const { return ring_rows_; }
     inline int ring_cols(void) const { return ring_cols_; }
-    inline int ring_srow(void) const { return(0); }
+    static inline int ring_srow(void) { return(0); }
     inline int ring_erow(void) const { return(ring_rows_ - 1); }
     inline int hist_rows(void) const { return hist_rows_; }
     inline int hist_cols(void) const { return ring_cols_; }
@@ -783,7 +783,7 @@ private:
     void clear(void) { buflen_ = clen_ = 0; }    // clear the buffer
     PartialUtf8Buf(void) { clear(); }            // Ctor
     // Is byte 'c' in the middle of a UTF-8 encoded byte sequence?
-    bool is_continuation(char c) {
+    static bool is_continuation(char c) {
       //           Byte 1    Byte 2    Byte 3   ..etc..
       //   ASCII:  0xxxxxxx
       // UTF8(2):  110xxxxx  10xxxxxx
