@@ -54,6 +54,6 @@ extern Fl_Choice* cv_code_choice_w;
 extern void toggle_codeview_b_cb(Fl_Button*, void*);
 Fl_Double_Window* make_codeview();
 extern Fl_Menu_Item menu_cv_code_choice_w[];
-#endif
+#endif // codeview_panel_h
 
 //

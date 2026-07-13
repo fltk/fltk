@@ -281,9 +281,9 @@ void Code_Writer::write_cstring(fluid::string_view text) {
           // A line break would be ok here. Do not put linebreak in front of
           // following characters (0b10......)
           if (linelength >= 78) { crc_puts(next_line); linelength = 0; }
+          linelength++;
         }
         crc_putc(c);
-        linelength++;
         break;
       }
       // otherwise we must print it as an octal constant:
@@ -453,7 +453,7 @@ void Code_Writer::write_c_indented(const std::string& codeblock, int additional_
 }
 
 /**
- Return true if the type can be the member of a class.
+ Return true if the type can be a member of a class.
 
  Some types are treated differently if they are inside class. Especially within
  a Widget Class, children that are widgets are written as part of the
@@ -481,7 +481,7 @@ bool is_class_member(Node *t) {
  \return false if it is followed by a widget or code
  \see is_class_member(Node *t)
  */
-bool is_comment_before_class_member(Node *q) {
+static bool is_comment_before_class_member(Node *q) {
   if (dynamic_cast<Comment_Node*>(q) && q->next && q->next->level==q->level) {
     if (dynamic_cast<Comment_Node*>(q->next))
       return is_comment_before_class_member(q->next);
@@ -497,11 +497,9 @@ bool is_comment_before_class_member(Node *q) {
  \return pointer to the next sibling
  */
 Node* Code_Writer::write_static(Node* p) {
-  if (write_codeview) p->header_static.start = header_pos();
-  if (write_codeview) p->code_static.start = code_pos();
+  mark_start(p->static_data);
   p->write_static(*this);
-  if (write_codeview) p->code_static.end = code_pos();
-  if (write_codeview) p->header_static.end = header_pos();
+  mark_end(p->static_data);
 
   Node* q;
   for (q = p->next; q && q->level > p->level;) {
@@ -522,11 +520,9 @@ Node* Code_Writer::write_code(Node* p) {
   // write all code that comes before the children code
   // (but don't write the last comment until the very end)
   if (!(p==Fluid.proj.tree.last && dynamic_cast<Comment_Node*>(p))) {
-    if (write_codeview) p->code1.start = code_pos();
-    if (write_codeview) p->header1.start = header_pos();
+    mark_start(p->setup_node);
     p->write_code1(*this);
-    if (write_codeview) p->code1.end = code_pos();
-    if (write_codeview) p->header1.end = header_pos();
+    mark_end(p->setup_node);
   }
   // recursively write the code of all children
   Node* q;
@@ -545,11 +541,9 @@ Node* Code_Writer::write_code(Node* p) {
     }
 
     // write all code that come after the children
-    if (write_codeview) p->code2.start = code_pos();
-    if (write_codeview) p->header2.start = header_pos();
+    mark_start(p->finalize_node);
     p->write_code2(*this);
-    if (write_codeview) p->code2.end = code_pos();
-    if (write_codeview) p->header2.end = header_pos();
+    mark_end(p->finalize_node);
 
     for (q = p->next; q && q->level > p->level;) {
       if (is_class_member(q) || is_comment_before_class_member(q)) {
@@ -567,17 +561,15 @@ Node* Code_Writer::write_code(Node* p) {
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children
-    if (write_codeview) p->code2.start = code_pos();
-    if (write_codeview) p->header2.start = header_pos();
+    mark_start(p->finalize_node);
     p->write_code2(*this);
-    if (write_codeview) p->code2.end = code_pos();
-    if (write_codeview) p->header2.end = header_pos();
+    mark_end(p->finalize_node);
   }
   return q;
 }
 
 /**
- Write the source and header files for the current design.
+ Write source code and header files.
 
  If the files already exist, they will be overwritten only if the content
  has changed. This conservative approach helps reduce unnecessary recompilation.
@@ -589,109 +581,92 @@ Node* Code_Writer::write_code(Node* p) {
  \return 0 if the operation failed, 1 if it was successful
  */
 int Code_Writer::write_code(const std::string& code_arg, const std::string& header_arg, bool to_codeview) {
+  code_filename = code_arg;
+  header_filename = header_arg;
   write_codeview = to_codeview;
-  unique_id_list.clear();
-  indentation = 0;
-  current_class = nullptr;
-  current_widget_class = nullptr;
-
-  // Always use string stream buffers for output
-  code_buffer.str("");
-  code_buffer.clear();
-  header_buffer.str("");
-  header_buffer.clear();
 
   // Remember the last code file location for MergeBack
-  if (!code_arg.empty() && proj_.write_mergeback_data && !to_codeview) {
-    std::string filename = proj_.projectfile_path() + proj_.projectfile_name();
-    int i, n = (int)filename.size();
-    for (i=0; i<n; i++) if (filename[i]=='\\') filename[i] = '/';
-    Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
-    Fl_Preferences path(build_records, filename.c_str());
-    path.set("code", code_arg);
+  if (!code_arg.empty() && proj_.write_mergeback_data && !to_codeview)
+    remember_mergeback_paths();
+
+  // Write the prologue comment, which may be a copyright notice or other
+  Node* first_node = write_prologue_comment();
+  write_prologue();
+  write_i18n_prologue();
+
+  for (Node* p = first_node; p;) {
+    // write all static data for this & all children first
+    write_static(p);
+    // then write the nested code:
+    p = write_code(p);
   }
+
+  write_epilogue();
+  write_epilogue_comment();
+
+  // For codeview mode, strings are available via code_string() / header_string()
+  if (write_codeview)
+    return 1;
+  else
+    return flush();
+}
+
+/**
+ If the first node in the project is a comment, emit it before the actual prologue.
+ \return the node after the comment (or the first node if it was not a comment)
+ */
+Node* Code_Writer::write_prologue_comment() {
   // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
   Node* first_node = Fluid.proj.tree.first;
   if (first_node && dynamic_cast<Comment_Node*>(first_node)) {
-    if (write_codeview) {
-      first_node->code1.start = first_node->code2.start = code_pos();
-      first_node->header1.start = first_node->header2.start = header_pos();
-    }
+    mark_start(first_node->setup_node);
+    mark_start(first_node->finalize_node);
     // it is ok to write non-recursive code here, because comments have no children or code2 blocks
     first_node->write_code1(*this);
-    if (write_codeview) {
-      first_node->code1.end = first_node->code2.end = code_pos();
-      first_node->header1.end = first_node->header2.end = header_pos();
-    }
+    mark_end(first_node->setup_node);
+    mark_end(first_node->finalize_node);
     first_node = first_node->next;
   }
+  return first_node;
+}
 
+/**
+ Write the prologue of the source and header files, including the include guard
+ and any necessary includes.
+ */
+void Code_Writer::write_prologue()
+{
   char version[128];
   fl_snprintf(version, sizeof(version),
     "// generated by Fast Light User Interface Designer (fluid) version %.4f\n\n",
     FL_VERSION);
   write_h(std::string(version));
   crc_puts(version);
-  {
-    // Creating the include guard is more involved than it seems at first glance.
-    // The include guard is deduced from header filename. However, if the
-    // filename contains unicode characters, they need to be encoded using
-    // \Uxxxxxxxx or \\uxxxx encoding to form a valid macro identifier.
-    //
-    // But that approach is not portable. Windows does not normalize Unicode
-    // (ö is the letter \u00F6). macOS normalizes to NFD (ö is \u006F\u0308,
-    // o followed by a Combining Diaresis ¨).
-    //
-    // To make the include guard consistent across l=platforms, it can be
-    // explicitly set by the user in the Project Settings.
-    std::string macro_name_str = proj_.include_guard;
-    if (macro_name_str.empty()) {
-      std::ostringstream macro_name;
-      std::string header_name;
-      const char* a = nullptr;
-      if (write_codeview) {
-        header_name = proj_.headerfile_name();
-        a = header_name.c_str();
-      } else {
-        a = fl_filename_name(header_arg.c_str());
-      }
-      const char* b = a + strlen(a);
-      int len = 0;
-      unsigned ucs = fl_utf8decode(a, b, &len);
-      if ((ucs > 127) || (!isalpha(ucs) && (ucs != '_')))
-        macro_name << '_';
-      while (a < b) {
-        ucs = fl_utf8decode(a, b, &len);
-        if (ucs > 0x0000ffff) { // large unicode character
-          macro_name << "\\U" << std::setw(8) << std::setfill('0') << std::hex << ucs;
-        } else if (ucs > 127) { // small unicode character or not an ASCI letter or digit
-          macro_name << "\\u" << std::setw(4) << std::setfill('0') << std::hex << ucs;
-        } else if (!isalnum(ucs)) {
-          macro_name << '_';
-        } else {
-          macro_name << (char)ucs;
-        }
-        a += len;
-      }
-      macro_name_str = macro_name.str();
-    }
-    write_h("#ifndef " + macro_name_str + "\n");
-    write_h("#define " + macro_name_str + "\n");
-  }
+
+  std::string guard = header_guard_macro();
+  write_h("#ifndef " + guard + "\n");
+  write_h("#define " + guard + "\n");
 
   if (proj_.avoid_early_includes==0) {
     write_h_once("#include <FL/Fl.H>");
   }
-  if (!header_arg.empty() && proj_.include_H_from_C) {
-    if (to_codeview) {
+  if (!header_filename.empty() && proj_.include_H_from_C) {
+    if (write_codeview) {
       write_c("#include \"CodeView.h\"\n");
     } else if (proj_.header_file_name[0] == '.' && strchr(proj_.header_file_name.c_str(), '/') == nullptr) {
-      write_c("#include \"" + fl_filename_name_str(header_arg) + "\"\n");
+      write_c("#include \"" + fl_filename_name_str(header_filename) + "\"\n");
     } else {
       write_c("#include \"" + proj_.header_file_name + "\"\n");
     }
   }
+}
+
+/**
+ Write the internationalization prologue, including any necessary includes and macros.
+ */
+void Code_Writer::write_i18n_prologue()
+{
   std::string loc_include, loc_conditional;
   if (proj_.i18n.type==fluid::I18n_Type::GNU) {
     loc_include = proj_.i18n.gnu_include;
@@ -743,51 +718,59 @@ int Code_Writer::write_code(const std::string& code_arg, const std::string& head
       write_c("#endif\n");
     }
   }
-  for (Node* p = first_node; p;) {
-    // write all static data for this & all children first
-    write_static(p);
-    // then write the nested code:
-    p = write_code(p);
-  }
+}
 
-  write_h("#endif\n");
+/**
+ Write the epilogue of the source and header files, including the include guard.
+ */
+void Code_Writer::write_epilogue()
+{
+  std::string guard = header_guard_macro();
+  write_h("#endif // " + guard + "\n");
+}
 
+/**
+ If the last node in the project is a comment, emit it after the actual epilogue.
+ */
+void Code_Writer::write_epilogue_comment() {
   Node* last_node = Fluid.proj.tree.last;
   if (last_node && (last_node != Fluid.proj.tree.first) && dynamic_cast<Comment_Node*>(last_node)) {
-    if (write_codeview) {
-      last_node->code1.start = last_node->code2.start = code_pos();
-      last_node->header1.start = last_node->header2.start = header_pos();
-    }
+    mark_start(last_node->setup_node);
+    mark_start(last_node->finalize_node);
     last_node->write_code1(*this);
-    if (write_codeview) {
-      last_node->code1.end = last_node->code2.end = code_pos();
-      last_node->header1.end = last_node->header2.end = header_pos();
-    }
+    mark_end(last_node->setup_node);
+    mark_end(last_node->finalize_node);
   }
+}
 
-  // For codeview mode, strings are available via code_string() / header_string()
-  if (write_codeview)
-    return 1;
+/**
+ Write the contents of code_buffer and header_buffer..
 
+ If the files already exist, they will be overwritten only if the content
+ has changed. This conservative approach helps reduce unnecessary recompilation.
+
+ \return 0 if the operation failed, 1 if it was successful
+ */
+int Code_Writer::flush()
+{
   // Write code output: to file if filename provided, to stdout otherwise
   bool code_ok = true;
-  if (!code_arg.empty()) {
-    code_ok = write_file_if_changed(code_arg, code_buffer.str());
+  if (!code_filename.empty()) {
+    code_ok = write_file_if_changed(code_filename, code_buffer.str());
   } else {
     fputs(code_buffer.str().c_str(), stdout);
   }
 
   // Write header output: to file if filename provided, to stdout otherwise
   bool header_ok = true;
-  if (!header_arg.empty()) {
-    header_ok = write_file_if_changed(header_arg, header_buffer.str());
+  if (!header_filename.empty()) {
+    header_ok = write_file_if_changed(header_filename, header_buffer.str());
   } else {
     fputs(header_buffer.str().c_str(), stdout);
   }
 
   return code_ok && header_ok ? 1 : 0;
 }
-
 
 /**
  Write the public/private/protected keywords inside the class.
@@ -973,6 +956,90 @@ void fluid::CRC32::update(fluid::string_view block) {
     crc_ = crc32(crc_, (const Bytef*)s, 1);
   }
 }
+
+/**
+ Return the macro name to use for the include guard in the header file.
+
+ Creating the include guard is more involved than it seems at first glance.
+ The include guard is deduced from header filename. However, if the
+ filename contains unicode characters, they need to be encoded using
+ \Uxxxxxxxx or \\uxxxx encoding to form a valid macro identifier.
+
+ But that approach is not portable. Windows does not normalize Unicode
+ (ö is the letter \u00F6). macOS normalizes to NFD (ö is \u006F\u0308,
+ o followed by a Combining Diaresis ¨).
+
+ To make the include guard consistent across l=platforms, it can be
+ explicitly set by the user in the Project Settings.
+ */
+std::string Code_Writer::header_guard_macro()
+{
+  if (!header_guard_macro_.empty()) {
+    return header_guard_macro_;
+  }
+  header_guard_macro_ = proj_.include_guard;
+  if (header_guard_macro_.empty()) {
+    std::ostringstream macro_name;
+    std::string header_name;
+    const char* a = nullptr;
+    if (write_codeview) {
+      header_name = proj_.headerfile_name();
+      a = header_name.c_str();
+    } else {
+      a = fl_filename_name(header_filename.c_str());
+    }
+    const char* b = a + strlen(a);
+    int len = 0;
+    unsigned ucs = fl_utf8decode(a, b, &len);
+    if ((ucs > 127) || (!isalpha(ucs) && (ucs != '_')))
+      macro_name << '_';
+    while (a < b) {
+      ucs = fl_utf8decode(a, b, &len);
+      if (ucs > 0x0000ffff) { // large unicode character
+        macro_name << "\\U" << std::setw(8) << std::setfill('0') << std::hex << ucs;
+      } else if (ucs > 127) { // small unicode character or not an ASCI letter or digit
+        macro_name << "\\u" << std::setw(4) << std::setfill('0') << std::hex << ucs;
+      } else if (!isalnum(ucs)) {
+        macro_name << '_';
+      } else {
+        macro_name << (char)ucs;
+      }
+      a += len;
+    }
+    header_guard_macro_ = macro_name.str();
+  }
+  return header_guard_macro_;
+}
+
+/**
+ Remember the last code file location for MergeBack.
+ This is stored in the user preferences, so that the next time the project is
+  opened, the code file can be found and merged back into the project.
+ */
+void Code_Writer::remember_mergeback_paths()
+{
+  std::string filename = proj_.projectfile_path() + proj_.projectfile_name();
+  int i, n = (int)filename.size();
+  for (i=0; i<n; i++) if (filename[i]=='\\') filename[i] = '/';
+  Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
+  Fl_Preferences path(build_records, filename.c_str());
+  path.set("code", code_filename);
+}
+
+void Code_Writer::mark_start(TextSpan2& span) {
+  if (write_codeview) {
+    span.c.start = code_pos();
+    span.h.start = header_pos();
+  }
+}
+
+void Code_Writer::mark_end(TextSpan2& span) {
+  if (write_codeview) {
+    span.c.end = code_pos();
+    span.h.end = header_pos();
+  }
+}
+
 
 /**
  Calculate the CRC32 of a block of text.

@@ -50,24 +50,24 @@ void update_codeview_position() {
       if (cv_source->visible_r()) {
         switch (cv_code_choice) {
           case 0: // prolog: not yet (include statements)
-            pos0 = Fluid.proj.tree.current->code1.start;
-            pos1 = Fluid.proj.tree.current->code2.end;
+            pos0 = Fluid.proj.tree.current->setup_node.c.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.c.end;
             break;
           case 1: // static: callbacks, menu declarations
-            pos0 = Fluid.proj.tree.current->code_static.start;
-            pos1 = Fluid.proj.tree.current->code_static.end;
+            pos0 = Fluid.proj.tree.current->static_data.c.start;
+            pos1 = Fluid.proj.tree.current->static_data.c.end;
             break;
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->code1.start;
-            pos1 = Fluid.proj.tree.current->code2.end;
+            pos0 = Fluid.proj.tree.current->setup_node.c.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.c.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->code1.start;
-            pos1 = Fluid.proj.tree.current->code1.end;
+            pos0 = Fluid.proj.tree.current->setup_node.c.start;
+            pos1 = Fluid.proj.tree.current->setup_node.c.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->code2.start;
-            pos1 = Fluid.proj.tree.current->code2.end;
+            pos0 = Fluid.proj.tree.current->finalize_node.c.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.c.end;
             break;
         }
         if (pos0>=0) {
@@ -82,20 +82,20 @@ void update_codeview_position() {
         switch (cv_code_choice) {
           case 0: // prolog: not yet (include statements)
           case 1: // static: callbacks, menu declarations
-            pos0 = Fluid.proj.tree.current->header_static.start;
-            pos1 = Fluid.proj.tree.current->header_static.end;
+            pos0 = Fluid.proj.tree.current->static_data.h.start;
+            pos1 = Fluid.proj.tree.current->static_data.h.end;
             break;
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->header1.start;
-            pos1 = Fluid.proj.tree.current->header2.end;
+            pos0 = Fluid.proj.tree.current->setup_node.h.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.h.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->header1.start;
-            pos1 = Fluid.proj.tree.current->header1.end;
+            pos0 = Fluid.proj.tree.current->setup_node.h.start;
+            pos1 = Fluid.proj.tree.current->setup_node.h.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->header2.start;
-            pos1 = Fluid.proj.tree.current->header2.end;
+            pos0 = Fluid.proj.tree.current->finalize_node.h.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.h.end;
             break;
         }
         if (pos0>=0) {
@@ -375,10 +375,10 @@ static void cb_cv_code_choice_w(Fl_Choice* o, void*) {
 
 Fl_Menu_Item menu_cv_code_choice_w[] = {
  {"prolog", 0,  nullptr, (void*)(0), 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"static", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"code", 0,  nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"code 1", 0,  nullptr, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"code 2", 0,  nullptr, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"static data", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"instantiate", 0,  nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"setup", 0,  nullptr, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"finalize", 0,  nullptr, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
@@ -517,7 +517,7 @@ Fl_Double_Window* make_codeview() {
       { cv_autoposition = new Fl_Light_Button(172, 485, 89, 20, "Auto-Position");
         cv_autoposition->labelsize(11);
       } // Fl_Light_Button* cv_autoposition
-      { cv_code_choice_w = new Fl_Choice(265, 485, 70, 20);
+      { cv_code_choice_w = new Fl_Choice(265, 485, 90, 20);
         cv_code_choice_w->down_box(FL_BORDER_BOX);
         cv_code_choice_w->labelsize(11);
         cv_code_choice_w->textsize(11);

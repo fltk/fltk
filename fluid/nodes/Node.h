@@ -85,6 +85,10 @@ struct TextSpan {
   int start = -1, end = -1;
 };
 
+struct TextSpan2 {
+  TextSpan h, c;
+};
+
 int storestring(const char *n, const char * & p, int nostrip=0);
 int storestring(const std::string& n, std::string& p, int nostrip=0);
 
@@ -180,8 +184,9 @@ public: // things that should not be public:
   std::string callback_name(fluid::io::Code_Writer& f);
 
   // text positions of this type in code, header, and project file (see codeview)
-  TextSpan code_static, code1, code2;
-  TextSpan header1, header2, header_static;
+  TextSpan2 static_data;
+  TextSpan2 setup_node;
+  TextSpan2 finalize_node;
   TextSpan proj1, proj2;
 
 public:

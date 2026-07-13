@@ -107,14 +107,14 @@ Node *Tree::find_in_text(int text_type, int crsr) {
   for (auto node: all_nodes()) {
     switch (text_type) {
       case 0:
-        if (crsr >= node->code1.start && crsr < node->code1.end) return node;
-        if (crsr >= node->code2.start && crsr < node->code2.end) return node;
-        if (crsr >= node->code_static.start && crsr < node->code_static.end) return node;
+        if (crsr >= node->setup_node.c.start && crsr < node->setup_node.c.end) return node;
+        if (crsr >= node->finalize_node.c.start && crsr < node->finalize_node.c.end) return node;
+        if (crsr >= node->static_data.c.start && crsr < node->static_data.c.end) return node;
         break;
       case 1:
-        if (crsr >= node->header1.start && crsr < node->header1.end) return node;
-        if (crsr >= node->header2.start && crsr < node->header2.end) return node;
-        if (crsr >= node->header_static.start && crsr < node->header_static.end) return node;
+        if (crsr >= node->setup_node.h.start && crsr < node->setup_node.h.end) return node;
+        if (crsr >= node->finalize_node.h.start && crsr < node->finalize_node.h.end) return node;
+        if (crsr >= node->static_data.h.start && crsr < node->static_data.h.end) return node;
         break;
       case 2:
         if (crsr >= node->proj1.start && crsr < node->proj1.end) return node;

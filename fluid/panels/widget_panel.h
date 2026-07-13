@@ -151,4 +151,4 @@ extern Fl_Menu_Item menu_9[];
 extern Fl_Menu_Item menu_a[];
 extern Fl_Menu_Item menu_b[];
 extern Fl_Menu_Item menu_c[];
-#endif
+#endif // widget_panel_h
