@@ -431,7 +431,6 @@ std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, ui
 int Mergeback::analyse() {
   // initialize local variables
   fluid::CRC32 crc;
-  bool line_start = true;
   char line[1024];
   // bail if the caller has not opened a file yet
   if (!code) return 0;
@@ -479,7 +478,6 @@ int Mergeback::analyse() {
       }
       // reset everything for the next block
       crc.reset();
-      line_start = true;
     }
   }
   return 0;
@@ -524,7 +522,6 @@ int Mergeback::apply_code(long block_end, long block_start, unsigned long code_c
 int Mergeback::apply() {
   // initialize local variables
   fluid::CRC32 crc;
-  bool line_start = true;
   char line[1024];
   int changed = 0;
   long block_start = 0;
@@ -564,7 +561,6 @@ int Mergeback::apply() {
       }
       // reset everything for the next block
       crc.reset();
-      line_start = true;
       block_start = ::ftell(code);
     }
   }
