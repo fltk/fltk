@@ -73,8 +73,8 @@ int fluid::io::read_file(Project &proj, const char *filename, int merge, Strateg
 static int hexdigit(int x) {
   if ((x < 0) || (x > 127)) return 20;
   if (isdigit(x)) return x-'0';
-  if (isupper(x)) return x-'A'+10;
-  if (islower(x)) return x-'a'+10;
+  if (fl_ascii_isupper(x)) return x-'A'+10;
+  if (fl_ascii_islower(x)) return x-'a'+10;
   return 20;
 }
 

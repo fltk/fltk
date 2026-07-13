@@ -93,7 +93,7 @@ void Code_Editor::style_parse(const char *in_tbuff,         // text buffer to pa
       if ( !sp.parse_quoted_string('\'', 'H') ) break;
     } else if ( c == '#' && sp.lwhite ) {                 // Start of '#' directive?
       if ( !sp.parse_directive() ) break;
-    } else if ( !sp.last && (islower(c) || c == '_') ) {  // Possible C/C++ keyword?
+    } else if ( !sp.last && (fl_ascii_islower(c) || c == '_') ) {  // Possible C/C++ keyword?
       if ( !sp.parse_keyword() ) break;
     } else {                                              // All other chars?
       if ( !sp.parse_all_else() ) break;
