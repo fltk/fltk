@@ -359,64 +359,20 @@ void later_cb(Fl_Widget*,void*) {
   widget_browser->rebuild();
 }
 
-/** \brief Delete all children of a Type.
+/**
+ Delete all children of this  Node.
+ This is a low level function that does not update the browser or the undo stack.
  */
-static void delete_children(Node *p) {
+void Node::delete_children() {
   Node *f;
   // find all types following p that are higher in level, effectively finding
   // the last child of the last child
-  for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
+  for (f = this; f && f->next && f->next->level > this->level; f = f->next) {/*empty*/}
   // now loop back up to p, deleting all children on the way
-  for (; f != p; ) {
+  for (; f != this; ) {
     Node *g = f->prev;
     delete f;
     f = g;
-  }
-}
-
-/** Delete all nodes in the Types tree and reset project settings, or delete selected nodes.
- Also calls the browser to refresh.
- \note Please refactor this into two separate methods of Project.
- \param[in] selected_only if set, delete only the selected widgets and
- don't reset the project.
- */
-void delete_all(int selected_only) {
-  if (widget_browser) {
-    if (selected_only)
-      widget_browser->save_scroll_position();
-    widget_browser->new_list();
-  }
-  for (Node *f = Fluid.proj.tree.first; f;) {
-    if (f->selected || !selected_only) {
-      delete_children(f);
-      Node *g = f->next;
-      delete f;
-      f = g;
-    } else {
-      f = f->next;
-    }
-  }
-  if(!selected_only) {
-    // reset the setting for the external shell command
-    if (g_shell_config) {
-      g_shell_config->clear(fluid::Tool_Store::PROJECT);
-      g_shell_config->rebuild_shell_menu();
-      g_shell_config->update_settings_dialog();
-    }
-    if (widget_browser) {
-      widget_browser->hposition(0);
-      widget_browser->vposition(0);
-    }
-    Fluid.layout_list.remove_all(fluid::Tool_Store::PROJECT);
-    Fluid.layout_list.current_suite(0);
-    Fluid.layout_list.current_preset(0);
-    Fluid.layout_list.update_dialogs();
-  }
-  selection_changed(nullptr);
-  if (widget_browser) {
-    if (selected_only)
-      widget_browser->restore_scroll_position();
-    widget_browser->rebuild();
   }
 }
 
@@ -466,16 +422,16 @@ int storestring(const std::string& n, std::string& p, int nostrip) {
   return ret;
 }
 
-/** Update the `visible` flag for `p` and all its descendants.
- \param[in] p start here and update all descendants
+/**
+ Update the `visible` flag for this node and all its descendants.
  */
-void update_visibility_flag(Node *p) {
-  Node *t = p;
+void Node::update_visibility_flag() {
+  Node *t = this;
   for (;;) {
     if (t->parent) t->visible = t->parent->visible && !t->parent->folded_;
     else t->visible = 1;
     t = t->next;
-    if (!t || t->level <= p->level) break;
+    if (!t || t->level <= this->level) break;
   }
 }
 
@@ -688,7 +644,7 @@ void Node::add(Node *anchor, Strategy strategy) {
   for (Node *t = this; t && t!=end->next; t = t->next) {
     if (target_parent && (t->level == target_level))
       target_parent->add_child(t, nullptr);
-    update_visibility_flag(t);
+    t->update_visibility_flag();
   }
 
   Fluid.proj.set_modflag(1);
@@ -728,7 +684,7 @@ void Node::insert(Node *g) {
   if (prev) prev->next = this; else Fluid.proj.tree.first = this;
   end->next = g;
   g->prev = end;
-  update_visibility_flag(this);
+  update_visibility_flag();
   { // make sure that we have no duplicate uid's
     Node *tp = this;
     do {

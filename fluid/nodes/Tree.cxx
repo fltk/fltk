@@ -17,8 +17,10 @@
 
 #include "nodes/Tree.h"
 
-#include "nodes/Node.h"
 #include "Project.h"
+#include "nodes/Node.h"
+#include "nodes/Widget_Node.h"
+#include "widgets/Node_Browser.h"
 
 using namespace fluid;
 using namespace fluid::node;
@@ -28,6 +30,56 @@ Tree::Tree(Project &proj)
 : proj_(proj)
 { (void)proj_; }
 
+
+/**
+ Delete all nodes in the tree.
+ Refreshes the widget browser and resets the selection.
+ */
+void Tree::delete_all_nodes() {
+  if (widget_browser) {
+    widget_browser->new_list();
+  }
+  for (Node *f = first; f;) {
+    f->delete_children();
+    Node *g = f->next;
+    delete f;
+    f = g;
+  }
+  if (widget_browser) {
+    widget_browser->hposition(0);
+    widget_browser->vposition(0);
+  }
+  selection_changed(nullptr);
+  if (widget_browser) {
+    widget_browser->rebuild();
+  }
+}
+
+/**
+  Delete all selected nodes in the tree.
+  Refreshes the widget browser and resets the selection.
+ */
+void Tree::delete_selected_nodes() {
+  if (widget_browser) {
+    widget_browser->save_scroll_position();
+    widget_browser->new_list();
+  }
+  for (Node *f = first; f;) {
+    if (f->selected) {
+      f->delete_children();
+      Node *g = f->next;
+      delete f;
+      f = g;
+    } else {
+      f = f->next;
+    }
+  }
+  selection_changed(nullptr);
+  if (widget_browser) {
+    widget_browser->restore_scroll_position();
+    widget_browser->rebuild();
+  }
+}
 
 /** Find a node by its unique id.
 

@@ -925,7 +925,7 @@ void Application::cut_selected() {
   ipasteoffset = 0;
   Node *p = proj.tree.current->parent;
   while (p && p->selected) p = p->parent;
-  delete_all(1);
+  proj.tree.delete_selected_nodes();
   if (p) select_only(p);
   widget_browser->rebuild();
 }
@@ -1045,7 +1045,7 @@ void Application::delete_selected() {
   ipasteoffset = 0;
   Node *p = proj.tree.current->parent;
   while (p && p->selected) p = p->parent;
-  delete_all(1);
+  proj.tree.delete_selected_nodes();
   if (p) select_only(p);
   widget_browser->rebuild();
 }

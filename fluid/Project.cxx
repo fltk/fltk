@@ -46,7 +46,23 @@ Project::~Project() {
  Reset all project setting to create a new empty project.
  */
 void Project::reset() {
-  ::delete_all();
+  // Remove all nodes in the project tree
+  tree.delete_all_nodes();
+
+  // reset the setting for the external shell command
+  if (g_shell_config) {
+    g_shell_config->clear(fluid::Tool_Store::PROJECT);
+    g_shell_config->rebuild_shell_menu();
+    g_shell_config->update_settings_dialog();
+  }
+
+  // Reset Layout List
+  Fluid.layout_list.remove_all(fluid::Tool_Store::PROJECT);
+  Fluid.layout_list.current_suite(0);
+  Fluid.layout_list.current_preset(0);
+  Fluid.layout_list.update_dialogs();
+
+  // Reset I18N Tab
   i18n.reset();
 
   include_H_from_C = 1;

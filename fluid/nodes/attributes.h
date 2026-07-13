@@ -1,5 +1,5 @@
 //
-// Fluid Node callbacks header file for the Fast Light Tool Kit (FLTK).
+// Fluid Node Attributes header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2026 by Bill Spitzak and others.
 //
@@ -14,10 +14,10 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef FLUID_NODES_CALLBACKS_H
-#define FLUID_NODES_CALLBACKS_H
+#ifndef FLUID_NODES_ATTRIBUTES_H
+#define FLUID_NODES_ATTRIBUTES_H
 
 #include "nodes/Node.h"
 
 
-#endif // FLUID_NODES_CALLBACKS_H
+#endif // FLUID_NODES_ATTRIBUTES_H

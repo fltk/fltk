@@ -133,7 +133,7 @@ void reveal_in_browser(Node *t) {
       if (!p->parent) break;
       p = p->parent;
     }
-    update_visibility_flag(p);
+    p->update_visibility_flag();
   }
   widget_browser->display(t);
   widget_browser->redraw();

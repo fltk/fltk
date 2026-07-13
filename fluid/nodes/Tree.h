@@ -46,6 +46,8 @@ public:
   Tree(Project &proj);
 
   bool empty() { return first == nullptr; }
+  void delete_all_nodes();
+  void delete_selected_nodes();
 
   // Iterators: `for (auto &n: tree.all_nodes()) { n.print(); }
   Node_Range all_nodes() { return Node_Range(*this, false); }

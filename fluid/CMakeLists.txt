@@ -134,6 +134,7 @@ set(CPPFILES
   nodes/Widget_Image.cxx
   nodes/Widget_Node.cxx
   nodes/Window_Node.cxx
+  nodes/attributes.cxx
   nodes/callbacks.cxx
   nodes/factory.cxx
   panels/about_panel.cxx
@@ -193,6 +194,7 @@ set(HEADERFILES
   nodes/Widget_Image.h
   nodes/Widget_Node.h
   nodes/Window_Node.h
+  nodes/attributes.h
   nodes/callbacks.h
   nodes/factory.h
   panels/about_panel.h

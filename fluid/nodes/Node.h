@@ -85,8 +85,6 @@ struct TextSpan {
   int start = -1, end = -1;
 };
 
-void update_visibility_flag(Node *p);
-void delete_all(int selected_only=0);
 int storestring(const char *n, const char * & p, int nostrip=0);
 int storestring(const std::string& n, std::string& p, int nostrip=0);
 
@@ -168,6 +166,7 @@ public: // things that should not be public:
   Node* first_child();
   const Node* next_sibling() const { return const_cast<Node*>(this)->next_sibling(); }
   const Node* first_child() const { return const_cast<Node*>(this)->first_child(); }
+  void delete_children();
 
   /** Range over the direct children of this node (`for (auto *c : n->children())`). */
   Child_Range children() { return Child_Range(first_child()); }
@@ -235,6 +234,7 @@ public:
   virtual void layout_widget() { }
 
   virtual void open();  // what happens when you double-click
+  void update_visibility_flag();
 
   // read and write data to a saved file:
   virtual void write(fluid::io::Project_Writer& f);
