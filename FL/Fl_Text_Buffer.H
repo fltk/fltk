@@ -477,7 +477,7 @@ public:
    Returns a non-zero value if text has been selected in the secondary
    text selection, 0 otherwise.
    */
-  int secondary_selected() { return mSecondary.selected(); }
+  int secondary_selected() const { return mSecondary.selected(); }
 
   /**
    Clears any selection in the secondary text selection object.
@@ -516,7 +516,7 @@ public:
   /**
    Returns a non-zero value if text has been highlighted, 0 otherwise.
    */
-  int highlight() { return mHighlight.selected(); }
+  int highlight() const { return mHighlight.selected(); }
 
   /**
    Unhighlights text in the buffer.
@@ -557,7 +557,7 @@ public:
    Calls all modify callbacks that have been registered using
    the add_modify_callback() method.
    */
-  void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
+  void call_modify_callbacks() const { call_modify_callbacks(0, 0, 0, 0, 0); }
 
   /**
    Adds a callback routine to be called before text is deleted from the buffer.
@@ -574,7 +574,7 @@ public:
    Calls the stored pre-delete callback procedure(s) for this buffer to update
    the changed area(s) on the screen and any other listeners.
    */
-  void call_predelete_callbacks() { call_predelete_callbacks(0, 0); }
+  void call_predelete_callbacks() const { call_predelete_callbacks(0, 0); }
 
   /**
    Returns the text from the entire line containing the specified
