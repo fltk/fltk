@@ -880,11 +880,6 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   // otherwise send it to Wayland-defined focus window
   Fl_Window *win = ( Fl::focus() ? Fl::focus()->top_window() :
                     Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface) );
-  if (win) {
-    set_event_xy(win);
-    Fl::e_is_click = 0;
-    Fl::handle(event, win);
-  }
   if (event == FL_KEYDOWN && status == XKB_COMPOSE_NOTHING &&
       !(sym >= FL_Shift_L && sym <= FL_Alt_R)) {
     // Handling of key repeats :
@@ -902,6 +897,11 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
     last_keydown_serial = serial;
     Fl::add_timeout(key_repeat_delay, (Fl_Timeout_Handler)key_repeat_timer_cb,
                     key_repeat_data);
+  }
+  if (win) {
+    set_event_xy(win);
+    Fl::e_is_click = 0;
+    Fl::handle(event, win);
   }
 }
 
