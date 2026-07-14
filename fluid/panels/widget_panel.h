@@ -95,11 +95,12 @@ extern Fl_Group* wp_cpp_tab;
 extern Fl_Group* wp_cpp_class;
 extern Fl_Group* wp_cpp_name;
 extern void name_public_cb(Fl_Choice*, void*);
-extern Fl_Input* v_input[4];
-#include <FL/Fl_Tile.H>
+extern Fl_Button* code_choice[6];
+extern Fl_Wizard* w_cpp_code_wiz;
 #include <FL/Fl_Text_Editor.H>
 extern Fl_Text_Editor* wComment;
 #include "widgets/Code_Editor.h"
+extern fluid::widget::Code_Editor* v_code_input[4];
 extern fluid::widget::Code_Editor* wCallback;
 extern Fl_Group* wp_cpp_callback;
 extern Fl_Menu_Item whenmenu[];
@@ -123,6 +124,7 @@ extern Fl_Tabs* declblock_tabs;
 extern Fl_Group* declblock_tabs_main;
 extern Fl_Tabs* decl_tabs;
 extern Fl_Group* decl_tabs_main;
+#include <FL/Fl_Tile.H>
 extern Fl_Tabs* codeblock_tabs;
 extern Fl_Group* codeblock_tabs_main;
 extern Fl_Tabs* code_tabs;

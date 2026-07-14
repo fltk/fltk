@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -66,7 +66,7 @@ if (v == LOAD) {
   widget_grid_rows->do_callback();
 }}
         xywh {125 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -75,7 +75,7 @@ if (v == LOAD) {
   widget_grid_rows->do_callback();
 }}
         xywh {140 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Input widget_grid_cols {
@@ -116,7 +116,7 @@ if (v == LOAD) {
   widget_grid_cols->do_callback();
 }}
         xywh {205 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -125,7 +125,7 @@ if (v == LOAD) {
   widget_grid_cols->do_callback();
 }}
         xywh {220 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {
@@ -309,7 +309,7 @@ if (v == LOAD) {
   widget_grid_curr_row->do_callback();
 }}
         xywh {125 145 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -318,7 +318,7 @@ if (v == LOAD) {
   widget_grid_curr_row->do_callback();
 }}
         xywh {140 145 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {
@@ -425,7 +425,7 @@ if (v == LOAD) {
   widget_grid_curr_col->do_callback();
 }}
         xywh {125 180 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -434,7 +434,7 @@ if (v == LOAD) {
   widget_grid_curr_col->do_callback();
 }}
         xywh {140 180 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {

@@ -290,7 +290,7 @@
  \image html wp_cpp_tab.png
  \image latex wp_cpp_tab.png "C++ Tab" width=9cm
 
- The C++ tab has various input fields for adding C++ code at various places
+ The C++ tab has multiple input fields for adding C++ code at various places
  in the source and header file.
 
  \image html wp_cpp_class.png
@@ -302,7 +302,7 @@
  explicitly set every known attribute of the super class.
 
  FLUID generates "include" statements for known classes. Custom classes should
- provide a \p \#include line as one of the "Extra Code" lines of the widget.
+ provide a \p \#include line in the `#include` text field.
 
  If the selected widget is a Widget Class node, the Class property will instead
  set the super class of the widget.
@@ -337,34 +337,51 @@
  \image html v_input.png
  \image latex v_input.png "" width=7cm
 
- These four input fields can be used to add arbitrary code to different parts
- of the header and source file. A line can be divided into multiple lines
- of code by inserting a `Ctrl-J`.
+ The C++ tab has six more subcategories with text input fields.
 
- All Extra Code fields are interpreted individually. If a field contains a `#`
- character, or the words `extern`, `typedef`, or `using`, FLUID assumes that
- the code is a declaration and writes it to the header file, and only if it
- does not duplicate previously written code. This is great for creating a
- `#include "MyWidgetType.H"` include statement in the header.
-
- If the code is not recognized as a declaration, it will instead be put after
- the code that instantiates the widget and all its children. For menu items,
- the code is added after the container  `Fl_Menu_` is created, but before the
- menu array is added to the container.
-
- FLUID will check for matching parentheses, braces, and
- quotes, but does not do much other error checking. Be careful
- here, as it may be hard to figure out what widget is producing
- an error in the compiler. If you need more than four lines you
- probably should call a function in your own `.cxx`
- code.
+ <h3>// comment</h3>
 
  \image html wComment.png
  \image latex wComment.png "" width=7cm
 
- Comments are added to the source code before the widget constructor by adding
- `// ` in front of every line of the comment. The first few characters of a
- comment are also visible in the widget browser in the main window.
+ Text entered here is written to the .cxx source file as a comment, enclosed
+ in `/✱ ... ✱/` and indented to match the surrounding code. The first few
+ characters are also shown next to the widget in the Widget Browser, which
+ makes this a convenient place to leave a note that helps you find the
+ widget again later.
+
+ <h3>#include</h3>
+
+ Each line typed into this field is copied to the header file as-is. FLUID
+ keeps track of every line it has already written to the header and silently
+ drops duplicates, so this field is the right place for `#include` statements
+ and other single-line declarations that must not appear more than once, even
+ if several widgets request the same line.
+
+ <h3>declare</h3>
+
+ The contents of this field are copied verbatim to the header file, once per
+ widget. Use it to declare member variables, external functions, `typedef`s,
+ or `using` declarations that belong to this widget but aren't restricted to
+ a single line, and therefore can't rely on the deduplication `#include`
+ provides.
+
+ <h3>setup</h3>
+
+ Code in the `setup` field is inserted into the constructor right after the
+ widget has been created and all of its attributes have been set, but before
+ any of its children are instantiated. This is the place to run
+ initialization that must happen before the widget's children exist, such as
+ configuring a group or setting up state the child widgets will depend on.
+
+ <h3>final</h3>
+
+ Code in the `final` field is inserted into the constructor after the widget
+ and all of its children have been fully instantiated. Use it for any setup
+ that depends on the complete widget subtree already being in place, such as
+ wiring up cross-references between the widget and its children.
+
+ <h3>callback</h3>
 
  \image html wp_cpp_callback.png
  \image latex wp_cpp_callback.png "" width=7cm

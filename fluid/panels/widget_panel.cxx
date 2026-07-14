@@ -50,12 +50,13 @@ extern fluid::widget::Formula_Input_Vars widget_vars[];
 extern int numselected;
 extern Fl_Menu_Item boxmenu[];
 extern int haderror;
+static Fl_Widget* w_cpp_code_act[6] = { };
 
 /**
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code --~-~~=~~=~~~~-=-~=--~-~ ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ---~-~~=~--==-~~-~=~~~=~ ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~-=-=-~~=~-=-----------~~=~-=~-~~-=~-==--=~= ▲ ﬂ//
 }
@@ -90,6 +91,40 @@ static void update_current(Fl_Text_Editor* o, void *v,
     }
   }
 //ﬂ ▲ ----------~~--~~-=---~------------=-=~~==~--=~--~=-=~- ▲ ﬂ//
+}
+
+static void w_code_cb(Fl_Text_Editor *o, void *v) {
+//ﬂ ▼ ------------------------ code ---~~~-~--~~~=-~=~-~---~ ▼ ﬂ//
+  bool has_text = false;
+  int n = fl_int(o->user_data());
+  if (v == LOAD) {
+    const char* code = current_widget->extra_code(n).c_str();
+    has_text = (code && *code);
+    o->buffer()->text(code);
+  } else {
+    int mod = 0;
+    const char *c = o->buffer()->text();
+    has_text = (c && *c);
+    const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
+    if (d) {
+      fl_message("Error in code: %s", d); 
+      haderror = 1; 
+      return;
+    }
+    for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
+      w->extra_code(n, c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+  }
+
+  if (has_text) {
+    code_choice[n+1]->labelfont(FL_HELVETICA_BOLD_ITALIC);
+  } else {
+    code_choice[n+1]->labelfont(FL_HELVETICA);
+  }
+  code_choice[n+1]->redraw();
+//ﬂ ▲ ----------~~~~~-=-~=~~----------~--==~=-=~~-~-=----==- ▲ ﬂ//
 }
 
 Fl_Double_Window* image_panel_window = (Fl_Double_Window*)nullptr;
@@ -2295,102 +2330,164 @@ Fl_Menu_Item menu_3[] = {
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_v_input(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~-~-=~=-=~-~--~=-~~~ ▼ ﬂ//
-  int n = fl_int(o->user_data());
-    if (v == LOAD) {
-      o->value(current_widget->extra_code(n).c_str());
-    } else {
-      int mod = 0;
-      const char *c = o->value();
-      const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
-      if (d) {fl_message("Error in %s: %s",o->label(),d); haderror = 1; return;}
-      for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
-        w->extra_code(n, c);
-        mod = 1;
-      }
-      if (mod) Fluid.proj.set_modflag(1);
-    }
-//ﬂ ▲ ----------~=--=~-~=-~~----------~~~--=~--=-=~--==~~-~- ▲ ﬂ//
+static void cb_code_choice(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=---=~~---~-~~--~-- ▼ ﬂ//
+  int ix = fl_int(v);
+  w_cpp_code_wiz->value(ix);
+  if (w_cpp_code_act[ix])
+    Fl::focus(w_cpp_code_act[ix]);
+//ﬂ ▲ ----------=~=~-~=~-=~------------~-=~~-~=-~=-~-=-=~=~~ ▲ ﬂ//
 }
 
-static void cb_v_input1(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~~-=~-=-~-=-~~~~~~=~=- ▼ ﬂ//
-  cb_v_input(o, v);
-//ﬂ ▲ ----------=~~--~=-~--------------~-~=-~=~==~-=--~~~=~- ▲ ﬂ//
+static void cb_code_choice1(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~-=---~~=---------~ ▼ ﬂ//
+  int ix = fl_int(v);
+  w_cpp_code_wiz->value(ix);
+  if (w_cpp_code_act[ix])
+    Fl::focus(w_cpp_code_act[ix]);
+//ﬂ ▲ ----------=~-~~=---=-------------~-=~~-~=-~=-~-=-=~=~~ ▲ ﬂ//
 }
 
-static void cb_v_input2(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~---=~=~~-=-=--=--=- ▼ ﬂ//
-  cb_v_input(o, v);
-//ﬂ ▲ ----------=~=~~--=-~~~-----------~-~=-~=~==~-=--~~~=~- ▲ ﬂ//
+static void cb_code_choice2(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~-~=~~-=-~~~~-~~-~- ▼ ﬂ//
+  int ix = fl_int(v);
+  w_cpp_code_wiz->value(ix);
+  if (w_cpp_code_act[ix])
+    Fl::focus(w_cpp_code_act[ix]);
+//ﬂ ▲ ----------~=-~=~~==-~=-----------~-=~~-~=-~=-~-=-=~=~~ ▲ ﬂ//
 }
 
-Fl_Input* v_input[4] = {(Fl_Input*)nullptr};
-
-static void cb_v_input3(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~=-=~=-~=~~-=--~-=-~ ▼ ﬂ//
-  cb_v_input(o, v);
-//ﬂ ▲ ----------=~=-=-~--~=------------~-~=-~=~==~-=--~~~=~- ▲ ﬂ//
+static void cb_code_choice3(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback -~=--=~~--~-~-~~-~~~-= ▼ ﬂ//
+  int ix = fl_int(v);
+  w_cpp_code_wiz->value(ix);
+  if (w_cpp_code_act[ix])
+    Fl::focus(w_cpp_code_act[ix]);
+//ﬂ ▲ ----------=~-~=~-~~=~~-----------~-=~~-~=-~=-~-=-=~=~~ ▲ ﬂ//
 }
 
-static void cb_12(Fl_Tile*, void* v) {
-//ﬂ ▼ ---------------------- callback -~~-~==-~=---~---==~-= ▼ ﬂ//
-  wComment->do_callback(wComment, v);
-  wCallback->do_callback(wCallback, v);
-//ﬂ ▲ ----------=~-~-==~=-~=-----------~=--~-==~-~-~--=-~~-= ▲ ﬂ//
+static void cb_code_choice4(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=~--~-=~~=-=-~~~=-= ▼ ﬂ//
+  int ix = fl_int(v);
+  w_cpp_code_wiz->value(ix);
+  if (w_cpp_code_act[ix])
+    Fl::focus(w_cpp_code_act[ix]);
+//ﬂ ▲ ----------~=-=-~=~~-~~-----------~-=~~-~=-~=-~-=-=~=~~ ▲ ﬂ//
+}
+
+Fl_Button* code_choice[6] = {(Fl_Button*)nullptr};
+
+static void cb_code_choice5(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback -~=~=~=~~=~-=~~~~-~~~~ ▼ ﬂ//
+  int ix = fl_int(v);
+  w_cpp_code_wiz->value(ix);
+  if (w_cpp_code_act[ix])
+    Fl::focus(w_cpp_code_act[ix]);
+//ﬂ ▲ ----------=~--~-=~=-~~-----------~-=~~-~=-~=-~-=-=~=~~ ▲ ﬂ//
+}
+
+Fl_Wizard* w_cpp_code_wiz = (Fl_Wizard*)nullptr;
+
+static void cb_w_cpp_code_wiz(Fl_Wizard* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--~~~-~-=~=-~=~---==~ ▼ ﬂ//
+  propagate_load(o, v);
+//ﬂ ▲ ----------=~~~=~-==~------------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Text_Editor* wComment = (Fl_Text_Editor*)nullptr;
 
 static void cb_wComment(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback --~==-=-~=~=~~-~=~--~- ▼ ﬂ//
+  bool has_text = false;
   if (v == LOAD) {
-      const char *cmttext = current_widget->comment();
-      o->buffer()->text( cmttext ? cmttext : "" );
-    } else {
-      int mod = 0;
-      char *c = o->buffer()->text();
-      for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
-        n->comment(c);
-        mod = 1;
-      }
-      if (mod) Fluid.proj.set_modflag(1);
-      free(c);
+    const char *cmttext = current_widget->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+    has_text = (cmttext && *cmttext);
+  } else {
+    int mod = 0;
+    char *c = o->buffer()->text();
+    has_text = (c && *c);
+    for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+      n->comment(c);
+      mod = 1;
     }
-//ﬂ ▲ ----------~=--=~--~~=~------------=--==--~~==-~-~--=~~ ▲ ﬂ//
+    if (mod) Fluid.proj.set_modflag(1);
+    free(c);
+  }
+  if (has_text) {
+    code_choice[0]->labelfont(FL_HELVETICA_BOLD_ITALIC);
+  } else {
+    code_choice[0]->labelfont(FL_HELVETICA);
+  }
+  code_choice[0]->redraw();
+//ﬂ ▲ ----------~=--=~--~~=~----------~--~-~=-~~=--==~-----= ▲ ﬂ//
+}
+
+static void cb_v_code_input(fluid::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=-~~~=~=-==~-~--~=-- ▼ ﬂ//
+  w_code_cb(o, v);
+//ﬂ ▲ ----------~==-~=~==~=---------------=~--=~=---=~~----= ▲ ﬂ//
+}
+
+static void cb_v_code_input1(fluid::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=-=-~~=-=-~=~=~=~~~= ▼ ﬂ//
+  w_code_cb(o, v);
+//ﬂ ▲ ----------~=~~~=-=--=~--------------=~--=~=---=~~----= ▲ ﬂ//
+}
+
+static void cb_v_code_input2(fluid::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~-~~--~~=-~-~--==~-- ▼ ﬂ//
+  w_code_cb(o, v);
+//ﬂ ▲ ----------~==-=---~=~~--------------=~--=~=---=~~----= ▲ ﬂ//
+}
+
+fluid::widget::Code_Editor* v_code_input[4] = {(fluid::widget::Code_Editor*)nullptr};
+
+static void cb_v_code_input3(fluid::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~-~--=~=-=-~---~~~~ ▼ ﬂ//
+  w_code_cb(o, v);
+//ﬂ ▲ ----------=~=--~~~--~~--------------=~--=~=---=~~----= ▲ ﬂ//
 }
 
 fluid::widget::Code_Editor* wCallback = (fluid::widget::Code_Editor*)nullptr;
 
 static void cb_wCallback(fluid::widget::Code_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~---~~----~~=--=--=~-- ▼ ﬂ//
+  bool has_text = false;
   if (v == LOAD) {
-      const char *cbtext = current_widget->callback();
-      o->buffer()->text( cbtext ? cbtext : "" );
-    } else {
-      int mod = 0;
-      char *c = o->buffer()->text();
-      const char *d = c_check(c);
-      if (d) {
-        fl_message("Error in callback: %s",d);
-        if (o->window()) o->window()->make_current();
-        haderror = 1;
-      }
-      for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
-        n->callback(c);
-        mod = 1;
-      }
-      if (mod) Fluid.proj.set_modflag(1);
-      free(c);
+    const char *cbtext = current_widget->callback();
+    has_text = (cbtext && *cbtext);
+    o->buffer()->text( cbtext ? cbtext : "" );
+  } else {
+    int mod = 0;
+    char *c = o->buffer()->text();
+    has_text = (c && *c);
+    const char *d = c_check(c);
+    if (d) {
+      fl_message("Error in callback: %s",d);
+      if (o->window()) o->window()->make_current();
+      haderror = 1;
     }
-//ﬂ ▲ ----------~=-==~~~=-~~----------~~=~----~~~~~~=~-=~==~ ▲ ﬂ//
+    for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
+      n->callback(c);
+      mod = 1;
+    }
+    if (mod) Fluid.proj.set_modflag(1);
+    free(c);
+  }
+  if (has_text) {
+    code_choice[5]->labelfont(FL_HELVETICA_BOLD_ITALIC);
+  } else {
+    code_choice[5]->labelfont(FL_HELVETICA);
+  }
+  code_choice[5]->redraw();
+//ﬂ ▲ ----------~=-==~~~=-~~---------------=-=~~~=--=---~-~= ▲ ﬂ//
 }
 
 Fl_Group* wp_cpp_callback = (Fl_Group*)nullptr;
 
-static void cb_13(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~--=-~--~-~--~-=~-~= ▼ ﬂ//
+static void cb_12(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~=~~-~=~-~--~-~=---~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(current_widget->user_data().c_str());
   } else {
@@ -2441,8 +2538,8 @@ static void cb_When(Fl_Menu_Button* o, void* v) {
 //ﬂ ▲ ----------=~=~-----~-~----------~---~=---=----~==--==~ ▲ ﬂ//
 }
 
-static void cb_14(Fl_Input_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~=-=~~~-=--=~--=-~~~- ▼ ﬂ//
+static void cb_13(Fl_Input_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-=~=-~~~~---~~=--~~ ▼ ﬂ//
   static const char *dflt = "void*";
   if (v == LOAD) {
     std::string c = current_widget->user_data_type();
@@ -2514,8 +2611,8 @@ static void cb_data_tabs(Fl_Tabs* o, void* v) {
 
 Fl_Group* data_tabs_data = (Fl_Group*)nullptr;
 
-static void cb_15(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~-=--~-==~--~--~------ ▼ ﬂ//
+static void cb_14(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--=~---=--~~-==----~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
@@ -2546,8 +2643,8 @@ Fl_Menu_Item menu_5[] = {
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_16(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback ----~~~-=~---~=~~~-~=- ▼ ﬂ//
+static void cb_15(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=--~=~---~~-~-=-~~= ▼ ﬂ//
   if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
@@ -2577,8 +2674,8 @@ Fl_Menu_Item menu_6[] = {
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_17(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~-=-==~~~=~~=~~~==-=- ▼ ﬂ//
+static void cb_16(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~~-~~--=~=~~=~~=--= ▼ ﬂ//
   if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
 
@@ -2891,8 +2988,8 @@ static void cb_class_tabs(Fl_Tabs* o, void* v) {
 
 Fl_Group* class_tabs_main = (Fl_Group*)nullptr;
 
-static void cb_18(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback -----==~~--=-~=---=~-= ▼ ﬂ//
+static void cb_17(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~--==-=~~~--=---~=-- ▼ ﬂ//
   if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
 
@@ -3186,8 +3283,8 @@ static void cb_decl_tabs(Fl_Tabs* o, void* v) {
 
 Fl_Group* decl_tabs_main = (Fl_Group*)nullptr;
 
-static void cb_19(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~=~~--==---~==--==-~= ▼ ﬂ//
+static void cb_18(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~--=--~=--=~---~=-=~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
@@ -3218,8 +3315,8 @@ Fl_Menu_Item menu_9[] = {
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_1a(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~~=-=--~-~~-~-=--=-=- ▼ ﬂ//
+static void cb_19(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~~-~-=~---==~~~-==~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
@@ -3249,8 +3346,8 @@ Fl_Menu_Item menu_a[] = {
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_1b(Fl_Tile* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~~~~-~-=~=~=--~~-~-~~ ▼ ﬂ//
+static void cb_1a(Fl_Tile* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=-=~=--=-=~=~-~~---- ▼ ﬂ//
   propagate_load(o, v);
 //ﬂ ▲ ----------=~~~-=~==~-=----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
@@ -3379,8 +3476,8 @@ static void cb_code_tabs(Fl_Tabs* o, void* v) {
 
 Fl_Group* code_tabs_main = (Fl_Group*)nullptr;
 
-static void cb_1c(fluid::widget::Code_Editor* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~-=-=~-~--~~=-~~-~-=-- ▼ ﬂ//
+static void cb_1b(fluid::widget::Code_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~---=---~-~~~==~----~- ▼ ﬂ//
   if (!current_node || !dynamic_cast<Code_Node*>(current_node)) return;
   Code_Node* nd = (Code_Node*)current_node;
    if (v == LOAD) {
@@ -3418,8 +3515,8 @@ static void cb_func_tabs(Fl_Tabs* o, void* v) {
 
 Fl_Group* func_tabs_main = (Fl_Group*)nullptr;
 
-static void cb_1d(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~-=~~~-~-=~=--~~=-~-~~ ▼ ﬂ//
+static void cb_1c(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=--~=~-~-=-=--=~~-=- ▼ ﬂ//
   if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
@@ -3449,8 +3546,8 @@ Fl_Menu_Item menu_b[] = {
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_1e(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~~-~~~~~-~-~~==~~=-- ▼ ﬂ//
+static void cb_1d(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~==~=~---~--~~~-~=-~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
@@ -3496,8 +3593,8 @@ static void cb_declare(Fl_Check_Button* o, void* v) {
 //ﬂ ▲ ----------~==-~-~--~-------------~-=--=-~~=~~-=~=-=~~= ▲ ﬂ//
 }
 
-static void cb_1f(Fl_Tile* o, void* v) {
-//ﬂ ▼ ---------------------- callback ---~~=~-~-~~~==~~=---- ▼ ﬂ//
+static void cb_1e(Fl_Tile* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=~~~=--~--=--==~~-~~ ▼ ﬂ//
   propagate_load(o, v);
 //ﬂ ▲ ----------=~-=~=~~=~~-----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
@@ -4304,99 +4401,142 @@ Fl_Double_Window* make_widget_panel() {
           wp_cpp_tab->callback((Fl_Callback*)propagate_load);
           wp_cpp_tab->when(FL_WHEN_NEVER);
           wp_cpp_tab->hide();
-          { wp_cpp_class = new Fl_Group(95, 40, 310, 20, "Class:");
-            wp_cpp_class->labelfont(1);
-            wp_cpp_class->labelsize(11);
-            wp_cpp_class->callback((Fl_Callback*)propagate_load);
-            wp_cpp_class->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Input* o = new Fl_Input(95, 40, 172, 20);
-              o->tooltip("The widget subclass.");
-              o->labelfont(1);
+          { Fl_Group* o = new Fl_Group(10, 35, 400, 55);
+            o->labelsize(11);
+            o->callback((Fl_Callback*)propagate_load);
+            { wp_cpp_class = new Fl_Group(95, 40, 310, 20, "Class:");
+              wp_cpp_class->labelfont(1);
+              wp_cpp_class->labelsize(11);
+              wp_cpp_class->callback((Fl_Callback*)propagate_load);
+              wp_cpp_class->align(Fl_Align(FL_ALIGN_LEFT));
+              { Fl_Input* o = new Fl_Input(95, 40, 172, 20);
+                o->tooltip("The widget subclass.");
+                o->labelfont(1);
+                o->labelsize(11);
+                o->textfont(4);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_e, (void*)(4));
+                Fl_Group::current()->resizable(o);
+              } // Fl_Input* o
+              { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
+                o->tooltip("The widget subtype.");
+                o->box(FL_THIN_UP_BOX);
+                o->down_box(FL_BORDER_BOX);
+                o->labelsize(11);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_f);
+              } // Fl_Choice* o
+              wp_cpp_class->end();
+              Fl_Group::current()->resizable(wp_cpp_class);
+            } // Fl_Group* wp_cpp_class
+            { wp_cpp_name = new Fl_Group(95, 65, 310, 20, "Name:");
+              wp_cpp_name->labelfont(1);
+              wp_cpp_name->labelsize(11);
+              wp_cpp_name->callback((Fl_Callback*)propagate_load);
+              wp_cpp_name->align(Fl_Align(FL_ALIGN_LEFT));
+              { Fl_Input* o = new Fl_Input(95, 65, 235, 20);
+                o->tooltip("The name of the widget.");
+                o->labelfont(1);
+                o->labelsize(11);
+                o->textfont(4);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_10);
+                Fl_Group::current()->resizable(o);
+              } // Fl_Input* o
+              { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+                o->tooltip("Change member access attribute.");
+                o->down_box(FL_BORDER_BOX);
+                o->labelsize(11);
+                o->textsize(11);
+                o->callback((Fl_Callback*)cb_11);
+                o->when(FL_WHEN_CHANGED);
+                o->menu(menu_2);
+              } // Fl_Choice* o
+              { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+                o->tooltip("Change widget accessibility.");
+                o->down_box(FL_BORDER_BOX);
+                o->labelsize(11);
+                o->textsize(11);
+                o->callback((Fl_Callback*)name_public_cb);
+                o->when(FL_WHEN_CHANGED);
+                o->hide();
+                o->menu(menu_3);
+              } // Fl_Choice* o
+              wp_cpp_name->end();
+            } // Fl_Group* wp_cpp_name
+            o->end();
+          } // Fl_Group* o
+          { Fl_Group* o = new Fl_Group(20, 95, 380, 20);
+            o->labelsize(11);
+            { code_choice[0] = new Fl_Button(20, 95, 85, 20, "// comment");
+              code_choice[0]->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
+"erview.");
+              code_choice[0]->type(102);
+              code_choice[0]->value(1);
+              code_choice[0]->compact(1);
+              code_choice[0]->selection_color(FL_DARK2);
+              code_choice[0]->labelsize(11);
+              code_choice[0]->callback((Fl_Callback*)cb_code_choice, (void*)(0));
+            } // Fl_Button* code_choice[0]
+            { code_choice[1] = new Fl_Button(105, 95, 70, 20, "#include");
+              code_choice[1]->tooltip("One or more #include lines or single-line declarations, written to the header"
+" file once each. Duplicate lines are dropped, even if several widgets add the "
+"same line.");
+              code_choice[1]->type(102);
+              code_choice[1]->compact(1);
+              code_choice[1]->selection_color(FL_DARK2);
+              code_choice[1]->labelsize(11);
+              code_choice[1]->callback((Fl_Callback*)cb_code_choice1, (void*)(1));
+            } // Fl_Button* code_choice[1]
+            { code_choice[2] = new Fl_Button(175, 95, 58, 20, "declare");
+              code_choice[2]->tooltip("C++ declarations for this widget (member variables, external functions, typed"
+"efs, or using declarations), copied verbatim to the header file.");
+              code_choice[2]->type(102);
+              code_choice[2]->compact(1);
+              code_choice[2]->selection_color(FL_DARK2);
+              code_choice[2]->labelsize(11);
+              code_choice[2]->callback((Fl_Callback*)cb_code_choice2, (void*)(2));
+            } // Fl_Button* code_choice[2]
+            { code_choice[3] = new Fl_Button(233, 95, 52, 20, "setup");
+              code_choice[3]->tooltip("C++ code inserted right after this widget is created and its attributes are s"
+"et, but before its children are instantiated. Use \'o\' to refer to the widget"
+".");
+              code_choice[3]->type(102);
+              code_choice[3]->compact(1);
+              code_choice[3]->selection_color(FL_DARK2);
+              code_choice[3]->labelsize(11);
+              code_choice[3]->callback((Fl_Callback*)cb_code_choice3, (void*)(3));
+            } // Fl_Button* code_choice[3]
+            { code_choice[4] = new Fl_Button(285, 95, 50, 20, "final");
+              code_choice[4]->tooltip("C++ code inserted after this widget and all its children have been instantiat"
+"ed. Use \'o\' to refer to the widget.");
+              code_choice[4]->type(102);
+              code_choice[4]->compact(1);
+              code_choice[4]->selection_color(FL_DARK2);
+              code_choice[4]->labelsize(11);
+              code_choice[4]->callback((Fl_Callback*)cb_code_choice4, (void*)(4));
+            } // Fl_Button* code_choice[4]
+            { code_choice[5] = new Fl_Button(335, 95, 65, 20, "callback");
+              code_choice[5]->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
+"access the Widget pointer and \'v\' to access the user value.");
+              code_choice[5]->type(102);
+              code_choice[5]->compact(1);
+              code_choice[5]->selection_color(FL_DARK2);
+              code_choice[5]->labelsize(11);
+              code_choice[5]->callback((Fl_Callback*)cb_code_choice5, (void*)(5));
+            } // Fl_Button* code_choice[5]
+            o->end();
+          } // Fl_Group* o
+          { Fl_Wizard* o = w_cpp_code_wiz = new Fl_Wizard(15, 120, 390, 235);
+            w_cpp_code_wiz->box(FL_FLAT_BOX);
+            w_cpp_code_wiz->labelsize(11);
+            w_cpp_code_wiz->callback((Fl_Callback*)cb_w_cpp_code_wiz);
+            { // Comment
+              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
               o->labelsize(11);
-              o->textfont(4);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_e, (void*)(4));
-              Fl_Group::current()->resizable(o);
-            } // Fl_Input* o
-            { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
-              o->tooltip("The widget subtype.");
-              o->box(FL_THIN_UP_BOX);
-              o->down_box(FL_BORDER_BOX);
-              o->labelsize(11);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_f);
-            } // Fl_Choice* o
-            wp_cpp_class->end();
-          } // Fl_Group* wp_cpp_class
-          { wp_cpp_name = new Fl_Group(95, 65, 310, 20, "Name:");
-            wp_cpp_name->labelfont(1);
-            wp_cpp_name->labelsize(11);
-            wp_cpp_name->callback((Fl_Callback*)propagate_load);
-            wp_cpp_name->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Input* o = new Fl_Input(95, 65, 235, 20);
-              o->tooltip("The name of the widget.");
-              o->labelfont(1);
-              o->labelsize(11);
-              o->textfont(4);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_10);
-              Fl_Group::current()->resizable(o);
-            } // Fl_Input* o
-            { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
-              o->tooltip("Change member access attribute.");
-              o->down_box(FL_BORDER_BOX);
-              o->labelsize(11);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_11);
-              o->when(FL_WHEN_CHANGED);
-              o->menu(menu_2);
-            } // Fl_Choice* o
-            { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
-              o->tooltip("Change widget accessibility.");
-              o->down_box(FL_BORDER_BOX);
-              o->labelsize(11);
-              o->textsize(11);
-              o->callback((Fl_Callback*)name_public_cb);
-              o->when(FL_WHEN_CHANGED);
+              o->callback((Fl_Callback*)propagate_load);
               o->hide();
-              o->menu(menu_3);
-            } // Fl_Choice* o
-            wp_cpp_name->end();
-          } // Fl_Group* wp_cpp_name
-          { v_input[0] = new Fl_Input(95, 90, 310, 20, "Extra Code:");
-            v_input[0]->tooltip("Extra initialization code for the widget.");
-            v_input[0]->labelfont(1);
-            v_input[0]->labelsize(11);
-            v_input[0]->textfont(4);
-            v_input[0]->textsize(11);
-            v_input[0]->callback((Fl_Callback*)cb_v_input, (void*)(0));
-          } // Fl_Input* v_input[0]
-          { v_input[1] = new Fl_Input(95, 110, 310, 20);
-            v_input[1]->tooltip("Extra initialization code for the widget.");
-            v_input[1]->labelsize(11);
-            v_input[1]->textfont(4);
-            v_input[1]->textsize(11);
-            v_input[1]->callback((Fl_Callback*)cb_v_input1, (void*)(1));
-          } // Fl_Input* v_input[1]
-          { v_input[2] = new Fl_Input(95, 130, 310, 20);
-            v_input[2]->tooltip("Extra initialization code for the widget.");
-            v_input[2]->labelsize(11);
-            v_input[2]->textfont(4);
-            v_input[2]->textsize(11);
-            v_input[2]->callback((Fl_Callback*)cb_v_input2, (void*)(2));
-          } // Fl_Input* v_input[2]
-          { v_input[3] = new Fl_Input(95, 150, 310, 20);
-            v_input[3]->tooltip("Extra initialization code for the widget.");
-            v_input[3]->labelsize(11);
-            v_input[3]->textfont(4);
-            v_input[3]->textsize(11);
-            v_input[3]->callback((Fl_Callback*)cb_v_input3, (void*)(3));
-          } // Fl_Input* v_input[3]
-          { Fl_Tile* o = new Fl_Tile(95, 175, 310, 130);
-            o->callback((Fl_Callback*)cb_12);
-            { Fl_Group* o = new Fl_Group(95, 175, 310, 48);
-              o->box(FL_FLAT_BOX);
-              { wComment = new Fl_Text_Editor(95, 175, 310, 45, "Comment:");
+              { Fl_Text_Editor* o = wComment = new Fl_Text_Editor(15, 120, 390, 235, "Comment:");
                 wComment->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
 "erview.");
                 wComment->box(FL_DOWN_BOX);
@@ -4409,84 +4549,199 @@ Fl_Double_Window* make_widget_panel() {
                 wComment->align(Fl_Align(FL_ALIGN_LEFT));
                 wComment->when(FL_WHEN_CHANGED);
                 Fl_Group::current()->resizable(wComment);
+                w_cpp_code_act[0] = o;
                 wComment->buffer(new Fl_Text_Buffer());
               } // Fl_Text_Editor* wComment
               o->end();
             } // Fl_Group* o
-            { Fl_Group* o = new Fl_Group(95, 223, 310, 82);
-              o->box(FL_FLAT_BOX);
-              { wCallback = new fluid::widget::Code_Editor(95, 225, 310, 80, "Callback:");
-                wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
-"access the Widget pointer and \'v\' to access the user value.");
-                wCallback->box(FL_DOWN_BOX);
-                wCallback->color(FL_BACKGROUND2_COLOR);
-                wCallback->selection_color(FL_SELECTION_COLOR);
-                wCallback->labeltype(FL_NORMAL_LABEL);
-                wCallback->labelfont(1);
-                wCallback->labelsize(11);
-                wCallback->labelcolor(FL_FOREGROUND_COLOR);
-                wCallback->textfont(4);
-                wCallback->textsize(11);
-                wCallback->callback((Fl_Callback*)cb_wCallback);
-                wCallback->align(Fl_Align(FL_ALIGN_LEFT));
-                wCallback->when(FL_WHEN_RELEASE);
-                Fl_Group::current()->resizable(wCallback);
-              } // fluid::widget::Code_Editor* wCallback
+            { // Include
+              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)propagate_load);
+              o->hide();
+              { fluid::widget::Code_Editor* o = v_code_input[0] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                v_code_input[0]->tooltip("One or more #include lines or single-line declarations, written to the header"
+" file once each. Duplicate lines are dropped, even if several widgets add the "
+"same line.");
+                v_code_input[0]->box(FL_DOWN_BOX);
+                v_code_input[0]->color(FL_BACKGROUND2_COLOR);
+                v_code_input[0]->selection_color(FL_SELECTION_COLOR);
+                v_code_input[0]->labeltype(FL_NORMAL_LABEL);
+                v_code_input[0]->labelfont(1);
+                v_code_input[0]->labelsize(11);
+                v_code_input[0]->labelcolor(FL_FOREGROUND_COLOR);
+                v_code_input[0]->textfont(4);
+                v_code_input[0]->textsize(11);
+                v_code_input[0]->callback((Fl_Callback*)cb_v_code_input, (void*)(0));
+                v_code_input[0]->align(Fl_Align(FL_ALIGN_LEFT));
+                v_code_input[0]->when(FL_WHEN_RELEASE);
+                w_cpp_code_act[1] = o;
+              } // fluid::widget::Code_Editor* v_code_input[0]
               o->end();
             } // Fl_Group* o
-            o->end();
-            Fl_Group::current()->resizable(o);
-          } // Fl_Tile* o
-          { wp_cpp_callback = new Fl_Group(95, 310, 310, 20, "User Data:");
-            wp_cpp_callback->labelfont(1);
-            wp_cpp_callback->labelsize(11);
-            wp_cpp_callback->callback((Fl_Callback*)propagate_load);
-            wp_cpp_callback->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Input* o = new Fl_Input(95, 310, 158, 20);
-              o->tooltip("The user data to pass into the callback code.");
-              o->labelfont(1);
+            { // Declare
+              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
               o->labelsize(11);
-              o->textfont(4);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_13);
-              Fl_Group::current()->resizable(o);
-            } // Fl_Input* o
-            { Fl_Menu_Button* o = new Fl_Menu_Button(260, 310, 145, 20, "When");
-              o->tooltip("When to call the callback function.");
-              o->box(FL_THIN_UP_BOX);
-              o->down_box(FL_BORDER_BOX);
-              o->labelfont(1);
+              o->callback((Fl_Callback*)propagate_load);
+              o->hide();
+              { fluid::widget::Code_Editor* o = v_code_input[1] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                v_code_input[1]->tooltip("C++ declarations for this widget (member variables, external functions, typed"
+"efs, or using declarations), copied verbatim to the header file.");
+                v_code_input[1]->box(FL_DOWN_BOX);
+                v_code_input[1]->color(FL_BACKGROUND2_COLOR);
+                v_code_input[1]->selection_color(FL_SELECTION_COLOR);
+                v_code_input[1]->labeltype(FL_NORMAL_LABEL);
+                v_code_input[1]->labelfont(1);
+                v_code_input[1]->labelsize(11);
+                v_code_input[1]->labelcolor(FL_FOREGROUND_COLOR);
+                v_code_input[1]->textfont(4);
+                v_code_input[1]->textsize(11);
+                v_code_input[1]->callback((Fl_Callback*)cb_v_code_input1, (void*)(1));
+                v_code_input[1]->align(Fl_Align(FL_ALIGN_LEFT));
+                v_code_input[1]->when(FL_WHEN_RELEASE);
+                w_cpp_code_act[2] = o;
+              } // fluid::widget::Code_Editor* v_code_input[1]
+              o->end();
+            } // Fl_Group* o
+            { // Setup
+              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
               o->labelsize(11);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_When);
-              o->when(FL_WHEN_CHANGED);
-              o->menu(whenmenu);
-            } // Fl_Menu_Button* o
-            wp_cpp_callback->end();
-          } // Fl_Group* wp_cpp_callback
-          { Fl_Group* o = new Fl_Group(95, 332, 310, 26, "Type:");
-            o->labelfont(1);
-            o->labelsize(11);
-            o->callback((Fl_Callback*)propagate_load);
-            o->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Input_Choice* o = new Fl_Input_Choice(95, 335, 158, 20);
-              o->tooltip("The type of the user data.");
-              o->labelfont(1);
+              o->callback((Fl_Callback*)propagate_load);
+              o->hide();
+              { fluid::widget::Code_Editor* o = v_code_input[2] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                v_code_input[2]->tooltip("C++ code inserted right after this widget is created and its attributes are s"
+"et, but before its children are instantiated. Use \'o\' to refer to the widget"
+".");
+                v_code_input[2]->box(FL_DOWN_BOX);
+                v_code_input[2]->color(FL_BACKGROUND2_COLOR);
+                v_code_input[2]->selection_color(FL_SELECTION_COLOR);
+                v_code_input[2]->labeltype(FL_NORMAL_LABEL);
+                v_code_input[2]->labelfont(1);
+                v_code_input[2]->labelsize(11);
+                v_code_input[2]->labelcolor(FL_FOREGROUND_COLOR);
+                v_code_input[2]->textfont(4);
+                v_code_input[2]->textsize(11);
+                v_code_input[2]->callback((Fl_Callback*)cb_v_code_input2, (void*)(2));
+                v_code_input[2]->align(Fl_Align(FL_ALIGN_LEFT));
+                v_code_input[2]->when(FL_WHEN_RELEASE);
+                w_cpp_code_act[3] = o;
+              } // fluid::widget::Code_Editor* v_code_input[2]
+              o->end();
+            } // Fl_Group* o
+            { // Finalize
+              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
               o->labelsize(11);
-              o->textfont(4);
-              o->textsize(11);
-              o->callback((Fl_Callback*)cb_14);
-              Fl_Group::current()->resizable(o);
-              o->menu(menu_4);
-            } // Fl_Input_Choice* o
-            { w_when_box = new Fl_Box(260, 332, 145, 26, "FL_WHEN_NEVER");
-              w_when_box->box(FL_FLAT_BOX);
-              w_when_box->selection_color((Fl_Color)1);
-              w_when_box->labelsize(8);
-              w_when_box->align(Fl_Align(193|FL_ALIGN_INSIDE));
-            } // Fl_Box* w_when_box
-            o->end();
-          } // Fl_Group* o
+              o->callback((Fl_Callback*)propagate_load);
+              o->hide();
+              { fluid::widget::Code_Editor* o = v_code_input[3] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                v_code_input[3]->tooltip("C++ code inserted after this widget and all its children have been instantiat"
+"ed. Use \'o\' to refer to the widget.");
+                v_code_input[3]->box(FL_DOWN_BOX);
+                v_code_input[3]->color(FL_BACKGROUND2_COLOR);
+                v_code_input[3]->selection_color(FL_SELECTION_COLOR);
+                v_code_input[3]->labeltype(FL_NORMAL_LABEL);
+                v_code_input[3]->labelfont(1);
+                v_code_input[3]->labelsize(11);
+                v_code_input[3]->labelcolor(FL_FOREGROUND_COLOR);
+                v_code_input[3]->textfont(4);
+                v_code_input[3]->textsize(11);
+                v_code_input[3]->callback((Fl_Callback*)cb_v_code_input3, (void*)(3));
+                v_code_input[3]->align(Fl_Align(FL_ALIGN_LEFT));
+                v_code_input[3]->when(FL_WHEN_RELEASE);
+                w_cpp_code_act[4] = o;
+              } // fluid::widget::Code_Editor* v_code_input[3]
+              o->end();
+            } // Fl_Group* o
+            { // Callback
+              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              o->labelsize(11);
+              o->callback((Fl_Callback*)propagate_load);
+              { Fl_Group* o = new Fl_Group(15, 120, 390, 180);
+                o->box(FL_FLAT_BOX);
+                o->callback((Fl_Callback*)propagate_load);
+                { fluid::widget::Code_Editor* o = wCallback = new fluid::widget::Code_Editor(15, 120, 390, 180);
+                  wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
+"access the Widget pointer and \'v\' to access the user value.");
+                  wCallback->box(FL_DOWN_BOX);
+                  wCallback->color(FL_BACKGROUND2_COLOR);
+                  wCallback->selection_color(FL_SELECTION_COLOR);
+                  wCallback->labeltype(FL_NORMAL_LABEL);
+                  wCallback->labelfont(1);
+                  wCallback->labelsize(11);
+                  wCallback->labelcolor(FL_FOREGROUND_COLOR);
+                  wCallback->textfont(4);
+                  wCallback->textsize(11);
+                  wCallback->callback((Fl_Callback*)cb_wCallback);
+                  wCallback->align(Fl_Align(FL_ALIGN_LEFT));
+                  wCallback->when(FL_WHEN_RELEASE);
+                  Fl_Group::current()->resizable(wCallback);
+                  w_cpp_code_act[5] = o;
+                } // fluid::widget::Code_Editor* wCallback
+                o->end();
+                Fl_Group::current()->resizable(o);
+              } // Fl_Group* o
+              { Fl_Group* o = new Fl_Group(15, 300, 390, 55);
+                o->labelsize(11);
+                o->callback((Fl_Callback*)propagate_load);
+                { wp_cpp_callback = new Fl_Group(95, 307, 310, 20, "User Data:");
+                  wp_cpp_callback->labelfont(1);
+                  wp_cpp_callback->labelsize(11);
+                  wp_cpp_callback->callback((Fl_Callback*)propagate_load);
+                  wp_cpp_callback->align(Fl_Align(FL_ALIGN_LEFT));
+                  { Fl_Input* o = new Fl_Input(95, 307, 158, 20);
+                    o->tooltip("The user data to pass into the callback code.");
+                    o->labelfont(1);
+                    o->labelsize(11);
+                    o->textfont(4);
+                    o->textsize(11);
+                    o->callback((Fl_Callback*)cb_12);
+                    Fl_Group::current()->resizable(o);
+                  } // Fl_Input* o
+                  { Fl_Menu_Button* o = new Fl_Menu_Button(260, 307, 145, 20, "When");
+                    o->tooltip("When to call the callback function.");
+                    o->box(FL_THIN_UP_BOX);
+                    o->down_box(FL_BORDER_BOX);
+                    o->labelfont(1);
+                    o->labelsize(11);
+                    o->textsize(11);
+                    o->callback((Fl_Callback*)cb_When);
+                    o->when(FL_WHEN_CHANGED);
+                    o->menu(whenmenu);
+                  } // Fl_Menu_Button* o
+                  wp_cpp_callback->end();
+                  Fl_Group::current()->resizable(wp_cpp_callback);
+                } // Fl_Group* wp_cpp_callback
+                { Fl_Group* o = new Fl_Group(95, 329, 310, 26, "Type:");
+                  o->labelfont(1);
+                  o->labelsize(11);
+                  o->callback((Fl_Callback*)propagate_load);
+                  o->align(Fl_Align(FL_ALIGN_LEFT));
+                  { Fl_Input_Choice* o = new Fl_Input_Choice(95, 332, 158, 20);
+                    o->tooltip("The type of the user data.");
+                    o->labelfont(1);
+                    o->labelsize(11);
+                    o->textfont(4);
+                    o->textsize(11);
+                    o->callback((Fl_Callback*)cb_13);
+                    Fl_Group::current()->resizable(o);
+                    o->menu(menu_4);
+                  } // Fl_Input_Choice* o
+                  { w_when_box = new Fl_Box(260, 329, 145, 26, "FL_WHEN_NEVER");
+                    w_when_box->box(FL_FLAT_BOX);
+                    w_when_box->selection_color((Fl_Color)1);
+                    w_when_box->labelsize(8);
+                    w_when_box->align(Fl_Align(193|FL_ALIGN_INSIDE));
+                  } // Fl_Box* w_when_box
+                  o->end();
+                } // Fl_Group* o
+                o->end();
+              } // Fl_Group* o
+              o->end();
+            } // Fl_Group* o
+            o->value(0);
+            w_cpp_code_wiz->end();
+            Fl_Group::current()->resizable(w_cpp_code_wiz);
+          } // Fl_Wizard* w_cpp_code_wiz
           wp_cpp_tab->end();
         } // Fl_Group* wp_cpp_tab
         { widget_tab_grid = new Grid_Tab(10, 30, 400, 330, "Grid");
@@ -4538,14 +4793,14 @@ Fl_Double_Window* make_widget_panel() {
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_15);
+              o->callback((Fl_Callback*)cb_14);
               o->menu(menu_5);
             } // Fl_Choice* o
             { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_16);
+              o->callback((Fl_Callback*)cb_15);
               o->menu(menu_6);
             } // Fl_Choice* o
             { Fl_Box* o = new Fl_Box(363, 49, 42, 20);
@@ -4564,7 +4819,7 @@ Fl_Double_Window* make_widget_panel() {
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_17);
+              o->callback((Fl_Callback*)cb_16);
               o->menu(menu_7);
             } // Fl_Choice* o
             { Fl_Box* o = new Fl_Box(363, 75, 42, 20);
@@ -4700,7 +4955,7 @@ Fl_Double_Window* make_widget_panel() {
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_18);
+              o->callback((Fl_Callback*)cb_17);
               o->menu(menu_8);
             } // Fl_Choice* o
             { Fl_Box* o = new Fl_Box(363, 50, 42, 20);
@@ -4857,20 +5112,20 @@ Fl_Double_Window* make_widget_panel() {
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_19);
+              o->callback((Fl_Callback*)cb_18);
               o->menu(menu_9);
             } // Fl_Choice* o
             { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_1a);
+              o->callback((Fl_Callback*)cb_19);
               o->menu(menu_a);
             } // Fl_Choice* o
             o->end();
           } // Fl_Group* o
           { Fl_Tile* o = new Fl_Tile(15, 75, 390, 210);
-            o->callback((Fl_Callback*)cb_1b);
+            o->callback((Fl_Callback*)cb_1a);
             { Fl_Group* o = new Fl_Group(15, 75, 390, 105);
               o->box(FL_FLAT_BOX);
               o->labelfont(1);
@@ -4989,12 +5244,12 @@ Fl_Double_Window* make_widget_panel() {
             o->labelcolor(FL_FOREGROUND_COLOR);
             o->textfont(4);
             o->textsize(11);
-            o->callback((Fl_Callback*)cb_1c);
+            o->callback((Fl_Callback*)cb_1b);
             o->align(Fl_Align(FL_ALIGN_TOP));
             o->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
             Fl_Group::current()->resizable(o);
             o->linenumber_width(60);
-o->linenumber_size(o->Fl_Text_Display::textsize());
+            o->linenumber_size(o->Fl_Text_Display::textsize());
           } // fluid::widget::Code_Editor* o
           code_tabs_main->end();
           Fl_Group::current()->resizable(code_tabs_main);
@@ -5028,14 +5283,14 @@ o->linenumber_size(o->Fl_Text_Display::textsize());
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_1d);
+              o->callback((Fl_Callback*)cb_1c);
               o->menu(menu_b);
             } // Fl_Choice* o
             { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
-              o->callback((Fl_Callback*)cb_1e);
+              o->callback((Fl_Callback*)cb_1d);
               o->menu(menu_c);
             } // Fl_Choice* o
             { Fl_Check_Button* o = new Fl_Check_Button(95, 75, 90, 20, "declare \"C\"");
@@ -5046,7 +5301,7 @@ o->linenumber_size(o->Fl_Text_Display::textsize());
             o->end();
           } // Fl_Group* o
           { Fl_Tile* o = new Fl_Tile(15, 100, 390, 220);
-            o->callback((Fl_Callback*)cb_1f);
+            o->callback((Fl_Callback*)cb_1e);
             { Fl_Group* o = new Fl_Group(15, 100, 390, 55);
               o->box(FL_FLAT_BOX);
               o->labelfont(1);

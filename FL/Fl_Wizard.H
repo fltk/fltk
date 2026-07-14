@@ -53,6 +53,7 @@ public:
   void prev();
   Fl_Widget *value();
   void value(Fl_Widget *);
+  void value(int);
 };
 
 #endif // !_Fl_Wizard_H_

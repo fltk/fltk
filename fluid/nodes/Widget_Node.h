@@ -66,7 +66,6 @@ protected:
   void write_static(fluid::io::Code_Writer& f) override;
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_widget_code(fluid::io::Code_Writer& f);
-  void write_extra_code(fluid::io::Code_Writer& f);
   void write_block_close(fluid::io::Code_Writer& f);
   void write_code2(fluid::io::Code_Writer& f) override;
   void write_color(fluid::io::Code_Writer& f, const char*, Fl_Color);
@@ -96,6 +95,7 @@ public:
 
   const std::string& extra_code(int n) const { return extra_code_[n]; }
   void extra_code(int n, const std::string& code);
+  void extra_code_append(int n, const std::string& code);
 
   std::string subclass() const { return subclass_; }
   void subclass(const std::string& name);

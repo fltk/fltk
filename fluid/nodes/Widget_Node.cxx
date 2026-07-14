@@ -199,6 +199,16 @@ void Widget_Node::extra_code(int m, const std::string& n) {
   storestring(n, extra_code_[m]);
 }
 
+void Widget_Node::extra_code_append(int m, const std::string& n) {
+  std::string code;
+  if (extra_code_[m].empty()) {
+    code = n;
+  } else {
+    code = extra_code_[m] + "\n" + n;
+  }
+  storestring(code, extra_code_[m]);
+}
+
 void Widget_Node::subclass(const std::string& n) {
   if (storestring(n, subclass_) && visible)
     redraw_browser();
@@ -608,25 +618,18 @@ const char* array_name(Widget_Node* o) {
   return buffer;
 }
 
-// Test to see if extra code is a declaration:
-int isdeclare(const char* c) {
-  while (fl_ascii_isspace(*c)) c++;
-  if (*c == '#') return 1;
-  if (!strncmp(c,"extern",6)) return 1;
-  if (!strncmp(c,"typedef",7)) return 1;
-  if (!strncmp(c,"using",5)) return 1;
-  return 0;
-}
-
 void Widget_Node::write_static(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   if (subclass().empty() || (is_class() && (t.compare(0, 3, "Fl_")==0))) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/" + t + ".H>");
   }
-  for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
-      f.write_h_once(extra_code(n));
+  if (!extra_code(0).empty()) {
+    f.write_block_h_once(extra_code(0));
+  }
+  if (!extra_code(1).empty()) {
+    f.write_h(extra_code(1));
+    f.write_h("\n");
   }
   if (callback() && is_function_name(callback())) {
     std::string callback_name_pattern = std::string(callback()) + "(*)";
@@ -733,8 +736,8 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   }
 
   if (!f.varused) {
-    for (int n=0; n < NUM_EXTRA_CODE; n++)
-      if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str()))
+    for (int n=2; n < NUM_EXTRA_CODE; n++)
+      if (!extra_code(n).empty())
       {
         int instring = 0;
         int inname = 0;
@@ -826,6 +829,10 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   if (wused) f.write_c(f.indent() + "w = o; (void)w;\n");
 
   write_widget_code(f);
+
+  if (!extra_code(2).empty()) {
+    f.write_c_indented(extra_code(2), 0, '\n');
+  }
 }
 
 void Widget_Node::write_color(fluid::io::Code_Writer& f, const char* field, Fl_Color color) {
@@ -1050,12 +1057,6 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   }
 }
 
-void Widget_Node::write_extra_code(fluid::io::Code_Writer& f) {
-  for (int n=0; n < NUM_EXTRA_CODE; n++)
-    if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str()))
-      f.write_c(f.indent() + extra_code(n) + "\n");
-}
-
 void Widget_Node::write_block_close(fluid::io::Code_Writer& f) {
   f.indent_less();
   f.write_c(f.indent() + "} // " + subclassname(this) + "* "
@@ -1063,7 +1064,9 @@ void Widget_Node::write_block_close(fluid::io::Code_Writer& f) {
 }
 
 void Widget_Node::write_code2(fluid::io::Code_Writer& f) {
-  write_extra_code(f);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
   write_block_close(f);
 }
 
@@ -1192,7 +1195,23 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   }
 }
 
-void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
+void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c)
+{
+  // Assign code according to the first non-whitespace character to stay
+  // compatible with pre 1.5.0.20 project files.
+  auto reshuffle = [this](const char* c) -> void {
+    while (fl_ascii_isspace(*c)) c++;
+    if ((*c == '#')
+       || (strncmp(c, "extern", 6) == 0)
+       || (strncmp(c, "typedef", 7) == 0)
+       || (strncmp(c, "using", 5) == 0))
+    {
+        extra_code_append(0, c);
+    } else {
+        extra_code_append(3, c);
+    }
+  };
+
   int x,y,w,h; Fl_Font ft; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
     public_ = 0;
@@ -1367,17 +1386,37 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c) {
     else if (dynamic_cast<Input_Node*>(this)) ((Fl_Input_*)o)->shortcut(shortcut);
     else if (dynamic_cast<Value_Input_Node*>(this)) ((Fl_Value_Input*)o)->shortcut(shortcut);
     else if (dynamic_cast<Text_Display_Node*>(this)) ((Fl_Text_Display*)o)->shortcut(shortcut);
-  } else {
-    if (!strncmp(c,"code",4)) {
-      int n = atoi(c+4);
-      if (n >= 0 && n <= NUM_EXTRA_CODE) {
-        extra_code(n, f.read_word());
-        return;
-      }
-    } else if (!strcmp(c,"extra_code")) {
+  } else if (!strcmp(c, "code0")) {
+    if (f.read_version < 1.050020) {
+      reshuffle(f.read_word());
+    } else {
       extra_code(0, f.read_word());
-      return;
     }
+  } else if (!strcmp(c, "code1")) {
+    if (f.read_version < 1.050020) {
+      reshuffle(f.read_word());
+    } else {
+      extra_code(1, f.read_word());
+    }
+  } else if (!strcmp(c, "code2")) {
+    if (f.read_version < 1.050020) {
+      reshuffle(f.read_word());
+    } else {
+      extra_code(2, f.read_word());
+    }
+  } else if (!strcmp(c, "code3")) {
+    if (f.read_version < 1.050020) {
+      reshuffle(f.read_word());
+    } else {
+      extra_code(3, f.read_word());
+    }
+  } else if (!strcmp(c,"extra_code")) { // fdesign file compatibility
+    if (f.read_version < 1.050020) {
+      reshuffle(f.read_word());
+    } else {
+      extra_code(3, f.read_word());
+    }
+  } else {
     Node::read_property(f, c);
   }
 }

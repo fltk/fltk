@@ -204,7 +204,9 @@ void Group_Node::write_code1(fluid::io::Code_Writer& f) {
 
 void Group_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
-  write_extra_code(f);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
   f.write_c(f.indent() + var + "->end();\n");
   if (resizable()) {
     f.write_c(f.indent() + "Fl_Group::current()->resizable(" + var + ");\n");

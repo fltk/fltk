@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -294,8 +294,8 @@ Function {make_codeview()} {open
         Fl_Text_Editor cv_source {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Code_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
           class {fluid::widget::Code_Viewer}
         }
       }
@@ -306,8 +306,8 @@ Function {make_codeview()} {open
         Fl_Text_Editor cv_header {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Code_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
           class {fluid::widget::Code_Viewer}
         }
       }
@@ -318,8 +318,8 @@ Function {make_codeview()} {open
         Fl_Text_Display cv_strings {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Text_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
           class {fluid::widget::Text_Viewer}
         }
       }
@@ -330,8 +330,8 @@ Function {make_codeview()} {open
         Fl_Text_Display cv_project {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Text_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
           class {fluid::widget::Text_Viewer}
         }
       }
@@ -451,7 +451,7 @@ if (e) {
       Fl_Light_Button cv_autorefresh {
         label {Auto-Refresh}
         xywh {77 485 91 20} labelsize 11
-        code0 {o->callback((Fl_Callback*)update_codeview_cb);}
+        code3 {o->callback((Fl_Callback*)update_codeview_cb);}
       }
       Fl_Light_Button cv_autoposition {
         label {Auto-Position}

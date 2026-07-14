@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -45,7 +45,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {125 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -54,7 +54,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {140 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Input widget_grid_col_input {
@@ -74,7 +74,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {205 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -83,7 +83,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {220 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {
@@ -277,7 +277,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {125 140 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -286,7 +286,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {140 140 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Input widget_grid_colspan_input {
@@ -306,7 +306,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {205 140 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -315,7 +315,7 @@ widget_class Grid_Child_Tab {
     widget_tab_grid_child->do_callback(widget_tab_grid_child, LOAD);
   }}
         xywh {220 140 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {

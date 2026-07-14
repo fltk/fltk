@@ -392,8 +392,10 @@ void run_autodoc(const std::string &target_dir) {
   Widget_Node *t_grp = (Widget_Node*)add_new_widget_from_user("Fl_Group", Strategy::AS_LAST_CHILD, false);
   t_grp->public_ = 0;
   Widget_Node *t_btn = (Widget_Node*)add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
-  t_btn->comment("Don't press this button!");
-  t_btn->name("emergency_btn");
+  t_btn->comment("This button will show a message box when clicked");
+  t_btn->name("information_btn");
+  t_btn->callback("fl_message(\"Welcome to FLTK!\\n\");");
+  t_btn->extra_code(2, "o->box(FL_UP_BOX);");
   ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
   Node *t_sldr = add_new_widget_from_user("Fl_Slider", Strategy::AS_LAST_CHILD, false);
   Node *t_inp = add_new_widget_from_user("Fl_Input", Strategy::AS_LAST_CHILD, false);
@@ -582,9 +584,16 @@ void run_autodoc(const std::string &target_dir) {
   fl_snapshot((target_dir + "wp_cpp_tab.png").c_str(), wp_cpp_tab, tab_margin, row_blend);
   fl_snapshot((target_dir + "wp_cpp_class.png").c_str(), wp_cpp_class, row_margin, row_blend);
   fl_snapshot((target_dir + "wp_cpp_name.png").c_str(), wp_cpp_name, row_margin, row_blend);
-  fl_snapshot((target_dir + "v_input.png").c_str(), v_input[0], v_input[3], row_margin, row_blend);
-  fl_snapshot((target_dir + "wComment.png").c_str(), wComment, row_margin, row_blend);
-  fl_snapshot((target_dir + "wp_cpp_callback.png").c_str(), wCallback, w_when_box, row_margin, row_blend);
+
+  code_choice[3]->setonly(); // show the setup code
+  code_choice[3]->do_callback();
+  fl_snapshot((target_dir + "v_input.png").c_str(), code_choice[0], w_cpp_code_wiz, row_margin, row_blend);
+  code_choice[0]->setonly(); // show the comment
+  code_choice[0]->do_callback();
+  fl_snapshot((target_dir + "wComment.png").c_str(), code_choice[0], w_cpp_code_wiz, row_margin, row_blend);
+  code_choice[5]->setonly(); // show the callback
+  code_choice[5]->do_callback();
+  fl_snapshot((target_dir + "wp_cpp_callback.png").c_str(), code_choice[0], w_cpp_code_wiz, row_margin, row_blend);
 
   // -- snapshot of the Grid tab
   select_only(t_grd);

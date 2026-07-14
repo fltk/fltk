@@ -29,4 +29,4 @@ extern Fl_Double_Window* about_panel;
 #include <FL/Fl_Return_Button.H>
 Fl_Double_Window* make_about_panel();
 extern unsigned char fluid_flow_chart_800_png[41559];
-#endif
+#endif // about_panel_h

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -42,22 +42,22 @@ if (!cbuf[0]) {
   } {
     Fl_Box {} {
       image {../icons/fluid.animated.gif} compress_image 1 xywh {10 10 115 120}
-      code0 {((Fl_Anim_GIF_Image*)(o->image()))->speed(0.5f);}
+      code3 {((Fl_Anim_GIF_Image*)(o->image()))->speed(0.5f);}
     }
     Fl_Box {} {
       label {FLTK User
 Interface Designer
 Version x.x.x}
       xywh {135 10 205 75} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
-      code0 {char about[80]; // uses less than 60}
-      code1 {snprintf(about,sizeof(about),"FLTK User\\nInterface Designer\\nVersion %d.%d.%d",FL_MAJOR_VERSION,FL_MINOR_VERSION,FL_PATCH_VERSION);}
-      code2 {o->copy_label(about);}
+      code3 {char about[80]; // uses less than 60
+snprintf(about,sizeof(about),"FLTK User\\nInterface Designer\\nVersion %d.%d.%d",FL_MAJOR_VERSION,FL_MINOR_VERSION,FL_PATCH_VERSION);
+o->copy_label(about);}
     }
     Fl_Box {} {
       label {(Copyright)}
       comment {Label edited dynamically:}
       xywh {135 90 200 45} align 148
-      code0 {o->label(cbuf);}
+      code3 {o->label(cbuf);}
     }
     Fl_Button {} {
       label {View License...}

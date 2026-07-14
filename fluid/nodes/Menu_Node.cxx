@@ -299,7 +299,6 @@ Submenu_Node Submenu_Node::prototype;
 bool is_function_name(const std::string& name);
 bool is_lambda(const std::string& name);
 const char *array_name(Widget_Node *o);
-int isdeclare(const char *c);
 
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
@@ -335,9 +334,12 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
       f.write_h_once("extern void " + std::string(callback()) + "(Fl_Menu_*, " + user_data_type_or_voidp() + ");");
     }
   }
-  for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
-      f.write_h_once(extra_code(n));
+  if (!extra_code(0).empty()) {
+    f.write_block_h_once(extra_code(0)); // TODO: line by line
+  }
+  if (!extra_code(1).empty()) {
+    f.write_h(extra_code(1));
+    f.write_h("\n");
   }
   if (callback() && !is_function_name(callback()) && !is_lambda(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
@@ -657,11 +659,13 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
       }
     }
   }
-  for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str())) {
-      start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
-      f.write_c(f.indent() + extra_code(n) + "\n");
-    }
+  if (!extra_code(2).empty()) {
+    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    f.write_c_indented(extra_code(2), 0, '\n');
+  }
+  if (!extra_code(3).empty()) {
+    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    f.write_c_indented(extra_code(3), 0, '\n');
   }
   if (menuItemInitialized) {
     f.indent_less();

@@ -292,6 +292,7 @@ public:
   int handle(int) override;
   Fl_Widget *value();
   int value(Fl_Widget *);
+  int value(int);
 
   /**
     Returns the tab group for the tab the user has currently down-clicked on

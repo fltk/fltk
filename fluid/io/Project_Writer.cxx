@@ -109,8 +109,17 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     proj_.undo.resume();
     return 0;
   }
+#if (FL_MAJOR_VERSION==1) && (FL_MINOR_VERSION==5) && (FL_PATCH_VERSION==0)
+  // For Fluid 1.5.0 write the version tag as 1.050020 instead of 1.5000 to
+  // indicate changes in the file format during 1.5.0 development. Reading
+  // project files with a version below 1.050020 will be reshuffled to match
+  // the new format. Back compatibility should be maintained.
+  write_string("# data file for the Fltk User Interface Designer (fluid)\n"
+               "version %.4f20",FL_VERSION);
+#else
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
                "version %.4f",FL_VERSION);
+#endif
   if(!proj_.include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
   if(proj_.use_FL_COMMAND)

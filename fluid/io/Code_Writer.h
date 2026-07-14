@@ -158,6 +158,7 @@ public:
   bool c_contains(void* ptr);
 
   int write_h_once(const std::string& code);
+  void write_block_h_once(const std::string& code);
   int write_c_once(const std::string& code);
   void write_cstring(fluid::string_view text);
   void write_cdata(fluid::string_view block);

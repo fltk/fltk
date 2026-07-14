@@ -76,4 +76,4 @@ private:
 public:
   void grid_child_cb(fluid::widget::Formula_Input* i, void* v, int what);
 };
-#endif
+#endif // Grid_Child_Tab_h

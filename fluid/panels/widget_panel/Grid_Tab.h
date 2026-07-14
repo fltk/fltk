@@ -87,4 +87,4 @@ private:
   inline void cb_Gap1_i(fluid::widget::Formula_Input*, void*);
   static void cb_Gap1(fluid::widget::Formula_Input*, void*);
 };
-#endif
+#endif // Grid_Tab_h

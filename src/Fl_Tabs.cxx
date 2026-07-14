@@ -783,6 +783,19 @@ int Fl_Tabs::value(Fl_Widget *newvalue) {
 }
 
 /**
+ Sets the widget to become the currently visible tab.
+
+ \param[in] ix index of the child widget to show
+ \return 1 if a different tab was chosen
+ \return 0 if there was no change (new value already set, ix out of range)
+*/
+int Fl_Tabs::value(int ix) {
+  if (ix < 0 || ix >= children())
+    return 0;
+  return value(child(ix));
+}
+
+/**
  Draw the tabs area, the optional pulldown button, and all children.
  */
 void Fl_Tabs::draw() {

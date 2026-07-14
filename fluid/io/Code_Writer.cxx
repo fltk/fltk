@@ -168,6 +168,21 @@ int Code_Writer::write_h_once(const std::string& code) {
   return 1;
 }
 
+/**
+ Write multiple lines of code to the header file unless the same line was written before.
+ \param[in] code block of code, newline characters will be appended
+ */
+void Code_Writer::write_block_h_once(const std::string& code) {
+  std::istringstream iss(code);
+  std::string line;
+  while (std::getline(iss, line)) {
+    if (line.empty()) {
+      write_h("\n");
+    } else {
+      write_h_once(line);
+    }
+  }
+}
 
 /**
  Write a line of code to the source file unless the same line was written before to the header or source file.

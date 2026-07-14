@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -170,11 +170,11 @@ Function {make_script_panel()} {uid 6499 open
   return; // ignore Escape
 script_panel->hide(); // otherwise hide..} open
     xywh {0 0 540 184} type Double labelsize 11 hide resizable
-    code0 {o->size_range(200, 150);} modal
+    code3 {o->size_range(200, 150);} modal
   } {
     Fl_Text_Editor script_input {uid 0f48
       xywh {10 10 520 130} box DOWN_BOX labelsize 12 when 13 textfont 4 textsize 12 resizable
-      code0 {script_input->buffer(new Fl_Text_Buffer);}
+      code3 {script_input->buffer(new Fl_Text_Buffer);}
     }
     Fl_Group {} {uid 5133
       callback propagate_load open
@@ -221,7 +221,7 @@ Function {make_settings_window()} {uid 5023 open
             label {Scheme: }
             callback {Fluid.set_scheme(o->text(o->value()));} open
             xywh {130 78 120 25} down_box BORDER_BOX labelfont 1 labelsize 12 textsize 12
-            code0 {Fluid.init_scheme();}
+            code3 {Fluid.init_scheme();}
             class Fl_Scheme_Choice
           } {}
           Fl_Box {} {uid f5ed
@@ -237,34 +237,34 @@ Function {make_settings_window()} {uid 5023 open
           callback {Fl_Tooltip::enable(tooltips_button->value());
 Fluid.preferences.set("show_tooltips", tooltips_button->value());}
           xywh {130 115 210 20} down_box DOWN_BOX labelsize 12
-          code0 {int b;}
-          code1 {Fluid.preferences.get("show_tooltips", b, 1);}
-          code2 {tooltips_button->value(b);}
-          code3 {Fl_Tooltip::enable(b);}
+          code3 {int b;
+Fluid.preferences.get("show_tooltips", b, 1);
+tooltips_button->value(b);
+Fl_Tooltip::enable(b);}
         }
         Fl_Check_Button completion_button {uid 154b
           label {Show Completion Dialogs}
           callback {Fluid.preferences.set("show_completion_dialogs", completion_button->value());}
           xywh {130 135 210 20} down_box DOWN_BOX labelsize 12
-          code0 {int b;}
-          code1 {Fluid.preferences.get("show_completion_dialogs", b, 1);}
-          code2 {completion_button->value(b);}
+          code3 {int b;
+Fluid.preferences.get("show_completion_dialogs", b, 1);
+completion_button->value(b);}
         }
         Fl_Check_Button openlast_button {uid 2902
           label {Open Previous File on Startup}
           callback {Fluid.preferences.set("open_previous_file", openlast_button->value());}
           xywh {130 155 210 20} down_box DOWN_BOX labelsize 12
-          code0 {int b;}
-          code1 {Fluid.preferences.get("open_previous_file", b, 0);}
-          code2 {openlast_button->value(b);}
+          code3 {int b;
+Fluid.preferences.get("open_previous_file", b, 0);
+openlast_button->value(b);}
         }
         Fl_Check_Button prevpos_button {uid 5435
           label {Remember Window Positions}
           callback {Fluid.preferences.set("prev_window_pos", prevpos_button->value());}
           xywh {130 175 210 20} down_box DOWN_BOX labelsize 12
-          code0 {int b;}
-          code1 {Fluid.preferences.get("prev_window_pos", b, 1);}
-          code2 {prevpos_button->value(b);}
+          code3 {int b;
+Fluid.preferences.get("prev_window_pos", b, 1);
+prevpos_button->value(b);}
         }
         Fl_Check_Button show_comments_button {uid 8039
           label {Show Comments in Browser}
@@ -272,8 +272,8 @@ Fluid.preferences.set("show_tooltips", tooltips_button->value());}
 Fluid.preferences.set("Fluid.show_comments", Fluid.show_comments);
 redraw_browser();}
           xywh {130 195 210 20} down_box DOWN_BOX labelsize 12
-          code1 {Fluid.preferences.get("Fluid.show_comments", Fluid.show_comments, 1);}
-          code2 {show_comments_button->value(Fluid.show_comments);}
+          code3 {Fluid.preferences.get("Fluid.show_comments", Fluid.show_comments, 1);
+show_comments_button->value(Fluid.show_comments);}
         }
         Fl_Group {} {uid 5081
           callback {propagate_load(o, v);} open
@@ -284,10 +284,10 @@ redraw_browser();}
             callback {Fluid.preferences.set("recent_files", recent_spinner->value());
 Fluid.history.load();}
             xywh {130 225 40 20} labelfont 1 labelsize 12 when 1 maximum 10 textsize 12
-            code0 {int c;}
-            code1 {Fluid.preferences.get("recent_files", c, 5);}
-            code2 {recent_spinner->maximum(10);}
-            code3 {recent_spinner->value(c);}
+            code3 {int c;
+Fluid.preferences.get("recent_files", c, 5);
+recent_spinner->maximum(10);
+recent_spinner->value(c);}
           }
           Fl_Box {} {uid 25b8
             xywh {170 225 10 20} hide resizable
@@ -304,8 +304,8 @@ Examples:
     gvim -f
     gedit
  emacs} xywh {130 255 210 20} labelfont 1 labelsize 12 when 1 textfont 4 textsize 12
-          code1 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");}
-          code2 {editor_command_input->value(Fluid.external_editor_command.c_str());}
+          code3 {Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");
+editor_command_input->value(Fluid.external_editor_command.c_str());}
         }
         Fl_Check_Button use_external_editor_button {uid 1ba2
           label {Use for Code Nodes}
@@ -313,8 +313,8 @@ Examples:
 Fluid.preferences.set("use_external_editor", Fluid.use_external_editor);
 redraw_browser();}
           xywh {130 278 210 20} down_box DOWN_BOX labelsize 12
-          code1 {Fluid.preferences.get("use_external_editor", Fluid.use_external_editor, 0);}
-          code2 {use_external_editor_button->value(Fluid.use_external_editor);}
+          code3 {Fluid.preferences.get("use_external_editor", Fluid.use_external_editor, 0);
+use_external_editor_button->value(Fluid.use_external_editor);}
         }
         Fl_Box {} {uid 339c
           label {Overlays: }
@@ -324,19 +324,19 @@ redraw_browser();}
           label {Show Positioning Guides}
           callback toggle_guides_cb
           tooltip {show guides that help to position and resize widgets and enable snapping} xywh {130 306 210 20} down_box DOWN_BOX labelsize 12
-          code0 {o->value(Fluid.show_guides);}
+          code3 {o->value(Fluid.show_guides);}
         }
         Fl_Check_Button restricted_button {uid ee5a
           label {Show Restricted Areas}
           callback toggle_restricted_cb
           tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {130 326 210 20} down_box DOWN_BOX labelsize 12
-          code0 {o->value(Fluid.show_restricted);}
+          code3 {o->value(Fluid.show_restricted);}
         }
         Fl_Check_Button ghosted_outline_button {uid 9267
           label {Show Ghosted Group Outlines}
           callback toggle_ghosted_outline_cb
           tooltip {groups with no box type or flat boxtypes without contrast will be rendered with a dim outline in the editing window only} xywh {130 346 210 20} down_box DOWN_BOX labelsize 12
-          code0 {o->value(Fluid.show_ghosted_outline);}
+          code3 {o->value(Fluid.show_ghosted_outline);}
         }
         Fl_Box {} {uid ac2a
           xywh {130 530 210 10} hide resizable
@@ -893,7 +893,7 @@ Fluid.layout_list.update_dialogs();}
 }} open
             tooltip {The style of the label text.} xywh {95 465 150 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 12 resizable
             code0 {extern Fl_Menu_Item fontmenu_w_default[];}
-            code1 {o->menu(fontmenu_w_default);}
+            code3 {o->menu(fontmenu_w_default);}
           } {}
           Fl_Value_Input {} {uid 22b2
             callback {if (v == LOAD) {
@@ -917,7 +917,7 @@ Fluid.layout_list.update_dialogs();}
 }} open
             tooltip {The value text style.} xywh {95 490 150 20} box DOWN_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 12 resizable
             code0 {extern Fl_Menu_Item fontmenu_w_default[];}
-            code1 {o->menu(fontmenu_w_default);}
+            code3 {o->menu(fontmenu_w_default);}
           } {}
           Fl_Value_Input {} {uid 2de2
             callback {if (v == LOAD) {
@@ -1318,7 +1318,7 @@ if (v == LOAD) {
   }
 }}
               xywh {110 373 208 80} labelfont 1 labelsize 12 align 4 textfont 4 textsize 12 resizable
-              code0 {o->buffer(new Fl_Text_Buffer);}
+              code3 {o->buffer(new Fl_Text_Buffer);}
             }
             Fl_Group {} {uid ed02 open
               xywh {318 373 22 80}
@@ -1562,11 +1562,11 @@ if (v == LOAD) {
         }
         Fl_Box w_settings_shell_fd_project {uid 7b19
           image {../pixmaps/fd_project.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
-          code0 {o->image()->scale(16, 16);}
+          code3 {o->image()->scale(16, 16);}
         }
         Fl_Box w_settings_shell_fd_user {uid d7ee
           image {../pixmaps/fd_user.png} compress_image 1 bind_image 1 bind_deimage 1 xywh {20 70 16 15} labelsize 11 hide deactivate
-          code0 {o->image()->scale(16, 16);}
+          code3 {o->image()->scale(16, 16);}
         }
       }
       Fl_Group w_settings_i18n_tab {uid 689a
@@ -1730,7 +1730,7 @@ if (v == LOAD) {
             callback cb_Comments open
             xywh {110 112 161 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code3 {o->menu(fontmenu);}
           } {}
           Fl_Button {} {uid 77b7
             user_data {&Node_Browser::label_color}
@@ -1742,7 +1742,7 @@ if (v == LOAD) {
             callback cb_Color_Choice open
             xywh {322 112 18 20} labelsize 12
             code0 {extern Fl_Menu_Item colormenu[];}
-            code1 {o->menu(colormenu);}
+            code3 {o->menu(colormenu);}
           } {}
         }
         Fl_Group {} {uid 28cb
@@ -1755,7 +1755,7 @@ if (v == LOAD) {
             callback cb_Comments open
             xywh {110 137 161 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code3 {o->menu(fontmenu);}
           } {}
           Fl_Button {} {uid 6c2f
             user_data {&Node_Browser::class_color}
@@ -1767,7 +1767,7 @@ if (v == LOAD) {
             callback cb_Color_Choice open
             xywh {322 137 18 20} labelsize 12
             code0 {extern Fl_Menu_Item colormenu[];}
-            code1 {o->menu(colormenu);}
+            code3 {o->menu(colormenu);}
           } {}
         }
         Fl_Group {} {uid 81f2
@@ -1780,7 +1780,7 @@ if (v == LOAD) {
             callback cb_Comments open
             xywh {110 162 161 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code3 {o->menu(fontmenu);}
           } {}
           Fl_Button {} {uid 028c
             user_data {&Node_Browser::func_color}
@@ -1792,7 +1792,7 @@ if (v == LOAD) {
             callback cb_Color_Choice open
             xywh {322 162 18 20} labelsize 12
             code0 {extern Fl_Menu_Item colormenu[];}
-            code1 {o->menu(colormenu);}
+            code3 {o->menu(colormenu);}
           } {}
         }
         Fl_Group {} {uid 3e48
@@ -1805,7 +1805,7 @@ if (v == LOAD) {
             callback cb_Comments open
             xywh {110 187 161 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code3 {o->menu(fontmenu);}
           } {}
           Fl_Button {} {uid 191e
             user_data {&Node_Browser::name_color}
@@ -1817,7 +1817,7 @@ if (v == LOAD) {
             callback cb_Color_Choice open
             xywh {322 187 18 20} labelsize 12
             code0 {extern Fl_Menu_Item colormenu[];}
-            code1 {o->menu(colormenu);}
+            code3 {o->menu(colormenu);}
           } {}
         }
         Fl_Group {} {uid fc1b
@@ -1830,7 +1830,7 @@ if (v == LOAD) {
             callback cb_Comments open
             xywh {110 212 161 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code3 {o->menu(fontmenu);}
           } {}
           Fl_Button {} {uid 8d4f
             user_data {&Node_Browser::code_color}
@@ -1842,7 +1842,7 @@ if (v == LOAD) {
             callback cb_Color_Choice open
             xywh {322 212 18 20} labelsize 12
             code0 {extern Fl_Menu_Item colormenu[];}
-            code1 {o->menu(colormenu);}
+            code3 {o->menu(colormenu);}
           } {}
         }
         Fl_Group {} {uid eb71
@@ -1855,7 +1855,7 @@ if (v == LOAD) {
             callback cb_Comments open
             xywh {110 237 161 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 12 textsize 11 resizable
             code0 {extern Fl_Menu_Item fontmenu[];}
-            code1 {o->menu(fontmenu);}
+            code3 {o->menu(fontmenu);}
           } {}
           Fl_Button {} {uid 2080
             user_data {&Node_Browser::comment_color}
@@ -1867,7 +1867,7 @@ if (v == LOAD) {
             callback cb_Color_Choice open
             xywh {322 237 18 20} labelsize 12
             code0 {extern Fl_Menu_Item colormenu[];}
-            code1 {o->menu(colormenu);}
+            code3 {o->menu(colormenu);}
           } {}
         }
         Fl_Box {} {uid 14d7
@@ -1923,8 +1923,8 @@ Function {make_shell_window()} {uid d6f1 open
   } {
     Fl_Terminal shell_run_terminal {uid 7f94
       xywh {10 10 535 375} resizable
-      code0 {shell_run_terminal->ansi(1);}
-      code1 {shell_run_terminal->history_lines(1000);}
+      code3 {shell_run_terminal->ansi(1);
+shell_run_terminal->history_lines(1000);}
     }
     Fl_Group {} {uid cd96 open
       xywh {10 395 535 25}

@@ -1243,7 +1243,9 @@ void Window_Node::write_code2(fluid::io::Code_Writer& f) {
             std::to_string(sr_min_w) + ", " + std::to_string(sr_min_h) + ");\n");
   }
   // insert extra code from user, may call `show()`
-  write_extra_code(f);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
   // stop adding widgets to this window
   f.write_c(f.indent() + var + "->end();\n");
   write_block_close(f);
@@ -1391,8 +1393,9 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
   if (c.empty()) c = "Fl_Group";
 
   f.write_c("\n");
+  f.write_h("\n");
   write_comment_h(f);
-  f.write_h("\nclass " + std::string(name()) + " : public " + c + " {\n");
+  f.write_h("class " + std::string(name()) + " : public " + c + " {\n");
   if (c.find("Window")!=c.npos) {
     f.write_h(f.indent(1) + "void _" + std::string(trimclassname(name())) + "();\n");
     f.write_h("public:\n");
@@ -1442,6 +1445,10 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
 
   f.indent_more();
   write_widget_code(f);
+
+  if (!extra_code(2).empty()) {
+    f.write_c_indented(extra_code(2), 0, '\n');
+  }
 }
 
 /**
@@ -1467,7 +1474,9 @@ void Widget_Class_Node::write_code2(fluid::io::Code_Writer& f) {
   if (((Fl_Window*)o)->resizable() == o)
     f.write_c(f.indent() + "resizable(this);\n");
   // insert extra code from user
-  write_extra_code(f);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
   // stop adding widgets to this window
   f.write_c(f.indent() + "end();\n");
   // reposition or resize the Widget Class to fit into the target

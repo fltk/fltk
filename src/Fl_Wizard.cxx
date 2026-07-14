@@ -176,3 +176,15 @@ void Fl_Wizard::value(Fl_Widget *kid)
   // show the next pane may leave the cursor set to the I beam, etc...
   if (window()) window()->cursor(FL_CURSOR_DEFAULT);
 }
+
+/**
+ Sets the child widget that is visible.
+ \param[in] ix index of the child widget to show. If the index is out of range,
+    this function does nothing.
+*/
+void Fl_Wizard::value(int ix) {
+  if (ix < 0 || ix >= children())
+    return;
+  value(child(ix));
+}
+

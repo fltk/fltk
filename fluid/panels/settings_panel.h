@@ -135,4 +135,4 @@ extern Fl_Double_Window* shell_run_window;
 extern Fl_Terminal* shell_run_terminal;
 extern Fl_Return_Button* shell_run_button;
 Fl_Double_Window* make_shell_window();
-#endif
+#endif // settings_panel_h
