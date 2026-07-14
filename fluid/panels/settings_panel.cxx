@@ -1320,23 +1320,30 @@ Fl_Menu_Item menu_Store[] = {
 static void cb_Condition(Fl_Choice* o, void* v) {
 //ﬂ ▼ ---------------------- callback --=-~=-=----~=~~~~~~=- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
+  int cond = Fd_Shell_Command::ALWAYS;
   if (v == LOAD) {
     if (selected) {
-      int cond = g_shell_config->list[selected-1]->condition;
+      cond = g_shell_config->list[selected-1]->condition;
       o->value(o->find_item_with_argument(cond));
     } else {
       o->value(o->find_item_with_argument(0));
+      w_shell_cond_text->hide();
     }
   } else {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
-      int cond = (int)(o->mvalue()->argument());
+      cond = (int)(o->mvalue()->argument());
       cmd->condition = cond;
       g_shell_config->rebuild_shell_menu();
-      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) 
+        Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=-=~~=-~~~~----------~~-=-~-=-==-~=-==~---~ ▲ ﬂ//
+  if (cond >= Fd_Shell_Command::USER_ONLY)
+    w_shell_cond_text->show();
+  else
+    w_shell_cond_text->hide();
+//ﬂ ▲ ----------~=-=~~=-~~~~-----------~-~~~-=----=-=-~=~~-= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Condition[] = {
@@ -1345,18 +1352,33 @@ Fl_Menu_Item menu_Condition[] = {
  {"Linux only", 0,  nullptr, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  {"macOS only", 0,  nullptr, (void*)(Fd_Shell_Command::MAC_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  {"Linux and macOS", 0,  nullptr, (void*)(Fd_Shell_Command::MAC_AND_UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
- {"don\'t use", 0,  nullptr, (void*)(Fd_Shell_Command::NEVER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"don\'t use", 0,  nullptr, (void*)(Fd_Shell_Command::NEVER), 128, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"user only", 0,  nullptr, (void*)(Fd_Shell_Command::USER_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"host only", 0,  nullptr, (void*)(Fd_Shell_Command::HOST_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"env var only", 0,  nullptr, (void*)(Fd_Shell_Command::ENV_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_Label(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~=-=-~~-~-=~---==-=~ ▼ ﬂ//
+Fl_Input* w_shell_cond_text = (Fl_Input*)nullptr;
+
+static void cb_w_shell_cond_text(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=-~=~~--=-=--~--~=~ ▼ ﬂ//
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
-  //  o->value(g_shell_command.c_str());
+    if (selected) 
+      o->value(g_shell_config->list[selected-1]->condition_data.c_str());
+    else 
+      o->value("");
   } else {
-  //  g_shell_command = o->value();
+    if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      cmd->condition_data = o->value();
+      g_shell_config->rebuild_shell_menu();
+      if (cmd->storage == fluid::Tool_Store::PROJECT) 
+        Fluid.proj.set_modflag(1);
+    }
   }
-//ﬂ ▲ ----------~=~~=~-==-~=-----------~--~-=~--~~~~=~=~~~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~=~-==-~=----------~-~=-=-----~~--=~---~- ▲ ﬂ//
 }
 
 Fl_Text_Editor* w_settings_shell_command = (Fl_Text_Editor*)nullptr;
@@ -3358,7 +3380,7 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(12);
             o->callback((Fl_Callback*)cb_Menu);
           } // Fl_Input* o
-          { Fl_Group* o = new Fl_Group(110, 297, 140, 71);
+          { Fl_Group* o = new Fl_Group(110, 297, 230, 71);
             o->callback((Fl_Callback*)cb_b);
             { Fl_Shortcut_Button* o = new Fl_Shortcut_Button(110, 297, 130, 20, "Shortcut");
               o->tooltip("an optional keyboard shortcut to run this shell command");
@@ -3392,20 +3414,16 @@ Fl_Double_Window* make_settings_window() {
               o->callback((Fl_Callback*)cb_Condition);
               o->menu(menu_Condition);
             } // Fl_Choice* o
-            { Fl_Box* o = new Fl_Box(240, 297, 10, 71);
-              o->hide();
-              Fl_Group::current()->resizable(o);
-            } // Fl_Box* o
+            { w_shell_cond_text = new Fl_Input(240, 348, 99, 20);
+              w_shell_cond_text->labelfont(1);
+              w_shell_cond_text->labelsize(12);
+              w_shell_cond_text->textfont(4);
+              w_shell_cond_text->textsize(12);
+              w_shell_cond_text->callback((Fl_Callback*)cb_w_shell_cond_text);
+              Fl_Group::current()->resizable(w_shell_cond_text);
+            } // Fl_Input* w_shell_cond_text
             o->end();
           } // Fl_Group* o
-          { Fl_Input* o = new Fl_Input(240, 348, 90, 20, "Label:");
-            o->labelfont(1);
-            o->labelsize(12);
-            o->textfont(4);
-            o->textsize(12);
-            o->callback((Fl_Callback*)cb_Label);
-            o->hide();
-          } // Fl_Input* o
           { Fl_Group* o = new Fl_Group(110, 373, 230, 80);
             o->callback((Fl_Callback*)propagate_load);
             { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(110, 373, 208, 80, "Shell script:");
@@ -3813,7 +3831,7 @@ Fl_Double_Window* make_settings_window() {
     settings_window->size_range(340, 580);
     settings_window->end();
   } // Fl_Double_Window* settings_window
-//ﬂ ▼ ------------------------ code --~-~--=~=~-~~=--==--~~- ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ---~~-~-=-=~-=~=~-~--~-~ ▼ ﬂ//
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);
 //ﬂ ▲ ----------~--==~=~---=----------~~-~~~-==~~~=-~=-=-~~= ▲ ﬂ//
   return settings_window;

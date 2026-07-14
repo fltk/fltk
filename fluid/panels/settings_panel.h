@@ -94,6 +94,7 @@ extern Fl_Menu_Button* w_settings_shell_menu;
 extern Fl_Button* w_settings_shell_play;
 extern Fl_Group* w_settings_shell_cmd;
 #include <FL/Fl_Shortcut_Button.H>
+extern Fl_Input* w_shell_cond_text;
 extern Fl_Text_Editor* w_settings_shell_command;
 extern Fl_Menu_Button* w_settings_shell_text_macros;
 extern Fl_Box* w_settings_shell_fd_project;

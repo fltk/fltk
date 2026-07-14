@@ -87,7 +87,8 @@ protected:
 
 class Fd_Shell_Command {
 public:
-  enum { ALWAYS, NEVER, MAC_ONLY, UX_ONLY, WIN_ONLY, MAC_AND_UX_ONLY, USER_ONLY, HOST_ONLY, ENV_ONLY }; // conditions
+  enum { ALWAYS, NEVER, MAC_ONLY, UX_ONLY, WIN_ONLY, MAC_AND_UX_ONLY,
+    USER_ONLY, HOST_ONLY, ENV_ONLY }; // conditions
   enum { SAVE_PROJECT = 1, SAVE_SOURCECODE = 2, SAVE_STRINGS = 4, SAVE_ALL = 7,
     DONT_SHOW_TERMINAL = 8, CLEAR_TERMINAL = 16, CLEAR_HISTORY = 32 }; // flags
   Fd_Shell_Command();

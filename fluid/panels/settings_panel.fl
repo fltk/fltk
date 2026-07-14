@@ -1171,7 +1171,7 @@ if (v == LOAD) {
           }
           Fl_Group {} {uid e447
             callback {propagate_load(o, v);} open
-            xywh {110 297 140 71}
+            xywh {110 297 230 71}
           } {
             Fl_Button {} {uid 1aa1
               label Shortcut
@@ -1235,22 +1235,29 @@ if (v == LOAD) {
             Fl_Choice {} {uid 475b
               label {Condition:}
               callback {int selected = w_settings_shell_list_selected;
+int cond = Fd_Shell_Command::ALWAYS;
 if (v == LOAD) {
   if (selected) {
-    int cond = g_shell_config->list[selected-1]->condition;
+    cond = g_shell_config->list[selected-1]->condition;
     o->value(o->find_item_with_argument(cond));
   } else {
     o->value(o->find_item_with_argument(0));
+    w_shell_cond_text->hide();
   }
 } else {
   if (selected) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
-    int cond = (int)(o->mvalue()->argument());
+    cond = (int)(o->mvalue()->argument());
     cmd->condition = cond;
     g_shell_config->rebuild_shell_menu();
-    if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (cmd->storage == fluid::Tool_Store::PROJECT) 
+      Fluid.proj.set_modflag(1);
   }
-}} open
+}
+if (cond >= Fd_Shell_Command::USER_ONLY)
+  w_shell_cond_text->show();
+else
+  w_shell_cond_text->hide();} open
               tooltip {add this command to the main menu bar only if this condition is true} xywh {110 348 130 20} down_box BORDER_BOX labelfont 1 labelsize 12 textsize 12
             } {
               MenuItem {} {uid b7a2
@@ -1281,21 +1288,42 @@ if (v == LOAD) {
               MenuItem {} {uid 779c
                 label {don't use}
                 user_data {Fd_Shell_Command::NEVER} user_data_type long
+                xywh {0 0 100 20} labelsize 12 divider
+              }
+              MenuItem {} {uid 264f
+                label {user only}
+                user_data {Fd_Shell_Command::USER_ONLY} user_data_type long
+                xywh {0 0 100 20} labelsize 12
+              }
+              MenuItem {} {uid 8c13
+                label {host only}
+                user_data {Fd_Shell_Command::HOST_ONLY} user_data_type long
+                xywh {0 0 100 20} labelsize 12
+              }
+              MenuItem {} {uid d4cf
+                label {env var only}
+                user_data {Fd_Shell_Command::ENV_ONLY} user_data_type long
                 xywh {0 0 100 20} labelsize 12
               }
             }
-            Fl_Box {} {uid bec4
-              xywh {240 297 10 71} hide resizable
-            }
-          }
-          Fl_Input {} {uid 3f2e
-            label {Label:}
-            callback {if (v == LOAD) {
-//  o->value(g_shell_command.c_str());
+            Fl_Input w_shell_cond_text {uid 3f2e
+              callback {int selected = w_settings_shell_list_selected;
+if (v == LOAD) {
+  if (selected) 
+    o->value(g_shell_config->list[selected-1]->condition_data.c_str());
+  else 
+    o->value("");
 } else {
-//  g_shell_command = o->value();
+  if (selected) {
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    cmd->condition_data = o->value();
+    g_shell_config->rebuild_shell_menu();
+    if (cmd->storage == fluid::Tool_Store::PROJECT) 
+      Fluid.proj.set_modflag(1);
+  }
 }}
-            xywh {240 348 90 20} labelfont 1 labelsize 12 textfont 4 textsize 12 hide
+              xywh {240 348 99 20} labelfont 1 labelsize 12 textfont 4 textsize 12 resizable
+            }
           }
           Fl_Group {} {uid 2336
             callback propagate_load open

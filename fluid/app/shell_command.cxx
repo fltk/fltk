@@ -109,8 +109,16 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_message.H>
 #include <FL/fl_string_functions.h>
+#include <FL/fl_utf8.h>
 
 #include <errno.h>
+
+#if defined(_WIN32) && !defined(__CYGWIN__)
+#  include <lmcons.h> // for UNLEN
+#  pragma comment(lib, "advapi32.lib")
+#else
+#  include <pwd.h>
+#endif
 
 using namespace fluid;
 
@@ -528,6 +536,57 @@ void Fd_Shell_Command::update_shell_menu() {
 }
 
 /**
+ Get the name of the user that is currently running FLUID.
+
+ \return the current user name, or an empty string if it can't be determined
+ */
+static std::string get_current_user_name() {
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  // Use the wide-character API and convert to UTF-8 so that user names
+  // containing international characters are handled correctly.
+  wchar_t wbuf[UNLEN + 1];
+  DWORD wlen = UNLEN + 1;
+  if (!GetUserNameW(wbuf, &wlen))
+    return std::string();
+  char buf[(UNLEN + 1) * 4]; // worst case 4 bytes per UTF-16 code unit
+  unsigned n = fl_utf8fromwc(buf, sizeof(buf), wbuf, (unsigned)wlen - 1);
+  return std::string(buf, n);
+#else
+  struct passwd pwd, *result = nullptr;
+  char buf[16384];
+  if (getpwuid_r(geteuid(), &pwd, buf, sizeof(buf), &result) == 0 && result)
+    return std::string(pwd.pw_name);
+  return std::string();
+#endif
+}
+
+/**
+ Get the name of the host that is currently running FLUID.
+
+ \return the current host name, or an empty string if it can't be determined
+ */
+static std::string get_current_host_name() {
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  // Use the wide-character API and convert to UTF-8 so that host names
+  // containing international characters are handled correctly.
+  wchar_t wbuf[MAX_COMPUTERNAME_LENGTH + 1];
+  DWORD wlen = MAX_COMPUTERNAME_LENGTH + 1;
+  if (!GetComputerNameW(wbuf, &wlen))
+    return std::string();
+  char buf[(MAX_COMPUTERNAME_LENGTH + 1) * 4]; // worst case 4 bytes per UTF-16 code unit
+  unsigned n = fl_utf8fromwc(buf, sizeof(buf), wbuf, (unsigned)wlen);
+  return std::string(buf, n);
+#else
+  char buf[256];
+  if (gethostname(buf, sizeof(buf)) == 0) {
+    buf[sizeof(buf) - 1] = '\0';
+    return std::string(buf);
+  }
+  return std::string();
+#endif
+}
+
+/**
  Check if the set condition is met.
 
  \return true if this command appears in the main menu
@@ -552,8 +611,14 @@ bool Fd_Shell_Command::is_active() {
     case WIN_ONLY: return false;
     case MAC_AND_UX_ONLY: return true;
 #endif
-    case USER_ONLY: return false; // TODO: get user name
-    case HOST_ONLY: return false; // TODO: get host name
+    case USER_ONLY: {
+      std::string user = get_current_user_name();
+      return !user.empty() && (user == condition_data);
+    }
+    case HOST_ONLY: {
+      std::string host = get_current_host_name();
+      return !host.empty() && (host == condition_data);
+    }
     case ENV_ONLY: {
       const char *value = fl_getenv(condition_data.c_str());
       if (value && *value) return true;
