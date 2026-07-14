@@ -236,7 +236,7 @@ public:
 
     \see void Fl_Group::clip_children(int c)
   */
-  unsigned int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
+  unsigned int clip_children() const { return (flags() & CLIP_CHILDREN) != 0; }
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   Fl_Group* as_group() override { return this; }
