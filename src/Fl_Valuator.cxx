@@ -184,7 +184,7 @@ int Fl_Valuator::format(char* buffer) {
   // count digits until we find the decimal point (or comma or whatever
   // letter is set in the current locale)
   for (; i>0; i--, c++) {
-    if (!isdigit(temp[i])) break;
+    if (!fl_ascii_isdigit(temp[i])) break;
   }
 
   // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT

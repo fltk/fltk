@@ -108,7 +108,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
         tptr += strlen(tptr);
       } else {
         width = 0;
-        while (isdigit(*format & 255)) {
+        while (fl_ascii_isdigit(*format & 255)) {
           if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
           width = width * 10 + *format++ - '0';
         }
@@ -126,7 +126,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
           tptr += strlen(tptr);
         } else {
           prec = 0;
-          while (isdigit(*format & 255)) {
+          while (fl_ascii_isdigit(*format & 255)) {
             if (tptr < (tformat + sizeof(tformat) - 1)) *tptr++ = *format;
             prec = prec * 10 + *format++ - '0';
           }

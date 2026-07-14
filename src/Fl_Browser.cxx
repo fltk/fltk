@@ -423,7 +423,7 @@ int Fl_Browser::item_height(void *item) const {
           case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
           case 'f': case 't': font = FL_COURIER; break;
           case 'B':
-          case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
+          case 'C': while (fl_ascii_isdigit(*str & 255)) str++; break; // skip a color number
           case 'F': font = (Fl_Font)strtol(str,&str,10); break;
           case 'S': tsize = (int)strtol(str,&str,10); break;
           case '.': goto END_FORMAT;
@@ -486,7 +486,7 @@ int Fl_Browser::item_width(void *item) const {
       case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
       case 'f': case 't': font = FL_COURIER; break;
       case 'B':
-      case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
+      case 'C': while (fl_ascii_isdigit(*str & 255)) str++; break; // skip a color number
       case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
       case 'S': tsize = (int)strtol(str, &str, 10); break;
       case '.':
@@ -582,7 +582,7 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
           if (!(l->flags & BLINE_SELECTED)) {
             fl_color((Fl_Color)strtoul(str, &str, 10));
             fl_rectf(X, Y, w1, H);
-          } else while (isdigit(*str & 255)) str++; // skip digits
+          } else while (fl_ascii_isdigit(*str & 255)) str++; // skip digits
           break;
         case 'C':
           lcol = (Fl_Color)strtoul(str, &str, 10);

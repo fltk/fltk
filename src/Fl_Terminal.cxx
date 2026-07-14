@@ -33,6 +33,9 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Terminal.H>
+
+#include "flstring.h"
+
 #include <FL/fl_utf8.h> // fl_utf8len1
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h>
@@ -426,7 +429,7 @@ int Fl_Terminal::EscapeSeq::parse(char c) {
       if (append_buff(c) < 0) goto pfail;   // save ';' in buf
       return success;
     }
-    if (isdigit(c)) {                       // parsing an integer?
+    if (fl_ascii_isdigit(c)) {                       // parsing an integer?
       if (!valbuffp_)                       // valbuffp not set yet?
         { valbuffp_ = buffp_; }             // point to first char in integer string
       if (append_buff(c) < 0) goto pfail;   // add value to buffer
