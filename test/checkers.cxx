@@ -734,7 +734,7 @@ void VT100move(node *n, int) {
 int decode(char *m) {
   int i;
   for(i=5; i<=40; i++)
-    if (toupper(m[0])==usermoves(i,1) && m[1]==usermoves(i,2)) return(i);
+    if (fl_ascii_toupper(m[0])==usermoves(i,1) && m[1]==usermoves(i,2)) return(i);
   return(0);
 }
 
@@ -779,7 +779,7 @@ node *getusermove(void) {
     puts("Valid moves are:");
     m1[0] = 'L';
   }
-  switch(toupper(m1[0])) {
+  switch(fl_ascii_toupper(m1[0])) {
   case 0: return(0);
   case 'A':
     if (playing) autoplay = 1;

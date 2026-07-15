@@ -1219,7 +1219,7 @@ void Fl_Help_View::Impl::format() {
             column = 0;
           }
 
-          if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+          if (fl_ascii_tolower(buf[0]) == 'h' && isdigit(buf[1]))
           {
             font  = FL_HELVETICA_BOLD;
             fsize = textsize_ + '7' - buf[1];
@@ -1246,7 +1246,7 @@ void Fl_Help_View::Impl::format() {
           yy = block->y + block->h;
           hh = 0;
 
-          if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
+          if ((fl_ascii_tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
               buf.cmp("DD") ||
               buf.cmp("DT") ||
               buf.cmp("P"))
@@ -1330,7 +1330,7 @@ void Fl_Help_View::Impl::format() {
           block->h += hh;
           yy       += hh;
 
-          if (tolower(buf[2]) == 'l')
+          if (fl_ascii_tolower(buf[2]) == 'l')
             yy += fsize + 2;
 
           if (row)
@@ -1457,7 +1457,7 @@ void Fl_Help_View::Impl::format() {
           block     = add_block(start, xx, yy, xx + ww, 0, border);
           needspace = 0;
           line      = 0;
-          newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? Align::CENTER : Align::LEFT);
+          newalign  = get_align(attrs, fl_ascii_tolower(buf[1]) == 'h' ? Align::CENTER : Align::LEFT);
           talign    = newalign;
 
           cells[column] = (int) (block - &blocks_[0]);
@@ -1828,7 +1828,7 @@ void Fl_Help_View::Impl::format_table(
         width     = 0;
         needspace = 0;
 
-        if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+        if (fl_ascii_tolower(buf[0]) == 'h' && isdigit(buf[1]))
         {
           font  = FL_HELVETICA_BOLD;
           fsize = textsize_ + '7' - buf[1];
@@ -2872,7 +2872,7 @@ void Fl_Help_View::Impl::draw()
                    buf.cmp("DT") ||
                    buf.cmp("PRE"))
           {
-            if (tolower(buf[0]) == 'h')
+            if (fl_ascii_tolower(buf[0]) == 'h')
             {
               font  = FL_HELVETICA_BOLD;
               fsize = textsize_ + '7' - buf[1];
@@ -2961,7 +2961,7 @@ void Fl_Help_View::Impl::draw()
           {
             int tx, ty, tw, th;
 
-            if (tolower(buf[1]) == 'h')
+            if (fl_ascii_tolower(buf[1]) == 'h')
               pushfont(font |= FL_BOLD, fsize);
             else
               pushfont(font = textfont_, fsize);
@@ -3669,7 +3669,7 @@ int Fl_Help_View::Impl::find(const char *s, int p)
       // Hint: use fl_utf8encode() [see below]
 
       int utf_len = 1;
-      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) {
+      if (c > 0x20 && c < 0x80 && fl_ascii_tolower(*sp) == fl_ascii_tolower(c)) {
         // Check for ASCII case insensitive match.
         //printf("%ld text match %c/%c\n", bp-value_, *sp, c);
         sp++;
@@ -4169,16 +4169,16 @@ static const char *vanilla(const char *p, const char *end) {
 // convert a command with up to four letters into an unsigned int
 static uint32_t command(const char *cmd)
 {
-  uint32_t ret = (tolower(cmd[0])<<24);
+  uint32_t ret = (fl_ascii_tolower(cmd[0])<<24);
   char c = cmd[1];
   if (c=='>' || c==' ' || c==0) return ret;
-  ret |= (tolower(c)<<16);
+  ret |= (fl_ascii_tolower(c)<<16);
   c = cmd[2];
   if (c=='>' || c==' ' || c==0) return ret;
-  ret |= (tolower(c)<<8);
+  ret |= (fl_ascii_tolower(c)<<8);
   c = cmd[3];
   if (c=='>' || c==' ' || c==0) return ret;
-  ret |= tolower(c);
+  ret |= fl_ascii_tolower(c);
   c = cmd[4];
   if (c=='>' || c==' ' || c==0) return ret;
   return 0;
