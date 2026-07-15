@@ -77,9 +77,8 @@ static void destroy_BGRA(void *data) {
 
 
 void Fl_PostScript_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {
-  Fl_RGB_Image *rgb =  new Fl_RGB_Image(pxm);
-  draw_rgb_bitmap_(rgb, XP, YP, WP, HP, cx, cy);
-  delete rgb;
+  Fl_RGB_Image rgb(pxm);
+  draw_rgb_bitmap_(&rgb, XP, YP, WP, HP, cx, cy);
 }
 
 
