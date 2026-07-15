@@ -1080,13 +1080,12 @@ void Fl_Scalable_Graphics_Driver::draw_image_rescale(void *buf, Fl_Draw_Image_Cb
       }
     }
   }
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(tmp_buf, W, H, depth);
-  rgb->alloc_array = 1;
+  Fl_RGB_Image rgb(tmp_buf, W, H, depth);
+  rgb.alloc_array = 1;
   Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
   Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
-  Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb->copy(floor(X+W)-floor(X), floor(Y+H)-floor(Y));
+  Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb.copy(floor(X+W)-floor(X), floor(Y+H)-floor(Y));
   Fl_Image::RGB_scaling(keep);
-  delete rgb;
   if (scaled_rgb) {
     Fl_Region r2 = scale_clip(scale());
     draw_image_unscaled(scaled_rgb->array, floor(X), floor(Y), scaled_rgb->w(), scaled_rgb->h(), depth);
