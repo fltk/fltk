@@ -431,17 +431,16 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   Fl_Screen_Driver *d = Fl::screen_driver();
   float s = d->scale(nscreen);
   if (s > 3) s = 3; // limit the growth of the transient window
-  Fl_Image_Surface *surf = new Fl_Image_Surface(int(w*s), int(w*s/2));
-  Fl_Surface_Device::push_current(surf);
+  Fl_Image_Surface surf(int(w*s), int(w*s/2));
+  Fl_Surface_Device::push_current(&surf);
   fl_color(FL_BLACK);
   fl_rectf(-1, -1, int(w*s)+2, int(w*s)+2);
   Fl_Box *b = new Fl_Box(FL_RFLAT_BOX, 0, 0, int(w*s), int(w*s/2), "");
   b->color(FL_WHITE);
-  surf->draw(b);
+  surf.draw(b);
   delete b;
-  Fl_RGB_Image* img = surf->image(); // img will be the window's shape
+  Fl_RGB_Image* img = surf.image(); // img will be the window's shape
   Fl_Surface_Device::pop_current();
-  delete surf;
   //create a window shaped with the rounded box
   int X, Y, W, H;
   Fl::screen_xywh(X, Y, W, H, nscreen);
