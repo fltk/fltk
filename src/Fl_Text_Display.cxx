@@ -3365,7 +3365,8 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
   IS_UTF8_ALIGNED2(buffer(), pos)
 
   int length, retPos, retLines, retLineStart, retLineEnd;
-  Fl_Text_Buffer *deletedTextBuf, *buf = buffer();
+  Fl_Text_Buffer deletedTextBuf_obj(0), *buf = buffer();
+  Fl_Text_Buffer *deletedTextBuf = &deletedTextBuf_obj;
   int nVisLines = mNVisibleLines;
   int *lineStarts = mLineStarts;
   int countFrom, countTo, lineStart, adjLineStart, i;
@@ -3492,16 +3493,16 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
   }
 
   length = (pos-countFrom) + nDeleted +(countTo-(pos+nInserted));
-  deletedTextBuf = new Fl_Text_Buffer(length);
-  deletedTextBuf->copy(buffer(), countFrom, pos, 0);
+  deletedTextBuf_obj.text(""); // Clear the buffer before copying
+  deletedTextBuf_obj.insert(0, "", length); // Pre-allocate memory
+  deletedTextBuf_obj.copy(buffer(), countFrom, pos, 0);
   if (nDeleted != 0)
-    deletedTextBuf->insert(pos-countFrom, deletedText);
-  deletedTextBuf->copy(buffer(), pos+nInserted, countTo, pos-countFrom+nDeleted);
+    deletedTextBuf_obj.insert(pos-countFrom, deletedText);
+  deletedTextBuf_obj.copy(buffer(), pos+nInserted, countTo, pos-countFrom+nDeleted);
   /* Note that we need to take into account an offset for the style buffer:
    the deletedTextBuf can be out of sync with the style buffer. */
-  wrapped_line_counter(deletedTextBuf, 0, length, INT_MAX, true, countFrom,
+  wrapped_line_counter(&deletedTextBuf_obj, 0, length, INT_MAX, true, countFrom,
                        &retPos, &retLines, &retLineStart, &retLineEnd, false);
-  delete deletedTextBuf;
   *linesDeleted = retLines;
   mSuppressResync = 0;
 }
