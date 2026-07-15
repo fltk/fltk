@@ -77,7 +77,8 @@ FL_EXPORT extern int fl_vsnprintf(char *, size_t, const char *, va_list ap);
  * that work the way strncpy() and strncat() *should* have worked.
  */
 
-FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t);
+/* promoted to <FL/fl_string_functions.h> */
+/* FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t); */
 #  ifndef HAVE_STRLCAT
 #    define strlcat fl_strlcat
 #  endif /* !HAVE_STRLCAT */

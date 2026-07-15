@@ -24,6 +24,8 @@
 #include "Fl_System_Driver.H"
 #include "Fl_Screen_Driver.H"
 #include <ctype.h>
+#include <stdlib.h>
+#include <FL/fl_utf8.h>
 
 static int fl_match(const char *a, const char *s, int atleast = 1) {
   const char *b = s;
@@ -97,6 +99,11 @@ extern const char *fl_bg2;
   \li -scheme string
   <br>
   Sets the widget scheme using Fl::scheme().
+
+  \li -scaling-factor number
+  <br>
+  Sets the UI scaling factor. This overrides the "FLTK_SCALING_FACTOR"
+  environment variable.
 
   \li -title string
   <br>
@@ -208,6 +215,15 @@ int Fl::arg(int argc, char **argv, int &i) {
 
   } else if (fl_match(s, "scheme", 1)) {
     Fl::scheme(v);
+
+  } else if (fl_match(s, "scaling-factor", 7)) {
+    float f = 1.0f;
+    if (sscanf(v, "%f", &f) == 1) {
+      Fl::screen_scale(0, f);
+      char env_buf[64];
+      snprintf(env_buf, 64, "FLTK_SCALING_FACTOR=%f", f);
+      fl_putenv(env_buf);
+    }
 
   } else {
     return 0; // unrecognized
@@ -349,6 +365,7 @@ static const char * const helpmsg =
 " -nok[bd]\n"
 " -not[ooltips]\n"
 " -s[cheme] scheme\n"
+" -sc[aling-factor] factor\n"
 " -ti[tle] windowtitle\n"
 " -to[oltips]";
 
