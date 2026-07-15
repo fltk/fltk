@@ -340,13 +340,12 @@ void Fl_Cairo_Graphics_Driver::line_style(int style, int width, char* dashes) {
   else c_join = CAIRO_LINE_JOIN_MITER;
   cairo_set_line_join(cairo_, c_join);
 
-  double *ddashes = NULL;
-  int l = 0;
+  double ddashes_array[6]; // Max 6 elements for dashes_flat/cap
+  double *ddashes = ddashes_array;
+  size_t l = 0;
   if (dashes && *dashes){
-    ddashes = new double[strlen(dashes)];
     while (dashes[l]) {ddashes[l] = dashes[l]; l++; }
   } else if (style & 0xff) {
-    ddashes = new double[6];
     if (style & 0x200){ // round and square caps, dash length need to be adjusted
       const double *dt = dashes_cap[style & 0xff];
       while (*dt >= 0){
@@ -363,7 +362,6 @@ void Fl_Cairo_Graphics_Driver::line_style(int style, int width, char* dashes) {
   }
   cairo_set_dash(cairo_, ddashes, l, 0);
   cairo_set_antialias(cairo_, l ? CAIRO_ANTIALIAS_NONE : CAIRO_ANTIALIAS_DEFAULT);
-  delete[] ddashes;
 }
 
 void Fl_Cairo_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
@@ -633,10 +631,9 @@ void Fl_Cairo_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int
       *(array + l*D*iw + i*D + D-1) = 0xff;
     }
   }
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(array, iw, ih, D);
-  rgb->alloc_array  = 1;
-  draw_rgb(rgb, ix, iy, iw, ih, 0, 0);
-  delete rgb;
+  Fl_RGB_Image rgb(array, iw, ih, D);
+  rgb.alloc_array  = 1;
+  draw_rgb(&rgb, ix, iy, iw, ih, 0, 0);
   surface_needs_commit();
 }
 
@@ -1001,11 +998,10 @@ void Fl_Cairo_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP,
 
 
 void Fl_Cairo_Graphics_Driver::cache(Fl_Pixmap *pxm) {
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(pxm);
-  cache(rgb);
-  *Fl_Graphics_Driver::id(pxm) = *Fl_Graphics_Driver::id(rgb);
-  *Fl_Graphics_Driver::id(rgb) = 0;
-  delete rgb;
+  Fl_RGB_Image rgb(pxm);
+  cache(&rgb);
+  *Fl_Graphics_Driver::id(pxm) = *Fl_Graphics_Driver::id(&rgb);
+  *Fl_Graphics_Driver::id(&rgb) = 0;
   int *pw, *ph;
   cache_w_h(pxm, pw, ph);
   *pw = pxm->data_w();
