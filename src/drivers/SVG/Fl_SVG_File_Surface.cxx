@@ -655,11 +655,10 @@ void Fl_SVG_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP,
   void *p = (void*)*Fl_Graphics_Driver::id(pxm);
   if (p) snprintf(name, 24, "FLpx%p", p); else name[0] = 0;
   if (!p || !last_rgb_name_ || strcmp(name, last_rgb_name_) != 0) {
-    Fl_RGB_Image *rgb = new Fl_RGB_Image(pxm);
+    Fl_RGB_Image rgb(pxm);
     if (*name==0 && need_clip) push_clip(XP, YP, WP, HP);
-    define_rgb_png(rgb, *name ? name : NULL, XP-cx, YP-cy);
+    define_rgb_png(&rgb, *name ? name : NULL, XP-cx, YP-cy);
     if (*name==0 && need_clip) pop_clip();
-    delete rgb;
   }
   if (*name) {
     if (need_clip) push_clip(XP, YP, WP, HP);
@@ -680,8 +679,8 @@ void Fl_SVG_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, 
     Fl::get_color(fl_color(), R, G, B);
     uchar *data = new uchar[bm->data_w() * bm->data_h() * 4];
     memset(data, 0, bm->data_w() * bm->data_h() * 4);
-    Fl_RGB_Image *rgb = new Fl_RGB_Image(data, bm->data_w(), bm->data_h(), 4);
-    rgb->alloc_array = 1;
+    Fl_RGB_Image rgb(data, bm->data_w(), bm->data_h(), 4);
+    rgb.alloc_array = 1;
     int rowBytes = (bm->data_w()+7)>>3 ;
     for (int j = 0; j < bm->data_h(); j++) {
       const uchar *p = bm->array + j*rowBytes;
@@ -690,7 +689,7 @@ void Fl_SVG_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, 
         int last = bm->data_w() - 8*i; if (last > 8) last = 8;
         for (int k=0; k < last; k++) {
           if (q&1) {
-            uchar *r = (uchar*)rgb->array + j*bm->data_w()*4 + i*8*4 + k*4;
+            uchar *r = (uchar*)rgb.array + j*bm->data_w()*4 + i*8*4 + k*4;
             *r++ = R; *r++ = G; *r++ = B; *r = ~0;
           }
           q >>= 1;
@@ -699,9 +698,8 @@ void Fl_SVG_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, 
       }
     }
     if (*name==0 && need_clip) push_clip(XP, YP, WP, HP);
-    define_rgb_png(rgb, *name ? name : NULL, XP-cx, YP-cy);
+    define_rgb_png(&rgb, *name ? name : NULL, XP-cx, YP-cy);
     if (*name==0 && need_clip) pop_clip();
-    delete rgb;
   }
   if (*name) {
     if (need_clip) push_clip(XP, YP, WP, HP);
@@ -720,9 +718,8 @@ void Fl_SVG_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, i
     fprintf(out_, "<g transform=\"translate(%d,%d) scale(1,-1)\">\n", x, y);
     x = 0; y = -h; buf -= (h-1)*abs(l);
   }
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(buf, w, h, abs(d), abs(l));
-  rgb->draw(x, y);
-  delete rgb;
+  Fl_RGB_Image rgb(buf, w, h, abs(d), abs(l));
+  rgb.draw(x, y);
   if (d < 0) fprintf(out_, "</g>\n");
   if (l < 0) fprintf(out_, "</g>\n");
 }
