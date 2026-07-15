@@ -568,7 +568,7 @@
       _FL_CBD_CLASS_NAME(TYPE0 p0, TYPE1 p1) \
       : p0_(p0), p1_(p1) { } \
     }; \
-    WIDGET->callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1), true); \
+    WIDGET.callback(_FL_CBD_CLASS_NAME::cb, new _FL_CBD_CLASS_NAME(VALUE0, VALUE1), true); \
   } while(0)
 
 #define FL_INLINE_CALLBACK_1(WIDGET, TYPE0, NAME0, VALUE0, LAMBDA) \

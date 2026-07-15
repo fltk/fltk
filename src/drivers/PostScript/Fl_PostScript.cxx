@@ -1137,8 +1137,8 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   // create an offscreen image of the string
   Fl_Color text_color = Fl_Graphics_Driver::color();
   Fl_Color bg_color = fl_contrast(FL_WHITE, text_color);
-  Fl_Image_Surface *off = new Fl_Image_Surface(w_scaled, (int)(h+3*scale), 1);
-  Fl_Surface_Device::push_current(off);
+  Fl_Image_Surface off(w_scaled, (int)(h+3*scale), 1);
+  Fl_Surface_Device::push_current(&off);
   fl_color(bg_color);
   // color offscreen background with a shade contrasting with the text color
   fl_rectf(0, 0, w_scaled, (int)(h+3*scale) );
@@ -1158,7 +1158,6 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   uchar *img = fl_read_image(NULL, 0, 1, w2, h, 0);
   Fl_Surface_Device::pop_current();
   font(fontnum, old_size);
-  delete off;
   // compute the mask of what is not the background
   uchar *img_mask = calc_mask(img, w2, h, bg_color);
   delete[] img;
@@ -1623,19 +1622,19 @@ static int size_count = sizeof(menu_to_size) / sizeof(menu_to_size[0]);
 static int update_format_layout(int rank, Fl_Paged_Device::Page_Layout layout,
                                 bool &need_set_default_psize) {
   int status = -1;
-  Fl_Window *modal = new Fl_Window(510, 90, Fl_PDF_File_Surface::format_dialog_title);
-  modal->begin();
-  Fl_Choice *psize = new Fl_Choice(140, 10, 110, 30, Fl_PDF_File_Surface::format_dialog_page_size);
-  psize->when(FL_WHEN_CHANGED);
+  Fl_Window modal(510, 90, Fl_PDF_File_Surface::format_dialog_title);
+  modal.begin();
+  Fl_Choice psize(140, 10, 110, 30, Fl_PDF_File_Surface::format_dialog_page_size);
+  psize.when(FL_WHEN_CHANGED);
   for (int i = 0; i < size_count; i++) {
-    psize->add(Fl_Paged_Device::page_formats[menu_to_size[i]].name);
+    psize.add(Fl_Paged_Device::page_formats[menu_to_size[i]].name);
   }
-  psize->value(rank);
-  Fl_Check_Button *default_size = new Fl_Check_Button(psize->x(), psize->y() + psize->h(),
-                          psize->w(), psize->h(), Fl_PDF_File_Surface::format_dialog_default);
+  psize.value(rank);
+  Fl_Check_Button *default_size = new Fl_Check_Button(psize.x(), psize.y() + psize.h(),
+                          psize.w(), psize.h(), Fl_PDF_File_Surface::format_dialog_default);
   default_size->value(1);
   default_size->user_data(&need_set_default_psize);
-  FL_INLINE_CALLBACK_2(psize, Fl_Choice*, choice, psize,
+  FL_INLINE_CALLBACK_2(psize, Fl_Choice*, choice, &psize,
                        Fl_Check_Button*, check_but, default_size,
                        {
                         if (check_but->value() && choice->mvalue() && choice->prev_mvalue() &&
@@ -1643,33 +1642,32 @@ static int update_format_layout(int rank, Fl_Paged_Device::Page_Layout layout,
                           check_but->value(0);
                         }
                        });
-  FL_INLINE_CALLBACK_2( modal, Fl_Window*, win, modal,
+  FL_INLINE_CALLBACK_2( modal, Fl_Window*, win, &modal,
                        Fl_Check_Button*, check_but, default_size,
                        {
                         *((bool*)check_but->user_data()) = check_but->value();
                         win->hide();
                        } );
-  Fl_Choice *orientation = new Fl_Choice(psize->x() + psize->w() + 120, psize->y(), 130, psize->h(),
+  Fl_Choice *orientation = new Fl_Choice(psize.x() + psize.w() + 120, psize.y(), 130, psize.h(),
                                          Fl_PDF_File_Surface::format_dialog_orientation);
   orientation->add("PORTRAIT|LANDSCAPE");
   orientation->value(layout == Fl_Paged_Device::PORTRAIT ? 0 : 1);
   Fl_Return_Button *ok = new Fl_Return_Button(orientation->x() + orientation->w() - 55,
-                                              psize->y() + psize->h() + 10, 55, 30, fl_ok);
+                                              psize.y() + psize.h() + 10, 55, 30, fl_ok);
   FL_INLINE_CALLBACK_4( ok, Fl_Widget*, b, ok,
                        int*, pstatus, &status,
-                       Fl_Choice*, psize, psize,
+                       Fl_Choice*, &psize, &psize,
                        Fl_Choice*, orientation, orientation,
                        {
     *pstatus = menu_to_size[psize->value()] + 0x100 * orientation->value();
     b->window()->do_callback();
                        } );
-  Fl_Button *cancel = new Fl_Button(ok->x() - 90, psize->y() + psize->h() + 10, 70, 30, fl_cancel);
+  Fl_Button *cancel = new Fl_Button(ok->x() - 90, psize.y() + psize.h() + 10, 70, 30, fl_cancel);
   FL_INLINE_CALLBACK_1( cancel, Fl_Widget*, wid, cancel, { wid->window()->do_callback(); } );
-  modal->end();
-  modal->set_modal();
-  modal->show();
-  while (modal->shown()) Fl::wait();
-  delete modal;
+  modal.end();
+  modal.set_modal();
+  modal.show();
+  while (modal.shown()) Fl::wait();
   return status;
 }
 
