@@ -817,6 +817,19 @@ if(UNIX AND FLTK_USE_WAYLAND)
   list(APPEND STATIC_FILES "xdg-shell-protocol.c")
   list(APPEND SHARED_FILES "xdg-shell-protocol.c")
 
+  if(HAVE_XDG_ACTIVATION)
+    set(INFILE ${PROTOCOLS}/staging/xdg-activation/xdg-activation-v1.xml)
+    add_custom_command(
+      OUTPUT xdg-activation-protocol.c xdg-activation-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} xdg-activation-protocol.c
+      COMMAND wayland-scanner client-header ${INFILE} xdg-activation-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "xdg-activation-protocol.c")
+    list(APPEND SHARED_FILES "xdg-activation-protocol.c")
+  endif()
+
   if(NOT USE_SYSTEM_LIBDECOR)
     set(INFILE ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
     fl_check_required_file(STOP_REQUIRED ${INFILE})
