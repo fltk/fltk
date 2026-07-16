@@ -110,6 +110,9 @@ public:
 #if HAVE_XDG_DIALOG
   struct xdg_wm_dialog_v1 *xdg_wm_dialog;
 #endif
+#if HAVE_XDG_ACTIVATION
+  struct xdg_activation_v1 *xdg_activation;
+#endif
 #if HAVE_CURSOR_SHAPE
   struct wp_cursor_shape_manager_v1 *wp_cursor_shape_manager;
   struct wp_cursor_shape_device_v1 *wp_cursor_shape_device;

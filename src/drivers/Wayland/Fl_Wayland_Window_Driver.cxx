@@ -23,6 +23,9 @@
 #include <wayland-cursor.h>
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"
+#if HAVE_XDG_ACTIVATION
+#  include "xdg-activation-client-protocol.h"
+#endif
 #include "gtk-shell-client-protocol.h"
 #if HAVE_XDG_DIALOG
 #  include "xdg-dialog-client-protocol.h"
@@ -164,15 +167,12 @@ void Fl_Wayland_Window_Driver::take_focus()
   struct wld_window *w = fl_wl_xid(pWindow);
   if (w) {
     Fl_Window *old_first = Fl::first_window();
-    struct wld_window *first_xid = (old_first ? fl_wl_xid(old_first->top_window()) : NULL);
-    if (first_xid && first_xid != w && xdg_toplevel()) {
-      // this will move the target window to the front
-      Fl_Wayland_Window_Driver *top_dr =
-        Fl_Wayland_Window_Driver::driver(old_first->top_window());
-      xdg_toplevel_set_parent(xdg_toplevel(), top_dr->xdg_toplevel());
-      // this will remove the parent-child relationship
-      xdg_toplevel_set_parent(xdg_toplevel(), NULL);
-      wl_surface_commit(w->wl_surface);
+    if (old_first) {
+      if (old_first->parent()) old_first = old_first->top_window();
+      if (old_first != pWindow && xdg_toplevel()) {
+        // let the current active window activate this window
+        Fl_Wayland_Window_Driver::driver(old_first)->activate_(pWindow);
+      }
     }
     // this sets the first window
     fl_wl_find(w);
@@ -2202,4 +2202,54 @@ void Fl_Wayland_Window_Driver::un_maximize() {
   struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
   if (xid->kind == DECORATED) libdecor_frame_unset_maximized(xid->frame);
   else Fl_Window_Driver::un_maximize();
+}
+
+
+#if HAVE_XDG_ACTIVATION
+
+static void xdg_activation_done(void *data,
+                         struct xdg_activation_token_v1 *xdg_activation_token_v1,
+                         const char *token) {
+  Fl_Wayland_Screen_Driver *screen_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  xdg_activation_v1_activate(screen_driver->xdg_activation, token, (struct wl_surface*)data);
+  xdg_activation_token_v1_destroy(xdg_activation_token_v1);
+}
+
+
+static struct xdg_activation_token_v1_listener xdg_activation_token_listener = {
+  .done = xdg_activation_done
+};
+
+#endif // HAVE_XDG_ACTIVATION
+
+
+/* This function lets one toplevel window, currently active, activate
+ another toplevel window given in its target parameter.
+ Wayland requires the "XDG activation" protocol for that.
+ This function also implements a fallback method used in absence of this protocol
+ which brings the target to front but doesn't activate it.
+ */
+void Fl_Wayland_Window_Driver::activate_(Fl_Window *target) {
+  struct wl_surface *target_surface = fl_wl_xid(target)->wl_surface;
+#if HAVE_XDG_ACTIVATION
+  Fl_Wayland_Screen_Driver *screen_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (screen_driver->xdg_activation) {
+    struct xdg_activation_token_v1 *token = xdg_activation_v1_get_activation_token(screen_driver->xdg_activation);
+    const char *appid = pWindow->xclass() ? pWindow->xclass() : get_prog_name();
+    xdg_activation_token_v1_set_app_id(token, appid);
+    xdg_activation_token_v1_set_surface(token, fl_wl_xid(pWindow)->wl_surface);
+    xdg_activation_token_v1_set_serial(token, screen_driver->seat->serial,
+                                       screen_driver->seat->wl_seat);
+    xdg_activation_token_v1_add_listener(token, &xdg_activation_token_listener, target_surface);
+    xdg_activation_token_v1_commit(token);
+  } else
+#endif // HAVE_XDG_ACTIVATION
+  { // Fallback in absence of support of the adequate Wayland protocol.
+    // this will move the target window to the front
+    Fl_Wayland_Window_Driver *top_dr = Fl_Wayland_Window_Driver::driver(target);
+    xdg_toplevel_set_parent(top_dr->xdg_toplevel(), xdg_toplevel());
+    // this will remove the parent-child relationship
+    xdg_toplevel_set_parent(top_dr->xdg_toplevel(), NULL);
+    wl_surface_commit(target_surface);
+  }
 }

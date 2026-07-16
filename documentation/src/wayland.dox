@@ -101,7 +101,8 @@ beginning with \c wl_, \c xkb_ or \c libdecor_ and belong to the \c libwayland-c
 \c libwayland-cursor.so, \c libxkbcommon.so and \c libdecor.so shared libraries.
 FLTK calls also several other functions which operate other used Wayland protocols.
 These have names beginning with \c xdg_, \c zwp_text_input_v3, \c zxdg_toplevel_decoration_,
-\c gtk_shell1_, \c gtk_surface1_, \c wp_cursor_shape_ and \c zwp_tablet_v2.
+\c gtk_shell1_, \c gtk_surface1_, \c wp_cursor_shape_, \c xdg_activation_ and
+\c zwp_tablet_v2.
 FLTK never writes itself to the socket; this is done inside the functions just mentioned.
 - Compositor to client: the callback function \c wld_socket_callback() runs when there are
 data to read in the socket; it calls \c libdecor_dispatch() which reads available data from
@@ -161,6 +162,7 @@ wayland-scanner client-header $PROTOCOLS/stable/xdg-shell/xdg-shell.xml xdg-shel
 \endcode
 Similar operations are performed for FLTK to use protocols
 <a href=https://wayland.app/protocols/xdg-dialog-v1>XDG dialog windows</a>,
+<a href=https://wayland.app/protocols/xdg-activation-v1>XDG activation</a>,
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>,
 <a href=https://wayland.app/protocols/cursor-shape-v1>Cursor shape</a>,
 <a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>,
@@ -332,6 +334,7 @@ Here is the list of the \c interface value for all protocols and system features
   wl_data_device                     | support of copy/paste/drag-n-drop
   wl_output                          | received once for each display
   xdg_wm_base                        | create mapped windows
+  xdg_activation_v1                  | programmatically activate a window
   xdg_wm_dialog_v1                   | create dialogs related to other windows
   wp_cursor_shape_manager_v1         | set cursor images using enumerated cursors
   gtk_shell1                         | indicates Mutter is in use + titlebar gestures

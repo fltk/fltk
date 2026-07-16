@@ -39,6 +39,9 @@
 #if HAVE_XDG_DIALOG
 #  include "xdg-dialog-client-protocol.h"
 #endif
+#if HAVE_XDG_ACTIVATION
+#  include "xdg-activation-client-protocol.h"
+#endif
 #if HAVE_CURSOR_SHAPE
 #  include "cursor-shape-client-protocol.h"
 #  include "tablet-client-protocol.h"
@@ -1393,6 +1396,11 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     scr_driver->xdg_wm_dialog = (struct xdg_wm_dialog_v1 *)
       wl_registry_bind(wl_registry, id, &xdg_wm_dialog_v1_interface, 1);
 #endif // HAVE_XDG_DIALOG
+#if HAVE_XDG_ACTIVATION
+  } else if (strcmp(interface, xdg_activation_v1_interface.name) == 0) {
+    scr_driver->xdg_activation = (struct xdg_activation_v1 *)
+      wl_registry_bind(wl_registry, id, &xdg_activation_v1_interface, 1);
+#endif // HAVE_XDG_ACTIVATION
 #if HAVE_CURSOR_SHAPE
   } else if (strcmp(interface, wp_cursor_shape_manager_v1_interface.name) == 0) {
     scr_driver->wp_cursor_shape_manager = (struct wp_cursor_shape_manager_v1 *)
@@ -1459,6 +1467,9 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
   wl_registry = NULL;
 #if HAVE_XDG_DIALOG
   xdg_wm_dialog = NULL;
+#endif
+#if HAVE_XDG_ACTIVATION
+  xdg_activation = NULL;
 #endif
 #if HAVE_CURSOR_SHAPE
   wp_cursor_shape_manager = NULL;
@@ -1636,6 +1647,12 @@ void Fl_Wayland_Screen_Driver::close_display() {
     xdg_wm_dialog = NULL;
   }
 #endif // HAVE_XDG_DIALOG
+#if HAVE_XDG_ACTIVATION
+  if (xdg_activation) {
+    xdg_activation_v1_destroy(xdg_activation);
+    xdg_activation = NULL;
+  }
+#endif // HAVE_XDG_ACTIVATION
 #if HAVE_CURSOR_SHAPE
   if (wp_cursor_shape_device ) {
     wp_cursor_shape_device_v1_destroy(wp_cursor_shape_device);
