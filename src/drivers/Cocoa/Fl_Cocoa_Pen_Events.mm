@@ -77,14 +77,6 @@ static Fl::Pen::EventData ev;
 
 namespace Fl {
 
-namespace Private {
-
-// Global mouse position at mouse down event
-extern int e_x_down;
-extern int e_y_down;
-
-}; // namespace Private
-
 namespace Pen {
 
 class Cocoa_Driver : public Driver {

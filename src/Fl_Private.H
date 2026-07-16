@@ -1,7 +1,7 @@
 //
 // Private header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -72,6 +72,10 @@ FL_EXPORT extern cairo_t *cairo_make_current(void *gc, int W, int H);
 FL_EXPORT extern Fl_Cairo_State cairo_state_;
 
 #endif // FLTK_HAVE_CAIRO
+
+// Global pen position at pen down event
+extern int e_x_down;
+extern int e_y_down;
 
 } // namespace Private
 } // namespace Fl

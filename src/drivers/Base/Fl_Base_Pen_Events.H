@@ -1,7 +1,7 @@
 //
 // Definition of default Pen/Tablet event driver.
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +21,7 @@
 #include <config.h>
 #include <FL/core/pen_events.H>
 #include <FL/Fl.H>
+#include <src/Fl_Private.H>
 
 #include <map>
 #include <memory>

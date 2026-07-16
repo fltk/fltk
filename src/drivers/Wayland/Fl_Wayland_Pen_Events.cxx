@@ -102,14 +102,6 @@ static Fl_Window *gtk_shell_window = nullptr;
 // fl_xmousewin tracks which window last received pointer/pen events.
 extern Fl_Window *fl_xmousewin;
 
-// Click detection needs the mouse-down position stored by Fl internals.
-namespace Fl {
-namespace Private {
-extern int e_x_down;
-extern int e_y_down;
-} // namespace Private
-} // namespace Fl
-
 using namespace Fl::Pen;
 
 // C+11 Safe defined
@@ -238,13 +230,14 @@ Trait Wayland_Driver::pen_traits(int pen_id) {
   return match ? match->capabilities : Trait::NONE;
 }
 
-} // namespace Pen
-} // namespace Fl
-
 Fl::Pen::Driver& newWaylandPenDriver() {
   Fl::Pen::Wayland_Driver *wayland_driver_instance = new Fl::Pen::Wayland_Driver();
   return *wayland_driver_instance;
 }
+
+} // namespace Pen
+} // namespace Fl
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Platform-independent helper functions
@@ -632,7 +625,7 @@ static int handle_frame_events(TabletTool *tool) {
       // libdecor_frame_resize(struct libdecor_frame *frame,struct wl_seat *wl_seat,uint32_t serial,enum libdecor_resize_edge edge)
       // libdecor_frame_close(struct libdecor_frame *frame)
       // see: pointer_button, handle_button_on_header, and handle_button_on_shadow in libdecor-gtk.c
-    }   
+    }
   }
   return 0;
 }
