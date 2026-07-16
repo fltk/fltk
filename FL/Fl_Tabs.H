@@ -1,7 +1,7 @@
 //
 // Tab header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -63,7 +63,7 @@ struct Fl_Menu_Item;
   be wrapped inside another Fl_Group and inset by five pixels within this
   group so the contents of the Fl_Scroll widget are kept away from the tabs
   by this amount.
-  <!-- See GitHub issue #1175. -->
+  <!-- See GitHub issue # 1175. -->
 
   The background area behind and to the right of the tabs is
   "transparent", exposing the background detail of the parent. The

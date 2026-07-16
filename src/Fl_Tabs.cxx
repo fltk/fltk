@@ -1,7 +1,7 @@
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -372,7 +372,7 @@ int Fl_Tabs::hit_tabs_area(int event_x, int event_y) {
  Check if the tabs overflow and sets the has_overflow_menu flag accordingly.
  */
 void Fl_Tabs::check_overflow_menu() {
-  int nc = children();
+  const int nc = children();
   if (nc == 0) {
     has_overflow_menu = 0;
     return;
@@ -437,10 +437,11 @@ int Fl_Tabs::maybe_do_callback(Fl_Widget *o) {
  The menu item array is then deleted.
  */
 void Fl_Tabs::handle_overflow_menu() {
-  int nc = children();
+  const int nc = children();
   if (nc == 0) return;
   int H = tab_height(); if (H < 0) H = -H;
-  int i, fv=-1, lv=nc; // first and last visible tab
+  int i;                // tab index
+  int fv = -1, lv = nc; // first and last visible tab
 
   // count visible children
   for (i = 0; i < nc; i++) {
@@ -449,8 +450,7 @@ void Fl_Tabs::handle_overflow_menu() {
   }
 
   // create a menu with all children
-  Fl_Menu_Item* overflow_menu = new Fl_Menu_Item[nc+1];
-  memset(overflow_menu, 0, sizeof(Fl_Menu_Item)*(nc+1));
+  Fl_Menu_Item* overflow_menu = new Fl_Menu_Item[nc+1]{}; // alloc and zero-init
   for (i = 0; i < nc; i++) {
     overflow_menu[i].label(child(i)->label());
     overflow_menu[i].user_data(child(i));
