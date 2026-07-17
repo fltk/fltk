@@ -1,7 +1,7 @@
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 // Original version Copyright 1998 by Curtis Edwards.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -67,27 +67,6 @@ public:
   Fl_Boxtype    down_box() const { return (Fl_Boxtype)down_box_; }
   /** Sets the box type to use for the navigation bar.  */
   void          down_box(Fl_Boxtype b) { down_box_ = (uchar)b; }
-
-  /**
-    Gets the current error color.
-
-    Returns \p FL_RED since FLTK 1.4.0 (default in 1.3.x).
-    Retained for backwards compatibility.
-
-    \deprecated Will be removed in FLTK 1.5.0 or higher.
-    \todo Remove Fl_File_Input::errorcolor() in FLTK 1.5.0 or higher.
-  */
-  Fl_Color      errorcolor() const { return FL_RED; }
-
-  /**
-    Sets the current error color to \p c.
-
-    Does nothing since FLTK 1.4.0. Retained for backwards compatibility.
-
-    \deprecated Will be removed in FLTK 1.5.0 or higher.
-    \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
-    */
-  void          errorcolor(Fl_Color c) {(void)c;}
 
   int   value(const char *str);
   int   value(const char *str, int len);
