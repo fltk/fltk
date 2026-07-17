@@ -2170,6 +2170,10 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 
 
 int Fl_Wayland_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
+  if (!libdecor_context) {
+    if (!wl_display) wl_display = wl_display_connect(NULL);
+    libdecor_context = libdecor_new(wl_display, &libdecor_iface);
+  }
   if (libdecor_dispatch(libdecor_context, 0) > 0) return 1;
   return Fl_Unix_Screen_Driver::poll_or_select_with_delay(time_to_wait);
 }
