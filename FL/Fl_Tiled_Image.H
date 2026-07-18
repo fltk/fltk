@@ -48,7 +48,7 @@ public:
   void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0) override;
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
   /** Gets The image that is tiled */
-  Fl_Image *image() { return image_; }
+  Fl_Image *image() const { return image_; }
 };
 
 #endif // !Fl_Tiled_Image_H
