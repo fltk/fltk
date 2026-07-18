@@ -72,8 +72,8 @@ public:
   void label(Fl_Widget*w) override;
   void label(Fl_Menu_Item*m) override;
   void uncache() override;
-  int cache_w() {return cache_w_;}
-  int cache_h() {return cache_h_;}
+  int cache_w() const { return cache_w_;}
+  int cache_h() const { return cache_h_;}
 };
 
 #endif
