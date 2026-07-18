@@ -35,8 +35,8 @@
 
 static int hexdigit(int x) {    // I - Hex digit...
   if (isdigit(x)) return x-'0';
-  if (isupper(x)) return x-'A'+10;
-  if (islower(x)) return x-'a'+10;
+  if (fl_ascii_isupper(x)) return x-'A'+10;
+  if (fl_ascii_islower(x)) return x-'a'+10;
   return 20;
 }
 

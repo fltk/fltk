@@ -249,7 +249,7 @@ int Fl_Shortcut_Button::handle(int e) {
           }
         }
         if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
-          if (isupper(v)) {
+          if (fl_ascii_isupper(v)) {
             v = tolower(v);
             v |= FL_SHIFT;
           }

@@ -1628,7 +1628,7 @@ int Fl::handle_(int e, Fl_Window* window)
     {
       unsigned char* c = (unsigned char*)event_text(); // cast away const
       if (!isalpha(*c)) return 0;
-      *c = isupper(*c) ? tolower(*c) : toupper(*c);
+      *c = fl_ascii_isupper(*c) ? tolower(*c) : toupper(*c);
     }
     e_number = e = FL_SHORTCUT;
 
