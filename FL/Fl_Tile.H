@@ -47,7 +47,7 @@ protected:
     \see Fl_Tile::set_cursor(int)
   */
 
-  Fl_Cursor cursor(int n) {
+  Fl_Cursor cursor(int n) const {
     return cursors_[n];
   }
 
