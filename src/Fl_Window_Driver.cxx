@@ -115,9 +115,8 @@ void Fl_Window_Driver::destroy_double_buffer() {
 }
 
 void Fl_Window_Driver::shape_pixmap_(Fl_Image* pixmap) {
-  Fl_RGB_Image* rgba = new Fl_RGB_Image((Fl_Pixmap*)pixmap);
-  shape_alpha_(rgba, 3);
-  delete rgba;
+  Fl_RGB_Image rgba((Fl_Pixmap*)pixmap);
+  shape_alpha_(&rgba, 3);
 }
 
 void Fl_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) {
