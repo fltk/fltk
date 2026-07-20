@@ -537,7 +537,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
   if ((lpstat = popen("LC_MESSAGES=C LANG=C /bin/sh -c '(lpstat -p -d ) 2>&-'", "r")) != NULL) { // try first with SystemV printing system
     while (fgets(line, sizeof(line), lpstat)) {
       if (!strncmp(line, "printer ", 8) &&
-          sscanf(line + 8, "%s", name) == 1) {
+          sscanf(line + 8, "%1023s", name) == 1) {
         for (nptr = name, qptr = qname; *nptr; *qptr++ = *nptr++) {
           if (*nptr == '/') *qptr++ = '\\';
         }
@@ -545,7 +545,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
 
         print_choice->add(qname, 0, 0, (void *)fl_strdup(name), 0);
       } else if (!strncmp(line, "system default destination: ", 28)) {
-        if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\0';
+        if (sscanf(line + 28, "%1023s", defname) != 1) defname[0] = '\0';
       }
     }
     pclose(lpstat);
