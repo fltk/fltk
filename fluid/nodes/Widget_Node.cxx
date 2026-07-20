@@ -1221,8 +1221,9 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c)
     if (sscanf(f.read_word(),"%d %d %d %d",&x,&y,&w,&h) == 4) {
       x += Fluid.pasteoffset;
       y += Fluid.pasteoffset;
-      // FIXME temporary change!
-      if (f.read_version>=2.0 && o->parent() && o->parent()!=o->window()) {
+      // Reading FLTK 2 projects into FLTK 1 Fluid requires adjusting the x
+      // and y coordinates to be relative to the parent window, if any.
+      if (f.read_version>=2.0 && f.read_version<3.0 && o->parent() && o->parent()!=o->window()) {
         x += o->parent()->x();
         y += o->parent()->y();
       }

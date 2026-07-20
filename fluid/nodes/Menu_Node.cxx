@@ -335,7 +335,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     }
   }
   if (!extra_code(0).empty()) {
-    f.write_block_h_once(extra_code(0)); // TODO: line by line
+    f.write_block_h_once(extra_code(0));
   }
   if (!extra_code(1).empty()) {
     f.write_h(extra_code(1));
