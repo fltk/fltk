@@ -1,7 +1,7 @@
 //
 // Cross-window show/focus test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
   win1->label("show() focus test");
 
   Fl_Box *b = new Fl_Box(10, 10, 280, 130);
-  b->label("Type something to pop the subwindow up. "
+  b->label("Type something to open a 2nd window. "
            "The focus should stay on the input, "
            "and you should be able to continue typing.");
   b->align(FL_ALIGN_WRAP | FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
