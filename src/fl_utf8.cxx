@@ -955,7 +955,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   } else if (c < 0xc2) {
     goto FAIL;
   }
-  if ( (end && p+1 >= end) || (p[1]&0xc0) != 0x80) goto FAIL;
+  if ( (end && p+1 >= end) || !fl_utf8_is_continuation(p[1])) goto FAIL;
   if (c < 0xe0) {
     if (len) *len = 2;
     return
@@ -977,7 +977,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
 #endif
   } else if (c < 0xf0) {
   UTF8_3:
-    if ( (end && p+2 >= end) || (p[2]&0xc0) != 0x80) goto FAIL;
+    if ( (end && p+2 >= end) || !fl_utf8_is_continuation(p[2])) goto FAIL;
     if (len) *len = 3;
     return
     ((p[0] & 0x0f) << 12) +
@@ -988,7 +988,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
     goto UTF8_4;
   } else if (c < 0xf4) {
   UTF8_4:
-    if ( (end && p+3 >= end) || (p[2]&0xc0) != 0x80 || (p[3]&0xc0) != 0x80) goto FAIL;
+    if ( (end && p+3 >= end) || !fl_utf8_is_continuation(p[2]) || !fl_utf8_is_continuation(p[3]) ) goto FAIL;
     if (len) *len = 4;
 #if STRICT_RFC3629
     /* RFC 3629 says all codes ending in fffe or ffff are illegal: */
@@ -1040,7 +1040,7 @@ const char* fl_utf8fwd(const char* p, const char* start, const char* end)
   const char* a;
   int len;
   /* if we are not pointing at a continuation character, we are done: */
-  if ((*p&0xc0) != 0x80) return p;
+  if ( !fl_utf8_is_continuation(*p) ) return p;
   /* search backwards for a 0xc0 starting the character: */
   for (a = p-1; ; --a) {
     if (a < start) return p;
@@ -1072,7 +1072,7 @@ const char* fl_utf8back(const char* p, const char* start, const char* end)
   const char* a;
   int len;
   /* if we are not pointing at a continuation character, we are done: */
-  if ((*p&0xc0) != 0x80) return p;
+  if ( !fl_utf8_is_continuation(*p) ) return p;
   /* search backwards for a 0xc0 starting the character: */
   for (a = p-1; ; --a) {
     if (a < start) return p;
@@ -1573,6 +1573,25 @@ int fl_utf8locale()
   return Fl::system_driver()->utf8locale();
 }
 
+/** Evaluates true if 'byte' is in the middle of a UTF-8 character (0x80..0xBF).
+  \return  1 if byte is a continuation char, 0 if not.
+
+*/
+int fl_utf8_is_continuation(char byte)
+{
+  //            Byte 1    Byte 2    Byte 3   ..etc..
+  //    ASCII:  0xxxxxxx
+  //  UTF8(2):  110xxxxx  10xxxxxx
+  //  UTF8(3):  1110xxxx  10xxxxxx  10xxxxxx
+  //  UTF8(4):  11110xxx  10xxxxxx  10xxxxxx  10xxxxxx
+  //  UTF8(5):  111110xx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
+  //  UTF8(6):  1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
+  //            \______/  \______________________________________________/
+  //           Start byte           Continuation bytes
+  //                                (c & 0xc0) == 0x80
+  //
+  return ((byte & 0xc0) == 0x80) ? 1 : 0;
+}
 
 /** Convert the UTF-8 used by FLTK to the locale-specific encoding
   used for filenames (and sometimes used for data in files).

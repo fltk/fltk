@@ -1321,19 +1321,19 @@ Fl_File_Chooser::update_preview()
       if ( (c&0x80)==0 ) {
         if (!isprint(c&255) && !fl_ascii_isspace(c)) break;
       } else if ( (c&0xe0)==0xc0 ) {
-        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;
       } else if ( (c&0xf0)==0xe0 ) {
-        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;
-        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;
       } else if ( (c&0xf8)==0xf0 ) {
-        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;
-        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;
-        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;
       }
     }

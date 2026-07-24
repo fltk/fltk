@@ -27,6 +27,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scrollbar.H>
 #include <FL/Fl_Rect.H>
+#include <FL/fl_utf8.h>         // fl_utf8_is_continuation()
 
 #include <stdarg.h>             // va_list (MinGW)
 
@@ -783,19 +784,7 @@ private:
     void clear(void) { buflen_ = clen_ = 0; }    // clear the buffer
     PartialUtf8Buf(void) { clear(); }            // Ctor
     // Is byte 'c' in the middle of a UTF-8 encoded byte sequence?
-    bool is_continuation(char c) {
-      //           Byte 1    Byte 2    Byte 3   ..etc..
-      //   ASCII:  0xxxxxxx
-      // UTF8(2):  110xxxxx  10xxxxxx
-      // UTF8(3):  1110xxxx  10xxxxxx  10xxxxxx
-      // UTF8(4):  11110xxx  10xxxxxx  10xxxxxx  10xxxxxx
-      // UTF8(5):  111110xx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
-      // UTF8(6):  1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
-      //           \______/  \______________________________________________/
-      //          Start byte           Continuation bytes
-      //                               (c & 0xc0) == 0x80
-      return ((c & 0xc0) == 0x80);
-    }
+    bool is_continuation(char c) { return fl_utf8_is_continuation(c); }  // issue #1541
     // Access buffer
     const char* buf(void) const { return buf_; }
     // Access buffer length

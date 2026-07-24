@@ -2173,7 +2173,7 @@ int Fl_Text_Buffer::next_char_clipped(int pos) const
 int Fl_Text_Buffer::utf8_align(int pos) const
 {
   char c = byte_at(pos);
-  while ( (c&0xc0) == 0x80) {
+  while (fl_utf8_is_continuation(c)) {
     pos--;
     c = byte_at(pos);
   }
