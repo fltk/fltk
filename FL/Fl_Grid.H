@@ -2,7 +2,7 @@
 // Fl_Grid widget header for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2021-2022 by Albrecht Schlosser.
-// Copyright 2022-2025 by Bill Spitzak and others.
+// Copyright 2022-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -199,9 +199,7 @@ public:
     /**
       Returns the next widget cell of the same row of this cell.
     */
-    Cell *next() {
-      return next_;
-    }
+    Cell *next() const { return next_; }
 
     /**
       Sets the \c next pointer of a grid's cell.

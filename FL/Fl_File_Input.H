@@ -57,10 +57,10 @@ public:
 
   Fl_File_Input(int X, int Y, int W, int H, const char *L=0);
 
-  int handle(int event) override;
+  int           handle(int event) override;
 
 protected:
-  void draw() override;
+  void          draw() override;
 
 public:
   /** Gets the box type used for the navigation bar. */
@@ -68,14 +68,14 @@ public:
   /** Sets the box type to use for the navigation bar.  */
   void          down_box(Fl_Boxtype b) { down_box_ = (uchar)b; }
 
-  int   value(const char *str);
-  int   value(const char *str, int len);
+  int           value(const char *str);
+  int           value(const char *str, int len);
 
   /**
     Returns the current value, which is a pointer to an internal buffer
     and is valid only until the next event is handled.
   */
-  const char    *value() { return Fl_Input_::value(); }
+  const char    *value() const { return Fl_Input_::value(); }
 };
 
 #endif // !Fl_File_Input_H

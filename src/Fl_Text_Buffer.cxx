@@ -756,7 +756,7 @@ void Fl_Text_Buffer::unselect()
 /*
  Return the primary selection range.
  */
-int Fl_Text_Buffer::selection_position(int *start, int *end)
+int Fl_Text_Buffer::selection_position(int *start, int *end) const
 {
   return mPrimary.selected(start, end);
 }
@@ -765,7 +765,7 @@ int Fl_Text_Buffer::selection_position(int *start, int *end)
 /*
  Return a copy of the selected text.
  */
-char *Fl_Text_Buffer::selection_text()
+char *Fl_Text_Buffer::selection_text() const
 {
   return selection_text_(&mPrimary);
 }
@@ -817,7 +817,7 @@ void Fl_Text_Buffer::secondary_unselect()
 /*
  Return the selected range.
  */
-int Fl_Text_Buffer::secondary_selection_position(int *start, int *end)
+int Fl_Text_Buffer::secondary_selection_position(int *start, int *end) const
 {
   return mSecondary.selected(start, end);
 }
@@ -826,7 +826,7 @@ int Fl_Text_Buffer::secondary_selection_position(int *start, int *end)
 /*
  Return a copy of the text in this selection.
  */
-char *Fl_Text_Buffer::secondary_selection_text()
+char *Fl_Text_Buffer::secondary_selection_text() const
 {
   return selection_text_(&mSecondary);
 }
@@ -878,7 +878,7 @@ void Fl_Text_Buffer::unhighlight()
 /*
  Return position of highlight.
  */
-int Fl_Text_Buffer::highlight_position(int *start, int *end)
+int Fl_Text_Buffer::highlight_position(int *start, int *end) const
 {
   return mHighlight.selected(start, end);
 }
@@ -887,7 +887,7 @@ int Fl_Text_Buffer::highlight_position(int *start, int *end)
 /*
  Return a copy of highlighted text.
  */
-char *Fl_Text_Buffer::highlight_text()
+char *Fl_Text_Buffer::highlight_text() const
 {
   return selection_text_(&mHighlight);
 }
@@ -1136,7 +1136,7 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
  Skip ahead a number of characters from a given index.
  This function breaks early if it encounters a newline character.
  */
-int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
+int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars) const
 {
   IS_UTF8_ALIGNED2(this, (lineStartPos))
 
@@ -1229,7 +1229,7 @@ int Fl_Text_Buffer::estimate_lines(int startPos, int endPos, int lineLen) const
  StartPos must be at a character boundary.
  This function is optimized for speed by not using UTF-8 calls.
  */
-int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
+int Fl_Text_Buffer::skip_lines(int startPos, int nLines) const
 {
   IS_UTF8_ALIGNED2(this, (startPos))
 
@@ -1267,7 +1267,7 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
  StartPos must be at a character boundary.
  This function is optimized for speed by not using UTF-8 calls.
  */
-int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
+int Fl_Text_Buffer::rewind_lines(int startPos, int nLines) const
 {
   IS_UTF8_ALIGNED2(this, (startPos))
 
@@ -1585,7 +1585,7 @@ int Fl_Text_Selection::includes(int pos) const {
  Return a duplicate of the selected text, or an empty string.
  Unicode safe.
  */
-char *Fl_Text_Buffer::selection_text_(Fl_Text_Selection * sel) const {
+char *Fl_Text_Buffer::selection_text_(const Fl_Text_Selection* sel) const {
   int start, end;
 
   /* If there's no selection, return an allocated empty string */

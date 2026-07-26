@@ -148,12 +148,12 @@ public:
 #endif
 
   /** Returns the filename of the shared image */
-  const char    *name() { return name_; }
+  const char    *name() const { return name_; }
 
   /** Returns the number of references of this shared image.
     When reference is below 1, the image is deleted.
   */
-  int           refcount() { return refcount_; }
+  int           refcount() const { return refcount_; }
 
   /** Returns whether this is an original image.
     Images loaded from a file or from memory are marked \p original as
@@ -162,7 +162,7 @@ public:
     \note This is useful for debugging (rarely used in user code).
     \since FLTK 1.4.0
   */
-  int original() { return original_; }
+  int original() const { return original_; }
 
   void  release() override;
   virtual void  reload();

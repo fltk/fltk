@@ -1,7 +1,7 @@
 //
 // Button header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file. If this
@@ -173,7 +173,7 @@ public:
   /// Return true if buttons are rendered as compact buttons.
   /// \return 0 if compact mode is off, 1 if it is on
   /// \see compact(bool)
-  uchar compact() { return compact_; }
+  uchar compact() const { return compact_; }
 };
 
 #endif

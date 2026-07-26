@@ -3,7 +3,7 @@
 //
 // Copyright 2002 by Greg Ercolano.
 // Copyright (c) 2004 O'ksi'D
-// Copyright 2009-2025 by Bill Spitzak and others.
+// Copyright 2009-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -161,8 +161,8 @@ private:
   std::vector<int> *_rowheights;        // row heights in pixels
 
   // number of columns and rows == size of corresponding vectors
-  int col_size();                       // size of the column widths vector
-  int row_size();                       // size of the row heights vector
+  int col_size() const;                 // size of the column widths vector
+  int row_size() const;                 // size of the row heights vector
 
   Fl_Cursor _last_cursor;               // last mouse cursor before changed to 'resize' cursor
 
@@ -436,7 +436,7 @@ public:
    Returns the current box type used for the data table.
   */
   inline Fl_Boxtype table_box( void ) const {
-    return(table->box());
+    return table->box();
   }
 
   virtual void rows(int val);                   // set number of rows
@@ -444,8 +444,8 @@ public:
   /**
    Returns the number of rows in the table.
   */
-  inline int rows() {
-    return(_rows);
+  inline int rows() const {
+    return _rows;
   }
 
   virtual void cols(int val);                   // set number of columns
@@ -454,7 +454,7 @@ public:
    Get the number of columns in the table.
   */
   inline int cols() const {
-    return(_cols);
+    return _cols;
   }
 
   /**
@@ -504,7 +504,7 @@ public:
     Returns if row resizing by the user is allowed.
   */
   inline int row_resize() const {
-    return(_row_resize);
+    return _row_resize;
   }
 
   /**
@@ -521,7 +521,7 @@ public:
     Returns if column resizing by the user is allowed.
   */
   inline int col_resize() const {
-    return(_col_resize);
+    return _col_resize;
   }
 
   /**
@@ -538,7 +538,7 @@ public:
     Returns the current column minimum resize value.
   */
   inline int col_resize_min() const {           // column minimum resizing width
-    return(_col_resize_min);
+    return _col_resize_min;
   }
 
   /**
@@ -554,7 +554,7 @@ public:
     Returns the current row minimum resize value.
   */
   inline int row_resize_min() const {          // column minimum resizing width
-    return(_row_resize_min);
+    return _row_resize_min;
   }
 
   /**
@@ -587,7 +587,7 @@ public:
     Returns if column headers are enabled or not.
   */
   inline int col_header() const {               // set/get col header enable flag
-    return(_col_header);
+    return _col_header;
   }
 
   /**
@@ -613,7 +613,7 @@ public:
     Gets the column header height.
   */
   inline int col_header_height() const {
-    return(_col_header_h);
+    return _col_header_h;
   }
 
   /**
@@ -629,7 +629,7 @@ public:
     Returns the current row header width (in pixels).
   */
   inline int row_header_width() const {
-    return(_row_header_w);
+    return _row_header_w;
   }
 
   /**
@@ -644,7 +644,7 @@ public:
     Returns the current row header color.
   */
   inline Fl_Color row_header_color() const {
-    return(_row_header_color);
+    return _row_header_color;
   }
 
   /**
@@ -659,18 +659,18 @@ public:
     Gets the color for column headers.
   */
   inline Fl_Color col_header_color() const {
-    return(_col_header_color);
+    return _col_header_color;
   }
 
   void row_height(int row, int height);         // set row height in pixels
 
   // Returns the current height of the specified row as a value in pixels.
-  int row_height(int row);
+  int row_height(int row) const;
 
   void col_width(int col, int width);           // set a column's width in pixels
 
   // Returns the current width of the specified column in pixels.
-  int col_width(int col);
+  int col_width(int col) const;
 
   /**
     Convenience method to set the height of all rows to the
@@ -699,14 +699,14 @@ public:
     Returns the current row scroll position as a row number.
   */
   int row_position() const {
-    return(_row_position);
+    return _row_position;
   }
 
   /**
     Returns the current column scroll position as a column number.
   */
   int col_position() const {
-    return(_col_position);
+    return _col_position;
   }
 
   /**
@@ -723,9 +723,9 @@ public:
     This row may be partially obscured.
   */
   inline int top_row() const {
-    return(row_position());
+    return row_position();
   }
-  int is_selected(int r, int c);                // selected cell
+  int is_selected(int r, int c) const;                // selected cell
   void get_selection(int &row_top, int &col_left, int &row_bot, int &col_right) const;
   void set_selection(int row_top, int col_left, int row_bot, int col_right);
   int move_cursor(int R, int C, int shiftselect);
@@ -823,7 +823,7 @@ public:
     valid until the next time a child is added or removed.</I>
   */
   Fl_Widget*const* array() const {
-    return(table->array());
+    return table->array();
   }
 
   /**
@@ -841,7 +841,7 @@ public:
     \endcode
   */
   Fl_Widget *child(int n) const {
-    return(table->child(n));
+    return table->child(n);
   }
 
   /**
@@ -853,17 +853,17 @@ public:
     \see child(int)
   */
   int children() const {
-    return(table->children()-2);    // -2: skip Fl_Scroll's h/v scrollbar widgets
+    return table->children()-2;    // -2: skip Fl_Scroll's h/v scrollbar widgets
   }
 
   // (doxygen will substitute Fl_Group's docs here)
   int find(const Fl_Widget *wgt) const {
-    return(table->find(wgt));
+    return table->find(wgt);
   }
 
   // (doxygen will substitute Fl_Group's docs here)
   int find(const Fl_Widget &wgt) const {
-    return(table->find(wgt));
+    return table->find(wgt);
   }
 
   // CALLBACKS
@@ -874,7 +874,7 @@ public:
     This function should only be used from within the user's callback function.
   */
   int callback_row() const {
-    return(_callback_row);
+    return _callback_row;
   }
 
   /**
@@ -883,7 +883,7 @@ public:
     This function should only be used from within the user's callback function.
   */
   int callback_col() const {
-    return(_callback_col);
+    return _callback_col;
   }
 
   /**
@@ -892,7 +892,7 @@ public:
     This function should only be used from within the user's callback function.
   */
   TableContext callback_context() const {
-    return(_callback_context);
+    return _callback_context;
   }
 
   /**
@@ -1032,7 +1032,7 @@ public:
     \see Fl::scrollbar_size(int)
   */
   int scrollbar_size() const {
-      return(_scrollbar_size);
+      return _scrollbar_size;
   }
 
   /**
@@ -1084,7 +1084,7 @@ public:
     \see tab_cell_nav(int)
   */
   int tab_cell_nav() const {
-    return(flags_ & TABCELLNAV ? 1 : 0);
+    return (flags_ & TABCELLNAV ? 1 : 0);
   }
 };
 

@@ -1,7 +1,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -119,12 +119,12 @@ protected:
   virtual void mask(const Fl_RGB_Image *) {}
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
-   of class Fl_Image_Surface_Driver for the plaform.
+   of class Fl_Image_Surface_Driver for the platform.
    */
   static Fl_Image_Surface_Driver *newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off);
 public:
   /** Returns pointer to the associated Fl_Image_Surface object */
-  Fl_Image_Surface *image_surface() { return image_surface_; }
+  Fl_Image_Surface *image_surface() const { return image_surface_; }
 };
 
 /**

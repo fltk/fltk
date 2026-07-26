@@ -246,16 +246,16 @@ public:
   void mult_matrix(double a, double b, double c, double d, double x, double y);
   void rotate(double d);
   void translate(double x,double y);
-  double transform_x(double x, double y);
-  double transform_y(double x, double y);
-  double transform_dx(double x, double y);
-  double transform_dy(double x, double y);
+  double transform_x(double x, double y) const;
+  double transform_y(double x, double y) const;
+  double transform_dx(double x, double y) const;
+  double transform_dy(double x, double y) const;
   /** Return the current Fl_Font_Descriptor */
-  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
+  inline Fl_Font_Descriptor *font_descriptor() const { return font_descriptor_;}
   /** Set the current Fl_Font_Descriptor */
   inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** Current scale factor between FLTK and drawing units: drawing = FLTK * scale() */
-  float scale() { return scale_; }
+  float scale() const { return scale_; }
   /** Sets the current value of the scaling factor */
   virtual void scale(float f);
   /** Return whether the graphics driver can do alpha blending */

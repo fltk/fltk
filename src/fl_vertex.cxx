@@ -1,7 +1,7 @@
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -127,22 +127,22 @@ void Fl_Graphics_Driver::begin_polygon() {
 }
 
 /** see fl_transform_x() */
-double Fl_Graphics_Driver::transform_x(double x, double y) {
+double Fl_Graphics_Driver::transform_x(double x, double y) const {
   return x*m.a + y*m.c + m.x;
 }
 
 /** see fl_transform_y() */
-double Fl_Graphics_Driver::transform_y(double x, double y) {
+double Fl_Graphics_Driver::transform_y(double x, double y) const {
   return x*m.b + y*m.d + m.y;
 }
 
 /** see fl_transform_dx() */
-double Fl_Graphics_Driver::transform_dx(double x, double y) {
+double Fl_Graphics_Driver::transform_dx(double x, double y) const {
   return x*m.a + y*m.c;
 }
 
 /** see fl_transform_dy() */
-double Fl_Graphics_Driver::transform_dy(double x, double y) {
+double Fl_Graphics_Driver::transform_dy(double x, double y) const {
   return x*m.b + y*m.d;
 }
 
