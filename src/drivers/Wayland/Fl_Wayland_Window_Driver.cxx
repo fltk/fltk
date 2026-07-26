@@ -1445,15 +1445,11 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     xdg_positioner_set_constraint_adjustment(positioner, constraint);
   }
   if (pWindow->tooltip_window()) {
+    xdg_positioner_set_anchor_rect(positioner, popup_x, Fl::event_y() * f, 1, 1);
     xdg_positioner_set_constraint_adjustment(positioner,
       XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
       XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y);
-    int dummy, scr_H;
-    Fl::screen_xywh(dummy, dummy, dummy, scr_H);
-    popup_y = Fl::event_y();
-    if (popup_y + pWindow->h() > scr_H) popup_y--;
-  }
-  if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
+  } else if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
     xdg_positioner_set_offset(positioner, 0, popup_y);
   }
   new_window->xdg_popup = xdg_surface_get_popup(new_window->xdg_surface,
