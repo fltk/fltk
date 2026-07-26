@@ -1,7 +1,7 @@
 //
 // Shortcut Button  code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -249,6 +249,7 @@ int Fl_Shortcut_Button::handle(int e) {
           }
         }
         if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
+          // TODO: The code above ussumes a code page ^^^^^. Fix tu use utf-8
           if (fl_ascii_isupper(v)) {
             v = fl_ascii_tolower(v);
             v |= FL_SHIFT;

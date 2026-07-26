@@ -1,7 +1,7 @@
 //
 // Syntax highlighting for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 // Copyright 2020 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
