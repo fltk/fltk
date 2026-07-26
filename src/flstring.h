@@ -200,6 +200,38 @@ inline int fl_ascii_isdigit(int ch) {
   return (ch >= '0' && ch <= '9');
 }
 
+
+/*
+  This function can be used to replace isupper(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note isupper() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_isupper(int ch) {
+  return (ch >= 'A' && ch <= 'Z');
+}
+
+/*
+  This function can be used to replace islower(int) in FLTK.
+
+  This function is \b NOT UTF-8 aware and \b should only be used where only ASCII
+  checks are needed.
+
+  \note islower() can only be used correctly on ASCII characters (bytes) in the
+    range 0 .. 127. Everything else is locale dependent or results in undefined
+    behavior.
+
+  \param[in]  ch  input character
+*/
+inline int fl_ascii_islower(int ch) {
+  return (ch >= 'a' && ch <= 'z');
+}
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */

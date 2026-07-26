@@ -1,7 +1,7 @@
 //
 // Fl_XPM_Image routines.
 //
-// Copyright 1997-2016 by Bill Spitzak and others.
+// Copyright 1997-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,8 +35,8 @@
 
 static int hexdigit(int x) {    // I - Hex digit...
   if (fl_ascii_isdigit(x)) return x-'0';
-  if (isupper(x)) return x-'A'+10;
-  if (islower(x)) return x-'a'+10;
+  if (fl_ascii_isupper(x)) return x-'A'+10;
+  if (fl_ascii_islower(x)) return x-'a'+10;
   return 20;
 }
 
