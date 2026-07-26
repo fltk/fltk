@@ -790,7 +790,7 @@ Fl_File_Chooser::fileNameCB()
 
   // Make sure we have an absolute path...
   int dirIsRelative = directory_[0] != '\0' && filename[0] != '/';
-  if (dirIsRelative && Fl::system_driver()->colon_is_drive()) dirIsRelative = !(fl_ascii_isalpha(filename[0] & 255) && (!filename[1] || filename[1] == ':'));
+  if (dirIsRelative && Fl::system_driver()->colon_is_drive()) dirIsRelative = !(fl_ascii_isalpha(filename[0]) && (!filename[1] || filename[1] == ':'));
   if (dirIsRelative) {
     fl_filename_absolute(pathname, sizeof(pathname), filename);
     value(pathname);
@@ -807,7 +807,7 @@ Fl_File_Chooser::fileNameCB()
   if (Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter) {
     // Enter pressed - select or change directory...
     int condition = 0;
-    if (Fl::system_driver()->colon_is_drive()) condition = fl_ascii_isalpha(pathname[0] & 255) && pathname[1] == ':' && !pathname[2];
+    if (Fl::system_driver()->colon_is_drive()) condition = fl_ascii_isalpha(pathname[0]) && pathname[1] == ':' && !pathname[2];
     if (!condition) condition = ( Fl::system_driver()->filename_isdir_quick(pathname) && compare_dirnames(pathname, directory_) );
     if (condition) {
       directory(pathname);
@@ -1337,13 +1337,13 @@ Fl_File_Chooser::update_preview()
         ptr++;
       }
     }
-//         *ptr && (fl_ascii_isprint(*ptr & 255) || fl_ascii_isspace(*ptr));
+//         *ptr && (fl_ascii_isprint(*ptr) || fl_ascii_isspace(*ptr));
 //       ptr ++);
 
     // Scan the buffer for printable characters in 8 bit
     if (*ptr || ptr == preview_text_) {
       for (ptr = preview_text_;
-         *ptr && (fl_ascii_isprint(*ptr & 255) || fl_ascii_isspace(*ptr));
+         *ptr && (fl_ascii_isprint(*ptr) || fl_ascii_isspace(*ptr));
          ptr ++) {/*empty*/}
     }
 

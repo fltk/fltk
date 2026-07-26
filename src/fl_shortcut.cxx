@@ -1,7 +1,7 @@
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -347,7 +347,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   if (c == ls)
     return 1;
   // On macOS, we need to simulate the upper case keystroke as well
-  if (extra_test && Fl::event_state(FL_ALT) && c<128 && fl_ascii_isalpha(c) && (unsigned)toupper(c)==ls)
+  if (extra_test && Fl::event_state(FL_ALT) && fl_ascii_isalpha(c) && (unsigned)toupper(c)==ls)
     return 1;
   return 0;
 }

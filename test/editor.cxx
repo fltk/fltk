@@ -20,7 +20,6 @@
 // Enable tutorial code for each chapter by adjusting this macro to match
 // the chapter number.
 #define TUTORIAL_CHAPTER 10
-#include "src/flstring.h"
 
 // ---- Tutorial Chapter 1 -----------------------------------------------------
 #if TUTORIAL_CHAPTER >= 1
@@ -924,7 +923,7 @@ style_parse(const char *text,
     else *style++ = current;
     col ++;
 
-    last = fl_ascii_isalnum((*text)&255) || *text == '_' || *text == '.';
+    last = isalnum((*text)&255) || *text == '_' || *text == '.';
 
     if (*text == '\n') {
       // Reset column and possibly reset the style

@@ -27,8 +27,6 @@
 #include "io/file_chooser.h"
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
-#include "src/flstring.h"
-
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Flex.H>
@@ -3055,7 +3053,7 @@ static void cb_Class(Fl_Input* o, void* v) {
     char *s = (char*)nv;
     char *d = (char*)nv;
     while (*s) {
-      if (fl_ascii_isalnum((unsigned char)*s) || *s == '_') {
+      if (isalnum((unsigned char)*s) || *s == '_') {
         *d++ = *s;
       }
       s++;
