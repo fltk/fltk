@@ -442,7 +442,7 @@ int Fl_File_Icon::load_image(const char *ifile) // I - File to read from
           // Read the RGB triplet...
           lineptr += 3;
           for (j = 0; j < 12; j ++)
-            if (!isxdigit(lineptr[j]))
+            if (!fl_ascii_isxdigit(lineptr[j]))
               break;
 
           switch (j) {
