@@ -627,7 +627,7 @@ Fl_WinAPI_System_Driver::filename_relative(char *to,    // O - Relative filename
   // if there is a drive letter, make sure both paths use the same drive
   if (   (unsigned)base_dir[0] < 128 && isalpha(base_dir[0]) && base_dir[1] == ':'
       && (unsigned)dest_dir[0] < 128 && isalpha(dest_dir[0]) && dest_dir[1] == ':') {
-    if (tolower(base_dir[0]) != tolower(dest_dir[0])) {
+    if (fl_ascii_tolower(base_dir[0]) != fl_ascii_tolower(dest_dir[0])) {
       strlcpy(to, dest_dir, tolen);
       return 0;
     }

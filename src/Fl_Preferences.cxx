@@ -1033,10 +1033,10 @@ static void *decodeHex( const char *src, int &size ) {
   const char *s = src;
   for ( int i=size; i>0; i-- ) {
     int v;
-    char x = tolower(*s++);
+    char x = fl_ascii_tolower(*s++);
     if ( x >= 'a' ) v = x-'a'+10; else v = x-'0';
     v = v<<4;
-    x = tolower(*s++);
+    x = fl_ascii_tolower(*s++);
     if ( x >= 'a' ) v += x-'a'+10; else v += x-'0';
     *d++ = (uchar)v;
   }

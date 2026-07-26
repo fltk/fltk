@@ -2726,9 +2726,9 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
       strcpy(buffer, xclass);
       strcpy(buffer + len + 1, xclass);
       // create the capitalized version:
-      buffer[len + 1] = toupper(buffer[len + 1]);
+      buffer[len + 1] = fl_ascii_toupper(buffer[len + 1]);
       if (buffer[len + 1] == 'X')
-        buffer[len + 2] = toupper(buffer[len + 2]);
+        buffer[len + 2] = fl_ascii_toupper(buffer[len + 2]);
       XChangeProperty(fl_display, xp->xid, XA_WM_CLASS, XA_STRING, 8, 0,
                       (unsigned char *)buffer, len * 2 + 2);
     }
