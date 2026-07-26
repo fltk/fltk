@@ -1573,10 +1573,7 @@ int fl_utf8locale()
   return Fl::system_driver()->utf8locale();
 }
 
-/** Evaluates true if 'byte' is in the middle of a UTF-8 character (0x80..0xBF).
-  \return  1 if byte is a continuation char, 0 if not.
-
-*/
+/** Evaluates true if 'byte' is in the middle of a UTF-8 character (0x80..0xBF). */
 int fl_utf8_is_continuation(char byte)
 {
   //            Byte 1    Byte 2    Byte 3   ..etc..
@@ -1590,7 +1587,7 @@ int fl_utf8_is_continuation(char byte)
   //           Start byte           Continuation bytes
   //                                (c & 0xc0) == 0x80
   //
-  return ((byte & 0xc0) == 0x80) ? 1 : 0;
+  return (byte & 0xc0) == 0x80;
 }
 
 /** Convert the UTF-8 used by FLTK to the locale-specific encoding
