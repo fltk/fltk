@@ -138,7 +138,7 @@ Fl_File_Icon::load_fti(const char *fti) // I - File to read from
     }
 
     // OK, this character better be a letter...
-    if (!isalpha(ch))
+    if (!fl_ascii_isalpha(ch))
     {
       Fl::error("Fl_File_Icon::load_fti(): Expected a letter at file position %ld (saw '%c')",
                 ftell(fp) - 1, ch);

@@ -4381,7 +4381,7 @@ static size_t url_scheme(const std::string &url, bool skip_slashes)
 {
   // First skip all ascii letters and digits
   size_t pos = 0;
-  while ( (pos < url.size()) && ( isalnum(url[pos]) || (url[pos] == '+') || (url[pos] == '-') || (url[pos] == '.') )) {
+  while ( (pos < url.size()) && ( fl_ascii_isalnum(url[pos]) || (url[pos] == '+') || (url[pos] == '-') || (url[pos] == '.') )) {
     pos++;
   }
   // Next, check for the ':' character
