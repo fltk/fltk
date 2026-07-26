@@ -24,7 +24,8 @@
  \param[in] X,Y   position of top-left of image to read
  \param[in] w,h   width and height of image to read
  \param[in] alpha alpha value for image (0 for none)
- \returns pointer to pixel buffer, or NULL if allocation failed.
+ \returns pointer to pixel buffer that should be freed using `delete[]`,
+          or `nullptr` if allocation failed.
 
  The \p p argument points to a buffer that can hold the image and must
  be at least \p w*h*3 bytes when reading RGB images, or \p w*h*4 bytes
