@@ -1,7 +1,7 @@
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -312,7 +312,7 @@ std::string fl_filename_path_str(const std::string &filename) {
   const char *base = filename.c_str();
   const char *name = fl_filename_name(base);
   if (name) {
-    return std::string(base, (int)(name-base));
+    return std::string(base, (size_t)(name-base));
   } else {
     return std::string();
   }

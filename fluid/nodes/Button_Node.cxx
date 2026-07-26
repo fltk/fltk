@@ -1,7 +1,7 @@
 //
 // Button Node code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,7 +15,7 @@
 //
 
 /**
- \file Bottun_Node.cxx
+ \file Button_Node.cxx
 
  Node prototypes for Fl_Button based classes. Those are used by the Node
  Factory to generate the scene from project files or user input.
@@ -72,7 +72,7 @@ void Button_Node::write_properties(fluid::io::Project_Writer &f) {
   Fl_Button *btn = (Fl_Button*)o;
   if (btn->compact()) {
     f.write_string("compact");
-    f.write_string("%d", btn->compact());
+    f.write_string("%u", btn->compact());
   }
 }
 
