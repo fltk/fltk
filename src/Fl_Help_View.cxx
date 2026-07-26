@@ -5,7 +5,7 @@
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2025 by Bill Spitzak and others.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1488,7 +1488,7 @@ void Fl_Help_View::Impl::format() {
           }
 
           if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-            if (fl_ascii_isdigit(attr[0] & 255)) {
+            if (fl_ascii_isdigit(attr[0])) {
               // Absolute size
               fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
             } else {
@@ -2934,7 +2934,7 @@ void Fl_Help_View::Impl::draw()
             }
 
             if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-              if (fl_ascii_isdigit(attr[0] & 255)) {
+              if (fl_ascii_isdigit(attr[0])) {
                 // Absolute size
                 fsize = (int)(textsize_ * pow(1.2, atof(attr) - 3.0));
               } else {
