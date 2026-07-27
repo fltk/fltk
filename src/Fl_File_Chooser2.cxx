@@ -1319,7 +1319,7 @@ Fl_File_Chooser::update_preview()
     for (ptr = preview_text_; *ptr; ptr++) {
       uchar c = uchar(*ptr);
       if ( (c&0x80)==0 ) {
-        if (!fl_ascii_isprint(c&255) && !fl_ascii_isspace(c)) break;
+        if (!fl_ascii_isprint(c) && !fl_ascii_isspace(c)) break;
       } else if ( (c&0xe0)==0xc0 ) {
         if (ptr[1] && !fl_utf8_is_continuation(ptr[1])) break;
         ptr++;

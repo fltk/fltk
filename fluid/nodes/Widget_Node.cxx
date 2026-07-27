@@ -748,7 +748,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
           if (instring) {
             if (*ptr == '\\') ptr++;
             else if (*ptr == '\"') instring = 0;
-          } else if (inname && !fl_ascii_isalnum(*ptr & 255)) {
+          } else if (inname && !fl_ascii_isalnum(*ptr)) {
             inname = 0;
           } else if (*ptr == '/' && ptr[1]=='*') {
             incomment = 1; ptr++;
@@ -763,7 +763,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
               incppcomment = 0;
           } else if (*ptr == '\"') {
             instring = 1;
-          } else if (fl_ascii_isalnum(*ptr & 255) || *ptr == '_') {
+          } else if (fl_ascii_isalnum(*ptr) || *ptr == '_') {
             size_t len = strspn(ptr, "0123456789_"
                                      "abcdefghijklmnopqrstuvwxyz"
                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
