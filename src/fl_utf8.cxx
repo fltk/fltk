@@ -1710,17 +1710,22 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
  Returns pointer to beginning of character before given location in UTF8 string accounting for emoji sequences.
  See fl_utf8_next_composed_char() for a hint about what is an emoji sequence.
  Use this function to step back to the previous character within a UTF8 string processing an entire emoji sequence
- if present as a single character.
- \param from points to a location within a UTF8 string. If this location is inside the UTF8
+ if present as a single character. The string is assumed to be NULL-terminated.
+ The returned value cannot be lower than \c begin.
+ \param from points to a location within a UTF8 string or to terminal null byte. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
  \param begin points to start of first codepoint of the string.
  \return pointer to beginning of first character, possibly an emoji sequence, before the codepoint that begins at \p from.
  */
 const char *fl_utf8_previous_composed_char(const char *from, const char *begin) {
-  int l = fl_utf8len(*from);
-  if (from <= begin || l == -1) return from - 1;
-  const char *keep = from + l;
-  from = fl_utf8back(from - 1, begin, NULL);
+  if (from <= begin) return begin;
+  const char *keep = from;
+  if (*from) {
+    int l = fl_utf8len(*from);
+    if (l == -1) return from - 1;
+    keep += l;
+  }
+  from = fl_utf8back(from - 1, begin, keep);
   unsigned u = fl_utf8decode(from, keep, NULL);
   if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
     const char *previous = fl_utf8back(from - 1, begin, NULL);
@@ -1737,7 +1742,7 @@ const char *fl_utf8_previous_composed_char(const char *from, const char *begin) 
       if (u == 0x1F3F4) return previous; // “waving black flag” starts subdivision flags
     } while (u >= 0xE0020 && u <= 0xE007E); // any series of "tag components"
   }
-  while (from >= begin) {
+  while (from > begin) {
     u = fl_utf8decode(from, keep, NULL);
     if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
       from = fl_utf8back(from - 1, begin, NULL);
