@@ -22,7 +22,7 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
 #if FLTK_HAVE_PEN_SUPPORT
-#  include "../Base/Fl_Base_Pen_Events.H"
+#  include "../Base/Fl_Base_Pen_Driver.H"
 #endif
 #ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"

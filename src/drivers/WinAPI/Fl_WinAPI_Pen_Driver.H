@@ -20,7 +20,7 @@
 #include <config.h>
 #include <FL/platform.H>
 
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
 // The Pointer Input API (GetPointerType, GetPointerPenInfo, POINTER_PEN_INFO,
 // PEN_MASK_*, IS_POINTER_*_WPARAM, ...) requires Windows 8 (_WIN32_WINNT >=
@@ -92,4 +92,4 @@ FL_EXPORT bool fl_winapi_pen_handle(HWND hwnd, UINT msg, WPARAM wParam,
                                     LPARAM lParam);
 
 
-#endif // FL_WINAPI_PEN_EVENTS_H
+#endif // FL_WINAPI_PEN_DRIVER_H

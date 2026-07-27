@@ -45,7 +45,7 @@
 #if HAVE_CURSOR_SHAPE
 #  include "cursor-shape-client-protocol.h"
 #  include "tablet-client-protocol.h"
-#  include "Fl_Wayland_Pen_Events.H"
+#  include "Fl_Wayland_Pen_Driver.H"
 #endif
 #include <assert.h>
 #include <sys/mman.h>

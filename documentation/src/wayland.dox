@@ -119,7 +119,7 @@ to a mapped Fl_Window.
 
 Classes \c Fl_Wayland_Window_Driver, \c Fl_Wayland_Screen_Driver, \c Fl_Wayland_Graphics_Driver,
 \c Fl_Wayland_Copy_Surface_Driver, \c Fl_Wayland_Image_Surface_Driver and
-\c Fl_Wayland_Gl_Window_Driver and files \c Fl_Wayland_Pen_Events.cxx and
+\c Fl_Wayland_Gl_Window_Driver and files \c Fl_Wayland_Pen_Driver.cxx and
 \c fl_wayland_platform_init.cxx contain all the Wayland-specific code of the FLTK library.
 This code is located at \c src/drivers/Wayland/ in the FLTK source tree.
 A single C++ source file generally contains all the code of a given class.

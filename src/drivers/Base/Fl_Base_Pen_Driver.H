@@ -15,8 +15,8 @@
 //
 
 
-#ifndef FL_BASE_PEN_EVENTS_H
-#define FL_BASE_PEN_EVENTS_H
+#ifndef FL_BASE_PEN_DRIVER_H
+#define FL_BASE_PEN_DRIVER_H
 
 #include <config.h>
 #include <FL/core/pen_events.H>
@@ -115,4 +115,4 @@ extern Driver& newPenDriver();
 } // namespace Fl
 
 
-#endif // FL_BASE_PEN_EVENTS_H
+#endif // FL_BASE_PEN_DRIVER_H

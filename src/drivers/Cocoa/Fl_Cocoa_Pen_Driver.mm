@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
 #include <FL/platform.H>
 #include <FL/Fl.H>
@@ -82,9 +82,6 @@ namespace Pen {
 class Cocoa_Driver : public Driver {
 public:
   Cocoa_Driver() = default;
-  //virtual void subscribe(Fl_Widget* widget) override;
-  //virtual void unsubscribe(Fl_Widget* widget) override;
-  //virtual void release() override;
   virtual Trait traits() override { return driver_traits_; }
   virtual Trait pen_traits(int pen_id) override {
     auto it = trait_list_.find(pen_id);

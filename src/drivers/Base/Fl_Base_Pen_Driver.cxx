@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
 
 class Fl_Widget;

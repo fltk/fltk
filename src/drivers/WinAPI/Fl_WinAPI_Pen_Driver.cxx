@@ -59,7 +59,7 @@
  driver performs NO mouse fallback: when no subscriber wants the pen event,
  it simply does nothing and lets the normal WinAPI mouse path — driven by the
  legacy messages Windows already sends — handle it. See
- Fl_WinAPI_Pen_Events.H for the corresponding note about suppressing the
+ Fl_WinAPI_Pen_Driver.H for the corresponding note about suppressing the
  legacy message when a pen event *is* consumed by a subscriber.
 
  Shared helper functions
@@ -67,13 +67,13 @@
  offset_subwindow_event(), event_inside(), find_below_pen(), copy_state(),
  pen_send(), and pen_send_all() are identical in spirit to the Cocoa and
  Wayland drivers. They are duplicated here intentionally rather than
- elevated to Fl_Base_Pen_Events to avoid touching the shared API in this
- patch (same TODO as in Fl_Wayland_Pen_Events.cxx: factor these into
- Fl_Base_Pen_Events.cxx and expose via the header).
+ elevated to Fl_Base_Pen_Driver to avoid touching the shared API in this
+ patch (same TODO as in Fl_Wayland_Pen_Driver.cxx: factor these into
+ Fl_Base_Pen_Driver.cxx and expose via the header).
  */
 
-#include "Fl_WinAPI_Pen_Events.H"
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "Fl_WinAPI_Pen_Driver.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -141,7 +141,7 @@ Fl::Pen::Driver& newPenDriver() {
 
 Trait WinAPI_Driver::traits() {
   // The Pointer Input API used by this driver is available on Windows 8 and
-  // later, which this build targets (see Fl_WinAPI_Pen_Events.H), so the
+  // later, which this build targets (see Fl_WinAPI_Pen_Driver.H), so the
   // driver itself is always considered available.
   Trait t = Trait::DRIVER_AVAILABLE | Trait::PEN_ID | Trait::ERASER |
             Trait::PRESSURE | Trait::TILT_X | Trait::TILT_Y | Trait::TWIST;
@@ -177,7 +177,7 @@ void WinAPI_Driver::release() {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Platform-independent helper functions
-// (TODO: factor into Fl_Base_Pen_Events.cxx, same code as Cocoa/Wayland drivers)
+// (TODO: factor into Fl_Base_Pen_Driver.cxx, same code as Cocoa/Wayland drivers)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /*
