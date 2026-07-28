@@ -23,6 +23,7 @@
 #include "flstring.h"
 
 #include <stdlib.h>
+#include <cstdint>
 
 //
 // Base image class...
@@ -549,88 +550,132 @@ Fl_RGB_Image *Fl_RGB_Image::copy_nearest_neighbor_(int W, int H) const {
   return new_image;
 }
 
+/**
+  Create a scaled up or down copy of this image using bilinear interpolation.
 
+  Scaling quality is best for factors > 0.5. Scaling below 0.5 can be achieved
+  by using copy_scale_down...() and copy_scale_up() first until the resulting
+  scale factor is greater than 0.5 .
+
+  This function can scale up or down for w and h independently.
+
+  RGB or gray must not be premultiplied if alpha is used.
+
+  Yes, this function is relatively slow. It may be worth looking to host OS
+  support for scaling images.
+
+  \param[in] W, H  Requested width and height of the new image
+  \returns  A new image object with the requested size. The caller is responsible
+           for deleting the returned image object when it is no longer needed.
+*/
 Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(int W, int H) const {
-  Fl_RGB_Image  *new_image;     // New RGB image
-  uchar         *new_array;     // New array for image data
-  // OK, need to resize the image data; allocate memory and create new image
-  uchar         *new_ptr;       // Pointer into new array
-  int           dx, dy,         // Destination coordinates
-                line_d;         // stride from line to line
+  const uint32_t D = d();
+  const uint32_t SW = data_w();
+  const uint32_t SH = data_h();
+  const uint32_t SLD = ld() ? ld() : SW * D;
 
-  // Allocate memory for the new image...
-  new_array = new uchar [((long)W) * H * d()];
-  new_image = new Fl_RGB_Image(new_array, W, H, d());
+  uint8_t *new_array = new uint8_t[((long)W) * H * D];
+  Fl_RGB_Image *new_image = new Fl_RGB_Image(new_array, W, H, D);
   new_image->alloc_array = 1;
 
-  line_d = ld() ? ld() : data_w() * d();
+  // Precompute X and Y coordinate maps and weights (8-bit fixed point: 0..256).
+  uint32_t *x0_off = new uint32_t[W];
+  uint32_t *x1_off = new uint32_t[W];
+  uint32_t *wx1 = new uint32_t[W];
 
+  uint32_t *y0_off = new uint32_t[H];
+  uint32_t *y1_off = new uint32_t[H];
+  uint32_t *wy1 = new uint32_t[H];
 
-  // Bilinear scaling (FL_RGB_SCALING_BILINEAR)
-  const float xscale = (data_w() - 1) / (float) W;
-  const float yscale = (data_h() - 1) / (float) H;
-  for (dy = 0; dy < H; dy++) {
-    float oldy = dy * yscale;
-    if (oldy >= data_h())
-      oldy = float(data_h() - 1);
-    const float yfract = oldy - (unsigned) oldy;
+  // Pixel-center mapping works for both upscaling and downscaling.
+  for (uint32_t x = 0; x < W; ++x) {
+    float sx = ((x + 0.5f) * SW) / (float)W - 0.5f;
+    int32_t x0 = (int32_t)sx;
+    if (sx < 0.0f && (float)x0 != sx) x0--; // floor for negatives
 
-    for (dx = 0; dx < W; dx++) {
-      new_ptr = new_array + ((long)dy) * W * d() + dx * d();
+    float fx = sx - x0;
 
-      float oldx = dx * xscale;
-      if (oldx >= data_w())
-        oldx = float(data_w() - 1);
-      const float xfract = oldx - (unsigned) oldx;
+    if (x0 < 0) {
+      x0 = 0;
+      fx = 0.0f;
+    } else if (x0 >= SW - 1) {
+      x0 = SW - 1;
+      fx = 0.0f;
+    }
 
-      const unsigned leftx = (unsigned)oldx;
-      const unsigned lefty = (unsigned)oldy;
-      const unsigned rightx = (unsigned)(oldx + 1 >= data_w() ? oldx : oldx + 1);
-      const unsigned righty = (unsigned)oldy;
-      const unsigned dleftx = (unsigned)oldx;
-      const unsigned dlefty = (unsigned)(oldy + 1 >= data_h() ? oldy : oldy + 1);
-      const unsigned drightx = (unsigned)rightx;
-      const unsigned drighty = (unsigned)dlefty;
+    uint32_t x1 = (x0 < SW - 1) ? (x0 + 1) : x0;
+    int32_t w = (int32_t)(fx * 256.0f + 0.5f);
+    if (w < 0) w = 0;
+    else if (w > 256) w = 256;
 
-      uchar left[4], right[4], downleft[4], downright[4];
-      memcpy(left, array + ((long)lefty) * line_d + leftx * d(), d());
-      memcpy(right, array + ((long)righty) * line_d + rightx * d(), d());
-      memcpy(downleft, array + ((long)dlefty) * line_d + dleftx * d(), d());
-      memcpy(downright, array + ((long)drighty) * line_d + drightx * d(), d());
+    x0_off[x] = x0 * D;
+    x1_off[x] = x1 * D;
+    wx1[x] = w;
+  }
 
-      int i;
-      if (d() == 4) {
-        for (i = 0; i < 3; i++) {
-          left[i] = (uchar)(left[i] * left[3] / 255.0f);
-          right[i] = (uchar)(right[i] * right[3] / 255.0f);
-          downleft[i] = (uchar)(downleft[i] * downleft[3] / 255.0f);
-          downright[i] = (uchar)(downright[i] * downright[3] / 255.0f);
-        }
+  for (uint32_t y = 0; y < H; ++y) {
+    float sy = ((y + 0.5f) * SH) / (float)H - 0.5f;
+    int32_t y0 = (int32_t)sy;
+    if (sy < 0.0f && (float)y0 != sy) y0--; // floor for negatives
+
+    float fy = sy - y0;
+
+    if (y0 < 0) {
+      y0 = 0;
+      fy = 0.0f;
+    } else if (y0 >= SH - 1) {
+      y0 = SH - 1;
+      fy = 0.0f;
+    }
+
+    uint32_t y1 = (y0 < SH - 1) ? (y0 + 1) : y0;
+    int32_t w = (int32_t)(fy * 256.0f + 0.5f);
+    if (w < 0) w = 0;
+    else if (w > 256) w = 256;
+
+    y0_off[y] = y0 * SLD;
+    y1_off[y] = y1 * SLD;
+    wy1[y] = w;
+  }
+
+  for (uint32_t y = 0; y < H; ++y) {
+    const uint8_t *row0 = array + y0_off[y];
+    const uint8_t *row1 = array + y1_off[y];
+    uint8_t *dst = new_array + y * W * D;
+
+    const uint32_t wy = wy1[y];
+    const uint32_t wy0 = 256 - wy;
+
+    for (uint32_t x = 0; x < W; ++x) {
+      const uint8_t *p00 = row0 + x0_off[x];
+      const uint8_t *p10 = row0 + x1_off[x];
+      const uint8_t *p01 = row1 + x0_off[x];
+      const uint8_t *p11 = row1 + x1_off[x];
+
+      const uint32_t wx = wx1[x];
+      const uint32_t wx0 = 256 - wx;
+
+      for (uint32_t c = 0; c < D; ++c) {
+        const uint32_t top = p00[c] * wx0 + p10[c] * wx;
+        const uint32_t bot = p01[c] * wx0 + p11[c] * wx;
+        dst[c] = (uint8_t)((top * wy0 + bot * wy + 32768) >> 16);
       }
-
-      const float leftf = 1 - xfract;
-      const float rightf = xfract;
-      const float upf = 1 - yfract;
-      const float downf = yfract;
-
-      for (i = 0; i < d(); i++) {
-        new_ptr[i] = (uchar)((left[i] * leftf +
-                              right[i] * rightf) * upf +
-                             (downleft[i] * leftf +
-                              downright[i] * rightf) * downf);
-      }
-
-      if (d() == 4 && new_ptr[3]) {
-        for (i = 0; i < 3; i++) {
-          new_ptr[i] = (uchar)(new_ptr[i] / (new_ptr[3] / 255.0f));
-        }
-      }
+      dst += D;
     }
   }
+
+  delete[] x0_off;
+  delete[] x1_off;
+  delete[] wx1;
+  delete[] y0_off;
+  delete[] y1_off;
+  delete[] wy1;
+
   return new_image;
 }
 
 /**
+  Create a scaled down copy of this image by a factor of 2 in the horizontal direction.
  */
 Fl_RGB_Image *Fl_RGB_Image::copy_scale_down_2h_() const {
   int W = data_w()/2;
