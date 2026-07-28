@@ -1728,6 +1728,7 @@ const char *fl_utf8_previous_composed_char(const char *from, const char *begin) 
   from = fl_utf8back(from - 1, begin, keep);
   unsigned u = fl_utf8decode(from, keep, NULL);
   if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
+    if (from <= begin) return begin;
     const char *previous = fl_utf8back(from - 1, begin, NULL);
     u = fl_utf8decode(previous, keep, NULL);
     if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 2nd Regional indicator symbol gives a flag
