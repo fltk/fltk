@@ -192,7 +192,6 @@ int fullscreen = 0;
 
 int main (int argc, char* argv[])
 {
-  Fl::use_high_res_GL(true);
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | FL_OPENGL3);
   glutInitWindowSize(400, 400);

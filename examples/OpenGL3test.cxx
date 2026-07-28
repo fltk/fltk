@@ -250,7 +250,6 @@ void add_widgets(Fl_Gl_Window *g) {
 
 int main(int argc, char **argv)
 {
-  Fl::use_high_res_GL(1);
   Fl_Window *topwin = new Fl_Window(800, 300);
   SimpleGL3Window *win = new SimpleGL3Window(0, 0, 300, 300);
   win->end();

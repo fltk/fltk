@@ -388,7 +388,6 @@ void makeform(const char *name) {
 }
 
 int main(int argc, char **argv) {
-  Fl::use_high_res_GL(1);
   Fl::set_color(FL_FREE_COLOR, 255, 255, 0, 75);
   makeform(argv[0]);
 
