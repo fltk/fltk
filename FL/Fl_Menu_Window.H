@@ -23,10 +23,20 @@
 #include "Fl_Single_Window.H"
 
 /**
-  The Fl_Menu_Window widget is a window type used for menus. By
-  default the window is drawn in the hardware overlay planes if they are
-  available so that the menu don't force the rest of the window to
-  redraw.
+  The Fl_Menu_Window widget is a window type originally used for menus.
+
+  Historically this window is drawn in hardware overlay layers of the graphics
+  card if they are available so that the menu doesn't force the rest of the
+  window to redraw (older SGI machines running under IRIX and X11).
+
+  With improved hardware and operating systems handling layerd windows and
+  defaulting to double buffering, overlay support was no longer useful and was
+  removed from FLTK in version 1.4.
+
+  Fl_Menu_Window has currently no special behavior over Fl_Single_Window.
+  In Fl_Menu.cxx, the local classes `Menu_Window_Basetype` and
+  `Menu_Title_Window` are derived from `Fl_Menu_Window`, implementing additional
+  popup functionality.
 */
 class FL_EXPORT Fl_Menu_Window : public Fl_Single_Window {
 public:
