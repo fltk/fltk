@@ -628,7 +628,7 @@ Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(uint32_t W, uint32_t H) const {
       fy = 0.0f;
     }
 
-    uint32_t y1 = (y0 < SH - 1) ? (y0 + 1) : y0;
+    uint32_t y1 = (y0 < (int32_t)SH - 1) ? (y0 + 1) : y0;
     int32_t w = (int32_t)(fy * 256.0f + 0.5f);
     if (w < 0) w = 0;
     else if (w > 256) w = 256;

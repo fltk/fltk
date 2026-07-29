@@ -16,6 +16,7 @@
 
 #include "Fluid.h"
 
+#include "main.h"
 #include "Project.h"
 #include "message.h"
 #include "proj/mergeback.h"
