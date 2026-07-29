@@ -57,6 +57,9 @@ decl {\#include "Fluid.h"} {uid 3af1 public global
 decl {\#include "Project.h"} {uid acd9 private local
 }
 
+decl {\#include "message.h"} {uid 5add private local
+}
+
 decl {\#include "io/file_chooser.h"} {uid 0c2a private local
 }
 
@@ -1040,7 +1043,7 @@ if (v==LOAD) {
   }
 } else {
   if (!selected) return;
-  int ret = fl_choice("Delete the shell command\\n\\"%s\\"?\\n\\nThis can not be undone.",
+  int ret = fluid_choice("Delete the shell command\\n\\"%s\\"?\\n\\nThis can not be undone.",
     "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
   if (ret==1) return;
   if (g_shell_config->at(selected-1)->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
@@ -1250,7 +1253,7 @@ if (v == LOAD) {
     cond = (int)(o->mvalue()->argument());
     cmd->condition = cond;
     g_shell_config->rebuild_shell_menu();
-    if (cmd->storage == fluid::Tool_Store::PROJECT) 
+    if (cmd->storage == fluid::Tool_Store::PROJECT)
       Fluid.proj.set_modflag(1);
   }
 }
@@ -1309,16 +1312,16 @@ else
             Fl_Input w_shell_cond_text {uid 3f2e
               callback {int selected = w_settings_shell_list_selected;
 if (v == LOAD) {
-  if (selected) 
+  if (selected)
     o->value(g_shell_config->list[selected-1]->condition_data.c_str());
-  else 
+  else
     o->value("");
 } else {
   if (selected) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->condition_data = o->value();
     g_shell_config->rebuild_shell_menu();
-    if (cmd->storage == fluid::Tool_Store::PROJECT) 
+    if (cmd->storage == fluid::Tool_Store::PROJECT)
       Fluid.proj.set_modflag(1);
   }
 }}

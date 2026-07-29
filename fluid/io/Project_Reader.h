@@ -75,6 +75,7 @@ public:
   int read_int();
   int read_fdesign_line(const char*& name, const char*& value);
   void read_fdesign();
+  int current_line_number() const { return lineno; }
 };
 
 } // namespace io

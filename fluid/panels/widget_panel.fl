@@ -42,6 +42,9 @@ decl {class Fl_Flex;} {uid 1a27 public global
 decl {\#include "Fluid.h"} {uid 2cd9 private global
 }
 
+decl {\#include "message.h"} {uid 8ed8 private local
+}
+
 decl {\#include "app/Snap_Action.h"} {uid 60c4 private global
 }
 
@@ -174,8 +177,8 @@ if (v == LOAD) {
   has_text = (c && *c);
   const char *d = c_check(c&&c[0]=='\#' ? c+1 : c);
   if (d) {
-    fl_message("Error in code: %s", d); 
-    haderror = 1; 
+    fluid_message("Error in code: %s", d);
+    haderror = 1;
     return;
   }
   for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
@@ -2626,7 +2629,7 @@ if (v == LOAD) {
   has_text = (c && *c);
   const char *d = c_check(c);
   if (d) {
-    fl_message("Error in callback: %s",d);
+    fluid_message("Error in callback: %s",d);
     if (o->window()) o->window()->make_current();
     haderror = 1;
   }
@@ -2666,7 +2669,7 @@ code_choice[5]->redraw();}
   const char *c = o->value();
   const char *d = c_check(c);
   if (d) {
-    fl_message("Error in user_data: %s",d);
+    fluid_message("Error in user_data: %s",d);
     haderror = 1;
     return;
   }
@@ -2735,7 +2738,7 @@ if (v == LOAD) {
       d = "must be pointer or long";
   }
   if (d) {
-    fl_message("Error in type: %s",d);
+    fluid_message("Error in type: %s",d);
     o->value("void*");
     haderror = 1;
     // return; // Don't return. A good value must still be set.
@@ -3107,8 +3110,8 @@ if (v == LOAD) {
   } else if (o->value()==2) {
     // remove the last selected comment from the database
     if (itempath[0]==0 || last_selected_item==0) {
-      fl_message("Please select an entry from this menu first.");
-    } else if (fl_choice("Are you sure that you want to delete the entry\\n"
+      fluid_message("Please select an entry from this menu first.");
+    } else if (fluid_choice("Are you sure that you want to delete the entry\\n"
                           "\\"%s\\"\\nfrom the database?", "Cancel", "Delete",
                           nullptr, itempath)) {
       Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
@@ -3168,7 +3171,7 @@ if (v != LOAD) {
   );
   if (!fname.empty()) {
     if (comment_tabs_name->buffer()->loadfile(fname.c_str())) {
-      fl_alert("Error loading file\\n%s", fname.c_str());
+      fluid_alert("Error loading text file\\n%s", fname.c_str());
     }
     comment_tabs_name->do_callback();
   }

@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "proj/Image_Asset.h"
 #include "proj/mergeback.h"
 #include "proj/undo.h"
@@ -170,7 +171,7 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fl_message("Please select a menu widget or a menu item");
+    fluid_message("Please select a menu widget or a menu item");
     return nullptr;
   }
   if (!o) {
@@ -205,7 +206,7 @@ void group_selected_menuitems() {
   Menu_Item_Node *q = static_cast<Menu_Item_Node*>(Fluid.proj.tree.current);
   Node *qq = Fluid.proj.tree.current->parent;
   if (!qq || !(dynamic_cast<Menu_Manager_Node*>(qq) || dynamic_cast<Submenu_Node*>(qq))) {
-    fl_message("Can't create a new submenu here.");
+    fluid_message("Can't create a new submenu here.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -231,7 +232,7 @@ void ungroup_selected_menuitems() {
   Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
   int q_level = q->level;
   if (!qq || !dynamic_cast<Submenu_Node*>(qq)) {
-    fl_message("Only menu items inside a submenu can be ungrouped.");
+    fluid_message("Only menu items inside a submenu can be ungrouped.");
     return;
   }
   Fluid.proj.undo.checkpoint();

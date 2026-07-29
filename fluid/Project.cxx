@@ -17,13 +17,12 @@
 #include <errno.h>      // strerror(errno)
 #include "Project.h"
 
+#include "message.h"
 #include "io/String_Writer.h"
 #include "nodes/Node.h"
 #include "nodes/Widget_Node.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
-
-#include <FL/fl_ask.H>
 
 using namespace fluid;
 
@@ -294,17 +293,10 @@ void Project::write_strings() {
   }
   std::string filename = stringsfile_path() + stringsfile_name();
   int x = fluid::io::write_strings(*this, filename);
-  if (Fluid.batch_mode) {
-    if (x) {
-      fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));
-      exit(1);
-    }
-  } else {
-    if (x) {
-      fl_message("Can't write %s: %s", filename.c_str(), strerror(errno));
-    } else if (completion_button->value()) {
-      fl_message("Wrote %s", stringsfile_name().c_str());
-    }
+  if (x) {
+    fluid_message("Can't write %s: %s", filename.c_str(), strerror(errno));
+  } else if (completion_button->value() && !Fluid.batch_mode) {
+    fluid_message("Wrote %s", stringsfile_name().c_str());
   }
 }
 

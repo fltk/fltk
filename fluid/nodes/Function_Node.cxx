@@ -17,6 +17,7 @@
 #include "nodes/Function_Node.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "proj/mergeback.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
@@ -30,7 +31,6 @@
 
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_File_Chooser.H>
-#include <FL/fl_ask.H>
 #include "../../src/flstring.h"
 
 #include <zlib.h>
@@ -509,7 +509,7 @@ Node *Code_Node::make(Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fl_message("Please select a function");
+    fluid_message("Please select a function");
     return nullptr;
   }
   Code_Node *o = new Code_Node();
@@ -630,7 +630,7 @@ Node *CodeBlock_Node::make(Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fl_message("Please select a function");
+    fluid_message("Please select a function");
     return nullptr;
   }
   CodeBlock_Node *o = new CodeBlock_Node();
@@ -1130,13 +1130,9 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_c(";\n");
     }
   }
-  // if we are in interactive mode, we pop up a warning dialog
-  // giving the error: (Fluid.batch_mode && !write_codeview) ???
+  // pop up a warning dialog giving the error
   if (message && !f.write_codeview) {
-    if (Fluid.batch_mode)
-      fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn.c_str());
-    else
-      fl_alert("%s\n%s\n", message, fn.c_str());
+    fluid_alert("%s\n%s\n", message, fn.c_str());
   }
   if (data) free(data);
 }

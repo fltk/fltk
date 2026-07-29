@@ -23,6 +23,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
 #include "app/Snap_Action.h"
@@ -213,12 +214,12 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
   REUSE_C:
     if (!c) {
       if (p && !merge)
-        read_error("Missing '}'");
+        read_error("Missing '}' in line %d", lineno);
       break;
     }
 
     if (!strcmp(c,"}")) {
-      if (!p) read_error("Unexpected '}'");
+      if (!p) read_error("Unexpected '}' in line %d", lineno);
       break;
     }
 
@@ -233,8 +234,10 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
       if (!strcmp(c,"version")) {
         c = read_word();
         read_version = strtod(c,nullptr);
-        if (read_version<=0 || read_version>double(FL_VERSION+0.00001))
-          read_error("unknown version '%s'",c);
+        if (read_version<=0 || read_version>double(FL_VERSION+0.000021))
+          read_error(
+            "Project file version '%s' is newer than this version of Fluid\n"
+            "Some features may not be supported.", c);
         continue;
       }
 
@@ -311,7 +314,10 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
     }
     t = add_new_widget_from_file(c, strategy);
     if (!t) {
-      read_error("Unknown word \"%s\"", c);
+      if (strlen(c) > 32)
+        read_error("Unknown word \"%.32s...\" in line %d", c, lineno);
+      else
+        read_error("Unknown word \"%s\" in line %d", c, lineno);
       continue;
     }
     last_child_read = t;
@@ -330,7 +336,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
     }
 
     if (strcmp(c,"{")) {
-      read_error("Missing property list for %s\n",t->title());
+      read_error("Missing property list for '%.32s' in line %d",t->title(), lineno);
       goto REUSE_C;
     }
 
@@ -344,7 +350,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
     if (t->can_have_children()) {
       c = read_word(1);
       if (strcmp(c,"{")) {
-        read_error("Missing child list for %s\n",t->title());
+        read_error("Missing child list for '%.32s' in line %d",t->title(), lineno);
         goto REUSE_C;
       }
       read_children(t, 0, Strategy::FROM_FILE_AS_LAST_CHILD, skip_options);
@@ -431,25 +437,12 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
  Display an error while reading the file.
  If the .fl file isn't opened for reading, pop up an FLTK dialog, otherwise
  print to stdout.
- \note Matt: I am not sure why it is done this way. Shouldn't this depend on \c Fluid.batch_mode?
- \todo Not happy about this function. Output channel should depend on `Fluid.batch_mode`
-       as the note above already states. I want to make all file readers and writers
-       depend on an error handling base class that outputs a useful analysis of file
-       operations.
  \param[in] format printf style format string, followed by an argument list
  */
 void Project_Reader::read_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
-  if (!fin) { // FIXME: this line suppresses any error messages in interactive mode
-    char buffer[1024]; // TODO: hides class member "buffer"
-    vsnprintf(buffer, sizeof(buffer), format, args);
-    fl_message("%s", buffer);
-  } else {
-    fprintf(stderr, "%s:%d: ", fname, lineno);
-    vfprintf(stderr, format, args);
-    fprintf(stderr, "\n");
-  }
+  fluid_alert(format, args);
   va_end(args);
 }
 
@@ -499,7 +492,7 @@ const char *Project_Reader::read_word(int wantbrace) {
     int nesting = 0;
     for (;;) {
       x = nextchar();
-      if (x<0) {read_error("Missing '}'"); break;}
+      if (x<0) {read_error("Missing '}' in line %d", lineno); break;}
       else if (x == '#') { // embedded comment
         do x = nextchar(); while (x >= 0 && x != '\n');
         lineno++;
@@ -726,14 +719,14 @@ void Project_Reader::read_fdesign() {
             value = class_matcher[i+1]; break;}
         widget = (Widget_Node*)add_new_widget_from_file(value, Strategy::FROM_FILE_AS_LAST_CHILD);
         if (!widget) {
-          printf("class %s not found, using Fl_Button\n", value);
+          fluid_message("class %s not found, using Fl_Button\n", value);
           widget = (Widget_Node*)add_new_widget_from_file("Fl_Button", Strategy::FROM_FILE_AS_LAST_CHILD);
         }
       }
 
     } else if (widget) {
       if (!widget->read_fdesign(name, value))
-        printf("Ignoring \"%s: %s\"\n", name, value);
+        fluid_message("Ignoring \"%s: %s\"\n", name, value);
     }
   }
 }

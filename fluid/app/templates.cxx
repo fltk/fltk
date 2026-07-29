@@ -17,6 +17,7 @@
 #include "app/templates.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "io/Project_Writer.h"
 #include "nodes/factory.h"
 #include "nodes/Tree.h"
@@ -24,7 +25,6 @@
 #include "panels/template_panel.h"
 
 #include <FL/filename.H>
-#include <FL/fl_ask.H>
 #include <FL/Fl_PNG_Image.H>
 #include "../../src/flstring.h"
 
@@ -83,7 +83,7 @@ void fluid::app::save_template() {
 
   char *ext = filename + strlen(filename);
   if (ext >= (filename + sizeof(filename) - 5)) {
-    fl_alert("The template name \"%s\" is too long!", c);
+    fluid_alert("The template name \"%s\" is too long!", c);
     return;
   }
 
@@ -91,13 +91,13 @@ void fluid::app::save_template() {
   strcpy(ext, ".fl");
 
   if (!fl_access(filename, 0)) {
-    if (fl_choice("The template \"%s\" already exists.\n"
+    if (fluid_choice("The template \"%s\" already exists.\n"
                   "Do you want to replace it?", "Cancel",
                   "Replace", nullptr, c) == 0) return;
   }
 
   if (!fluid::io::write_file(Fluid.proj, filename)) {
-    fl_alert("Error writing %s: %s", filename, strerror(errno));
+    fluid_alert("Error writing template file '%s':\n%s", filename, strerror(errno));
     return;
   }
 
@@ -125,7 +125,7 @@ void fluid::app::save_template() {
   errno = 0;
   if (fl_write_png(filename, pixels, w, h, 3) != 0) {
     delete[] pixels;
-    fl_alert("Error writing %s: %s", filename, strerror(errno));
+    fluid_alert("Error writing template snapshot '%s':\n%s", filename, strerror(errno));
     return;
   }
 

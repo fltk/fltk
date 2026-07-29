@@ -99,6 +99,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "io/file_chooser.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
@@ -283,7 +284,7 @@ void Fl_Process::clean_close(HANDLE& h) {
 static bool prepare_shell_command(int flags)  {
 //  settings_window->hide();
   if (s_proc.desc()) {
-    fl_alert("Previous shell command still running!");
+    fluid_alert("Previous shell command still running!");
     return false;
   }
   if (flags & Fd_Shell_Command::SAVE_PROJECT) {
@@ -390,7 +391,7 @@ void show_terminal_window() {
  */
 void run_shell_command(const std::string &cmd, int flags) {
   if (cmd.empty()) {
-    fl_alert("No shell command entered!");
+    fluid_alert("No shell command entered!");
     return;
   }
 

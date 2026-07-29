@@ -21,6 +21,7 @@
 #include "nodes/Group_Node.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "proj/undo.h"
 #include "app/Snap_Action.h"
 #include "io/Project_Reader.h"
@@ -96,11 +97,11 @@ extern void group_selected_menuitems();
 
 void group_cb(Fl_Widget *, void *) {
   if (!Fluid.proj.tree.current) {
-    fl_message("No widgets selected.");
+    fluid_message("No widgets selected.");
     return;
   }
   if (!Fluid.proj.tree.current->is_widget()) {
-    fl_message("Only widgets and menu items can be grouped.");
+    fluid_message("Only widgets and menu items can be grouped.");
     return;
   }
   if (dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
@@ -114,7 +115,7 @@ void group_cb(Fl_Widget *, void *) {
     qq = qq->parent;
   }
   if (!qq) {
-    fl_message("Can't create a new group here.");
+    fluid_message("Can't create a new group here.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -144,11 +145,11 @@ extern void ungroup_selected_menuitems();
 
 void ungroup_cb(Fl_Widget *, void *) {
   if (!Fluid.proj.tree.current) {
-    fl_message("No widgets selected.");
+    fluid_message("No widgets selected.");
     return;
   }
   if (!Fluid.proj.tree.current->is_widget()) {
-    fl_message("Only widgets and menu items can be ungrouped.");
+    fluid_message("Only widgets and menu items can be ungrouped.");
     return;
   }
   if (dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
@@ -161,7 +162,7 @@ void ungroup_cb(Fl_Widget *, void *) {
   Node *qq = Fluid.proj.tree.current->parent;
   while (qq && !qq->is_true_widget()) qq = qq->parent;
   if (!qq || !dynamic_cast<Group_Node*>(qq)) {
-    fl_message("Only menu widgets inside a group can be ungrouped.");
+    fluid_message("Only menu widgets inside a group can be ungrouped.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -689,7 +690,7 @@ void Table_Node::add_child(Node* cc, Node* before) {
   Widget_Node* c = (Widget_Node*)cc;
   Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
   if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
-    fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
+    fluid_message("Inserting child widgets into an Fl_Table is not recommended.\n"
                "Please refer to the documentation on Fl_Table.");
   }
   ((Fl_Table*)o)->insert(*(c->o), b);

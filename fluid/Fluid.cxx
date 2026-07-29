@@ -17,6 +17,7 @@
 #include "Fluid.h"
 
 #include "Project.h"
+#include "message.h"
 #include "proj/mergeback.h"
 #include "app/Menu.h"
 #include "app/shell_command.h"
@@ -42,7 +43,6 @@
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
-#include <FL/fl_ask.H>
 #ifdef __APPLE__
 #include <FL/platform.H> // for fl_open_callback
 #endif
@@ -186,11 +186,8 @@ int Application::run(int argc,char **argv) {
   }
   proj.undo.suspend();
   if (c && !fluid::io::read_file(proj, c,0)) {
-    if (batch_mode) {
-      fprintf(stderr,"%s : %s\n", c, strerror(errno));
-      exit(1);
-    }
-    fl_message("Can't read %s: %s", c, strerror(errno));
+    fluid_message("Can't read project file '%s': %s", c, strerror(errno));
+    if (batch_mode) exit(1);
   }
   proj.undo.resume();
 
@@ -254,7 +251,7 @@ int Application::run(int argc,char **argv) {
  */
 void Application::quit() {
   if (shell_command_running()) {
-    int choice = fl_choice("Previous shell command still running!",
+    int choice = fluid_choice("Previous shell command still running!",
                            "Cancel",
                            "Exit",
                            nullptr);
@@ -384,11 +381,7 @@ void Application::create_tmpdir() {
     if (fl_access(path.c_str(), 6) == 0) tmpdir_path = path;
   }
   if (tmpdir_path.empty()) {
-    if (batch_mode) {
-      fprintf(stderr, "ERROR: Can't create directory for temporary data storage.\n");
-    } else {
-      fl_alert("Can't create directory for temporary data storage.");
-    }
+    fluid_alert("Can't create directory for temporary data storage.");
   }
 }
 
@@ -417,11 +410,7 @@ void Application::delete_tmpdir() {
 
   // then delete the directory itself
   if (fl_rmdir(tmpdir_path.c_str()) < 0) {
-    if (batch_mode) {
-      fprintf(stderr, "WARNING: Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
-    } else {
-      fl_alert("WARNING: Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
-    }
+    fluid_alert("Can't delete tmpdir '%s': %s", tmpdir_path.c_str(), strerror(errno));
   }
 }
 
@@ -569,7 +558,7 @@ bool Application::merge_project_file(const std::string &filename_arg) {
     proj.undo.resume();
     widget_browser->rebuild();
     proj.update_settings_dialog();
-    fl_message("Can't read %s: %s", c, strerror(errno));
+    fluid_message("Can't read %s: %s", c, strerror(errno));
     free((void *)proj.proj_filename);
     proj.proj_filename = oldfilename;
     if (main_window) proj.set_modflag(proj.modflag);
@@ -619,7 +608,7 @@ void Application::save_project_file(void *v) {
 #if 0 // filechooser is already doing this check, so we don't need to do it again here
     if (!fl_access(c, 0)) {
       std::string basename = fl_filename_name_str(c);
-      if (fl_choice("The file \"%s\" already exists.\n"
+      if (fluid_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
                     "Replace", nullptr, basename.c_str()) == 0) return;
     }
@@ -627,7 +616,7 @@ void Application::save_project_file(void *v) {
     if (v != (void *)2) proj.set_filename(c);
   }
   if (!fluid::io::write_file(proj, c)) {
-    fl_alert("Error writing %s: %s", c, strerror(errno));
+    fluid_alert("Error writing project file '%s':\n%s", c, strerror(errno));
     return;
   }
 
@@ -644,7 +633,7 @@ void Application::save_project_file(void *v) {
  */
 void Application::revert_project() {
   if ( proj.modflag) {
-    if (!fl_choice("This user interface has been changed. Really revert?",
+    if (!fluid_choice("This user interface has been changed. Really revert?",
                    "Cancel", "Revert", nullptr)) return;
   }
   proj.undo.suspend();
@@ -652,7 +641,7 @@ void Application::revert_project() {
     proj.undo.resume();
     widget_browser->rebuild();
     proj.update_settings_dialog();
-    fl_message("Can't read %s: %s", proj.proj_filename, strerror(errno));
+    fluid_message("Can't read %s: %s", proj.proj_filename, strerror(errno));
     return;
   }
   widget_browser->rebuild();
@@ -723,7 +712,7 @@ bool Application::new_project_from_template() {
       FILE *infile, *outfile;
 
       if ((infile = fl_fopen(tname, "rb")) == nullptr) {
-        fl_alert("Error reading template file \"%s\":\n%s", tname,
+        fluid_alert("Error reading template file \"%s\":\n%s", tname,
                  strerror(errno));
         proj.set_modflag(0);
         proj.undo.clear();
@@ -731,7 +720,7 @@ bool Application::new_project_from_template() {
       }
 
       if ((outfile = fl_fopen(cutfname(1), "wb")) == nullptr) {
-        fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
+        fluid_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
                  strerror(errno));
         fclose(infile);
         proj.set_modflag(0);
@@ -880,27 +869,18 @@ int Application::write_code_files(bool dont_show_completion_dialog)
   if (!batch_mode) proj.leave_project_dir();
 
   // -- print error message in batch mode or pop up an error or confirmation dialog box
-  if (batch_mode) {
-    if (!x) {
-      fprintf(stderr, "%s and %s: %s\n",
-              code_filename_rel.c_str(),
-              header_filename_rel.c_str(),
-              strerror(errno));
-      exit(1);
-    }
+  if (!x) {
+    fluid_message("Can't write %s or %s: %s",
+                code_filename_rel.c_str(),
+                header_filename_rel.c_str(),
+                strerror(errno));
+    if (batch_mode) exit(1);
   } else {
-    if (!x) {
-      fl_message("Can't write %s or %s: %s",
-                 code_filename_rel.c_str(),
-                 header_filename_rel.c_str(),
-                 strerror(errno));
-    } else {
-      proj.set_modflag(-1, 0);
-      if (dont_show_completion_dialog==false && completion_button->value()) {
-        fl_message("Wrote %s and %s",
-                   code_filename_rel.c_str(),
-                   header_filename_rel.c_str());
-      }
+    proj.set_modflag(-1, 0);
+    if (dont_show_completion_dialog==false && completion_button->value()) {
+      fluid_message("Wrote %s and %s",
+                  code_filename_rel.c_str(),
+                  header_filename_rel.c_str());
     }
   }
   return 0;
@@ -917,7 +897,7 @@ void Application::cut_selected() {
   }
   flush_text_widgets();
   if (!fluid::io::write_file(proj, cutfname(),1)) {
-    fl_message("Can't write %s: %s", cutfname(), strerror(errno));
+    fluid_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
   }
   proj.undo.checkpoint();
@@ -943,7 +923,7 @@ void Application::copy_selected() {
   flush_text_widgets();
   ipasteoffset = 10;
   if (!fluid::io::write_file(proj, cutfname(),1)) {
-    fl_message("Can't write %s: %s", cutfname(), strerror(errno));
+    fluid_message("Can't write %s: %s", cutfname(), strerror(errno));
     return;
   }
 }
@@ -972,7 +952,7 @@ void Application::paste_from_clipboard() {
   }
   if (!fluid::io::read_file(proj, cutfname(), 1, strategy)) {
     widget_browser->rebuild();
-    fl_message("Can't read %s: %s", cutfname(), strerror(errno));
+    fluid_message("Can't read %s: %s", cutfname(), strerror(errno));
   }
   proj.undo.resume();
   widget_browser->display(proj.tree.current);
@@ -1014,7 +994,7 @@ void Application::duplicate_selected() {
 
   // write the selected widgets to a file:
   if (!fluid::io::write_file(proj, cutfname(1),1)) {
-    fl_message("Can't write %s: %s", cutfname(1), strerror(errno));
+    fluid_message("Can't write %s: %s", cutfname(1), strerror(errno));
     return;
   }
 
@@ -1023,7 +1003,7 @@ void Application::duplicate_selected() {
   proj.undo.checkpoint();
   proj.undo.suspend();
   if (!fluid::io::read_file(proj, cutfname(1), 1, Strategy::FROM_FILE_AFTER_CURRENT)) {
-    fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
+    fluid_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
   fl_unlink(cutfname(1));
   widget_browser->display(proj.tree.current);
@@ -1056,7 +1036,7 @@ void Application::delete_selected() {
  */
 void Application::edit_selected() {
   if (!proj.tree.current) {
-    fl_message("Please select a widget");
+    fluid_message("Please select a widget");
     return;
   }
   proj.tree.current->open();
@@ -1237,7 +1217,7 @@ void Application::make_main_window() {
  */
 bool Application::confirm_project_clear() {
   if (proj.modflag == 0) return true;
-  switch (fl_choice("This project has unsaved changes. Do you want to save\n"
+  switch (fluid_choice("This project has unsaved changes. Do you want to save\n"
                     "the project file before proceeding?",
                     "Cancel", "Save", "Don't Save"))
   {
@@ -1392,6 +1372,28 @@ void Application::init_scheme() {
     Fl::scheme(scheme_name);
   }
   free(scheme_name);
+}
+
+
+/**
+ Return true if output needs to go to the console, false if show dialog boxes.
+
+ On Windows, output is decided at compile time, and either `fluid` or
+ `fluid-cmd` is geerated. On macOS and Linux, the output is decided at run time,
+ based on the command line options, see `batch_mode'.
+
+ \return true if we are using stdout/stderr
+ */
+bool Application::console_mode() const {
+#ifdef _WIN32
+  if (FLUID_CONFIG_CONSOLE) {
+    return batch_mode;
+  } else {
+    return false;
+  }
+#else
+  return batch_mode;
+#endif
 }
 
 

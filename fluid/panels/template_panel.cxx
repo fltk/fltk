@@ -18,9 +18,9 @@
 
 #include "template_panel.h"
 #include "Fluid.h"
+#include "message.h"
 #include "tools/filename.h"
 #include <FL/Fl_Shared_Image.H>
-#include <FL/fl_ask.H>
 #include <FL/fl_string_functions.h>
 #include "../src/flstring.h"
 #include <stdio.h>
@@ -198,11 +198,11 @@ void template_delete_cb(Fl_Button *, void *) {
   const char *flfile = (const char *)template_browser->data(item);
   if (!flfile) return;
 
-  if (!fl_choice("Are you sure you want to delete the template \"%s\"?",
+  if (!fluid_choice("Are you sure you want to delete the template \"%s\"?",
                  "Cancel", "Delete", 0, name)) return;
 
   if (fl_unlink(flfile)) {
-    fl_alert("Unable to delete template \"%s\":\n%s", name, strerror(errno));
+    fluid_alert("Unable to delete template \"%s\":\n%s", name, strerror(errno));
     return;
   }
 

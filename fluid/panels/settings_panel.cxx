@@ -18,6 +18,7 @@
 
 #include "settings_panel.h"
 #include "Project.h"
+#include "message.h"
 #include "io/file_chooser.h"
 #include "proj/undo.h"
 #include "nodes/Widget_Node.h"
@@ -31,7 +32,7 @@ void scheme_cb(Fl_Scheme_Choice *, void *);
 int w_settings_shell_list_selected;
 
 static void cb_Comments(Fl_Choice* o, void* v) {
-//ﬂ ▼ ------------------------ code ---~~~=----=-==-~=-=-~-= ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ---~~=~~-~~~-~-=-~~==--~ ▼ ﬂ//
   Fl_Font *font = (Fl_Font*)o->user_data();
   if (v == LOAD) {
     o->value(*font);
@@ -1131,7 +1132,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     }
   } else {
     if (!selected) return;
-    int ret = fl_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
+    int ret = fluid_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
       "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
     if (ret==1) return;
     if (g_shell_config->at(selected-1)->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
@@ -1146,7 +1147,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
-//ﬂ ▲ ----------=~~-~==~-~~=------------=-~-~-~--~-==--=-==- ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~==~-~~=------------=~=-=--=-==~-==~-=~- ▲ ﬂ//
 }
 
 Fl_Menu_Button* w_settings_shell_menu = (Fl_Menu_Button*)nullptr;
@@ -1335,7 +1336,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
       cond = (int)(o->mvalue()->argument());
       cmd->condition = cond;
       g_shell_config->rebuild_shell_menu();
-      if (cmd->storage == fluid::Tool_Store::PROJECT) 
+      if (cmd->storage == fluid::Tool_Store::PROJECT)
         Fluid.proj.set_modflag(1);
     }
   }
@@ -1365,16 +1366,16 @@ static void cb_w_shell_cond_text(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~~=-~=~~--=-=--~--~=~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
-    if (selected) 
+    if (selected)
       o->value(g_shell_config->list[selected-1]->condition_data.c_str());
-    else 
+    else
       o->value("");
   } else {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->condition_data = o->value();
       g_shell_config->rebuild_shell_menu();
-      if (cmd->storage == fluid::Tool_Store::PROJECT) 
+      if (cmd->storage == fluid::Tool_Store::PROJECT)
         Fluid.proj.set_modflag(1);
     }
   }

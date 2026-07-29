@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "nodes/Node.h"
@@ -28,7 +29,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/fl_ask.H>
 #include "tools/filename.h"
 #include "../src/flstring.h"
 

@@ -205,6 +205,10 @@ public: // Methods
   // Read Fluid's scheme preferences and set the app's scheme.
   void init_scheme();
 
+  // Return true if all error message must go to the console
+  // Return false if error messages should be shown in a dialog box.
+  bool console_mode() const;
+
 #ifdef __APPLE__
   static void apple_open_cb(const char *c);
 #endif // __APPLE__

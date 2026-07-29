@@ -16,11 +16,12 @@
 
 #include "app/args.h"
 
+#include "main.h"
 #include "Fluid.h"
+#include "message.h"
 
 #include <FL/Fl.H>
 #include <FL/filename.H>
-#include <FL/fl_ask.H>
 
 using namespace fluid;
 using namespace fluid::app;
@@ -60,8 +61,11 @@ int Args::load(int argc,char **argv) {
     if ( !app_name || !app_name[0])
       app_name = "fluid";
 #ifdef _MSC_VER
-    // TODO: if this is fluid-cmd, use stderr and not fl_message
-    fl_message(msg, app_name);
+    if (FLUID_CONFIG_CONSOLE) {
+      fprintf(stderr, msg, app_name);
+    } else {
+      fluid_message(msg, app_name);
+    }
 #else
     fprintf(stderr, msg, app_name);
 #endif

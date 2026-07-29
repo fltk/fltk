@@ -7,9 +7,9 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 
 #include <FL/Fl.H>      /* Fl_Timeout_Handler.. */
-#include <FL/fl_ask.H>  /* fl_alert() */
 #include <FL/fl_string_functions.h> /* fl_strdup() */
 
 #include <errno.h>      /* errno */
@@ -114,11 +114,11 @@ void ExternalCodeEditor::close_editor() {
       case -2:  // no editor running (unlikely to happen)
         return;
       case -1:  // error
-        fl_alert("Error reaping external editor\n"
+        fluid_alert("Error reaping external editor\n"
                  "pid=%ld file=%s", long(pid_), filename());
         break;
       case 0:   // process still running
-        switch ( fl_choice("Please close external editor\npid=%ld file=%s",
+        switch ( fluid_choice("Please close external editor\npid=%ld file=%s",
                            "Force Close",       // button 0
                            "Closed",            // button 1
                            nullptr,                   // button 2
@@ -154,14 +154,14 @@ void ExternalCodeEditor::kill_editor() {
       case -2:  // editor not running (unlikely to happen)
         return;
       case -1:  // error
-        fl_alert("Can't seem to close editor of file: %s\n"
+        fluid_alert("Can't seem to close editor of file: %s\n"
                  "waitpid() returned: %s\n"
                  "Please close editor and hit OK",
                  filename(), strerror(errno));
         continue;
       case 0:   // process still running
         if ( ++wcount > 3 ) {   // retry 3x with 1/10th delay before showing dialog
-          fl_alert("Can't seem to close editor of file: %s\n"
+          fluid_alert("Can't seem to close editor of file: %s\n"
                    "Please close editor and hit OK", filename());
         }
         continue;
@@ -193,7 +193,7 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   int changed = 0;
   {
     struct stat sbuf;
-    if ( stat(filename(), &sbuf) < 0 ) return(-1);  // TODO: show fl_alert(), do this in win32 too, adjust func call docs above
+    if ( stat(filename(), &sbuf) < 0 ) return(-1);  // TODO: show fluid_alert(), do this in win32 too, adjust func call docs above
     time_t now_mtime = sbuf.st_mtime;
     size_t now_size  = sbuf.st_size;
     // OK, now see if file changed; update records if so
@@ -205,18 +205,18 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   // Changes? Load file, and fallthru to close()
   int fd = open(filename(), O_RDONLY);
   if ( fd < 0 ) {
-    fl_alert("ERROR: can't open '%s': %s", filename(), strerror(errno));
+    fluid_alert("ERROR: can't open '%s': %s", filename(), strerror(errno));
     return -1;
   }
   int ret = 0;
   char *buf = (char*)malloc(file_size_ + 1);
   ssize_t count = read(fd, buf, file_size_);
   if ( count == -1 ) {
-    fl_alert("ERROR: read() %s: %s", filename(), strerror(errno));
+    fluid_alert("ERROR: read() %s: %s", filename(), strerror(errno));
     free((void*)buf);
     ret = -1;
   } else if ( (long)count != (long)file_size_ ) {
-    fl_alert("ERROR: read() failed for %s:\n"
+    fluid_alert("ERROR: read() failed for %s:\n"
              "expected %ld bytes, only got %ld",
              filename(), long(file_size_), long(count));
     ret = -1;
@@ -243,7 +243,7 @@ int ExternalCodeEditor::remove_tmpfile() {
   if ( is_file(tmpfile) ) {
     if ( Fluid.debug_external_editor ) printf("Removing tmpfile '%s'\n", tmpfile);
     if ( remove(tmpfile) < 0 ) {
-      fl_alert("WARNING: Can't remove() '%s': %s", tmpfile, strerror(errno));
+      fluid_alert("WARNING: Can't remove() '%s': %s", tmpfile, strerror(errno));
       return -1;
     }
   }
@@ -272,7 +272,7 @@ void ExternalCodeEditor::tmpdir_clear() {
   if ( is_dir(tmpdir) ) {
     if ( Fluid.debug_external_editor ) printf("Removing tmpdir '%s'\n", tmpdir);
     if ( rmdir(tmpdir) < 0 ) {
-      fl_alert("WARNING: Can't rmdir() '%s': %s", tmpdir, strerror(errno));
+      fluid_alert("WARNING: Can't rmdir() '%s': %s", tmpdir, strerror(errno));
     }
   }
 }
@@ -286,7 +286,7 @@ const char* ExternalCodeEditor::create_tmpdir() {
   const char *dirname = tmpdir_name();
   if ( ! is_dir(dirname) ) {
     if ( mkdir(dirname, 0777) < 0 ) {
-      fl_alert("can't create directory '%s': %s",
+      fluid_alert("can't create directory '%s': %s",
         dirname, strerror(errno));
       return nullptr;
     }
@@ -318,17 +318,17 @@ static int save_file(const char *filename, const char *code) {
   if ( code == nullptr ) code = "";   // nullptr? write an empty file
   int fd = open(filename, O_WRONLY|O_CREAT, 0666);
   if ( fd == -1 ) {
-    fl_alert("ERROR: open() '%s': %s", filename, strerror(errno));
+    fluid_alert("ERROR: open() '%s': %s", filename, strerror(errno));
     return -1;
   }
   ssize_t clen = strlen(code);
   ssize_t count = write(fd, code, clen);
   int ret = 0;
   if ( count == -1 ) {
-    fl_alert("ERROR: write() '%s': %s", filename, strerror(errno));
+    fluid_alert("ERROR: write() '%s': %s", filename, strerror(errno));
     ret = -1; // fallthru to close()
   } else if ( count != clen ) {
-    fl_alert("ERROR: write() '%s': wrote only %lu bytes, expected %lu",
+    fluid_alert("ERROR: write() '%s': wrote only %lu bytes, expected %lu",
              filename, (unsigned long)count, (unsigned long)clen);
     ret = -1; // fallthru to close()
   }
@@ -394,7 +394,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
   // Fork editor to background..
   switch ( pid_ = fork() ) {
     case -1:    // error
-      fl_alert("couldn't fork(): %s", strerror(errno));
+      fluid_alert("couldn't fork(): %s", strerror(errno));
       return -1;
     case 0: {   // child
       // NOTE: OSX wants minimal code between fork/exec, see Apple TN2083
@@ -486,11 +486,11 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
         case -2:        // no editor running? (unlikely if is_editing() true)
           break;
         case -1:        // waitpid() failed
-          fl_alert("ERROR: waitpid() failed: %s\nfile='%s', pid=%ld",
+          fluid_alert("ERROR: waitpid() failed: %s\nfile='%s', pid=%ld",
             strerror(errno), filename(), (long)pid_);
           return -1;
         case 0:         // process still running
-          fl_alert("Editor Already Open\n  file='%s'\n  pid=%ld",
+          fluid_alert("Editor Already Open\n  file='%s'\n  pid=%ld",
             filename(), (long)pid_);
           return 0;
         case 1:        // process reaped, wpid is pid reaped
@@ -508,7 +508,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
   // Update mtime/size from closed file
   struct stat sbuf;
   if ( stat(filename(), &sbuf) < 0 ) {
-    fl_alert("ERROR: can't stat('%s'): %s", filename(), strerror(errno));
+    fluid_alert("ERROR: can't stat('%s'): %s", filename(), strerror(errno));
     return -1;
   }
   file_mtime_ = sbuf.st_mtime;
@@ -567,12 +567,12 @@ void ExternalCodeEditor::alert_pipe_cb(FL_SOCKET s, void* d) {
   const char* cmd = self->command_line_.c_str();
   if (cmd && *cmd) {
     if (cmd[0] == '/') { // is this an absolute filename?
-      fl_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"",
+      fluid_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"",
                fl_filename_name(cmd), strerror(self->last_error_), cmd);
     } else {
       char pwd[FL_PATH_MAX+1];
       fl_getcwd(pwd, FL_PATH_MAX);
-      fl_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"\npwd: \"%s\"",
+      fluid_alert("Can't launch external editor '%s':\n%s\n\ncmd: \"%s\"\npwd: \"%s\"",
                fl_filename_name(cmd), strerror(self->last_error_), cmd, pwd);
     }
   }

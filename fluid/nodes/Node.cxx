@@ -98,6 +98,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "app/Snap_Action.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
@@ -784,7 +785,7 @@ void Node::comment(const char *n) {
 }
 
 void Node::open() {
-  printf("Open of '%s' is not yet implemented\n",type_name());
+  fluid_alert("Opening node type '%s' is not yet implemented\n",type_name());
 }
 
 // returns pointer to whatever is after f & children
@@ -919,7 +920,7 @@ void Node::read_property(fluid::io::Project_Reader &f, const char *c) {
       f.read_word();  // skip the entire block (this should generate a warning)
     }
   else
-    f.read_error("Unknown property \"%s\"", c);
+    f.read_error("Unknown property \"%.32s\" in line %d", c, f.current_line_number());
 }
 
 /** Write parent properties into the child property list.
@@ -988,7 +989,7 @@ void Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bo
  */
 void Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property) {
   (void)child;
-  f.read_error("Unknown parent property \"%s\"", property);
+  f.read_error("Unknown parent property \"%s\" in line %d", property, f.current_line_number());
 }
 
 

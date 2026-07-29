@@ -61,6 +61,7 @@ macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
     add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES} ${ICON_PATH})
   else()
     add_executable(${TARGET} ${SOURCES})
+    target_compile_definitions(${TARGET} PUBLIC FLUID_CMD)
   endif(${GUI})
 
   if(${EXPORT})
@@ -111,6 +112,7 @@ set(MAIN_FILES main.cxx main.h fluid.rc)
 set(CPPFILES
   Fluid.cxx
   Project.cxx
+  message.cxx
   fluid_icon.cxx
   app/args.cxx
   app/Snap_Action.cxx
@@ -171,6 +173,7 @@ set(CPPFILES
 set(HEADERFILES
   Fluid.h
   Project.h
+  message.h
   fluid_icon.h
   app/args.h
   app/Snap_Action.h

@@ -17,10 +17,10 @@
 #include "io/file_chooser.h"
 
 #include "Fluid.h"
+#include "message.h"
 
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/filename.H>
-#include <FL/fl_ask.H>
 
 
 static constexpr int load_type = Fl_Native_File_Chooser::BROWSE_FILE;
@@ -70,7 +70,7 @@ std::string fluid::io::filechooser(
 
   switch (fnfc.show()) {
     case -1: // Error
-      fl_alert(error_message.c_str(), fnfc.errmsg());
+      fluid_alert(error_message.c_str(), fnfc.errmsg());
       return "";
     case 1: // Cancelled
       return "";

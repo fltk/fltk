@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "proj/Image_Asset.h"
 #include "proj/mergeback.h"
 #include "proj/undo.h"
@@ -115,7 +116,7 @@ Node* Widget_Node::make(Strategy strategy) {
     pp = pp->parent;
   }
   if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
-    fl_message("Please select a group widget or window");
+    fluid_message("Please select a group widget or window");
     return nullptr;
   }
 

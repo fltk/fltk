@@ -17,13 +17,13 @@
 #include "proj/mergeback.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "proj/undo.h"
 #include "io/Code_Writer.h"
 #include "nodes/Function_Node.h"
 #include "nodes/Widget_Node.h"
 
 #include <FL/Fl_Window.H>
-#include <FL/fl_ask.H>
 #include "../../src/flstring.h"
 
 #include <stdarg.h>
@@ -182,7 +182,7 @@ std::string Mergeback::read_and_unindent_block(long start, long end) {
  */
 int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &proj_filename) {
   if (tag_error) {
-    fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+    fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                "MergeBack found an error in line %d while reading tags\n"
                "from the source code. Merging code back is not possible.",
                code_filename.c_str(), proj_filename.c_str(), line_no);
@@ -192,7 +192,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     return 0;
   }
   if (num_changed_structure && !num_changed_code) {
-    fl_message("Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
+    fluid_message("Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
                "MergeBack found %3$d modifications in the project structure\n"
                "of the source code. These kind of changes can not be\n"
                "merged back and will be lost when the source code is\n"
@@ -219,7 +219,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     "from the open project.";
 
   if (num_changed_code==num_uid_not_found) {
-    fl_message(msg.c_str(),
+    fluid_message(msg.c_str(),
                code_filename.c_str(), proj_filename.c_str(),
                num_changed_code, num_uid_not_found,
                num_changed_structure, num_possible_override);
@@ -228,7 +228,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
     "Click Merge to merge all code changes back into\n"
     "the open project.";
-    int c = fl_choice(msg.c_str(), "Cancel", "Merge", nullptr,
+    int c = fluid_choice(msg.c_str(), "Cancel", "Merge", nullptr,
                       code_filename.c_str(), proj_filename.c_str(),
                       num_changed_code, num_uid_not_found,
                       num_changed_structure, num_possible_override);
@@ -649,7 +649,7 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
   }
   if (!proj.write_mergeback_data) {
     if (feedback & Mergeback::CHATTY) {
-      fl_message("MergeBack is not enabled for this project.\n"
+      fluid_message("MergeBack is not enabled for this project.\n"
                  "Please enable MergeBack in the project settings\n"
                  "dialog and re-save the project file and the code.");
     }
@@ -686,11 +686,11 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
   if (!Fluid.batch_mode) proj.leave_project_dir();
 
   if (feedback & Mergeback::CHATTY) {
-    if (c==0) fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+    if (c==0) fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                          "MergeBack found no external modifications\n"
                          "in the source code.",
                          code_filename.c_str(), proj_filename.c_str());
-    if (c==-2) fl_message("No corresponding source code file found.");
+    if (c==-2) fluid_message("No corresponding source code file found.");
   }
   recursion_lock = false;
   return c;

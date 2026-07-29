@@ -18,6 +18,7 @@
 
 #include "widget_panel.h"
 #include "Fluid.h"
+#include "message.h"
 #include "app/Snap_Action.h"
 #include "proj/Image_Asset.h"
 #include "proj/undo.h"
@@ -56,7 +57,7 @@ static Fl_Widget* w_cpp_code_act[6] = { };
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code ---~-~~=~--==-~~-~=~~~=~ ▼ ﬂ//
+//ﬂ ▼ ------------------------ code --~---~~=~-~=------==~~~ ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~-=-=-~~=~-=-----------~~=~-=~-~~-=~-==--=~= ▲ ﬂ//
 }
@@ -107,8 +108,8 @@ static void w_code_cb(Fl_Text_Editor *o, void *v) {
     has_text = (c && *c);
     const char *d = c_check(c&&c[0]=='#' ? c+1 : c);
     if (d) {
-      fl_message("Error in code: %s", d); 
-      haderror = 1; 
+      fluid_message("Error in code: %s", d);
+      haderror = 1;
       return;
     }
     for (Widget_Node *w: Fluid.proj.tree.all_selected_widgets()) {
@@ -124,7 +125,7 @@ static void w_code_cb(Fl_Text_Editor *o, void *v) {
     code_choice[n+1]->labelfont(FL_HELVETICA);
   }
   code_choice[n+1]->redraw();
-//ﬂ ▲ ----------~~~~~-=-~=~~----------~--==~=-=~~-~-=----==- ▲ ﬂ//
+//ﬂ ▲ ----------~~~~~-=-~=~~-----------~~=~=--=----==-~~=-~- ▲ ﬂ//
 }
 
 Fl_Double_Window* image_panel_window = (Fl_Double_Window*)nullptr;
@@ -2464,7 +2465,7 @@ static void cb_wCallback(fluid::widget::Code_Editor* o, void* v) {
     has_text = (c && *c);
     const char *d = c_check(c);
     if (d) {
-      fl_message("Error in callback: %s",d);
+      fluid_message("Error in callback: %s",d);
       if (o->window()) o->window()->make_current();
       haderror = 1;
     }
@@ -2481,7 +2482,7 @@ static void cb_wCallback(fluid::widget::Code_Editor* o, void* v) {
     code_choice[5]->labelfont(FL_HELVETICA);
   }
   code_choice[5]->redraw();
-//ﬂ ▲ ----------~=-==~~~=-~~---------------=-=~~~=--=---~-~= ▲ ﬂ//
+//ﬂ ▲ ----------~=-==~~~=-~~----------~~--=~=~-=--~==-~=-=-= ▲ ﬂ//
 }
 
 Fl_Group* wp_cpp_callback = (Fl_Group*)nullptr;
@@ -2495,7 +2496,7 @@ static void cb_12(Fl_Input* o, void* v) {
     const char *c = o->value();
     const char *d = c_check(c);
     if (d) {
-      fl_message("Error in user_data: %s",d);
+      fluid_message("Error in user_data: %s",d);
       haderror = 1;
       return;
     }
@@ -2505,7 +2506,7 @@ static void cb_12(Fl_Input* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------=~-=~=~~-~~=-----------~-=--=~=~=~--=~=~~=~= ▲ ﬂ//
+//ﬂ ▲ ----------=~-=~=~~-~~=-------------=-~--~=~--=~------= ▲ ﬂ//
 }
 
 static void cb_When(Fl_Menu_Button* o, void* v) {
@@ -2559,7 +2560,7 @@ static void cb_13(Fl_Input_Choice* o, void* v) {
         d = "must be pointer or long";
     }
     if (d) {
-      fl_message("Error in type: %s",d);
+      fluid_message("Error in type: %s",d);
       o->value("void*");
       haderror = 1;
       // return; // Don't return. A good value must still be set.
@@ -2573,7 +2574,7 @@ static void cb_13(Fl_Input_Choice* o, void* v) {
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~=-=~-=-=~=-----------~~~~-~-==-=-~=-=~~=-~~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~-=-=~=------------~=-~--~=~-=--=~---~~= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_4[] = {
@@ -2875,8 +2876,8 @@ static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
     } else if (o->value()==2) {
       // remove the last selected comment from the database
       if (itempath[0]==0 || last_selected_item==0) {
-        fl_message("Please select an entry from this menu first.");
-      } else if (fl_choice("Are you sure that you want to delete the entry\n"
+        fluid_message("Please select an entry from this menu first.");
+      } else if (fluid_choice("Are you sure that you want to delete the entry\n"
                             "\"%s\"\nfrom the database?", "Cancel", "Delete",
                             nullptr, itempath)) {
         Fl_Preferences db(Fl_Preferences::USER_L, "fltk.org", "fluid_comments");
@@ -2917,7 +2918,7 @@ static void cb_comment_predefined_2(Fl_Menu_Button* o, void* v) {
       }
     }
   }
-//ﬂ ▲ ----------~=--~-~=~---------------=--~=~-~-=~--~-~~=~= ▲ ﬂ//
+//ﬂ ▲ ----------~=--~-~=~-------------~~~=--~-~-~==-=-~~~--~ ▲ ﬂ//
 }
 
 Fl_Button* comment_load_2 = (Fl_Button*)nullptr;
@@ -2937,12 +2938,12 @@ static void cb_comment_load_2(Fl_Button*, void* v) {
     );
     if (!fname.empty()) {
       if (comment_tabs_name->buffer()->loadfile(fname.c_str())) {
-        fl_alert("Error loading file\n%s", fname.c_str());
+        fluid_alert("Error loading text file\n%s", fname.c_str());
       }
       comment_tabs_name->do_callback();
     }
   }
-//ﬂ ▲ ----------~=~~~---~-------------~~~--~~-~==~~---=----= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~~---~-------------~~=~---~-=--=~-~~-~~~~ ▲ ﬂ//
 }
 
 static void cb_output(Fl_Check_Button* o, void* v) {

@@ -24,13 +24,13 @@ comment {//
 decl {\#include "Fluid.h"} {private local
 }
 
+decl {\#include "message.h"} {private local
+}
+
 decl {\#include "tools/filename.h"} {selected private local
 }
 
 decl {\#include <FL/Fl_Shared_Image.H>} {private local
-}
-
-decl {\#include <FL/fl_ask.H>} {private local
 }
 
 decl {\#include <FL/fl_string_functions.h>} {private local
@@ -196,11 +196,11 @@ const char *name = template_browser->text(item);
 const char *flfile = (const char *)template_browser->data(item);
 if (!flfile) return;
 
-if (!fl_choice("Are you sure you want to delete the template \\"%s\\"?",
+if (!fluid_choice("Are you sure you want to delete the template \\"%s\\"?",
                "Cancel", "Delete", 0, name)) return;
 
 if (fl_unlink(flfile)) {
-  fl_alert("Unable to delete template \\"%s\\":\\n%s", name, strerror(errno));
+  fluid_alert("Unable to delete template \\"%s\\":\\n%s", name, strerror(errno));
   return;
 }
 

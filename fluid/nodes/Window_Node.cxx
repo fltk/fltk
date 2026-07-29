@@ -24,6 +24,7 @@
 #include "app/Snap_Action.h"
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
@@ -238,7 +239,7 @@ Node *Window_Node::make(Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fl_message("Please select a function");
+    fluid_message("Please select a function");
     return nullptr;
   }
   Window_Node *myo = new Window_Node();
