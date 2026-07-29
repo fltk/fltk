@@ -877,7 +877,7 @@ int Application::write_code_files(bool dont_show_completion_dialog)
     if (batch_mode) exit(1);
   } else {
     proj.set_modflag(-1, 0);
-    if (dont_show_completion_dialog==false && completion_button->value()) {
+    if (!batch_mode && dont_show_completion_dialog==false && completion_button->value()) {
       fluid_message("Wrote %s and %s",
                   code_filename_rel.c_str(),
                   header_filename_rel.c_str());

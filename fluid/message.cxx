@@ -209,7 +209,7 @@ int fluid::choice(const std::string &title, const std::string &message,
         return fl_choice_n("%s", nullptr, option[0].label.c_str(), nullptr, message.c_str());
     }
     // option 1 defaults to the <return> key.
-    for (int i = 0; i < std::min(option.size(), (size_t)3); ++i) {
+    for (int i = 0; i < std::min((int)option.size(), (int)3); ++i) {
         b[i] = option[i].label.c_str();
     }
     return fl_choice_n("%s", b[0], b[1], b[2], message.c_str());

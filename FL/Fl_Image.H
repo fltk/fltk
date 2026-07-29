@@ -366,7 +366,7 @@ private:
 
   Fl_RGB_Image *copy_scale_down_2h_() const;
   Fl_RGB_Image *copy_scale_down_2v_() const;
-  Fl_RGB_Image *copy_bilinear_(int W, int H) const;
+  Fl_RGB_Image *copy_bilinear_(uint32_t W, uint32_t H) const;
   Fl_RGB_Image *copy_nearest_neighbor_(int W, int H) const;
   Fl_RGB_Image *copy_optimize_(int W, int H) const;
 public:

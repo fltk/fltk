@@ -568,7 +568,7 @@ Fl_RGB_Image *Fl_RGB_Image::copy_nearest_neighbor_(int W, int H) const {
   \returns  A new image object with the requested size. The caller is responsible
            for deleting the returned image object when it is no longer needed.
 */
-Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(int W, int H) const {
+Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(uint32_t W, uint32_t H) const {
   const uint32_t D = d();
   const uint32_t SW = data_w();
   const uint32_t SH = data_h();
@@ -598,12 +598,12 @@ Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(int W, int H) const {
     if (x0 < 0) {
       x0 = 0;
       fx = 0.0f;
-    } else if (x0 >= SW - 1) {
+    } else if (x0 >= (int32_t)SW - 1) {
       x0 = SW - 1;
       fx = 0.0f;
     }
 
-    uint32_t x1 = (x0 < SW - 1) ? (x0 + 1) : x0;
+    uint32_t x1 = (x0 < (int32_t)SW - 1) ? (x0 + 1) : x0;
     int32_t w = (int32_t)(fx * 256.0f + 0.5f);
     if (w < 0) w = 0;
     else if (w > 256) w = 256;
@@ -623,7 +623,7 @@ Fl_RGB_Image *Fl_RGB_Image::copy_bilinear_(int W, int H) const {
     if (y0 < 0) {
       y0 = 0;
       fy = 0.0f;
-    } else if (y0 >= SH - 1) {
+    } else if (y0 >= (int32_t)SH - 1) {
       y0 = SH - 1;
       fy = 0.0f;
     }
