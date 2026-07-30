@@ -19,7 +19,7 @@
 
 #include <string>
 
-namespace fld {
+namespace fluid {
 
 class Project;
 
@@ -48,7 +48,7 @@ public:
   Project &project_;
 
   /// One of the available internationalization types.
-  fld::I18n_Type type = I18n_Type::NONE;
+  fluid::I18n_Type type = I18n_Type::NONE;
   /// Include file for GNU i18n, writes an #include statement into the source
   /// file. This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
   std::string gnu_include = "<libintl.h>";
@@ -81,7 +81,7 @@ public: // Methods
 
 } // namespace proj
 
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_PROJ_I18N_H
 

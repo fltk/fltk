@@ -19,8 +19,8 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 
-#include <FL/fl_ask.H>
 #include <FL/fl_utf8.h>
 
 #include <errno.h>
@@ -69,10 +69,7 @@ std::shared_ptr<Image_Asset> Image_Asset_Map::find_or_create(const std::string& 
   proj_.enter_project_dir();
   FILE *f = fl_fopen(iname.c_str(), "rb");
   if (!f) {
-    if (Fluid.batch_mode)
-      fprintf(stderr, "Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
-    else
-      fl_message("Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
+    fluid_message("Can't open image file:\n%s\n%s", iname.c_str(), strerror(errno));
     proj_.leave_project_dir();
     return nullptr;
   }
@@ -81,10 +78,7 @@ std::shared_ptr<Image_Asset> Image_Asset_Map::find_or_create(const std::string& 
   // Construct the asset (loads the image via Fl_Shared_Image while still in project dir).
   std::shared_ptr<Image_Asset> asset(new Image_Asset(iname, *this));
   if (!asset->image_ || !asset->image_->w() || !asset->image_->h()) {
-    if (Fluid.batch_mode)
-      fprintf(stderr, "Can't read image file:\n%s\nunrecognized image format", iname.c_str());
-    else
-      fl_message("Can't read image file:\n%s\nunrecognized image format", iname.c_str());
+    fluid_message("Can't read image file:\n%s\nunrecognized image format", iname.c_str());
     proj_.leave_project_dir();
     return nullptr;
   }

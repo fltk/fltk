@@ -281,7 +281,6 @@ int arg(int, char **argv, int &i) {
 
 int main(int argc, char **argv) {
 
-  Fl::use_high_res_GL(1);
   int i=0;
   if (Fl::args(argc,argv,i,arg) < argc)
     Fl::fatal("Options are:\n -2 = 2 windows\n -f = startup fullscreen\n%s",Fl::help);

@@ -19,7 +19,7 @@
 
 #include <FL/Fl_Input.H>
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 class Formula_Input;
@@ -63,11 +63,11 @@ public:
   /** Set the general callback for this widget. */
   void callback(Fl_Callback *cb) { user_callback_ = cb; }
 
-  void variables(fld::widget::Formula_Input_Vars *vars, void *user_data);
+  void variables(fluid::widget::Formula_Input_Vars *vars, void *user_data);
   int handle(int) override;
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_WIDGETS_FORMULA_INPUT_H

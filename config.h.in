@@ -356,3 +356,10 @@
  */
 
 #cmakedefine01 HAVE_CURSOR_SHAPE
+
+
+/*
+ * Can we use the "XDG activation" Wayland protocol?
+ */
+
+#cmakedefine01 HAVE_XDG_ACTIVATION

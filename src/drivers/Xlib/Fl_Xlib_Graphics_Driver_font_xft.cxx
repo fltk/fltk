@@ -201,7 +201,7 @@ static void make_raw_name(char *raw, char *pretty)
         style++; // Start of Style string
         if ((style >= last) || (*style == 0)) continue;
       }
-      type = toupper(style[0]);
+      type = fl_ascii_toupper(style[0]);
       switch (type)
       {
       // Things we might see: Regular Normal Bold Italic Oblique (??what??) Medium
@@ -1037,7 +1037,7 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   char *pc = fl_strdup(fl_fonts[fnum].name); // what font were we asked for?
 #if USE_PANGO
   char *p = pc + 1;
-  while (*p) { *p = tolower(*p); p++; }
+  while (*p) { *p = fl_ascii_tolower(*p); p++; }
 #endif // USE_PANGO
   const char *name = pc;    // keep a handle to the original name for freeing later
   // Parse the "fltk-name" of the font

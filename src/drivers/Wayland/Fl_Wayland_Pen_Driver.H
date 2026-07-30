@@ -15,12 +15,12 @@
 //
 
 /**
- \file Fl_Wayland_Pen_Events.H
+ \file Fl_Wayland_Pen_Driver.H
  \brief Wayland tablet/pen event driver interface.
  */
 
-#ifndef FL_WAYLAND_PEN_EVENTS_H
-#define FL_WAYLAND_PEN_EVENTS_H
+#ifndef FL_WAYLAND_PEN_DRIVER_H
+#define FL_WAYLAND_PEN_DRIVER_H
 
 struct wl_seat;
 struct zwp_tablet_manager_v2;
@@ -53,4 +53,5 @@ void fl_wayland_tablet_cleanup();
  * @param surface Wayland surface to invalidate.
  */
 void fl_wayland_tablet_surface_destroyed(struct wl_surface *surface);
-#endif // FL_WAYLAND_PEN_EVENTS_H
+
+#endif // FL_WAYLAND_PEN_DRIVER_H

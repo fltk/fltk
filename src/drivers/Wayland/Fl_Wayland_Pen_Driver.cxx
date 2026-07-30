@@ -57,18 +57,19 @@
  offset_subwindow_event(), event_inside(), find_below_pen(), copy_state(),
  pen_send(), and pen_send_all() are identical in the Cocoa and Wayland
  drivers.  They are duplicated here intentionally rather than elevated to
- Fl_Base_Pen_Events to avoid touching the shared API in this patch.
- TODO: move them to Fl_Base_Pen_Events.cxx and expose via the header.
+ Fl_Base_Pen_Driver to avoid touching the shared API in this patch.
+ TODO: move them to Fl_Base_Pen_Driver.cxx and expose via the header.
  */
 
-#include "Fl_Wayland_Pen_Events.H"
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "Fl_Wayland_Pen_Driver.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Window_Driver.H"
 #include "../../Fl_Window_Driver.H"
 #include "../../../libdecor/build/fl_libdecor.h"
 
 #include <FL/Fl.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Window.H>
 #include <FL/platform.H>
 
@@ -103,19 +104,13 @@ extern "C" {
                                          struct libdecor_frame *frame,
                                          bool *using_CAIRO);
 }
-extern struct wl_surface *gtk_shell_surface;
-extern Fl_Window *gtk_shell_window;
+
+static struct wl_surface *gtk_shell_surface;
+static libdecor_frame *gtk_shell_frame = nullptr;
+static Fl_Window *gtk_shell_window = nullptr;
 
 // fl_xmousewin tracks which window last received pointer/pen events.
 extern Fl_Window *fl_xmousewin;
-
-// Click detection needs the mouse-down position stored by Fl internals.
-namespace Fl {
-namespace Private {
-extern int e_x_down;
-extern int e_y_down;
-} // namespace Private
-} // namespace Fl
 
 using namespace Fl::Pen;
 
@@ -201,9 +196,6 @@ public:
   Trait pen_traits(int id)  override;
 };
 
-static Wayland_Driver wayland_driver_instance;
-// Define the extern Driver& declared in Fl_Base_Pen_Events.H.
-Driver& driver = wayland_driver_instance;
 
 void Wayland_Driver::subscribe(Fl_Widget* widget)
 {
@@ -254,13 +246,18 @@ Trait Wayland_Driver::pen_traits(int pen_id) {
   return match ? match->capabilities : Trait::NONE;
 }
 
+Fl::Pen::Driver& newWaylandPenDriver() {
+  Fl::Pen::Wayland_Driver *wayland_driver_instance = new Fl::Pen::Wayland_Driver();
+  return *wayland_driver_instance;
+}
+
 } // namespace Pen
 } // namespace Fl
 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Platform-independent helper functions
-// (TODO: factor into Fl_Base_Pen_Events.cxx, same code as Cocoa driver)
+// (TODO: factor into Fl_Base_Pen_Driver.cxx, same code as Cocoa driver)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /*
@@ -770,8 +767,9 @@ static int handle_cairo_events(Fl_Window* win, TabletTool* tool)
 
     return 0;
 }
+
 /*
-  Convert pen evenets over the titlebar or resize area into libdecor actions.
+  Convert pen events over the titlebar or resize area into libdecor actions.
 
   \return a value that indicate how the caller shall continue processing the event.
   The return values are yet to be defined.
@@ -851,6 +849,10 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                Fl::Pen::LEAVE, (State)0, copied);
     }
     below_pen_ = nullptr;
+
+    Fl::belowmouse(nullptr);
+    Fl_Tooltip::enter(nullptr);
+
     if (pushed_) {
       Fl::pushed(nullptr);
       pushed_ = nullptr;
@@ -987,10 +989,20 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
     auto bpen_old    = (Fl::belowmouse() == bpen_widget) ? bpen_widget : nullptr;
     auto bpen_now    = find_below_pen(eventWindow, tool->ev.x, tool->ev.y);
 
+    // Prevent flickering by ignoring the tooltip window entirely ──
+    if (bpen_now) {
+      Fl_Window *win = bpen_now->as_window() ? bpen_now->as_window() : bpen_now->window();
+      if (win && win->tooltip_window()) {
+        bpen_now = bpen_old; // Pretend the pen never left the underlying widget
+      }
+    }
+
+    // ── Widget Transition Logic ────────────────────────────────────────────
     if (bpen_now != bpen_old) {
-      if (bpen_old)
+      if (bpen_old) {
         pen_send(tool, bpen_old, Fl::Pen::LEAVE, (State)0,
                  event_data_copied);
+      }
       below_pen_ = nullptr;
       if (bpen_now) {
         State hover_state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER)
@@ -998,8 +1010,16 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
         if (pen_send(tool, bpen_now, Fl::Pen::ENTER, hover_state,
                      event_data_copied)) {
           below_pen_ = subscriber_list_[bpen_now];
-          Fl::belowmouse(bpen_now);
         }
+
+        // Update standard FLTK hover state regardless of pen_send success.
+        // This ensures passive widgets (like Fl_Box) still show their standard tooltips!
+        Fl::belowmouse(bpen_now);
+        Fl_Tooltip::enter(bpen_now);
+      } else {
+        // Moving into empty space
+        Fl::belowmouse(nullptr);
+        Fl_Tooltip::enter(nullptr);
       }
     }
     receiver = below_pen_ ? below_pen_->widget() : nullptr;

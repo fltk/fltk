@@ -1,11 +1,11 @@
 //
 // Fl_Help_View widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1997-2010 by Easy Software Products.
+// Copyright 1997-2026 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2025 by Bill Spitzak and others.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -555,7 +555,7 @@ void Fl_Help_View::Impl::Font_Stack::top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c
   \param[in] c color to apply
  */
 void Fl_Help_View::Impl::Font_Stack::push(Fl_Font f, Fl_Fontsize s, Fl_Color c) {
-  elts_.push_back(Font_Style(f, s, c));
+  elts_.emplace_back(f, s, c);
   fl_font(f, s);
   fl_color(c);
 }
@@ -629,7 +629,7 @@ void Fl_Help_View::Impl::free_data() {
 
         buf.clear();
 
-        while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
+        while (*ptr && *ptr != '>' && !fl_ascii_isspace(*ptr))
           buf += *ptr++;
 
         attrs = ptr;
@@ -976,7 +976,7 @@ void Fl_Help_View::Impl::format() {
     for (ptr = value_, buf.clear(); *ptr;)
     {
       // End of word?
-      if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0)
+      if ((*ptr == '<' || fl_ascii_isspace(*ptr)) && buf.size() > 0)
       {
         // Get width of word parsed so far...
         ww = buf.width();
@@ -1025,7 +1025,7 @@ void Fl_Help_View::Impl::format() {
             hh = fsize + 2;
 
           // Handle preformatted text...
-          while (isspace((*ptr)&255))
+          while (fl_ascii_isspace(*ptr))
           {
             if (*ptr == '\n')
             {
@@ -1057,7 +1057,7 @@ void Fl_Help_View::Impl::format() {
         else
         {
           // Handle normal text or stuff in the <HEAD> section...
-          while (isspace((*ptr)&255))
+          while (fl_ascii_isspace(*ptr))
             ptr ++;
         }
 
@@ -1083,7 +1083,7 @@ void Fl_Help_View::Impl::format() {
             break;
         }
 
-        while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
+        while (*ptr && *ptr != '>' && !fl_ascii_isspace(*ptr))
           buf += *ptr++;
 
         attrs = ptr;
@@ -1219,7 +1219,7 @@ void Fl_Help_View::Impl::format() {
             column = 0;
           }
 
-          if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+          if (fl_ascii_tolower(buf[0]) == 'h' && fl_ascii_isdigit(buf[1]))
           {
             font  = FL_HELVETICA_BOLD;
             fsize = textsize_ + '7' - buf[1];
@@ -1246,7 +1246,7 @@ void Fl_Help_View::Impl::format() {
           yy = block->y + block->h;
           hh = 0;
 
-          if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
+          if ((fl_ascii_tolower(buf[0]) == 'h' && fl_ascii_isdigit(buf[1])) ||
               buf.cmp("DD") ||
               buf.cmp("DT") ||
               buf.cmp("P"))
@@ -1324,16 +1324,13 @@ void Fl_Help_View::Impl::format() {
 
           popfont(font, fsize, fcolor);
 
-          //#if defined(__GNUC__)
-          //#warning FIXME this isspace & 255 test will probably not work on a utf8 stream... And we use it everywhere!
-          //#endif /*__GNUC__*/
-          while (isspace((*ptr)&255))
+          while (fl_ascii_isspace(*ptr))
             ptr ++;
 
           block->h += hh;
           yy       += hh;
 
-          if (tolower(buf[2]) == 'l')
+          if (fl_ascii_tolower(buf[2]) == 'l')
             yy += fsize + 2;
 
           if (row)
@@ -1460,7 +1457,7 @@ void Fl_Help_View::Impl::format() {
           block     = add_block(start, xx, yy, xx + ww, 0, border);
           needspace = 0;
           line      = 0;
-          newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? Align::CENTER : Align::LEFT);
+          newalign  = get_align(attrs, fl_ascii_tolower(buf[1]) == 'h' ? Align::CENTER : Align::LEFT);
           talign    = newalign;
 
           cells[column] = (int) (block - &blocks_[0]);
@@ -1491,7 +1488,7 @@ void Fl_Help_View::Impl::format() {
           }
 
           if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-            if (isdigit(attr[0] & 255)) {
+            if (fl_ascii_isdigit(attr[0])) {
               // Absolute size
               fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
             } else {
@@ -1593,7 +1590,7 @@ void Fl_Help_View::Impl::format() {
         needspace = 0;
         ptr ++;
       }
-      else if (isspace((*ptr)&255))
+      else if (fl_ascii_isspace(*ptr))
       {
         needspace = 1;
         if ( pre ) {
@@ -1769,7 +1766,7 @@ void Fl_Help_View::Impl::format_table(
   // Scan the table...
   for (ptr = table, column = -1, width = 0, incell = 0; *ptr;)
   {
-    if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0 && incell)
+    if ((*ptr == '<' || fl_ascii_isspace(*ptr)) && buf.size() > 0 && incell)
     {
       // Check width...
       if (needspace)
@@ -1794,7 +1791,7 @@ void Fl_Help_View::Impl::format_table(
     {
       start = ptr;
 
-      for (buf.clear(), ptr ++; *ptr && *ptr != '>' && !isspace((*ptr)&255);)
+      for (buf.clear(), ptr ++; *ptr && *ptr != '>' && !fl_ascii_isspace(*ptr);)
         buf += *ptr++;
 
       attrs = ptr;
@@ -1831,7 +1828,7 @@ void Fl_Help_View::Impl::format_table(
         width     = 0;
         needspace = 0;
 
-        if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
+        if (fl_ascii_tolower(buf[0]) == 'h' && fl_ascii_isdigit(buf[1]))
         {
           font  = FL_HELVETICA_BOLD;
           fsize = textsize_ + '7' - buf[1];
@@ -2028,7 +2025,7 @@ void Fl_Help_View::Impl::format_table(
       needspace = 0;
       ptr ++;
     }
-    else if (isspace((*ptr)&255))
+    else if (fl_ascii_isspace(*ptr))
     {
       needspace = 1;
 
@@ -2189,13 +2186,13 @@ const char *Fl_Help_View::Impl::get_attr(
 
   while (*p && *p != '>')
   {
-    while (isspace((*p)&255))
+    while (fl_ascii_isspace(*p))
       p ++;
 
     if (*p == '>' || !*p)
       return (nullptr);
 
-    for (ptr = name; *p && !isspace((*p)&255) && *p != '=' && *p != '>';)
+    for (ptr = name; *p && !fl_ascii_isspace(*p) && *p != '=' && *p != '>';)
       if (ptr < (name + sizeof(name) - 1))
         *ptr++ = *p++;
       else
@@ -2203,14 +2200,14 @@ const char *Fl_Help_View::Impl::get_attr(
 
     *ptr = '\0';
 
-    if (isspace((*p)&255) || !*p || *p == '>')
+    if (fl_ascii_isspace(*p) || !*p || *p == '>')
       buf[0] = '\0';
     else
     {
       if (*p == '=')
         p ++;
 
-      for (ptr = buf; *p && !isspace((*p)&255) && *p != '>';)
+      for (ptr = buf; *p && !fl_ascii_isspace(*p) && *p != '>';)
         if (*p == '\'' || *p == '\"')
         {
           quote = *p++;
@@ -2718,7 +2715,7 @@ void Fl_Help_View::Impl::draw()
       int entity_extra_length = 0;
       for (ptr = block->start, buf.clear(); ptr < block->end;)
       {
-        if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0)
+        if ((*ptr == '<' || fl_ascii_isspace(*ptr)) && buf.size() > 0)
         {
           if (!head && !pre)
           {
@@ -2741,7 +2738,7 @@ void Fl_Help_View::Impl::draw()
             buf.clear();
             entity_extra_length = 0;
             if (underline) {
-              xtra_ww = isspace((*ptr)&255)?(int)fl_width(' '):0;
+              xtra_ww = fl_ascii_isspace(*ptr)?(int)fl_width(' '):0;
               fl_xyline(xx + view.x() - leftline_, yy + view.y() + 1,
                         xx + view.x() - leftline_ + ww + xtra_ww);
             }
@@ -2755,7 +2752,7 @@ void Fl_Help_View::Impl::draw()
           }
           else if (pre)
           {
-            while (isspace((*ptr)&255))
+            while (fl_ascii_isspace(*ptr))
             {
               if (*ptr == '\n')
               {
@@ -2803,7 +2800,7 @@ void Fl_Help_View::Impl::draw()
           {
             buf.clear();
 
-            while (isspace((*ptr)&255))
+            while (fl_ascii_isspace(*ptr))
               ptr ++;
             current_pos_ = (int) (ptr-value_);
           }
@@ -2826,7 +2823,7 @@ void Fl_Help_View::Impl::draw()
               break;
           }
 
-          while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
+          while (*ptr && *ptr != '>' && !fl_ascii_isspace(*ptr))
             buf += *ptr++;
 
           attrs = ptr;
@@ -2875,7 +2872,7 @@ void Fl_Help_View::Impl::draw()
                    buf.cmp("DT") ||
                    buf.cmp("PRE"))
           {
-            if (tolower(buf[0]) == 'h')
+            if (fl_ascii_tolower(buf[0]) == 'h')
             {
               font  = FL_HELVETICA_BOLD;
               fsize = textsize_ + '7' - buf[1];
@@ -2937,7 +2934,7 @@ void Fl_Help_View::Impl::draw()
             }
 
             if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-              if (isdigit(attr[0] & 255)) {
+              if (fl_ascii_isdigit(attr[0])) {
                 // Absolute size
                 fsize = (int)(textsize_ * pow(1.2, atof(attr) - 3.0));
               } else {
@@ -2964,7 +2961,7 @@ void Fl_Help_View::Impl::draw()
           {
             int tx, ty, tw, th;
 
-            if (tolower(buf[1]) == 'h')
+            if (fl_ascii_tolower(buf[1]) == 'h')
               pushfont(font |= FL_BOLD, fsize);
             else
               pushfont(font = textfont_, fsize);
@@ -3098,7 +3095,7 @@ void Fl_Help_View::Impl::draw()
           ptr ++;
           current_pos_ = (int) (ptr-value_);
         }
-        else if (isspace((*ptr)&255))
+        else if (fl_ascii_isspace(*ptr))
         {
           if (pre)
           {
@@ -3131,7 +3128,7 @@ void Fl_Help_View::Impl::draw()
             utf8l = buf.size() - utf8l; // length of added UTF-8 text
             const char *oldptr = ptr;
             ptr = strchr(ptr, ';') + 1;
-            entity_extra_length += int(ptr - (oldptr-1)) - utf8l; // extra length between html entity and UTF-8
+            entity_extra_length += (int)((size_t)(ptr - (oldptr-1)) - utf8l); // extra length between html entity and UTF-8
           }
 
           if ((fsize + 2) > hh)
@@ -3672,7 +3669,7 @@ int Fl_Help_View::Impl::find(const char *s, int p)
       // Hint: use fl_utf8encode() [see below]
 
       int utf_len = 1;
-      if (c > 0x20 && c < 0x80 && tolower(*sp) == tolower(c)) {
+      if (c > 0x20 && c < 0x80 && fl_ascii_tolower(*sp) == fl_ascii_tolower(c)) {
         // Check for ASCII case insensitive match.
         //printf("%ld text match %c/%c\n", bp-value_, *sp, c);
         sp++;
@@ -4047,7 +4044,7 @@ int Fl_Help_View::Impl::copy(int clipboard)
           *d++ = *src++;
         }
         c = src[-1] & 0xff;
-        p = isspace(c) ? ' ' : c;
+        p = fl_ascii_isspace(c) ? ' ' : c;
       }
       continue;
     }
@@ -4064,7 +4061,7 @@ int Fl_Help_View::Impl::copy(int clipboard)
     }
     int n = (int) (s2-value_);
     if (n>selection_first_ && n<=selection_last_) {
-      if (!pre && c < 256 && isspace(c)) c = ' ';
+      if (!pre && fl_ascii_isspace(c)) c = ' ';
       if (p != ' ' || c != ' ') {
         if (s2 != s) { // c was an HTML entity
           d += fl_utf8encode(c, d);
@@ -4172,16 +4169,16 @@ static const char *vanilla(const char *p, const char *end) {
 // convert a command with up to four letters into an unsigned int
 static uint32_t command(const char *cmd)
 {
-  uint32_t ret = (tolower(cmd[0])<<24);
+  uint32_t ret = (fl_ascii_tolower(cmd[0])<<24);
   char c = cmd[1];
   if (c=='>' || c==' ' || c==0) return ret;
-  ret |= (tolower(c)<<16);
+  ret |= (fl_ascii_tolower(c)<<16);
   c = cmd[2];
   if (c=='>' || c==' ' || c==0) return ret;
-  ret |= (tolower(c)<<8);
+  ret |= (fl_ascii_tolower(c)<<8);
   c = cmd[3];
   if (c=='>' || c==' ' || c==0) return ret;
-  ret |= tolower(c);
+  ret |= fl_ascii_tolower(c);
   c = cmd[4];
   if (c=='>' || c==' ' || c==0) return ret;
   return 0;
@@ -4384,7 +4381,7 @@ static size_t url_scheme(const std::string &url, bool skip_slashes)
 {
   // First skip all ascii letters and digits
   size_t pos = 0;
-  while ( (pos < url.size()) && ( isalnum(url[pos]) || (url[pos] == '+') || (url[pos] == '-') || (url[pos] == '.') )) {
+  while ( (pos < url.size()) && ( fl_ascii_isalnum(url[pos]) || (url[pos] == '+') || (url[pos] == '-') || (url[pos] == '.') )) {
     pos++;
   }
   // Next, check for the ':' character

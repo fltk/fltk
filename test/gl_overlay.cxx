@@ -106,7 +106,6 @@ void overlay_sides_cb(Fl_Widget *o, void *p) {
 #include <stdio.h>
 int main(int argc, char **argv) {
 
-  Fl::use_high_res_GL(1);
   Fl_Window window(300, 370);
 
   shape_window sw(10, 75, window.w()-20, window.h()-90);

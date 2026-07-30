@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <setjmp.h>
 
-
 // Some releases of the Cygwin JPEG libraries don't have a correctly
 // updated header file for the INT32 data type; the following define
 // from Shane Hill seems to be a usable workaround...
@@ -242,7 +241,7 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   fl_jpeg_error_mgr       jerr;     // Error handler info
   JSAMPROW                row;      // Sample row pointer
 
-  struct load_stat *lstat = new load_stat();
+  struct load_stat lstat;
 
   // Clear data...
   alloc_array = 0;
@@ -250,15 +249,13 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
 
   // Open the image file if we read from the file system
   if (filename) {
-    if ((lstat->fp = fl_fopen(filename, "rb")) == NULL) {
+    if ((lstat.fp = fl_fopen(filename, "rb")) == NULL) {
       ld(ERR_FILE_ACCESS);
-      delete lstat;
       return;
     }
   } else {
     if (data==0L) {
       ld(ERR_FILE_ACCESS);
-      delete lstat;
       return;
     }
   }
@@ -278,9 +275,9 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
 
     // if any of the cleanup routines hits another error, we would end up
     // in a loop. So instead, we decrement max_err for some upper cleanup limit.
-    if ( ((lstat->max_finish_decompress_err)-- > 0) && array)
+    if ( ((lstat.max_finish_decompress_err)-- > 0) && array)
       jpeg_finish_decompress(&dinfo);
-    if ( (lstat->max_destroy_decompress_err)-- > 0)
+    if ( (lstat.max_destroy_decompress_err)-- > 0)
       jpeg_destroy_decompress(&dinfo);
 
     w(0);
@@ -294,13 +291,12 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
     }
 
     ld(ERR_FORMAT);
-    delete lstat;
     return;
   }
 
   jpeg_create_decompress(&dinfo);
-  if (lstat->fp) {
-    jpeg_stdio_src(&dinfo, lstat->fp);
+  if (lstat.fp) {
+    jpeg_stdio_src(&dinfo, lstat.fp);
   } else {
     if (data_length==-1)
       jpeg_unprotected_mem_src(&dinfo, data);
@@ -335,8 +331,6 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
 
   jpeg_finish_decompress(&dinfo);
   jpeg_destroy_decompress(&dinfo);
-
-  delete lstat;
 
   if (sharename && w() && h()) {
     Fl_Shared_Image *si = new Fl_Shared_Image(sharename, this);

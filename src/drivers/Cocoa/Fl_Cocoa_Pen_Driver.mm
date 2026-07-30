@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
 #include <FL/platform.H>
 #include <FL/Fl.H>
@@ -77,22 +77,11 @@ static Fl::Pen::EventData ev;
 
 namespace Fl {
 
-namespace Private {
-
-// Global mouse position at mouse down event
-extern int e_x_down;
-extern int e_y_down;
-
-}; // namespace Private
-
 namespace Pen {
 
 class Cocoa_Driver : public Driver {
 public:
   Cocoa_Driver() = default;
-  //virtual void subscribe(Fl_Widget* widget) override;
-  //virtual void unsubscribe(Fl_Widget* widget) override;
-  //virtual void release() override;
   virtual Trait traits() override { return driver_traits_; }
   virtual Trait pen_traits(int pen_id) override {
     auto it = trait_list_.find(pen_id);
@@ -106,8 +95,11 @@ public:
   }
 };
 
-Cocoa_Driver cocoa_driver;
-Driver& driver = cocoa_driver;
+static Cocoa_Driver cocoa_driver;
+
+Driver& newPenDriver() {
+  return cocoa_driver;
+}
 
 } // namespace Pen
 
@@ -395,11 +387,8 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
     return 0;
 
   if (is_down) {
-    if (!pushed) {
-      pushed_ = subscriber_list_[receiver];
-      Fl::pushed(receiver);
-    }
     State trigger = button_to_trigger([event buttonNumber], true);
+    int result = 0;
     if ([event buttonNumber] == 0) {
       Fl::e_is_click = 1;
       Fl::Private::e_x_down = (int)ev.x;
@@ -408,20 +397,24 @@ bool fl_cocoa_tablet_handler(NSEvent *event, Fl_Window *eventWindow) {
         Fl::e_clicks++;
       else
         Fl::e_clicks = 0;
-      pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
+      result = pen_send(receiver, Fl::Pen::TOUCH, trigger, event_data_copied);
     } else {
-      pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
+      result = pen_send(receiver, Fl::Pen::BUTTON_PUSH, trigger, event_data_copied);
+    }
+    if (!pushed && result) {
+      pushed_ = subscriber_list_[receiver];
+      Fl::pushed(receiver);
     }
   } else if (is_up) {
-    if ( (ev.state & State::ANY_DOWN) == State::NONE ) {
-      Fl::pushed(nullptr);
-      pushed_ = nullptr;
-    }
     State trigger = button_to_trigger([event buttonNumber], true);
     if ([event buttonNumber] == 0)
       pen_send(receiver, Fl::Pen::LIFT, trigger, event_data_copied);
     else
       pen_send(receiver, Fl::Pen::BUTTON_RELEASE, trigger, event_data_copied);
+    if ( ((ev.state & State::ANY_DOWN) == State::NONE) && ( Fl::pushed() || pushed_ ) ) {
+      Fl::pushed(nullptr);
+      pushed_ = nullptr;
+    }
   } else if (is_motion) {
     if (  Fl::e_is_click &&
          ( (fabs((int)ev.x - Fl::Private::e_x_down) > 5) ||

@@ -20,8 +20,8 @@
 
 #include "../src/flstring.h"
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 
 /**
@@ -48,6 +48,7 @@ void History::load() {
       else Fluid.history_item[i].flags = 0;
     } else break;
   }
+  Fluid.preferences.get("latest_project_path", latest_project_path_, "");
 
   for (; i < 10; i ++) {
     if (i) Fluid.history_item[i-1].flags |= FL_MENU_DIVIDER;
@@ -71,13 +72,19 @@ void History::update(std::string project_file) {
   Fluid.preferences.get("recent_files", max_files, 5);
   if (max_files > 10) max_files = 10;
 
-  std::string absolute = fld::fix_separators(fl_filename_absolute_str(project_file));
+  std::string absolute = fluid::fix_separators(fl_filename_absolute_str(project_file));
   for (i = 0; i < max_files; i ++)
 #if defined(_WIN32) || defined(__APPLE__)
     if (!strcasecmp(absolute.c_str(), abspath[i])) break;
 #else
     if (!strcmp(absolute.c_str(), abspath[i])) break;
 #endif // _WIN32 || __APPLE__
+
+  std::string path = fl_filename_path_str(absolute);
+  if (path != latest_project_path_) {
+    latest_project_path_ = path;
+    Fluid.preferences.set("latest_project_path", latest_project_path_);
+  }
 
   // Does the first entry match?
   if (i == 0)

@@ -101,7 +101,7 @@ std::string fl_filename_shortened(const std::string &filename, int max_chars) {
  \param[in] str directory or path name
  \return a new string, ending with a '/'
  */
-std::string fld::end_with_slash(const std::string &str) {
+std::string fluid::end_with_slash(const std::string &str) {
   char last = str[str.size()-1];
   if (last !='/' && last != '\\')
     return str + "/";
@@ -114,7 +114,7 @@ std::string fld::end_with_slash(const std::string &str) {
  \param[in] fn a file path in Unix or Windows format
  \return a copy of the file path in Unix format.
  */
-std::string fld::fix_separators(const std::string &fn) {
+std::string fluid::fix_separators(const std::string &fn) {
   std::string ret = fn;
   for (size_t i=0; i<ret.size(); ++i) {
     if (ret[i] == '\\') {

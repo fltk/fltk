@@ -39,10 +39,13 @@
 #if HAVE_XDG_DIALOG
 #  include "xdg-dialog-client-protocol.h"
 #endif
+#if HAVE_XDG_ACTIVATION
+#  include "xdg-activation-client-protocol.h"
+#endif
 #if HAVE_CURSOR_SHAPE
 #  include "cursor-shape-client-protocol.h"
 #  include "tablet-client-protocol.h"
-#  include "Fl_Wayland_Pen_Events.H"
+#  include "Fl_Wayland_Pen_Driver.H"
 #endif
 #include <assert.h>
 #include <sys/mman.h>
@@ -97,9 +100,7 @@ struct pointer_output {
 
 
 static std::vector<int> key_vector; // used by Fl_Wayland_Screen_Driver::event_key()
-/*static*/ struct wl_surface *gtk_shell_surface = NULL;
-/*static*/ libdecor_frame *gtk_shell_frame = NULL;
-/*static*/ Fl_Window *gtk_shell_window = nullptr;
+static struct wl_surface *gtk_shell_surface = NULL;
 
 Fl_Wayland_Screen_Driver::compositor_name Fl_Wayland_Screen_Driver::compositor =
   Fl_Wayland_Screen_Driver::unspecified;
@@ -651,14 +652,14 @@ struct key_repeat_data_t {
   Fl_Window *window;
 };
 
-#define KEY_REPEAT_DELAY 0.5 // sec
-#define KEY_REPEAT_INTERVAL 0.05 // sec
+static double key_repeat_delay = 0.5; // sec
+static double key_repeat_interval = 0.05;  // sec
 
 
 static void key_repeat_timer_cb(key_repeat_data_t *key_repeat_data) {
-  if (last_keydown_serial == key_repeat_data->serial) {
+  if (last_keydown_serial == key_repeat_data->serial && key_repeat_interval > 0) {
     Fl::handle(FL_KEYDOWN, key_repeat_data->window);
-    Fl::add_timeout(KEY_REPEAT_INTERVAL, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
+    Fl::add_timeout(key_repeat_interval, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
   }
   else delete key_repeat_data;
 }
@@ -882,11 +883,6 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
   // otherwise send it to Wayland-defined focus window
   Fl_Window *win = ( Fl::focus() ? Fl::focus()->top_window() :
                     Fl_Wayland_Window_Driver::surface_to_window(seat->keyboard_surface) );
-  if (win) {
-    set_event_xy(win);
-    Fl::e_is_click = 0;
-    Fl::handle(event, win);
-  }
   if (event == FL_KEYDOWN && status == XKB_COMPOSE_NOTHING &&
       !(sym >= FL_Shift_L && sym <= FL_Alt_R)) {
     // Handling of key repeats :
@@ -902,8 +898,13 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
     key_repeat_data->serial = serial;
     key_repeat_data->window = win;
     last_keydown_serial = serial;
-    Fl::add_timeout(KEY_REPEAT_DELAY, (Fl_Timeout_Handler)key_repeat_timer_cb,
+    Fl::add_timeout(key_repeat_delay, (Fl_Timeout_Handler)key_repeat_timer_cb,
                     key_repeat_data);
+  }
+  if (win) {
+    set_event_xy(win);
+    Fl::e_is_click = 0;
+    Fl::handle(event, win);
   }
 }
 
@@ -948,7 +949,9 @@ static void wl_keyboard_modifiers(void *data, struct wl_keyboard *wl_keyboard,
 
 static void wl_keyboard_repeat_info(void *data, struct wl_keyboard *wl_keyboard, int32_t rate, int32_t delay)
 {
-  // wl_keyboard is version 3 under Debian, but that event isn't sent until version 4
+  key_repeat_delay = delay / 1000.;
+  key_repeat_interval = (rate > 0 ? 1. / rate : 0);
+  //printf("wl_keyboard_repeat_info: rate=%d delay=%d\n",rate,delay);
 }
 
 
@@ -1029,8 +1032,8 @@ void text_input_commit_string(void *data, struct zwp_text_input_v3 *zwp_text_inp
 void text_input_delete_surrounding_text(void *data,
                                         struct zwp_text_input_v3 *zwp_text_input_v3,
                                         uint32_t before_length, uint32_t after_length) {
-  fprintf(stderr, "delete_surrounding_text before=%d adfter=%d\n",
-          before_length,after_length);
+  fprintf(stderr, "delete_surrounding_text before=%u after=%u\n",
+          before_length, after_length);
 }
 
 
@@ -1274,7 +1277,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
 //fprintf(stderr, "registry_handle_global: seat=%p\n", scr_driver->seat);
     wl_list_init(&scr_driver->seat->pointer_outputs);
     scr_driver->seat->wl_seat = (wl_seat*)wl_registry_bind(wl_registry, id,
-                                                           &wl_seat_interface, 3);
+                                                      &wl_seat_interface, fl_min(version, 4));
     scr_driver->seat->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (scr_driver->seat->xkb_context) {
       const char *locale = getenv("LC_ALL");
@@ -1362,7 +1365,7 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     ((pair_bool*)user_data)->found_gtk_shell = true;
     //fprintf(stderr, "Running the Mutter compositor\n");
     scr_driver->seat->gtk_shell = (struct gtk_shell1*)wl_registry_bind(wl_registry, id,
-                                  &gtk_shell1_interface, version);
+                                  &gtk_shell1_interface, fl_min(version, 5));
   } else if (strcmp(interface, "weston_desktop_shell") == 0) {
     Fl_Wayland_Screen_Driver::compositor = Fl_Wayland_Screen_Driver::WESTON;
     //fprintf(stderr, "Running the Weston compositor\n");
@@ -1393,6 +1396,11 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
     scr_driver->xdg_wm_dialog = (struct xdg_wm_dialog_v1 *)
       wl_registry_bind(wl_registry, id, &xdg_wm_dialog_v1_interface, 1);
 #endif // HAVE_XDG_DIALOG
+#if HAVE_XDG_ACTIVATION
+  } else if (strcmp(interface, xdg_activation_v1_interface.name) == 0) {
+    scr_driver->xdg_activation = (struct xdg_activation_v1 *)
+      wl_registry_bind(wl_registry, id, &xdg_activation_v1_interface, 1);
+#endif // HAVE_XDG_ACTIVATION
 #if HAVE_CURSOR_SHAPE
   } else if (strcmp(interface, wp_cursor_shape_manager_v1_interface.name) == 0) {
     scr_driver->wp_cursor_shape_manager = (struct wp_cursor_shape_manager_v1 *)
@@ -1436,7 +1444,7 @@ static const struct wl_registry_listener registry_listener = {
 };
 
 
-static void libdecor_fd_callback(int fd, struct libdecor *libdecor_context)
+static void wld_socket_callback(int fd, struct libdecor *libdecor_context)
 {
   if (libdecor_dispatch(libdecor_context, 0) >= 0) return;
   if (wl_display_get_error(Fl_Wayland_Screen_Driver::wl_display) == EPROTO) {
@@ -1459,6 +1467,9 @@ Fl_Wayland_Screen_Driver::Fl_Wayland_Screen_Driver() : Fl_Unix_Screen_Driver() {
   wl_registry = NULL;
 #if HAVE_XDG_DIALOG
   xdg_wm_dialog = NULL;
+#endif
+#if HAVE_XDG_ACTIVATION
+  xdg_activation = NULL;
 #endif
 #if HAVE_CURSOR_SHAPE
   wp_cursor_shape_manager = NULL;
@@ -1542,7 +1553,7 @@ void Fl_Wayland_Screen_Driver::open_display_platform() {
   wl_callback_add_listener(registry_cb, &sync_listener, &registry_cb);
   while (registry_cb) wl_display_dispatch(wl_display);
   libdecor_context = libdecor_new(wl_display, &libdecor_iface);
-  Fl::add_fd(libdecor_get_fd(libdecor_context), FL_READ, (Fl_FD_Handler)libdecor_fd_callback,
+  Fl::add_fd(libdecor_get_fd(libdecor_context), FL_READ, (Fl_FD_Handler)wld_socket_callback,
              libdecor_context);
   fl_create_print_window();
   atexit(do_atexit);
@@ -1636,6 +1647,12 @@ void Fl_Wayland_Screen_Driver::close_display() {
     xdg_wm_dialog = NULL;
   }
 #endif // HAVE_XDG_DIALOG
+#if HAVE_XDG_ACTIVATION
+  if (xdg_activation) {
+    xdg_activation_v1_destroy(xdg_activation);
+    xdg_activation = NULL;
+  }
+#endif // HAVE_XDG_ACTIVATION
 #if HAVE_CURSOR_SHAPE
   if (wp_cursor_shape_device ) {
     wp_cursor_shape_device_v1_destroy(wp_cursor_shape_device);
@@ -2170,7 +2187,7 @@ void *Fl_Wayland_Screen_Driver::control_maximize_button(void *data) {
 
 
 int Fl_Wayland_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
-  if (wl_display_dispatch_pending(wl_display) > 0) return 1;
+  if (libdecor_context && libdecor_dispatch(libdecor_context, 0) > 0) return 1;
   return Fl_Unix_Screen_Driver::poll_or_select_with_delay(time_to_wait);
 }
 

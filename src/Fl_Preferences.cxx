@@ -2,7 +2,7 @@
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002-2010 by Matthias Melcher.
-// Copyright 2011-2024 by Bill Spitzak and others.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -853,9 +853,9 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue ) 
  */
 char Fl_Preferences::set( const char *key, double value ) {
   if (rootNode->root() & C_LOCALE) {
-    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%lg", value );
+    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%g", value );
   } else {
-    snprintf( nameBuffer, sizeof(nameBuffer), "%lg", value );
+    snprintf( nameBuffer, sizeof(nameBuffer), "%g", value );
   }
   node->set( key, nameBuffer );
   return 1;
@@ -873,9 +873,9 @@ char Fl_Preferences::set( const char *key, double value ) {
  */
 char Fl_Preferences::set( const char *key, double value, int precision ) {
   if (rootNode->root() & C_LOCALE) {
-    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%.*lg", precision, value );
+    clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%.*g", precision, value );
   } else {
-    snprintf( nameBuffer, sizeof(nameBuffer), "%.*lg", precision, value );
+    snprintf( nameBuffer, sizeof(nameBuffer), "%.*g", precision, value );
   }
   node->set( key, nameBuffer );
   return 1;
@@ -887,7 +887,7 @@ static char *decodeText( const char *src ) {
   const char *s = src;
   for ( ; *s; s++, len++ ) {
     if ( *s == '\\' ) {
-      if ( isdigit( s[1] ) ) {
+      if ( fl_ascii_isdigit( s[1] ) ) {
         s+=3;
       } else {
         s+=1;
@@ -901,7 +901,7 @@ static char *decodeText( const char *src ) {
       if ( s[1] == '\\' ) { *d++ = c; s++; }
       else if ( s[1] == 'n' ) { *d++ = '\n'; s++; }
       else if ( s[1] == 'r' ) { *d++ = '\r'; s++; }
-      else if ( isdigit( s[1] ) ) { *d++ = ((s[1]-'0')<<6) + ((s[2]-'0')<<3) + (s[3]-'0'); s+=3; }
+      else if ( fl_ascii_isdigit( s[1] ) ) { *d++ = ((s[1]-'0')<<6) + ((s[2]-'0')<<3) + (s[3]-'0'); s+=3; }
       else s++; // error
     }
     else
@@ -1033,10 +1033,10 @@ static void *decodeHex( const char *src, int &size ) {
   const char *s = src;
   for ( int i=size; i>0; i-- ) {
     int v;
-    char x = tolower(*s++);
+    char x = fl_ascii_tolower(*s++);
     if ( x >= 'a' ) v = x-'a'+10; else v = x-'0';
     v = v<<4;
-    x = tolower(*s++);
+    x = fl_ascii_tolower(*s++);
     if ( x >= 'a' ) v += x-'a'+10; else v += x-'0';
     *d++ = (uchar)v;
   }
@@ -1606,7 +1606,7 @@ Fl_Preferences::Node::~Node() {
 }
 
 // recursively check if any entry is dirty (was changed after loading a fresh prefs file)
-char Fl_Preferences::Node::dirty() {
+char Fl_Preferences::Node::dirty() const {
   if ( dirty_ ) return 1;
   if ( next_ && next_->dirty() ) return 1;
   if ( first_child_ && first_child_->dirty() ) return 1;
@@ -1668,8 +1668,8 @@ void Fl_Preferences::Node::setParent( Node *pn ) {
 }
 
 // find the corresponding root node
-Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot() {
-  Node *n = this;
+Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot() const {
+  const Node *n = this;
   do {
     if (n->top_)
       return n->root_node_;
@@ -1749,13 +1749,13 @@ void Fl_Preferences::Node::add( const char *line ) {
 }
 
 // get the value for a name, returns 0 if no such name
-const char *Fl_Preferences::Node::get( const char *name ) {
+const char *Fl_Preferences::Node::get( const char *name ) const {
   int i = getEntry( name );
   return i>=0 ? entry_[i].value : 0 ;
 }
 
 // find the index of an entry, returns -1 if no such entry
-int Fl_Preferences::Node::getEntry( const char *name ) {
+int Fl_Preferences::Node::getEntry( const char *name ) const {
   for ( int i=0; i<nEntry_; i++ ) {
     if ( strcmp( name, entry_[i].name ) == 0 ) {
       return i;
@@ -1841,7 +1841,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset
 }
 
 // return the number of child nodes (groups)
-int Fl_Preferences::Node::nChildren() {
+int Fl_Preferences::Node::nChildren() const {
   if (indexed_) {
     return nIndex_;
   } else {
@@ -1853,7 +1853,7 @@ int Fl_Preferences::Node::nChildren() {
 }
 
 // return the node name
-const char *Fl_Preferences::Node::name() {
+const char *Fl_Preferences::Node::name() const {
   if ( path_ ) {
     char *r = strrchr( path_, '/' );
     return r ? r+1 : path_ ;

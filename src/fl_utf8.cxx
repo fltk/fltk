@@ -955,7 +955,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   } else if (c < 0xc2) {
     goto FAIL;
   }
-  if ( (end && p+1 >= end) || (p[1]&0xc0) != 0x80) goto FAIL;
+  if ( (end && p+1 >= end) || !fl_utf8_is_continuation(p[1])) goto FAIL;
   if (c < 0xe0) {
     if (len) *len = 2;
     return
@@ -977,7 +977,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
 #endif
   } else if (c < 0xf0) {
   UTF8_3:
-    if ( (end && p+2 >= end) || (p[2]&0xc0) != 0x80) goto FAIL;
+    if ( (end && p+2 >= end) || !fl_utf8_is_continuation(p[2])) goto FAIL;
     if (len) *len = 3;
     return
     ((p[0] & 0x0f) << 12) +
@@ -988,7 +988,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
     goto UTF8_4;
   } else if (c < 0xf4) {
   UTF8_4:
-    if ( (end && p+3 >= end) || (p[2]&0xc0) != 0x80 || (p[3]&0xc0) != 0x80) goto FAIL;
+    if ( (end && p+3 >= end) || !fl_utf8_is_continuation(p[2]) || !fl_utf8_is_continuation(p[3]) ) goto FAIL;
     if (len) *len = 4;
 #if STRICT_RFC3629
     /* RFC 3629 says all codes ending in fffe or ffff are illegal: */
@@ -1040,7 +1040,7 @@ const char* fl_utf8fwd(const char* p, const char* start, const char* end)
   const char* a;
   int len;
   /* if we are not pointing at a continuation character, we are done: */
-  if ((*p&0xc0) != 0x80) return p;
+  if ( !fl_utf8_is_continuation(*p) ) return p;
   /* search backwards for a 0xc0 starting the character: */
   for (a = p-1; ; --a) {
     if (a < start) return p;
@@ -1072,7 +1072,7 @@ const char* fl_utf8back(const char* p, const char* start, const char* end)
   const char* a;
   int len;
   /* if we are not pointing at a continuation character, we are done: */
-  if ((*p&0xc0) != 0x80) return p;
+  if ( !fl_utf8_is_continuation(*p) ) return p;
   /* search backwards for a 0xc0 starting the character: */
   for (a = p-1; ; --a) {
     if (a < start) return p;
@@ -1573,6 +1573,22 @@ int fl_utf8locale()
   return Fl::system_driver()->utf8locale();
 }
 
+/** Evaluates true if 'byte' is in the middle of a UTF-8 character (0x80..0xBF). */
+int fl_utf8_is_continuation(char byte)
+{
+  //            Byte 1    Byte 2    Byte 3   ..etc..
+  //    ASCII:  0xxxxxxx
+  //  UTF8(2):  110xxxxx  10xxxxxx
+  //  UTF8(3):  1110xxxx  10xxxxxx  10xxxxxx
+  //  UTF8(4):  11110xxx  10xxxxxx  10xxxxxx  10xxxxxx
+  //  UTF8(5):  111110xx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
+  //  UTF8(6):  1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
+  //            \______/  \______________________________________________/
+  //           Start byte           Continuation bytes
+  //                                (c & 0xc0) == 0x80
+  //
+  return (byte & 0xc0) == 0x80;
+}
 
 /** Convert the UTF-8 used by FLTK to the locale-specific encoding
   used for filenames (and sometimes used for data in files).
@@ -1694,19 +1710,25 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
  Returns pointer to beginning of character before given location in UTF8 string accounting for emoji sequences.
  See fl_utf8_next_composed_char() for a hint about what is an emoji sequence.
  Use this function to step back to the previous character within a UTF8 string processing an entire emoji sequence
- if present as a single character.
- \param from points to a location within a UTF8 string. If this location is inside the UTF8
+ if present as a single character. The string is assumed to be NULL-terminated.
+ The returned value cannot be lower than \c begin.
+ \param from points to a location within a UTF8 string or to terminal null byte. If this location is inside the UTF8
  encoding of a codepoint or is an invalid byte, this function returns \p from - 1.
  \param begin points to start of first codepoint of the string.
  \return pointer to beginning of first character, possibly an emoji sequence, before the codepoint that begins at \p from.
  */
 const char *fl_utf8_previous_composed_char(const char *from, const char *begin) {
-  int l = fl_utf8len(*from);
-  if (from <= begin || l == -1) return from - 1;
-  const char *keep = from + l;
-  from = fl_utf8back(from - 1, begin, NULL);
+  if (from <= begin) return begin;
+  const char *keep = from;
+  if (*from) {
+    int l = fl_utf8len(*from);
+    if (l == -1) return from - 1;
+    keep += l;
+  }
+  from = fl_utf8back(from - 1, begin, keep);
   unsigned u = fl_utf8decode(from, keep, NULL);
   if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 1st regional indicator symbol can be a flag
+    if (from <= begin) return begin;
     const char *previous = fl_utf8back(from - 1, begin, NULL);
     u = fl_utf8decode(previous, keep, NULL);
     if (u >= 0x1F1E6 && u <= 0x1F1FF) { // a 2nd Regional indicator symbol gives a flag
@@ -1721,7 +1743,7 @@ const char *fl_utf8_previous_composed_char(const char *from, const char *begin) 
       if (u == 0x1F3F4) return previous; // “waving black flag” starts subdivision flags
     } while (u >= 0xE0020 && u <= 0xE007E); // any series of "tag components"
   }
-  while (from >= begin) {
+  while (from > begin) {
     u = fl_utf8decode(from, keep, NULL);
     if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
       from = fl_utf8back(from - 1, begin, NULL);
@@ -1733,6 +1755,7 @@ const char *fl_utf8_previous_composed_char(const char *from, const char *begin) 
       keep = fl_utf8back(from - 1, begin, NULL);
       u = fl_utf8decode(keep, from, NULL);
       if (u == 0x200D) { // zero-width joiner
+        if (keep <= begin) return begin;
         from = fl_utf8back(keep - 1, begin, NULL);
         continue;
       }

@@ -767,7 +767,6 @@ void handlemenu(Fl_Widget*, void *value) {handlemenu(fl_int(value));}
 
 int main(int argc, char** argv)
 {
-  Fl::use_high_res_GL(1);
 //  glutInit(&argc, argv); // this line removed for FLTK
 
   // create FLTK window:

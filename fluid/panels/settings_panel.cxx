@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,17 +18,21 @@
 
 #include "settings_panel.h"
 #include "Project.h"
+#include "message.h"
+#include "io/file_chooser.h"
 #include "proj/undo.h"
+#include "nodes/Widget_Node.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_ask.H>
 #include "../src/flstring.h"
 #include <string.h>
-using namespace fld::widget;
+using namespace fluid::widget;
 void scheme_cb(Fl_Scheme_Choice *, void *);
 int w_settings_shell_list_selected;
 
 static void cb_Comments(Fl_Choice* o, void* v) {
+//ﬂ ▼ ------------------------ code ---~~=~~-~~~-~-=-~~==--~ ▼ ﬂ//
   Fl_Font *font = (Fl_Font*)o->user_data();
   if (v == LOAD) {
     o->value(*font);
@@ -37,9 +41,11 @@ static void cb_Comments(Fl_Choice* o, void* v) {
     widget_browser->redraw();
     widget_browser->save_prefs();
   }
+//ﬂ ▲ ----------~-~=~~~~~==-----------~-=~-~~~--=~=-~=~~-~~~ ▲ ﬂ//
 }
 
 static void cb_Color_Chip(Fl_Button* o, void* v) {
+//ﬂ ▼ ------------------------ code --~--~=-~~-=-=----=~--~~ ▼ ﬂ//
   Fl_Color *color = (Fl_Color*)o->user_data();
   if (v == LOAD) {
     o->color(*color);
@@ -51,9 +57,11 @@ static void cb_Color_Chip(Fl_Button* o, void* v) {
     widget_browser->redraw();
     widget_browser->save_prefs();
   }
+//ﬂ ▲ ----------~~-~~==~~-~=----------~~-~~~=~~==-~~~~~-=~-~ ▲ ﬂ//
 }
 
 static void cb_Color_Choice(Fl_Menu_Button* o, void* v) {
+//ﬂ ▼ ------------------------ code ---~=-=~-=--~-~=-=-=-=~= ▼ ﬂ//
   if (v != LOAD) {
     Fl_Color *color = (Fl_Color*)o->user_data();
     Fl_Color d = (Fl_Color)(o->mvalue()->argument());
@@ -62,14 +70,17 @@ static void cb_Color_Choice(Fl_Menu_Button* o, void* v) {
     widget_browser->redraw();
     widget_browser->save_prefs();
   }
+//ﬂ ▲ ----------~~-~~=-=--=~----------~-=~-~-=-==--~-~-----= ▲ ﬂ//
 }
 
 Fl_Double_Window* script_panel = (Fl_Double_Window*)nullptr;
 
 static void cb_script_panel(Fl_Double_Window*, void*) {
+//ﬂ ▼ ---------------------- callback ---=~~-~~-~---~--==-~~ ▼ ﬂ//
   if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
   script_panel->hide(); // otherwise hide..;
+//ﬂ ▲ ----------=~~~~-~-~-~-------------~=---~~-~-~~----=~~= ▲ ﬂ//
 }
 
 Fl_Text_Editor* script_input = (Fl_Text_Editor*)nullptr;
@@ -109,9 +120,11 @@ Fl_Double_Window* make_script_panel() {
     o->size_range(200, 150);
     script_panel->end();
   } // Fl_Double_Window* script_panel
+//ﬂ ▼ ------------------------ code ---~=~-~~=-=~-~=~=~~=~=- ▼ ﬂ//
   // Enable line numbers
   script_input->linenumber_width(60);
   script_input->linenumber_size(script_input->Fl_Text_Display::textsize());
+//ﬂ ▲ ----------~---=~-=-~=------------~-~~~~-=~~==-=~-~-=-= ▲ ﬂ//
   return script_panel;
 }
 
@@ -120,7 +133,9 @@ Fl_Double_Window* settings_window = (Fl_Double_Window*)nullptr;
 Fl_Tabs* w_settings_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_w_settings_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==~~=--~--~~~~~-~=~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------=~=~-=-~~~=~----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Group* w_settings_general_tab = (Fl_Group*)nullptr;
@@ -235,74 +250,95 @@ static Fl_Image* image_general_64() {
 }
 
 static void cb_(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~=~==~--~~-~~~-~~-=- ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=~--~~~~--~----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Scheme_Choice* scheme_choice = (Fl_Scheme_Choice*)nullptr;
 
 static void cb_scheme_choice(Fl_Scheme_Choice* o, void*) {
+//ﬂ ▼ ---------------------- callback ~~~=~~----~--~--~~~==~ ▼ ﬂ//
   Fluid.set_scheme(o->text(o->value()));
+//ﬂ ▲ ----------=~=~~~~~-~--------------~=~-~~-~~-~=~-~~~=~~ ▲ ﬂ//
 }
 
 Fl_Check_Button* tooltips_button = (Fl_Check_Button*)nullptr;
 
 static void cb_tooltips_button(Fl_Check_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ----~=~=~~---=--=~=-~= ▼ ﬂ//
   Fl_Tooltip::enable(tooltips_button->value());
   Fluid.preferences.set("show_tooltips", tooltips_button->value());
+//ﬂ ▲ ----------~=~=-=---~-=------------=-=-=--==~~=-=-~=-=~ ▲ ﬂ//
 }
 
 Fl_Check_Button* completion_button = (Fl_Check_Button*)nullptr;
 
 static void cb_completion_button(Fl_Check_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~--~=-=~-~=-~=-~~~-~~= ▼ ﬂ//
   Fluid.preferences.set("show_completion_dialogs", completion_button->value());
+//ﬂ ▲ ----------~=-~~-=--~~~----------~~--~~=~=~---=--=~=~~= ▲ ﬂ//
 }
 
 Fl_Check_Button* openlast_button = (Fl_Check_Button*)nullptr;
 
 static void cb_openlast_button(Fl_Check_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~-=~~~~-~-~~~-----=~~~ ▼ ﬂ//
   Fluid.preferences.set("open_previous_file", openlast_button->value());
+//ﬂ ▲ ----------~=~--=-=--~-----------~----=--~~=-=~--=-~-=~ ▲ ﬂ//
 }
 
 Fl_Check_Button* prevpos_button = (Fl_Check_Button*)nullptr;
 
 static void cb_prevpos_button(Fl_Check_Button*, void*) {
+//ﬂ ▼ ---------------------- callback -~-==-~~~~=~~==-~~~--= ▼ ﬂ//
   Fluid.preferences.set("prev_window_pos", prevpos_button->value());
+//ﬂ ▲ ----------~==-~---~==-----------~--~-~~=-=~=--~~=----~ ▲ ﬂ//
 }
 
 Fl_Check_Button* show_comments_button = (Fl_Check_Button*)nullptr;
 
 static void cb_show_comments_button(Fl_Check_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~-~~=~--=~-~--~~=~~-~= ▼ ﬂ//
   Fluid.show_comments = show_comments_button->value();
   Fluid.preferences.set("Fluid.show_comments", Fluid.show_comments);
   redraw_browser();
+//ﬂ ▲ ----------=~------=~-~----------~~~~=-~---~-~-~~-~=~~~ ▲ ﬂ//
 }
 
 static void cb_1(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==~--=~=-~=~-~--~=~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~==---~----~----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Spinner* recent_spinner = (Fl_Spinner*)nullptr;
 
 static void cb_recent_spinner(Fl_Spinner*, void*) {
+//ﬂ ▼ ---------------------- callback -~-=~=-==---~=--~--=-- ▼ ﬂ//
   Fluid.preferences.set("recent_files", recent_spinner->value());
   Fluid.history.load();
+//ﬂ ▲ ----------~=~=~-~----=----------~---=-=-~--~~--~=~=-=~ ▲ ﬂ//
 }
 
 Fl_Input* editor_command_input = (Fl_Input*)nullptr;
 
 static void cb_editor_command_input(Fl_Input*, void*) {
-  strncpy(Fluid.external_editor_command, editor_command_input->value(), sizeof(Fluid.external_editor_command)-1);
-  Fluid.external_editor_command[sizeof(Fluid.external_editor_command)-1] = 0;
+//ﬂ ▼ ---------------------- callback --~~~---~-~=-==--==~~~ ▼ ﬂ//
+  Fluid.external_editor_command = editor_command_input->value();
   Fluid.preferences.set("external_editor_command", Fluid.external_editor_command);
   redraw_browser();
+//ﬂ ▲ ----------~=~=~--=~--=-----------~--=-=~~-=-~=----~~~~ ▲ ﬂ//
 }
 
 Fl_Check_Button* use_external_editor_button = (Fl_Check_Button*)nullptr;
 
 static void cb_use_external_editor_button(Fl_Check_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~-~=--=-~==---=-~~~=-= ▼ ﬂ//
   Fluid.use_external_editor = use_external_editor_button->value();
   Fluid.preferences.set("use_external_editor", Fluid.use_external_editor);
   redraw_browser();
+//ﬂ ▲ ----------~=-~=-~=-=~-----------~~=-=~-=-=~=--~-=-~~-= ▲ ﬂ//
 }
 
 Fl_Check_Button* guides_button = (Fl_Check_Button*)nullptr;
@@ -314,7 +350,9 @@ Fl_Check_Button* ghosted_outline_button = (Fl_Check_Button*)nullptr;
 Fl_Group* w_settings_project_tab = (Fl_Group*)nullptr;
 
 static void cb_w_settings_project_tab(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~~-=~~---=~~~-=~=-- ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=~~~-~~-~~-----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 static const unsigned char idata_document_64[] =
@@ -370,6 +408,7 @@ static Fl_Image* image_document_64() {
 Fl_Input* header_file_input = (Fl_Input*)nullptr;
 
 static void cb_header_file_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -----~=-=~=--==~-=--~- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.header_file_name.c_str());
   } else {
@@ -378,11 +417,13 @@ static void cb_header_file_input(Fl_Input* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~~---~~--=-----------~~-~=~--~---~-~-----~- ▲ ﬂ//
 }
 
 Fl_Input* code_file_input = (Fl_Input*)nullptr;
 
 static void cb_code_file_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~~~=-~-~-~--~-~=--- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.code_file_name.c_str());
   } else {
@@ -391,11 +432,13 @@ static void cb_code_file_input(Fl_Input* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~=--~-=~~=-~----------~---~=~~=-=--~-=~~~~~~ ▲ ﬂ//
 }
 
 Fl_Check_Button* include_H_from_C_button = (Fl_Check_Button*)nullptr;
 
 static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~~=-~=~-=~~-~==-~=-= ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.include_H_from_C);
   } else {
@@ -404,11 +447,13 @@ static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
       Fluid.proj.include_H_from_C = o->value();
     }
   }
+//ﬂ ▲ ----------~=~--~~-~=-------------~=-~---~-~~~=~-~----~ ▲ ﬂ//
 }
 
 Fl_Input* include_guard_input = (Fl_Input*)nullptr;
 
 static void cb_include_guard_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~=~~--~~~~=-~=--==~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.include_guard.c_str());
   } else {
@@ -417,11 +462,13 @@ static void cb_include_guard_input(Fl_Input* o, void* v) {
       Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~==-~~~~---=-----------~-~-=-=--~~~~--~==~=- ▲ ﬂ//
 }
 
 Fl_Check_Button* use_FL_COMMAND_button = (Fl_Check_Button*)nullptr;
 
 static void cb_use_FL_COMMAND_button(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~=~--~~~~~~~-~----=~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.use_FL_COMMAND);
   } else {
@@ -430,11 +477,13 @@ static void cb_use_FL_COMMAND_button(Fl_Check_Button* o, void* v) {
       Fluid.proj.use_FL_COMMAND = o->value();
     }
   }
+//ﬂ ▲ ----------~=~-=-~=-~~-----------~~~~---~=~-=-~~-~-=--- ▲ ﬂ//
 }
 
 Fl_Check_Button* utf8_in_src_button = (Fl_Check_Button*)nullptr;
 
 static void cb_utf8_in_src_button(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~-=~=~=~--~~~~-~--=~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.utf8_in_src);
   } else {
@@ -443,11 +492,13 @@ static void cb_utf8_in_src_button(Fl_Check_Button* o, void* v) {
       Fluid.proj.utf8_in_src = o->value();
     }
   }
+//ﬂ ▲ ----------=~-~--=~-==-------------~~=-=-=-~=----~=-~=- ▲ ﬂ//
 }
 
 Fl_Check_Button* avoid_early_includes_button = (Fl_Check_Button*)nullptr;
 
 static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---=~~=-~==-=~=-=~=~=~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.avoid_early_includes);
   } else {
@@ -456,11 +507,13 @@ static void cb_avoid_early_includes_button(Fl_Check_Button* o, void* v) {
       Fluid.proj.avoid_early_includes = o->value();
     }
   }
+//ﬂ ▲ ----------~=~==-~-~~~~--------------~~---~-~=--=~-=~=- ▲ ﬂ//
 }
 
 Fl_Check_Button* w_proj_mergeback = (Fl_Check_Button*)nullptr;
 
 static void cb_w_proj_mergeback(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=~~=~~~-=~~-=~=~-=-- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.write_mergeback_data);
   } else {
@@ -469,12 +522,15 @@ static void cb_w_proj_mergeback(Fl_Check_Button* o, void* v) {
       Fluid.proj.write_mergeback_data = o->value();
     }
   }
+//ﬂ ▲ ----------=~-=-~-==~-~-----------~-~~=~~~=~=---=-=~==~ ▲ ﬂ//
 }
 
 Fl_Group* w_settings_layout_tab = (Fl_Group*)nullptr;
 
 static void cb_w_settings_layout_tab(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~-~-~-~~~==~=~-=~-=~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=--~~=~~==~----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 static const unsigned char idata_layout_64[] =
@@ -509,6 +565,7 @@ static Fl_Image* image_layout_64() {
 Fl_Choice* layout_choice = (Fl_Choice*)nullptr;
 
 static void cb_layout_choice(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=--~~=~=-=---==--=-= ▼ ﬂ//
   if (v == LOAD) {
       o->value(Fluid.layout_list.current_suite());
     } else {
@@ -516,6 +573,7 @@ static void cb_layout_choice(Fl_Choice* o, void* v) {
       Fluid.layout_list.current_suite(index);
       Fluid.layout_list.update_dialogs();
     }
+//ﬂ ▲ ----------~=-=~=~--=-~----------~-~~-=-~-=~~-~=~~-~~~- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_layout_choice[] = {
@@ -525,6 +583,7 @@ Fl_Menu_Item menu_layout_choice[] = {
 };
 
 static void cb_2(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~~~--=--------=~-~- ▼ ﬂ//
   // Clone the current layout suite
 
   if (v == LOAD) return;
@@ -537,14 +596,16 @@ static void cb_2(Fl_Button*, void* v) {
 
   Fluid.layout_list.add(new_name);
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ ----------=~=~-=~~=~~=----------~~-~--~--~~~-=--=~=~=- ▲ ﬂ//
 }
 
 Fl_Menu_Button* w_layout_menu = (Fl_Menu_Button*)nullptr;
 
 static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback --=-~-=-~-~-=~~~-~-=-~ ▼ ﬂ//
   if (v == LOAD) {
-    fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-    if (suite.storage_ == fld::Tool_Store::INTERNAL) {
+    fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+    if (suite.storage_ == fluid::Tool_Store::INTERNAL) {
       w_layout_menu_rename->deactivate();
       for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
       w_layout_menu_delete->deactivate();
@@ -555,9 +616,11 @@ static void cb_w_layout_menu(Fl_Menu_Button*, void* v) {
     }
     w_layout_menu_storage[static_cast<int>(suite.storage_)]->setonly(menu_w_layout_menu);
   }
+//ﬂ ▲ ----------=~=~-~=~=-=-----------~~---~--~~=~=-=--=~=~= ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
+//ﬂ ▼ ---------------------- callback ~-=-~-~~-~=~~=-=----~~ ▼ ﬂ//
   // Rename the current layout suite
 
   std::string old_name = Fluid.layout_list[Fluid.layout_list.current_suite()].name_;
@@ -567,69 +630,96 @@ static void cb_w_layout_menu_rename(Fl_Menu_*, void*) {
 
   Fluid.layout_list.rename(new_name);
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ -----------=-=~=~=-==------------~=--=-~~-~--=-=-==--= ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_storage(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::INTERNAL);
+//ﬂ ▼ ---------------------- callback ~-~-=-~-~---~-~=-~-~~- ▼ ﬂ//
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::INTERNAL);
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ ----------=-~~-=~~~-=-----------~--~-------=--=-=--==~ ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_storage1(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::USER);
+//ﬂ ▼ ---------------------- callback -~-~--~-~=----=-~=~-=~ ▼ ﬂ//
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::USER);
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ ----------=-~=--~~~=~~----------~-~~~--~=~~-~~~~-~=-=- ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_storage2(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::PROJECT);
+//ﬂ ▼ ---------------------- callback -~~=-~-~---~~-~~~~~-=~ ▼ ﬂ//
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::PROJECT);
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ ----------=--~=-~~~~-~----------~-=~=~~=-==~-~~=~-=--~ ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_storage3(Fl_Menu_*, void*) {
-  fld::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  suite.storage(fld::Tool_Store::FILE);
+//ﬂ ▼ ---------------------- callback -~-=~=--~--~-=-~--~-=~ ▼ ﬂ//
+  fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
+  suite.storage(fluid::Tool_Store::FILE);
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ -----------=-=~=~~-=-=----------~-~=-~--~-=-=~-=-=~-~= ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_load(Fl_Menu_*, void*) {
+//ﬂ ▼ ---------------------- callback ---=~~-==-~~-~~-~=-~-- ▼ ﬂ//
   // Give the user a file chooser and load that file
-  Fl_Native_File_Chooser fnfc;
-  fnfc.title("Load Layout Settings:");
-  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fnfc.options(Fl_Native_File_Chooser::USE_FILTER_EXT);
-  fnfc.filter("FLUID Layouts\t*.fll\n");
-  if (fnfc.show() != 0) return;
-  const char *new_filename = fnfc.filename();
-  if (!new_filename) return;
-  Fluid.layout_list.load(new_filename);
-  //Fluid.layout_list.current_suite(n);
-  Fluid.layout_list.update_dialogs();
+    if (Fluid.layout_list.filename_.empty()) {
+      Fluid.layout_list.filename_ = Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll";
+    }
+
+    std::string filename = fluid::io::filechooser(
+      fluid::io::FileChooserType::LOAD_FILE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
+      "Import Layout Settings",
+      "Can't open layout file:\n%s.",
+      Fluid.layout_list.filename_,
+      Fluid.proj.projectfile_path(),
+      "Fluid Layout File\t*.fll"
+    );
+    if (filename.empty()) return;
+
+    Fluid.layout_list.filename_ = filename;
+    Fluid.layout_list.load(filename);
+    //Fluid.layout_list.current_suite(n);
+    Fluid.layout_list.update_dialogs();
+//ﬂ ▲ -----------=~~~=-~~~~~-----------~---~~=~--~~--==~-~=~ ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_save(Fl_Menu_*, void*) {
+//ﬂ ▼ ---------------------- callback ~-~~~~--~-=--=-=-=~==- ▼ ﬂ//
   // Give the user a file chooser with a suggested name
-    Fl_Native_File_Chooser fnfc;
-    fnfc.title("Save Layout Settings:");
-    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
-    fnfc.filter("FLUID Layouts\t*.fll\n");
-    std::string filename = Fluid.layout_list.filename_;
-    fnfc.directory(fl_filename_path_str(filename).c_str());
-    fnfc.preset_file(fl_filename_name_str(filename).c_str());
-    if (fnfc.show() != 0) return;
-    const char *new_filename = fnfc.filename();
-    if (!new_filename) return;
-    Fluid.layout_list.filename_ = new_filename;
-    Fluid.layout_list.save(new_filename);
+    if (Fluid.layout_list.filename_.empty()) {
+      Fluid.layout_list.filename_ = Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll";
+    }
+
+    std::string filename = fluid::io::filechooser(
+      fluid::io::FileChooserType::SAVE_FILE,
+      fluid::io::FileChooserPath::ABSOLUTE_PATH,
+      "Export Layout Settings",
+      "Can't create layout file:\n%s.",
+      Fluid.layout_list.filename_,
+      Fluid.proj.projectfile_path(),
+      "Fluid Layout File\t*.fll"
+    );
+    if (filename.empty()) return;
+
+    Fluid.layout_list.filename_ = filename;
+    Fluid.layout_list.save(filename);
+//ﬂ ▲ ----------=-~~=-=~=~~--------------~~==-~--~-~~~~==~-= ▲ ﬂ//
 }
 
 static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
+//ﬂ ▼ ---------------------- callback --=-~~-=-==----=-==-=- ▼ ﬂ//
   // remove the current suite
 
   Fluid.layout_list.remove(Fluid.layout_list.current_suite());
   Fluid.layout_list.update_dialogs();
+//ﬂ ▲ -----------==-~--~=--=----------~~-~-=~=~~~=--~~=--~=~ ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_w_layout_menu[] = {
@@ -647,195 +737,243 @@ Fl_Menu_Item menu_w_layout_menu[] = {
 Fl_Button* preset_choice[3] = {(Fl_Button*)nullptr};
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~=--~-=-~-~==~---~=- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->left_window_margin);
   } else {
     Fluid.proj.layout->left_window_margin = (int)o->value();
   }
+//ﬂ ▲ ----------=~=~~=-=--~=-----------~~-~-~~-~--~=~=~--=~~ ▲ ﬂ//
 }
 
 static void cb_Top(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=--=~==--~--=~=-~=~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->top_window_margin);
   } else {
     Fluid.proj.layout->top_window_margin = (int)o->value();
   }
+//ﬂ ▲ ----------=~~-~~~-~~---------------=~-~=-=-~=-=-~----= ▲ ﬂ//
 }
 
 static void cb_Right(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~~=-~~-=~=-==~~-=--~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->right_window_margin);
   } else {
     Fluid.proj.layout->right_window_margin = (int)o->value();
   }
+//ﬂ ▲ ----------~=~=---~=-=--------------~~-~---~-~=~~=-~~-= ▲ ﬂ//
 }
 
 static void cb_Bottom(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~~=-=-=~=~-=---=~~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->bottom_window_margin);
   } else {
     Fluid.proj.layout->bottom_window_margin = (int)o->value();
   }
+//ﬂ ▲ ----------=~~~~~=--=-~----------~~=---~=-~-==~~~----~~ ▲ ﬂ//
 }
 
 static void cb_Horizontal(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-~-=~=~=--~~-=--~~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->window_grid_x);
   } else {
     Fluid.proj.layout->window_grid_x = (int)o->value();
   }
+//ﬂ ▲ ----------~==~---=~=-=----------~~~=~-=~~~=-=-~=~~-==~ ▲ ﬂ//
 }
 
 static void cb_Vertical(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~---~-=---=~==-~==-~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->window_grid_y);
   } else {
     Fluid.proj.layout->window_grid_y = (int)o->value();
   }
+//ﬂ ▲ ----------~=-~-=~--=-~----------~~-=-=~==~-~=--~-~=-~~ ▲ ﬂ//
 }
 
 static void cb_Left1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~--~==~=-~-~=--~==- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->left_group_margin);
   } else {
     Fluid.proj.layout->left_group_margin = (int)o->value();
   }
+//ﬂ ▲ ----------~=-~=-~~=~=--------------==-=~-~~=-=-==~-~=- ▲ ﬂ//
 }
 
 static void cb_Top1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-~~~~~=--==~~==~-=-= ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->top_group_margin);
   } else {
     Fluid.proj.layout->top_group_margin = (int)o->value();
   }
+//ﬂ ▲ ----------=~=-=---~=~=-----------~~-=~-=~~~-~~-~~-=-=- ▲ ﬂ//
 }
 
 static void cb_Right1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=-=-----~~~=--=~=-=~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->right_group_margin);
   } else {
     Fluid.proj.layout->right_group_margin = (int)o->value();
   }
+//ﬂ ▲ ----------~=~~-~-~~----------------~-~-=-~~~=---=~-~~= ▲ ﬂ//
 }
 
 static void cb_Bottom1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~=~~~---=~=~-~=~-=~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->bottom_group_margin);
   } else {
     Fluid.proj.layout->bottom_group_margin = (int)o->value();
   }
+//ﬂ ▲ ----------~=-=-~~~=--~----------~--==~-=~~~-~=~~~==~=~ ▲ ﬂ//
 }
 
 static void cb_Horizontal1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=~~=--==-~==~=--=-- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->group_grid_x);
   } else {
     Fluid.proj.layout->group_grid_x = (int)o->value();
   }
+//ﬂ ▲ ----------=~-~=-~----~-----------~~~~=-=-=-=----=-~~-~ ▲ ﬂ//
 }
 
 static void cb_Vertical1(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--~~---=~==~--=~-=~= ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->group_grid_y);
   } else {
     Fluid.proj.layout->group_grid_y = (int)o->value();
   }
+//ﬂ ▲ ----------=~~-=~~=-~=~----------~--~-=--~----=~~~-~-~- ▲ ﬂ//
 }
 
 static void cb_Top2(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~---~-~~~-~-=~~-=-~~~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->top_tabs_margin);
   } else {
     Fluid.proj.layout->top_tabs_margin = (int)o->value();
   }
+//ﬂ ▲ ----------~=-=-~-=~~~=-----------~-=~~~--==~---~~-~=~- ▲ ﬂ//
 }
 
 static void cb_Bottom2(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=~~-~-=~-~=~=-=-~~-= ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->bottom_tabs_margin);
   } else {
     Fluid.proj.layout->bottom_tabs_margin = (int)o->value();
   }
+//ﬂ ▲ ----------~==~---=-~=~------------~==~-==~=-~=--~--=~~ ▲ ﬂ//
 }
 
 static void cb_Minimum(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~---~-=~~==---~=~-~--- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->widget_min_w);
   } else {
     Fluid.proj.layout->widget_min_w = (int)o->value();
   }
+//ﬂ ▲ ----------=~-~-~-~---=----------~~~~--~-=~--=~~~-~=-~- ▲ ﬂ//
 }
 
 static void cb_Increment(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~==-=-~=~~-=-=-~~~~- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->widget_inc_w);
   } else {
     Fluid.proj.layout->widget_inc_w = (int)o->value();
   }
+//ﬂ ▲ ----------=~~~~--~~-=------------~~~~=-~=-=~--~--~=--- ▲ ﬂ//
 }
 
 static void cb_Gap(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~~=-~~~=---~~-~=~-~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->widget_gap_x);
   } else {
     Fluid.proj.layout->widget_gap_x = (int)o->value();
   }
+//ﬂ ▲ ----------~=-==--~=~~--------------~~-~~=-~~=-~=~-~~-= ▲ ﬂ//
 }
 
 static void cb_3(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-=~-~=-=---~~-~-=~~- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->widget_min_h);
   } else {
     Fluid.proj.layout->widget_min_h = (int)o->value();
   }
+//ﬂ ▲ ----------=~~-=~~-=-~~----------~~=-~==---~~-=-=~~=~=~ ▲ ﬂ//
 }
 
 static void cb_4(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~~~-~--~~---~~--=-=~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->widget_inc_h);
   } else {
     Fluid.proj.layout->widget_inc_h = (int)o->value();
   }
+//ﬂ ▲ ----------~==-=~-~~--------------~=---~=~--=~~=-~~=~=- ▲ ﬂ//
 }
 
 static void cb_5(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=-~~-==~~=---~~=--=- ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->widget_gap_y);
   } else {
     Fluid.proj.layout->widget_gap_y = (int)o->value();
   }
+//ﬂ ▲ ----------~=--~-~~-~-~----------~~~~--=~~~=~-~=-=-~-=~ ▲ ﬂ//
 }
 
 static void cb_6(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~==~---==~~~--=~-~=- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.layout->labelfont+1);
   } else {
     Fluid.proj.layout->labelfont = (int)o->value()-1;
   }
+//ﬂ ▲ ----------=~-~-=~~~~~=--------------~~=~=~~==~-==~=~=- ▲ ﬂ//
 }
 
 static void cb_7(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-~~~-~=-=--=~~-~--- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.layout->labelsize);
   } else {
     Fluid.proj.layout->labelsize = (int)o->value();
   }
+//ﬂ ▲ ----------~=~--~~-~=~-----------~~-~~-=-=---~-=--=~=-- ▲ ﬂ//
 }
 
 static void cb_8(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~-~~=~---~~=-~----- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.layout->textfont+1);
   } else {
     Fluid.proj.layout->textfont = (int)o->value()-1;
   }
+//ﬂ ▲ ----------=~~--=~-~==-------------=----~~=--~--=~~~==- ▲ ﬂ//
 }
 
 static void cb_9(Fl_Value_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=~-~----~-~-~==~=~~~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.layout->textsize);
   } else {
     Fluid.proj.layout->textsize = (int)o->value();
   }
+//ﬂ ▲ ----------~=~-~==~-=~------------~~~~--=-~--=~-~-~~--- ▲ ﬂ//
 }
 
 Fl_Group* w_settings_shell_tab = (Fl_Group*)nullptr;
@@ -887,6 +1025,7 @@ static Fl_Image* image_shell_64() {
 Fl_Browser* w_settings_shell_list = (Fl_Browser*)nullptr;
 
 static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~--=---=~~=~==-~-=~~~ ▼ ﬂ//
   if (v == LOAD) {
     // load from g_shell_config
     if (g_shell_config) {
@@ -895,9 +1034,9 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
       for (int i=0; i<g_shell_config->list_size; i++) {
         Fd_Shell_Command *cmd = g_shell_config->list[i];
         o->add(cmd->name.c_str());
-        if (cmd->storage == fld::Tool_Store::USER)
+        if (cmd->storage == fluid::Tool_Store::USER)
           o->icon(i+1, w_settings_shell_fd_user->image());
-        else if (cmd->storage == fld::Tool_Store::PROJECT)
+        else if (cmd->storage == fluid::Tool_Store::PROJECT)
           o->icon(i+1, w_settings_shell_fd_project->image());
       }
     }
@@ -912,17 +1051,21 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   }
+//ﬂ ▲ ----------=~---~~=~~=~-----------~~~~~~=-~~=-~-~-~-~=~ ▲ ﬂ//
 }
 
 Fl_Group* w_settings_shell_toolbox = (Fl_Group*)nullptr;
 
 static void cb_w_settings_shell_toolbox(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~--=~-~~=-~-~~~~=~=-~= ▼ ﬂ//
   if (v==LOAD) {
     propagate_load(o, v);
   }
+//ﬂ ▲ ----------~==-~=~--~------------~-~=-==~-=-~-=~--~---~ ▲ ﬂ//
 }
 
 static void cb_a(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback --~~--~==-~-~~-=~-~--= ▼ ﬂ//
   if (v != LOAD) {
     int selected = w_settings_shell_list_selected;
     Fd_Shell_Command *cmd = new Fd_Shell_Command("new shell command");
@@ -930,9 +1073,9 @@ static void cb_a(Fl_Button*, void* v) {
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
-    if (cmd->storage == fld::Tool_Store::USER) {
+    if (cmd->storage == fluid::Tool_Store::USER) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-    } else if (cmd->storage == fld::Tool_Store::PROJECT) {
+    } else if (cmd->storage == fluid::Tool_Store::PROJECT) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
       Fluid.proj.set_modflag(1);
     }
@@ -941,11 +1084,13 @@ static void cb_a(Fl_Button*, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
+//ﬂ ▲ ----------=~~==~-~-==~----------~~-==~-~~==--~~~-==~=- ▲ ﬂ//
 }
 
 Fl_Button* w_settings_shell_dup = (Fl_Button*)nullptr;
 
 static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-~~=--=~--~~----=~= ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
     if (selected) {
@@ -960,9 +1105,9 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
     w_settings_shell_list->value(selected+1);
-    if (cmd->storage == fld::Tool_Store::USER) {
+    if (cmd->storage == fluid::Tool_Store::USER) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_user->image());
-    } else if (cmd->storage == fld::Tool_Store::PROJECT) {
+    } else if (cmd->storage == fluid::Tool_Store::PROJECT) {
       w_settings_shell_list->icon(selected+1, w_settings_shell_fd_project->image());
       Fluid.proj.set_modflag(1);
     }
@@ -971,11 +1116,13 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
+//ﬂ ▲ ----------=~=--~~-=~=-----------~--==~-==~=-=-~==~=-~- ▲ ﬂ//
 }
 
 Fl_Button* w_settings_shell_remove = (Fl_Button*)nullptr;
 
 static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~~~--=-~-==-~~-=-==~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
     if (selected) {
@@ -985,10 +1132,10 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     }
   } else {
     if (!selected) return;
-    int ret = fl_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
+    int ret = fluid_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
       "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
     if (ret==1) return;
-    if (g_shell_config->at(selected-1)->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+    if (g_shell_config->at(selected-1)->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     g_shell_config->remove(selected-1);
     w_settings_shell_list->remove(selected);
     if (selected <= w_settings_shell_list->size())
@@ -1000,18 +1147,23 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
+//ﬂ ▲ ----------=~~-~==~-~~=------------=~=-=--=-==~-==~-=~- ▲ ﬂ//
 }
 
 Fl_Menu_Button* w_settings_shell_menu = (Fl_Menu_Button*)nullptr;
 
 static void cb_Import(Fl_Menu_*, void* v) {
+//ﬂ ▼ ---------------------- callback -~~~~=---=~~--~=~~~-~- ▼ ﬂ//
   if (v != LOAD)
     Fd_Shell_Command_List::import_from_file();
+//ﬂ ▲ ----------=--==-=~~=~-----------~~-==-=--~=~--~-=-~=~~ ▲ ﬂ//
 }
 
 static void cb_Export(Fl_Menu_*, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~~~~~==-~~--=-=-=-=~ ▼ ﬂ//
   if (v != LOAD)
     Fd_Shell_Command_List::export_selected();
+//ﬂ ▲ ----------=-~---=--=-~----------~~=-~~=~-~--~=-~-~=-~~ ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_w_settings_shell_menu[] = {
@@ -1026,12 +1178,15 @@ Fl_Menu_Item menu_w_settings_shell_menu[] = {
 };
 
 static void cb_T(Fl_Button*, void* v) {
+//ﬂ ▼ ---------------------- callback --~-=~~=-=~=~-~~=-~~=~ ▼ ﬂ//
   if (v!=LOAD) show_terminal_window();
+//ﬂ ▲ ----------~==-=---~=-=-------------~~~-=~~~=-=-==-=--- ▲ ﬂ//
 }
 
 Fl_Button* w_settings_shell_play = (Fl_Button*)nullptr;
 
 static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-~-~=-~~-~--=~-=~~- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v==LOAD) {
     if (selected) {
@@ -1044,11 +1199,13 @@ static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
     Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
     cmd->run();
   }
+//ﬂ ▲ ----------~=~-=--~-=~------------~~--~=-=-=~-~=-=-=--~ ▲ ﬂ//
 }
 
 Fl_Group* w_settings_shell_cmd = (Fl_Group*)nullptr;
 
 static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---==---=-~==~-=~=--=~ ▼ ﬂ//
   if (v==LOAD) {
     int selected = w_settings_shell_list_selected;
     if (selected) {
@@ -1058,9 +1215,11 @@ static void cb_w_settings_shell_cmd(Fl_Group* o, void* v) {
     }
     propagate_load(o, v);
   }
+//ﬂ ▲ ----------=~-=~~-=--=~----------~---=-~=-~~~~=~~~--=-- ▲ ﬂ//
 }
 
 static void cb_Name(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~-=-~=~=~=~~-~~-=-- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1073,12 +1232,14 @@ static void cb_Name(Fl_Input* o, void* v) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->name = o->value();
       w_settings_shell_list->text(selected, o->value());
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~~-~-~~~-=~----------~-~-~=-~=-~=~--~=~~~~~ ▲ ﬂ//
 }
 
 static void cb_Menu(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~=-~-~-=-~~==---~~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1091,16 +1252,20 @@ static void cb_Menu(Fl_Input* o, void* v) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->label = o->value();
       cmd->update_shell_menu();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~=~-~=-~~~~=----------~-~=~--~~-~=~=-~-~=~-~ ▲ ﬂ//
 }
 
 static void cb_b(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=~~~~=--~-~~~--==--= ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------=~~=~--~--=~----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=-~=~~~--~--=~=~~~-= ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1114,60 +1279,72 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->shortcut = o->value();
       cmd->update_shell_menu();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~=-~=-~--=-~------------~~---=--~-=~~~-~--~~ ▲ ﬂ//
 }
 
 static void cb_Store(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~=--==-~=-~~--~~=-=~= ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      fld::Tool_Store ts = g_shell_config->list[selected-1]->storage;
+      fluid::Tool_Store ts = g_shell_config->list[selected-1]->storage;
       o->value(o->find_item_with_argument((long)ts));
     } else {
-      o->value(o->find_item_with_argument((long)fld::Tool_Store::USER));
+      o->value(o->find_item_with_argument((long)fluid::Tool_Store::USER));
     }
   } else {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
-      fld::Tool_Store ts = (fld::Tool_Store)(o->mvalue()->argument());
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      fluid::Tool_Store ts = (fluid::Tool_Store)(o->mvalue()->argument());
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
       cmd->storage = ts;
       //w_settings_shell_list->text(selected, cmd->name.c_str());
-      if (cmd->storage == fld::Tool_Store::USER)
+      if (cmd->storage == fluid::Tool_Store::USER)
         w_settings_shell_list->icon(selected, w_settings_shell_fd_user->image());
-      else if (cmd->storage == fld::Tool_Store::PROJECT)
+      else if (cmd->storage == fluid::Tool_Store::PROJECT)
         w_settings_shell_list->icon(selected, w_settings_shell_fd_project->image());
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~=-=-=-~~~------------~~----=~~~=-=-~~~=---= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Store[] = {
- {"@fd_user User Setting", 0,  nullptr, (void*)(fld::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
- {"@fd_project Project File", 0,  nullptr, (void*)(fld::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"@fd_user User Setting", 0,  nullptr, (void*)(fluid::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"@fd_project Project File", 0,  nullptr, (void*)(fluid::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
 static void cb_Condition(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=-~=-=----~=~~~~~~=- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
+  int cond = Fd_Shell_Command::ALWAYS;
   if (v == LOAD) {
     if (selected) {
-      int cond = g_shell_config->list[selected-1]->condition;
+      cond = g_shell_config->list[selected-1]->condition;
       o->value(o->find_item_with_argument(cond));
     } else {
       o->value(o->find_item_with_argument(0));
+      w_shell_cond_text->hide();
     }
   } else {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
-      int cond = (int)(o->mvalue()->argument());
+      cond = (int)(o->mvalue()->argument());
       cmd->condition = cond;
       g_shell_config->rebuild_shell_menu();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT)
+        Fluid.proj.set_modflag(1);
     }
   }
+  if (cond >= Fd_Shell_Command::USER_ONLY)
+    w_shell_cond_text->show();
+  else
+    w_shell_cond_text->hide();
+//ﬂ ▲ ----------~=-=~~=-~~~~-----------~-~~~-=----=-=-~=~~-= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Condition[] = {
@@ -1176,21 +1353,39 @@ Fl_Menu_Item menu_Condition[] = {
  {"Linux only", 0,  nullptr, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  {"macOS only", 0,  nullptr, (void*)(Fd_Shell_Command::MAC_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  {"Linux and macOS", 0,  nullptr, (void*)(Fd_Shell_Command::MAC_AND_UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
- {"don\'t use", 0,  nullptr, (void*)(Fd_Shell_Command::NEVER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"don\'t use", 0,  nullptr, (void*)(Fd_Shell_Command::NEVER), 128, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"user only", 0,  nullptr, (void*)(Fd_Shell_Command::USER_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"host only", 0,  nullptr, (void*)(Fd_Shell_Command::HOST_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
+ {"env var only", 0,  nullptr, (void*)(Fd_Shell_Command::ENV_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
-static void cb_Label(Fl_Input* o, void* v) {
+Fl_Input* w_shell_cond_text = (Fl_Input*)nullptr;
+
+static void cb_w_shell_cond_text(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~=-~=~~--=-=--~--~=~ ▼ ﬂ//
+  int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
-  //  o->value(g_shell_command.c_str());
+    if (selected)
+      o->value(g_shell_config->list[selected-1]->condition_data.c_str());
+    else
+      o->value("");
   } else {
-  //  g_shell_command = o->value();
+    if (selected) {
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      cmd->condition_data = o->value();
+      g_shell_config->rebuild_shell_menu();
+      if (cmd->storage == fluid::Tool_Store::PROJECT)
+        Fluid.proj.set_modflag(1);
+    }
   }
+//ﬂ ▲ ----------~=~~=~-==-~=----------~-~=-=-----~~--=~---~- ▲ ﬂ//
 }
 
 Fl_Text_Editor* w_settings_shell_command = (Fl_Text_Editor*)nullptr;
 
 static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-=-~=~-~--~=-=-=-~-~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1202,14 +1397,16 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
     if (selected) {
       Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
       cmd->command = o->buffer()->text();
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~-=-=-==-~------------~~~~~=~~---~-~~~~=~~~ ▲ ﬂ//
 }
 
 Fl_Menu_Button* w_settings_shell_text_macros = (Fl_Menu_Button*)nullptr;
 
 static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
+//ﬂ ▼ ---------------------- callback -~=~~~---~----~-~-=~-= ▼ ﬂ//
   const Fl_Menu_Item *mi = o->mvalue();
   if (mi) {
     char buffer[256];
@@ -1228,6 +1425,7 @@ static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
     }
     w_settings_shell_command->do_callback(w_settings_shell_command, (void*)nullptr);
   }
+//ﬂ ▲ ----------~==--=-~~=~~----------~~---==-~~~~~~=---=~~~ ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
@@ -1247,6 +1445,7 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
 };
 
 static void cb_1fd_zoom(Fl_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~-~~--~~-=--~-~-=---=- ▼ ﬂ//
   if (!script_panel) make_script_panel();
   script_input->buffer()->text(w_settings_shell_command->buffer()->text());
   script_panel->show();
@@ -1262,9 +1461,11 @@ static void cb_1fd_zoom(Fl_Button*, void*) {
   w_settings_shell_command->do_callback();
   BREAK2:
   script_panel->hide();
+//ﬂ ▲ ----------~=~--~=--~=~------------=--=~~-=-==~=-~~~--= ▲ ﬂ//
 }
 
 static void cb_save(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=--==~=~~-~=-~~==~=~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1281,12 +1482,14 @@ static void cb_save(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_PROJECT;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~--~==--==---------------~-=~~=~=~=~~=--==~ ▲ ﬂ//
 }
 
 static void cb_save1(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=-~=~=-~=~-=-~-~-==- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1303,12 +1506,14 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_SOURCECODE;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~=-~~=~=-~=~-----------~-~-=~==~-==-=--~--~= ▲ ﬂ//
 }
 
 static void cb_save2(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~==-~=-=--=~-~=-~=-- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1325,12 +1530,14 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::SAVE_STRINGS;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~~-~~~=~=-=----------~~--~~~=~=-~-==-~==~~= ▲ ﬂ//
 }
 
 static void cb_show(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~-=~~~-=~~=~~---~--~- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1347,12 +1554,14 @@ static void cb_show(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::DONT_SHOW_TERMINAL;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~==--~~~~=------------~~~-~==~=~=~~~-=~=--=~ ▲ ﬂ//
 }
 
 static void cb_clear(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~=--=---=~-=~---=-~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1369,12 +1578,14 @@ static void cb_clear(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::CLEAR_TERMINAL;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------~=~--=~=--------------~~-=~~-~-==~~==~=-=~-- ▲ ﬂ//
 }
 
 static void cb_clear1(Fl_Check_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-=~-~-=-=~----~=-=-~~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
@@ -1391,9 +1602,10 @@ static void cb_clear1(Fl_Check_Button* o, void* v) {
       } else {
         cmd->flags &= ~Fd_Shell_Command::CLEAR_HISTORY;
       }
-      if (cmd->storage == fld::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
+      if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
+//ﬂ ▲ ----------=~~~-~~=~==~----------~~~~~=-=~==-=~~=~---~- ▲ ﬂ//
 }
 
 Fl_Box* w_settings_shell_fd_project = (Fl_Box*)nullptr;
@@ -2053,7 +2265,9 @@ static Fl_Image* image_fd_user() {
 Fl_Group* w_settings_i18n_tab = (Fl_Group*)nullptr;
 
 static void cb_w_settings_i18n_tab(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~~=~-=~~~~=~~~~~-~~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=~=-=~-~~~-----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 static const unsigned char idata_language_64[] =
@@ -2141,12 +2355,15 @@ Fl_Menu_Item menu_i18n_type_chooser[] = {
 Fl_Group* i18n_gnu_group = (Fl_Group*)nullptr;
 
 static void cb_i18n_gnu_group(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~=-=-~-=--~=-~~----~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=-=~--~=~-=----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Input* i18n_gnu_include_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---~=--~~-~=-==~---~=- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.gnu_include.c_str());
   } else {
@@ -2154,11 +2371,13 @@ static void cb_i18n_gnu_include_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.gnu_include = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=~=~~~=-~-=-------------~~~-=--=-~~-~-=-=-- ▲ ﬂ//
 }
 
 Fl_Input* i18n_gnu_conditional_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~~=-~=-=-~~-~~=-~--= ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.gnu_conditional.c_str());
   } else {
@@ -2166,11 +2385,13 @@ static void cb_i18n_gnu_conditional_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.gnu_conditional = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~==-----~==~-----------~-~-=-~~-=~=---~-~=~~ ▲ ﬂ//
 }
 
 Fl_Input* i18n_gnu_function_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~=-=-~--=-=~=-~-~-==~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.gnu_function.c_str());
   } else {
@@ -2178,11 +2399,13 @@ static void cb_i18n_gnu_function_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.gnu_function = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~==-~==~~~=~----------~-~-----=-=~~~~-~~=~~- ▲ ﬂ//
 }
 
 Fl_Input* i18n_gnu_static_function_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~~==-~---=~~~~=~~-= ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.gnu_static_function.c_str());
   } else {
@@ -2190,17 +2413,21 @@ static void cb_i18n_gnu_static_function_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.gnu_static_function = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~=~=~~~---~------------~-~=~-~=~~~~~-=~=~~- ▲ ﬂ//
 }
 
 Fl_Group* i18n_posix_group = (Fl_Group*)nullptr;
 
 static void cb_i18n_posix_group(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~-~=-~~==-~~~~~=~~-= ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~==--~~-=-=-----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Input* i18n_pos_include_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~~-~=~~~-==-=~~=~--= ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.posix_include.c_str());
   } else {
@@ -2208,11 +2435,13 @@ static void cb_i18n_pos_include_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.posix_include = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~~=-~~--==------------~~~~-=-=~~-~=~~=~=~-- ▲ ﬂ//
 }
 
 Fl_Input* i18n_pos_conditional_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~~--=~~-----==-~~=-~= ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.posix_conditional.c_str());
   } else {
@@ -2220,11 +2449,13 @@ static void cb_i18n_pos_conditional_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.posix_conditional = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------=~=--==~~--~----------~--~=~=~~~~~~=-~--=--- ▲ ﬂ//
 }
 
 Fl_Input* i18n_pos_file_input = (Fl_Input*)nullptr;
 
 static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~==~=~--~--~-~~~=~~- ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.posix_file.c_str());
   } else {
@@ -2232,15 +2463,19 @@ static void cb_i18n_pos_file_input(Fl_Input* o, void* v) {
     Fluid.proj.i18n.posix_file = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~=-==~--~=~~------------=--=-==-~=~-~-=-~~=- ▲ ﬂ//
 }
 
 static void cb_c(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~~-=~==~-~-~-~~==~~~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=~-=~=~~--~----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 Fl_Int_Input* i18n_pos_set_input = (Fl_Int_Input*)nullptr;
 
 static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=~--=~-~~~==-~=~--~ ▼ ﬂ//
   if (v == LOAD) {
     o->value(Fluid.proj.i18n.posix_set.c_str());
   } else {
@@ -2248,12 +2483,15 @@ static void cb_i18n_pos_set_input(Fl_Int_Input* o, void* v) {
     Fluid.proj.i18n.posix_set = o->value();
     Fluid.proj.set_modflag(1);
   }
+//ﬂ ▲ ----------~==-=~-==~~-----------~~=--~~=--~--~--~~-~-- ▲ ﬂ//
 }
 
 Fl_Group* w_settings_user_tab = (Fl_Group*)nullptr;
 
 static void cb_w_settings_user_tab(Fl_Group* o, void* v) {
+//ﬂ ▼ ---------------------- callback --~=--=~~==~~=-~----~~ ▼ ﬂ//
   propagate_load(o, v);
+//ﬂ ▲ ----------~=----~~~=------------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
 
 static const unsigned char idata_user_circle_64[] =
@@ -2445,6 +2683,7 @@ static Fl_Image* image_user_circle_64() {
 Fl_Choice* w_settings_user_commenttext = (Fl_Choice*)nullptr;
 
 static void cb_Reset(Fl_Button* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=----==---~=~~~=-==- ▼ ﬂ//
   if (v == LOAD) return;
   Node_Browser::label_color = 72;
   Node_Browser::label_font = FL_HELVETICA;
@@ -2461,13 +2700,16 @@ static void cb_Reset(Fl_Button* o, void* v) {
   o->parent()->do_callback(o->parent(), LOAD);
   widget_browser->redraw();
   widget_browser->save_prefs();
+//ﬂ ▲ ----------~=-=~==~~=~------------~-=~~~~-~~=~-~~=~~=~- ▲ ﬂ//
 }
 
 static void cb_Close(Fl_Button*, void*) {
+//ﬂ ▼ ---------------------- callback -~-==-~~=~=~=~~----=~~ ▼ ﬂ//
   if (g_shell_config)
-    g_shell_config->write(Fluid.preferences, fld::Tool_Store::USER);
-  Fluid.layout_list.write(Fluid.preferences, fld::Tool_Store::USER);
+    g_shell_config->write(Fluid.preferences, fluid::Tool_Store::USER);
+  Fluid.layout_list.write(Fluid.preferences, fluid::Tool_Store::USER);
   settings_window->hide();
+//ﬂ ▲ ----------~=--~=~=~~~=----------~-~~--~~~=-=--~==~-~-= ▲ ﬂ//
 }
 
 Fl_Double_Window* make_settings_window() {
@@ -2580,8 +2822,8 @@ Fl_Double_Window* make_settings_window() {
           editor_command_input->textsize(12);
           editor_command_input->callback((Fl_Callback*)cb_editor_command_input);
           editor_command_input->when(FL_WHEN_CHANGED);
-          Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "", sizeof(Fluid.external_editor_command)-1);
-          editor_command_input->value(Fluid.external_editor_command);
+          Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");
+          editor_command_input->value(Fluid.external_editor_command.c_str());
         } // Fl_Input* editor_command_input
         { use_external_editor_button = new Fl_Check_Button(130, 278, 210, 20, "Use for Code Nodes");
           use_external_editor_button->down_box(FL_DOWN_BOX);
@@ -3139,7 +3381,7 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(12);
             o->callback((Fl_Callback*)cb_Menu);
           } // Fl_Input* o
-          { Fl_Group* o = new Fl_Group(110, 297, 140, 71);
+          { Fl_Group* o = new Fl_Group(110, 297, 230, 71);
             o->callback((Fl_Callback*)cb_b);
             { Fl_Shortcut_Button* o = new Fl_Shortcut_Button(110, 297, 130, 20, "Shortcut");
               o->tooltip("an optional keyboard shortcut to run this shell command");
@@ -3173,20 +3415,16 @@ Fl_Double_Window* make_settings_window() {
               o->callback((Fl_Callback*)cb_Condition);
               o->menu(menu_Condition);
             } // Fl_Choice* o
-            { Fl_Box* o = new Fl_Box(240, 297, 10, 71);
-              o->hide();
-              Fl_Group::current()->resizable(o);
-            } // Fl_Box* o
+            { w_shell_cond_text = new Fl_Input(240, 348, 99, 20);
+              w_shell_cond_text->labelfont(1);
+              w_shell_cond_text->labelsize(12);
+              w_shell_cond_text->textfont(4);
+              w_shell_cond_text->textsize(12);
+              w_shell_cond_text->callback((Fl_Callback*)cb_w_shell_cond_text);
+              Fl_Group::current()->resizable(w_shell_cond_text);
+            } // Fl_Input* w_shell_cond_text
             o->end();
           } // Fl_Group* o
-          { Fl_Input* o = new Fl_Input(240, 348, 90, 20, "Label:");
-            o->labelfont(1);
-            o->labelsize(12);
-            o->textfont(4);
-            o->textsize(12);
-            o->callback((Fl_Callback*)cb_Label);
-            o->hide();
-          } // Fl_Input* o
           { Fl_Group* o = new Fl_Group(110, 373, 230, 80);
             o->callback((Fl_Callback*)propagate_load);
             { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(110, 373, 208, 80, "Shell script:");
@@ -3594,7 +3832,9 @@ Fl_Double_Window* make_settings_window() {
     settings_window->size_range(340, 580);
     settings_window->end();
   } // Fl_Double_Window* settings_window
+//ﬂ ▼ ------------------------ code ---~~-~-=-=~-=~=~-~--~-~ ▼ ﬂ//
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);
+//ﬂ ▲ ----------~--==~=~---=----------~~-~~~-==~~~=-~=-=-~~= ▲ ﬂ//
   return settings_window;
 }
 
@@ -3603,19 +3843,23 @@ Fl_Double_Window* shell_run_window = (Fl_Double_Window*)nullptr;
 Fl_Terminal* shell_run_terminal = (Fl_Terminal*)nullptr;
 
 static void cb_Clear(Fl_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~--~~=~=~-------~~-=~- ▼ ﬂ//
   // clear screen, clear scrollback, home cursor
   shell_run_terminal->append("\033[2J\033[3J\033[H");
+//ﬂ ▲ ----------~=~~-~~~=---------------=--~=-~==---~~---~~- ▲ ﬂ//
 }
 
 Fl_Return_Button* shell_run_button = (Fl_Return_Button*)nullptr;
 
 static void cb_shell_run_button(Fl_Return_Button*, void*) {
+//ﬂ ▼ ---------------------- callback ~~=-=-~~=--=-~~-~~=~-~ ▼ ﬂ//
   Fl_Preferences pos(Fluid.preferences, "shell_run_Window_pos");
   pos.set("x", shell_run_window->x());
   pos.set("y", shell_run_window->y());
   pos.set("w", shell_run_window->w());
   pos.set("h", shell_run_window->h());
   shell_run_window->hide();
+//ﬂ ▲ ----------=~-==~~==-~~----------~-=~~--=~=-=-~~~=~-~~- ▲ ﬂ//
 }
 
 Fl_Double_Window* make_shell_window() {

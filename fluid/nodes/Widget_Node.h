@@ -32,7 +32,8 @@ extern Widget_Node* current_widget; // one of the selected ones
 extern Fl_Window* the_panel;
 
 extern std::string subclassname(Node* l);
-extern int is_name(const char* c);
+extern bool is_function_name(const std::string& name);
+extern bool is_lambda(const std::string& name);
 extern void selection_changed(Node* new_current);
 extern Node* sort(Node* parent);
 
@@ -62,13 +63,12 @@ protected:
   /// disabling the output of the "hide" property by the Widget Type.
   uchar override_visible_ = 0;
 
-  void write_static(fld::io::Code_Writer& f) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_widget_code(fld::io::Code_Writer& f);
-  void write_extra_code(fld::io::Code_Writer& f);
-  void write_block_close(fld::io::Code_Writer& f);
-  void write_code2(fld::io::Code_Writer& f) override;
-  void write_color(fld::io::Code_Writer& f, const char*, Fl_Color);
+  void write_static(fluid::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_widget_code(fluid::io::Code_Writer& f);
+  void write_block_close(fluid::io::Code_Writer& f);
+  void write_code2(fluid::io::Code_Writer& f) override;
+  void write_color(fluid::io::Code_Writer& f, const char*, Fl_Color);
 
   /// Pointer to widget representing this node in live mode.
   Fl_Widget* live_widget = nullptr;
@@ -95,6 +95,7 @@ public:
 
   const std::string& extra_code(int n) const { return extra_code_[n]; }
   void extra_code(int n, const std::string& code);
+  void extra_code_append(int n, const std::string& code);
 
   std::string subclass() const { return subclass_; }
   void subclass(const std::string& name);
@@ -113,17 +114,12 @@ public:
 
   virtual Fl_Menu_Item* subtypes();
 
-  Type type() const override { return Type::Widget_; }
-  bool is_a(Type inType) const override
-  {
-    return (inType == Type::Widget_) ? true : super::is_a(inType);
-  }
   int is_widget() const override;
   int is_true_widget() const override { return 1; }
   int is_public() const override;
 
-  void write_properties(fld::io::Project_Writer& f) override;
-  void read_property(fld::io::Project_Reader& f, const char*) override;
+  void write_properties(fluid::io::Project_Writer& f) override;
+  void read_property(fluid::io::Project_Reader& f, const char*) override;
   int read_fdesign(const char*, const char*) override;
 
   Fl_Widget* enter_live_mode(int top = 0) override;

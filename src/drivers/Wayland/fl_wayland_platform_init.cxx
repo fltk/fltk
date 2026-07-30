@@ -1,7 +1,7 @@
 //
 // Wayland-specific code to initialize wayland support.
 //
-// Copyright 2022-2023 by Bill Spitzak and others.
+// Copyright 2022-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Image_Surface_Driver.H"
 #if FLTK_HAVE_PEN_SUPPORT
-#  include "../Base/Fl_Base_Pen_Events.H"
+#  include "../Base/Fl_Base_Pen_Driver.H"
 #endif
 #ifdef FLTK_USE_X11
 #  include "../Xlib/Fl_Xlib_Copy_Surface_Driver.H"
@@ -147,13 +147,26 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
   return new Fl_Wayland_Image_Surface_Driver(w, h, high_res, off);
 }
 
-// This defines e_x_down and e_y_down both for Wayland and X11.
+// This defines Pen Driver both for Wayland and, optionally, X11.
 #if FLTK_HAVE_PEN_SUPPORT
 namespace Fl {
-namespace Private {
-// Global mouse position at mouse down event
-int e_x_down { 0 };
-int e_y_down { 0 };
-}; // namespace Private
-}; // namespace Fl
+  namespace Pen
+  {
+    extern Fl::Pen::Driver& newWaylandPenDriver();
+
+#ifdef FLTK_USE_X11
+    Fl::Pen::Driver &newX11PenDriver() {
+      Fl::Pen::Driver *x11_driver_instance = new Fl::Pen::Driver();
+      return *x11_driver_instance;
+    }
+#endif
+
+    Fl::Pen::Driver& newPenDriver() {
+#ifdef FLTK_USE_X11
+      if (!attempt_wayland()) return newX11PenDriver();
+#endif
+      return newWaylandPenDriver();
+    }
+  }
+}
 #endif

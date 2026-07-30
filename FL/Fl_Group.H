@@ -1,7 +1,7 @@
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -236,7 +236,7 @@ public:
 
     \see void Fl_Group::clip_children(int c)
   */
-  unsigned int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
+  unsigned int clip_children() const { return (flags() & CLIP_CHILDREN) != 0; }
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   Fl_Group* as_group() override { return this; }

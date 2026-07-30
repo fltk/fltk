@@ -4,7 +4,7 @@
 // KDE icon code donated by Maarten De Boer.
 //
 // Copyright 1999-2010 by Michael Sweet.
-// Copyright 2011-2019 by Bill Spitzak and others.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -121,7 +121,7 @@ Fl_File_Icon::load_fti(const char *fti) // I - File to read from
   while ((ch = getc(fp)) != EOF)
   {
     // Skip whitespace
-    if (isspace(ch))
+    if (fl_ascii_isspace(ch))
       continue;
 
     // Skip comments starting with "#"...
@@ -138,7 +138,7 @@ Fl_File_Icon::load_fti(const char *fti) // I - File to read from
     }
 
     // OK, this character better be a letter...
-    if (!isalpha(ch))
+    if (!fl_ascii_isalpha(ch))
     {
       Fl::error("Fl_File_Icon::load_fti(): Expected a letter at file position %ld (saw '%c')",
                 ftell(fp) - 1, ch);
@@ -442,7 +442,7 @@ int Fl_File_Icon::load_image(const char *ifile) // I - File to read from
           // Read the RGB triplet...
           lineptr += 3;
           for (j = 0; j < 12; j ++)
-            if (!isxdigit(lineptr[j]))
+            if (!fl_ascii_isxdigit(lineptr[j]))
               break;
 
           switch (j) {

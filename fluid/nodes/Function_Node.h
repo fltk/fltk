@@ -38,7 +38,7 @@
 
 extern class Class_Node *current_class;
 
-int has_toplevel_function(const char *rtype, const char *sig);
+bool has_toplevel_function(const std::string& return_type_regex, const std::string& function_sig_regex);
 
 const char *c_check(const char *c, int type = 0);
 
@@ -62,8 +62,8 @@ public:
   ~Function_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
   int ismain() {return name_ == nullptr;}
   const char *type_name() override {return "Function";}
@@ -71,11 +71,9 @@ public:
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_public() const override;
-  Type type() const override { return Type::Function; }
-  bool is_a(Type inType) const override { return (inType==Type::Function) ? true : super::is_a(inType); }
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
-  int has_signature(const char *, const char*) const;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  bool has_signature(const std::string& return_type_regex, const std::string& function_sig_regex) const;
   std::string return_type() const { return return_type_; }
   void return_type(const std::string& t) { storestring(t, return_type_); }
   char visibility() { return public_; }
@@ -103,14 +101,12 @@ public:
   ~Code_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write(fld::io::Project_Writer &f) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override { }
+  void write(fluid::io::Project_Writer &f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override { }
   void open() override;
   const char *type_name() override {return "code";}
   int is_code_block() const override {return 0;}
-  Type type() const override { return Type::Code; }
-  bool is_a(Type inType) const override { return (inType==Type::Code) ? true : super::is_a(inType); }
   int is_public() const override { return -1; }
   int is_editing();
   int reap_editor();
@@ -130,7 +126,7 @@ class CodeBlock_Node : public Node
 public:
   typedef Node super;
   static CodeBlock_Node prototype;
-  
+
 private:
   std::string end_code_;
 
@@ -139,17 +135,15 @@ public:
   ~CodeBlock_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
   const char *type_name() override {return "codeblock";}
   int is_code_block() const override {return 1;}
   int can_have_children() const override {return 1;}
   int is_public() const override { return -1; }
-  Type type() const override { return Type::CodeBlock; }
-  bool is_a(Type inType) const override { return (inType==Type::CodeBlock) ? true : super::is_a(inType); }
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   std::string end_code() const { return end_code_; }
   void end_code(const std::string& c) { storestring(c, end_code_); }
 };
@@ -171,15 +165,13 @@ public:
   ~Decl_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override { }
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override { }
   void open() override;
   const char *type_name() override {return "decl";}
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   int is_public() const override;
-  Type type() const override { return Type::Decl; }
-  bool is_a(Type inType) const override { return (inType==Type::Decl) ? true : super::is_a(inType); }
   char visibility() { return public_; }
   void visibility(char v) { public_ = v; }
   char output_file() { return (public_&1)|((static_&1)<<1); }
@@ -203,14 +195,12 @@ public:
   ~Data_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override {}
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override {}
   void open() override;
   const char *type_name() override {return "data";}
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
-  Type type() const override { return Type::Data; }
-  bool is_a(Type inType) const override { return (inType==Type::Data) ? true : super::is_a(inType); }
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   void filename(const std::string& fn) { storestring(fn, filename_); }
   std::string filename() const { return filename_; }
   int output_format() { return output_format_; }
@@ -240,19 +230,17 @@ public:
   ~DeclBlock_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write_static(fld::io::Code_Writer& f) override;
-  void write_static_after(fld::io::Code_Writer& f) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_static(fluid::io::Code_Writer& f) override;
+  void write_static_after(fluid::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
   const char *type_name() override {return "declblock";}
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   int can_have_children() const override {return 1;}
   int is_decl_block() const override {return 1;}
   int is_public() const override;
-  Type type() const override { return Type::DeclBlock; }
-  bool is_a(Type inType) const override { return (inType==Type::DeclBlock) ? true : super::is_a(inType); }
   std::string end_code() const { return end_code_; }
   void end_code(const std::string& p) { storestring(p, end_code_); }
   int write_map() { return write_map_; }
@@ -277,15 +265,13 @@ public:
   ~Comment_Node() override = default;
 
   Node *make(Strategy strategy) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override { }
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override { }
   void open() override;
   const char *type_name() override {return "comment";}
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   int is_public() const override { return 1; }
-  Type type() const override { return Type::Comment; }
-  bool is_a(Type inType) const override { return (inType==Type::Comment) ? true : super::is_a(inType); }
   bool in_h() { return in_h_; }
   void in_h(bool v) { in_h_ = v; }
   bool in_c() { return in_c_; }
@@ -314,18 +300,16 @@ public:
   Class_Node* parent_class; // save class if nested
 
   Node *make(Strategy strategy) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
   const char *type_name() override {return "class";}
   int can_have_children() const override {return 1;}
   int is_decl_block() const override {return 1;}
   int is_class() const override {return 1;}
   int is_public() const override;
-  Type type() const override { return Type::Class; }
-  bool is_a(Type inType) const override { return (inType==Type::Class) ? true : super::is_a(inType); }
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
 
   /** Get base class access and name. */
   std::string base_class() const { return base_class_; }

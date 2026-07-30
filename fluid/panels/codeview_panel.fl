@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -78,24 +78,24 @@ file.} open return_type void
     if (cv_source->visible_r()) {
       switch (cv_code_choice) {
         case 0: // prolog: not yet (include statements)
-          pos0 = Fluid.proj.tree.current->code1_start;
-          pos1 = Fluid.proj.tree.current->code2_end;
+          pos0 = Fluid.proj.tree.current->setup_node.c.start;
+          pos1 = Fluid.proj.tree.current->finalize_node.c.end;
           break;
         case 1: // static: callbacks, menu declarations
-          pos0 = Fluid.proj.tree.current->code_static_start;
-          pos1 = Fluid.proj.tree.current->code_static_end;
+          pos0 = Fluid.proj.tree.current->static_data.c.start;
+          pos1 = Fluid.proj.tree.current->static_data.c.end;
           break;
         case 2: // code: entire implementation block including children
-          pos0 = Fluid.proj.tree.current->code1_start;
-          pos1 = Fluid.proj.tree.current->code2_end;
+          pos0 = Fluid.proj.tree.current->setup_node.c.start;
+          pos1 = Fluid.proj.tree.current->finalize_node.c.end;
           break;
         case 3: // code1: all implementation code before the children
-          pos0 = Fluid.proj.tree.current->code1_start;
-          pos1 = Fluid.proj.tree.current->code1_end;
+          pos0 = Fluid.proj.tree.current->setup_node.c.start;
+          pos1 = Fluid.proj.tree.current->setup_node.c.end;
           break;
         case 4: // code1: all implementation code before the children
-          pos0 = Fluid.proj.tree.current->code2_start;
-          pos1 = Fluid.proj.tree.current->code2_end;
+          pos0 = Fluid.proj.tree.current->finalize_node.c.start;
+          pos1 = Fluid.proj.tree.current->finalize_node.c.end;
           break;
       }
       if (pos0>=0) {
@@ -110,20 +110,20 @@ file.} open return_type void
       switch (cv_code_choice) {
         case 0: // prolog: not yet (include statements)
         case 1: // static: callbacks, menu declarations
-          pos0 = Fluid.proj.tree.current->header_static_start;
-          pos1 = Fluid.proj.tree.current->header_static_end;
+          pos0 = Fluid.proj.tree.current->static_data.h.start;
+          pos1 = Fluid.proj.tree.current->static_data.h.end;
           break;
         case 2: // code: entire implementation block including children
-          pos0 = Fluid.proj.tree.current->header1_start;
-          pos1 = Fluid.proj.tree.current->header2_end;
+          pos0 = Fluid.proj.tree.current->setup_node.h.start;
+          pos1 = Fluid.proj.tree.current->finalize_node.h.end;
           break;
         case 3: // code1: all implementation code before the children
-          pos0 = Fluid.proj.tree.current->header1_start;
-          pos1 = Fluid.proj.tree.current->header1_end;
+          pos0 = Fluid.proj.tree.current->setup_node.h.start;
+          pos1 = Fluid.proj.tree.current->setup_node.h.end;
           break;
         case 4: // code1: all implementation code before the children
-          pos0 = Fluid.proj.tree.current->header2_start;
-          pos1 = Fluid.proj.tree.current->header2_end;
+          pos0 = Fluid.proj.tree.current->finalize_node.h.start;
+          pos1 = Fluid.proj.tree.current->finalize_node.h.end;
           break;
       }
       if (pos0>=0) {
@@ -139,16 +139,16 @@ file.} open return_type void
         case 0: // prolog: not yet (include statements)
         case 1: // static: callbacks, menu declarations
         case 2: // code: entire implementation block including children
-          pos0 = Fluid.proj.tree.current->proj1_start;
-          pos1 = Fluid.proj.tree.current->proj2_end;
+          pos0 = Fluid.proj.tree.current->proj1.start;
+          pos1 = Fluid.proj.tree.current->proj2.end;
           break;
         case 3: // code1: all implementation code before the children
-          pos0 = Fluid.proj.tree.current->proj1_start;
-          pos1 = Fluid.proj.tree.current->proj1_end;
+          pos0 = Fluid.proj.tree.current->proj1.start;
+          pos1 = Fluid.proj.tree.current->proj1.end;
           break;
         case 4: // code1: all implementation code before the children
-          pos0 = Fluid.proj.tree.current->proj2_start;
-          pos1 = Fluid.proj.tree.current->proj2_end;
+          pos0 = Fluid.proj.tree.current->proj2.start;
+          pos1 = Fluid.proj.tree.current->proj2.end;
           break;
       }
       if (pos0>=0) {
@@ -187,7 +187,7 @@ if (!cv_design_filename) {
 }
 
 if (cv_project->visible_r()) {
-  fld::io::write_file(Fluid.proj, cv_design_filename, false, true);
+  fluid::io::write_file(Fluid.proj, cv_design_filename, false, true);
   int top = cv_project->top_line();
   cv_project->buffer()->loadfile(cv_design_filename);
   cv_project->scroll(top, 0);
@@ -197,20 +197,20 @@ if (cv_project->visible_r()) {
   fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
   fl_strlcat(fn, "strings", FL_PATH_MAX);
   fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n.type)]);
-  fld::io::write_strings(Fluid.proj, fn);
+  fluid::io::write_strings(Fluid.proj, fn);
   int top = cv_strings->top_line();
   cv_strings->buffer()->loadfile(fn);
   cv_strings->scroll(top, 0);
 } else if (cv_source->visible_r() || cv_header->visible_r()) {
   // Generate code into in-memory ostringstream buffers (no temp files).
-  fld::io::Code_Writer f(Fluid.proj);
+  fluid::io::Code_Writer f(Fluid.proj);
   std::string code_filename = Fluid.proj.codefile_path() + Fluid.proj.codefile_name();
   std::string header_filename = Fluid.proj.headerfile_path() + Fluid.proj.headerfile_name();
   if (Fluid.proj.proj_filename)
     Fluid.proj.enter_project_dir();
   // Setting code_view to true write code files directly into a string buffer
   // and does not write over the code files on disk.
-  if (f.write_code(code_filename.c_str(), header_filename.c_str(), true))
+  if (f.write_code(code_filename, header_filename, true))
   {
     // Push generated text directly into the editor buffers.
     int pos = cv_source->top_line();
@@ -224,8 +224,7 @@ if (cv_project->visible_r()) {
   }
   if (Fluid.proj.proj_filename)
     Fluid.proj.leave_project_dir();
-}} {selected
-  }
+}} {}
 }
 
 Function {update_codeview_timer(void*)} {
@@ -281,8 +280,8 @@ Function {make_codeview()} {open
 } {
   Fl_Window codeview_panel {
     label {Code View}
-    callback toggle_codeview_cb open
-    xywh {389 507 520 515} type Double align 80 resizable size_range {384 120 0 0} visible
+    callback toggle_codeview_cb open selected
+    xywh {518 271 520 515} type Double align 80 resizable size_range {384 120 0 0} visible
   } {
     Fl_Tabs cv_tab {
       callback update_codeview_position_cb open
@@ -295,9 +294,9 @@ Function {make_codeview()} {open
         Fl_Text_Editor cv_source {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Code_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Code_Viewer}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
+          class {fluid::widget::Code_Viewer}
         }
       }
       Fl_Group {} {
@@ -307,9 +306,9 @@ Function {make_codeview()} {open
         Fl_Text_Editor cv_header {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Code_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Code_Viewer}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
+          class {fluid::widget::Code_Viewer}
         }
       }
       Fl_Group {} {
@@ -319,9 +318,9 @@ Function {make_codeview()} {open
         Fl_Text_Display cv_strings {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Text_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Text_Viewer}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
+          class {fluid::widget::Text_Viewer}
         }
       }
       Fl_Group {} {
@@ -331,9 +330,9 @@ Function {make_codeview()} {open
         Fl_Text_Display cv_project {
           xywh {10 40 500 410} textfont 4 textsize 11 resizable
           code0 {\#include "widgets/Text_Viewer.h"}
-          code1 {o->linenumber_width(60);}
-          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
-          class {fld::widget::Text_Viewer}
+          code3 {o->linenumber_width(60);
+o->linenumber_size(o->Fl_Text_Display::textsize());}
+          class {fluid::widget::Text_Viewer}
         }
       }
     }
@@ -452,7 +451,7 @@ if (e) {
       Fl_Light_Button cv_autorefresh {
         label {Auto-Refresh}
         xywh {77 485 91 20} labelsize 11
-        code0 {o->callback((Fl_Callback*)update_codeview_cb);}
+        code3 {o->callback((Fl_Callback*)update_codeview_cb);}
       }
       Fl_Light_Button cv_autoposition {
         label {Auto-Position}
@@ -461,7 +460,7 @@ if (e) {
       Fl_Choice cv_code_choice_w {
         callback {cv_code_choice = (int)o->mvalue()->argument();
 update_codeview_position();} open
-        xywh {265 485 70 20} down_box BORDER_BOX labelsize 11 textsize 11
+        xywh {265 485 90 20} down_box BORDER_BOX labelsize 11 textsize 11
       } {
         MenuItem {} {
           label prolog
@@ -469,22 +468,22 @@ update_codeview_position();} open
           tooltip {Include statements in header or source code} xywh {0 0 100 20} labelsize 11 hide
         }
         MenuItem {} {
-          label static
+          label {static data}
           user_data 1 user_data_type long
           tooltip {static declarations in source code} xywh {10 10 100 20} labelsize 11
         }
         MenuItem {} {
-          label code
+          label instantiate
           user_data 2 user_data_type long
           tooltip {widget code block including children} xywh {20 20 100 20} labelsize 11
         }
         MenuItem {} {
-          label {code 1}
+          label setup
           user_data 3 user_data_type long
           tooltip {widget code block before children} xywh {30 30 100 20} labelsize 11
         }
         MenuItem {} {
-          label {code 2}
+          label finalize
           user_data 4 user_data_type long
           tooltip {widget code block after children} xywh {40 40 100 20} labelsize 11
         }

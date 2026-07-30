@@ -50,24 +50,24 @@ void update_codeview_position() {
       if (cv_source->visible_r()) {
         switch (cv_code_choice) {
           case 0: // prolog: not yet (include statements)
-            pos0 = Fluid.proj.tree.current->code1_start;
-            pos1 = Fluid.proj.tree.current->code2_end;
+            pos0 = Fluid.proj.tree.current->setup_node.c.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.c.end;
             break;
           case 1: // static: callbacks, menu declarations
-            pos0 = Fluid.proj.tree.current->code_static_start;
-            pos1 = Fluid.proj.tree.current->code_static_end;
+            pos0 = Fluid.proj.tree.current->static_data.c.start;
+            pos1 = Fluid.proj.tree.current->static_data.c.end;
             break;
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->code1_start;
-            pos1 = Fluid.proj.tree.current->code2_end;
+            pos0 = Fluid.proj.tree.current->setup_node.c.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.c.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->code1_start;
-            pos1 = Fluid.proj.tree.current->code1_end;
+            pos0 = Fluid.proj.tree.current->setup_node.c.start;
+            pos1 = Fluid.proj.tree.current->setup_node.c.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->code2_start;
-            pos1 = Fluid.proj.tree.current->code2_end;
+            pos0 = Fluid.proj.tree.current->finalize_node.c.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.c.end;
             break;
         }
         if (pos0>=0) {
@@ -82,20 +82,20 @@ void update_codeview_position() {
         switch (cv_code_choice) {
           case 0: // prolog: not yet (include statements)
           case 1: // static: callbacks, menu declarations
-            pos0 = Fluid.proj.tree.current->header_static_start;
-            pos1 = Fluid.proj.tree.current->header_static_end;
+            pos0 = Fluid.proj.tree.current->static_data.h.start;
+            pos1 = Fluid.proj.tree.current->static_data.h.end;
             break;
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->header1_start;
-            pos1 = Fluid.proj.tree.current->header2_end;
+            pos0 = Fluid.proj.tree.current->setup_node.h.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.h.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->header1_start;
-            pos1 = Fluid.proj.tree.current->header1_end;
+            pos0 = Fluid.proj.tree.current->setup_node.h.start;
+            pos1 = Fluid.proj.tree.current->setup_node.h.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->header2_start;
-            pos1 = Fluid.proj.tree.current->header2_end;
+            pos0 = Fluid.proj.tree.current->finalize_node.h.start;
+            pos1 = Fluid.proj.tree.current->finalize_node.h.end;
             break;
         }
         if (pos0>=0) {
@@ -111,16 +111,16 @@ void update_codeview_position() {
           case 0: // prolog: not yet (include statements)
           case 1: // static: callbacks, menu declarations
           case 2: // code: entire implementation block including children
-            pos0 = Fluid.proj.tree.current->proj1_start;
-            pos1 = Fluid.proj.tree.current->proj2_end;
+            pos0 = Fluid.proj.tree.current->proj1.start;
+            pos1 = Fluid.proj.tree.current->proj2.end;
             break;
           case 3: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->proj1_start;
-            pos1 = Fluid.proj.tree.current->proj1_end;
+            pos0 = Fluid.proj.tree.current->proj1.start;
+            pos1 = Fluid.proj.tree.current->proj1.end;
             break;
           case 4: // code1: all implementation code before the children
-            pos0 = Fluid.proj.tree.current->proj2_start;
-            pos1 = Fluid.proj.tree.current->proj2_end;
+            pos0 = Fluid.proj.tree.current->proj2.start;
+            pos1 = Fluid.proj.tree.current->proj2.end;
             break;
         }
         if (pos0>=0) {
@@ -161,7 +161,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
   }
 
   if (cv_project->visible_r()) {
-    fld::io::write_file(Fluid.proj, cv_design_filename, false, true);
+    fluid::io::write_file(Fluid.proj, cv_design_filename, false, true);
     int top = cv_project->top_line();
     cv_project->buffer()->loadfile(cv_design_filename);
     cv_project->scroll(top, 0);
@@ -171,20 +171,20 @@ void update_codeview_cb(class Fl_Button*, void*) {
     fl_strlcpy(fn, Fluid.get_tmpdir().c_str(), FL_PATH_MAX);
     fl_strlcat(fn, "strings", FL_PATH_MAX);
     fl_filename_setext(fn, FL_PATH_MAX, exts[static_cast<int>(Fluid.proj.i18n.type)]);
-    fld::io::write_strings(Fluid.proj, fn);
+    fluid::io::write_strings(Fluid.proj, fn);
     int top = cv_strings->top_line();
     cv_strings->buffer()->loadfile(fn);
     cv_strings->scroll(top, 0);
   } else if (cv_source->visible_r() || cv_header->visible_r()) {
     // Generate code into in-memory ostringstream buffers (no temp files).
-    fld::io::Code_Writer f(Fluid.proj);
+    fluid::io::Code_Writer f(Fluid.proj);
     std::string code_filename = Fluid.proj.codefile_path() + Fluid.proj.codefile_name();
     std::string header_filename = Fluid.proj.headerfile_path() + Fluid.proj.headerfile_name();
     if (Fluid.proj.proj_filename)
       Fluid.proj.enter_project_dir();
     // Setting code_view to true write code files directly into a string buffer
     // and does not write over the code files on disk.
-    if (f.write_code(code_filename.c_str(), header_filename.c_str(), true))
+    if (f.write_code(code_filename, header_filename, true))
     {
       // Push generated text directly into the editor buffers.
       int pos = cv_source->top_line();
@@ -257,13 +257,13 @@ Fl_Tabs* cv_tab = (Fl_Tabs*)nullptr;
 
 Fl_Group* cv_source_tab = (Fl_Group*)nullptr;
 
-fld::widget::Code_Viewer* cv_source = (fld::widget::Code_Viewer*)nullptr;
+fluid::widget::Code_Viewer* cv_source = (fluid::widget::Code_Viewer*)nullptr;
 
-fld::widget::Code_Viewer* cv_header = (fld::widget::Code_Viewer*)nullptr;
+fluid::widget::Code_Viewer* cv_header = (fluid::widget::Code_Viewer*)nullptr;
 
-fld::widget::Text_Viewer* cv_strings = (fld::widget::Text_Viewer*)nullptr;
+fluid::widget::Text_Viewer* cv_strings = (fluid::widget::Text_Viewer*)nullptr;
 
-fld::widget::Text_Viewer* cv_project = (fld::widget::Text_Viewer*)nullptr;
+fluid::widget::Text_Viewer* cv_project = (fluid::widget::Text_Viewer*)nullptr;
 
 Fl_Group* cv_find_row = (Fl_Group*)nullptr;
 
@@ -375,10 +375,10 @@ static void cb_cv_code_choice_w(Fl_Choice* o, void*) {
 
 Fl_Menu_Item menu_cv_code_choice_w[] = {
  {"prolog", 0,  nullptr, (void*)(0), 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"static", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"code", 0,  nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"code 1", 0,  nullptr, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
- {"code 2", 0,  nullptr, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"static data", 0,  nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"instantiate", 0,  nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"setup", 0,  nullptr, (void*)(3), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"finalize", 0,  nullptr, (void*)(4), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
  { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
@@ -392,7 +392,7 @@ Fl_Double_Window* make_codeview() {
       cv_tab->callback((Fl_Callback*)update_codeview_position_cb);
       { cv_source_tab = new Fl_Group(10, 35, 500, 415, "Source");
         cv_source_tab->labelsize(13);
-        { fld::widget::Code_Viewer* o = cv_source = new fld::widget::Code_Viewer(10, 40, 500, 410);
+        { fluid::widget::Code_Viewer* o = cv_source = new fluid::widget::Code_Viewer(10, 40, 500, 410);
           cv_source->box(FL_DOWN_FRAME);
           cv_source->color(FL_BACKGROUND2_COLOR);
           cv_source->selection_color(FL_SELECTION_COLOR);
@@ -407,14 +407,14 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_source);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // fld::widget::Code_Viewer* cv_source
+        } // fluid::widget::Code_Viewer* cv_source
         cv_source_tab->end();
         Fl_Group::current()->resizable(cv_source_tab);
       } // Fl_Group* cv_source_tab
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Header");
         o->labelsize(13);
         o->hide();
-        { fld::widget::Code_Viewer* o = cv_header = new fld::widget::Code_Viewer(10, 40, 500, 410);
+        { fluid::widget::Code_Viewer* o = cv_header = new fluid::widget::Code_Viewer(10, 40, 500, 410);
           cv_header->box(FL_DOWN_FRAME);
           cv_header->color(FL_BACKGROUND2_COLOR);
           cv_header->selection_color(FL_SELECTION_COLOR);
@@ -429,13 +429,13 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_header);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // fld::widget::Code_Viewer* cv_header
+        } // fluid::widget::Code_Viewer* cv_header
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Strings");
         o->labelsize(13);
         o->hide();
-        { fld::widget::Text_Viewer* o = cv_strings = new fld::widget::Text_Viewer(10, 40, 500, 410);
+        { fluid::widget::Text_Viewer* o = cv_strings = new fluid::widget::Text_Viewer(10, 40, 500, 410);
           cv_strings->box(FL_DOWN_FRAME);
           cv_strings->color(FL_BACKGROUND2_COLOR);
           cv_strings->selection_color(FL_SELECTION_COLOR);
@@ -450,13 +450,13 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_strings);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // fld::widget::Text_Viewer* cv_strings
+        } // fluid::widget::Text_Viewer* cv_strings
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Project");
         o->labelsize(13);
         o->hide();
-        { fld::widget::Text_Viewer* o = cv_project = new fld::widget::Text_Viewer(10, 40, 500, 410);
+        { fluid::widget::Text_Viewer* o = cv_project = new fluid::widget::Text_Viewer(10, 40, 500, 410);
           cv_project->box(FL_DOWN_FRAME);
           cv_project->color(FL_BACKGROUND2_COLOR);
           cv_project->selection_color(FL_SELECTION_COLOR);
@@ -471,7 +471,7 @@ Fl_Double_Window* make_codeview() {
           Fl_Group::current()->resizable(cv_project);
           o->linenumber_width(60);
           o->linenumber_size(o->Fl_Text_Display::textsize());
-        } // fld::widget::Text_Viewer* cv_project
+        } // fluid::widget::Text_Viewer* cv_project
         o->end();
       } // Fl_Group* o
       cv_tab->end();
@@ -517,7 +517,7 @@ Fl_Double_Window* make_codeview() {
       { cv_autoposition = new Fl_Light_Button(172, 485, 89, 20, "Auto-Position");
         cv_autoposition->labelsize(11);
       } // Fl_Light_Button* cv_autoposition
-      { cv_code_choice_w = new Fl_Choice(265, 485, 70, 20);
+      { cv_code_choice_w = new Fl_Choice(265, 485, 90, 20);
         cv_code_choice_w->down_box(FL_BORDER_BOX);
         cv_code_choice_w->labelsize(11);
         cv_code_choice_w->textsize(11);

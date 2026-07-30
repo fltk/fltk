@@ -1,7 +1,7 @@
 //
 // Definition of default Pen/Tablet event driver.
 //
-// Copyright 2025 by Bill Spitzak and others.
+// Copyright 2025-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,12 +15,13 @@
 //
 
 
-#ifndef FL_BASE_PEN_EVENTS_H
-#define FL_BASE_PEN_EVENTS_H
+#ifndef FL_BASE_PEN_DRIVER_H
+#define FL_BASE_PEN_DRIVER_H
 
 #include <config.h>
 #include <FL/core/pen_events.H>
 #include <FL/Fl.H>
+#include <src/Fl_Private.H>
 
 #include <map>
 #include <memory>
@@ -107,10 +108,11 @@ public:
 };
 
 extern Driver& driver;
+extern Driver& newPenDriver();
 
 } // namespace Pen
 
 } // namespace Fl
 
 
-#endif // FL_BASE_PEN_EVENTS_H
+#endif // FL_BASE_PEN_DRIVER_H

@@ -65,15 +65,13 @@ public:
   int is_button() const override {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) override {return nullptr;}
   Widget_Node* _make() override {return nullptr;}
-  virtual const char* menu_name(fld::io::Code_Writer& f, int& i);
+  std::string menu_name(fluid::io::Code_Writer& f, int& i);
   int flags();
-  void write_static(fld::io::Code_Writer& f) override;
-  void write_item(fld::io::Code_Writer& f);
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_static(fluid::io::Code_Writer& f) override;
+  void write_item(fluid::io::Code_Writer& f);
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   int is_true_widget() const override { return 0; }
-  Type type() const override { return Type::Menu_Item; }
-  bool is_a(Type inType) const override { return (inType==Type::Menu_Item) ? true : super::is_a(inType); }
 
   bool headline() const { return headline_; }
   void headline(bool v) { headline_ = v; }
@@ -90,8 +88,6 @@ public:
 public:
   const char* type_name() override {return "RadioMenuItem";}
   Node* make(Strategy strategy) override;
-  Type type() const override { return Type::Radio_Menu_Item; }
-  bool is_a(Type inType) const override { return (inType==Type::Radio_Menu_Item) ? true : super::is_a(inType); }
 };
 
 /**
@@ -105,8 +101,6 @@ public:
 public:
   const char* type_name() override {return "CheckMenuItem";}
   Node* make(Strategy strategy) override;
-  Type type() const override { return Type::Checkbox_Menu_Item; }
-  bool is_a(Type inType) const override { return (inType==Type::Checkbox_Menu_Item) ? true : super::is_a(inType); }
 };
 
 /**
@@ -133,8 +127,6 @@ public:
   void add_child(Node*a, Node*b) override {parent->add_child(a,b);}
   void move_child(Node*a, Node*b) override {parent->move_child(a,b);}
   void remove_child(Node*a) override {parent->remove_child(a);}
-  Type type() const override { return Type::Submenu; }
-  bool is_a(Type inType) const override { return (inType==Type::Submenu) ? true : super::is_a(inType); }
 };
 
 // -----------------------------------------------------------------------------
@@ -152,7 +144,7 @@ public:
     auto layout = Fluid.proj.layout;
     h = layout->textsize_not_null() + 8;
     w = layout->textsize_not_null() * 6 + 8;
-    fld::app::Snap_Action::better_size(w, h);
+    fluid::app::Snap_Action::better_size(w, h);
   }
   int can_have_children() const override {return 1;}
   int menusize;
@@ -162,10 +154,8 @@ public:
   void move_child(Node*, Node*) override { build_menu(); }
   void remove_child(Node*) override { build_menu();}
   Node* click_test(int x, int y) override = 0;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   void copy_properties() override = 0;
-  Type type() const override { return Type::Menu_Manager_; }
-  bool is_a(Type inType) const override { return (inType==Type::Menu_Manager_) ? true : super::is_a(inType); }
 };
 
 /**
@@ -206,8 +196,6 @@ public:
   }
   Widget_Node *_make() override {return new Input_Choice_Node();}
   void build_menu() override;
-  Type type() const override { return Type::Input_Choice; }
-  bool is_a(Type inType) const override { return (inType==Type::Input_Choice) ? true : super::is_a(inType); }
   void copy_properties() override;
 };
 
@@ -236,8 +224,6 @@ public:
   }
   Node* click_test(int x, int y) override;
   void copy_properties() override;
-  Type type() const override { return Type::Menu_; }
-  bool is_a(Type inType) const override { return (inType==Type::Menu_) ? true : super::is_a(inType); }
 };
 
 extern Fl_Menu_Item button_type_menu[];
@@ -258,8 +244,6 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     return new Fl_Menu_Button(X,Y,W,H,"menu");}
   Widget_Node *_make() override {return new Menu_Button_Node();}
-  Type type() const override { return Type::Menu_Button; }
-  bool is_a(Type inType) const override { return (inType==Type::Menu_Button) ? true : super::is_a(inType); }
 };
 
 
@@ -280,8 +264,6 @@ public:
     return myo;
   }
   Widget_Node *_make() override {return new Choice_Node();}
-  Type type() const override { return Type::Choice; }
-  bool is_a(Type inType) const override { return (inType==Type::Choice) ? true : super::is_a(inType); }
 };
 
 
@@ -302,16 +284,12 @@ public:
   const char *alt_type_name() override {return "fltk::MenuBar";}
   Fl_Widget *widget(int X,int Y,int W,int H) override {return new Fl_Menu_Bar(X,Y,W,H);}
   Widget_Node *_make() override {return new Menu_Bar_Node();}
-  void write_static(fld::io::Code_Writer& f) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-//  void write_code2(fld::io::Code_Writer& f) override;
-  Type type() const override { return Type::Menu_Bar; }
-  bool is_a(Type inType) const override { return (inType==Type::Menu_Bar) ? true : super::is_a(inType); }
+  void write_static(fluid::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+//  void write_code2(fluid::io::Code_Writer& f) override;
   bool is_sys_menu_bar();
   std::string sys_menubar_name() const;
-  const char *sys_menubar_proxy_name();
-protected:
-  char *_proxy_name;
+  std::string sys_menubar_proxy_name() const;
 };
 
 

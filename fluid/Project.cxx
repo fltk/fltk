@@ -17,12 +17,14 @@
 #include <errno.h>      // strerror(errno)
 #include "Project.h"
 
+#include "message.h"
 #include "io/String_Writer.h"
 #include "nodes/Node.h"
+#include "nodes/Widget_Node.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
 
-using namespace fld;
+using namespace fluid;
 
 // ---- project settings
 
@@ -43,7 +45,23 @@ Project::~Project() {
  Reset all project setting to create a new empty project.
  */
 void Project::reset() {
-  ::delete_all();
+  // Remove all nodes in the project tree
+  tree.delete_all_nodes();
+
+  // reset the setting for the external shell command
+  if (g_shell_config) {
+    g_shell_config->clear(fluid::Tool_Store::PROJECT);
+    g_shell_config->rebuild_shell_menu();
+    g_shell_config->update_settings_dialog();
+  }
+
+  // Reset Layout List
+  Fluid.layout_list.remove_all(fluid::Tool_Store::PROJECT);
+  Fluid.layout_list.current_suite(0);
+  Fluid.layout_list.current_preset(0);
+  Fluid.layout_list.update_dialogs();
+
+  // Reset I18N Tab
   i18n.reset();
 
   include_H_from_C = 1;
@@ -167,8 +185,8 @@ std::string Project::stringsfile_name() const {
   if (!proj_filename) return std::string{};
   switch (i18n.type) {
     default: return fl_filename_setext_str(fl_filename_name(proj_filename), ".txt");
-    case fld::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
-    case fld::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");
+    case fluid::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name(proj_filename), ".po");
+    case fluid::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name(proj_filename), ".msg");
   }
 }
 
@@ -274,18 +292,11 @@ void Project::write_strings() {
     if (!proj_filename) return;
   }
   std::string filename = stringsfile_path() + stringsfile_name();
-  int x = fld::io::write_strings(*this, filename);
-  if (Fluid.batch_mode) {
-    if (x) {
-      fprintf(stderr, "%s : %s\n", filename.c_str(), strerror(errno));
-      exit(1);
-    }
-  } else {
-    if (x) {
-      fl_message("Can't write %s: %s", filename.c_str(), strerror(errno));
-    } else if (completion_button->value()) {
-      fl_message("Wrote %s", stringsfile_name().c_str());
-    }
+  int x = fluid::io::write_strings(*this, filename);
+  if (x) {
+    fluid_message("Can't write %s: %s", filename.c_str(), strerror(errno));
+  } else if (completion_button->value() && !Fluid.batch_mode) {
+    fluid_message("Wrote %s", stringsfile_name().c_str());
   }
 }
 

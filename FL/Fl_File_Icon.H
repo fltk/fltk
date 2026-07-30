@@ -1,7 +1,7 @@
 //
 // Fl_File_Icon definitions.
 //
-// Copyright 1999-2010 by Michael Sweet.
+// Copyright 1999-2026 by Michael Sweet.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -119,13 +119,13 @@ class FL_EXPORT Fl_File_Icon {                  //// Icon data
   int           load_image(const char *i);
 
   /** Returns next file icon object. See Fl_File_Icon::first() */
-  Fl_File_Icon  *next() { return (next_); }
+  Fl_File_Icon  *next() const { return next_; }
 
   /** Returns the filename matching pattern for the icon.*/
-  const char    *pattern() { return (pattern_); }
+  const char    *pattern() const { return pattern_; }
 
   /**  Returns the number of words of data used by the icon.*/
-  int           size() { return (num_data_); }
+  int           size() const { return num_data_; }
 
   /**
     Returns the filetype associated with the icon, which can be one of the
@@ -138,15 +138,15 @@ class FL_EXPORT Fl_File_Icon {                  //// Icon data
     \li Fl_File_Icon::LINK, symbolic links.
     \li Fl_File_Icon::DIRECTORY, directories.
   */
-  int           type() { return (type_); }
+  int           type() const { return type_; }
 
   /**  Returns the data array for the icon.*/
-  short         *value() { return (data_); }
+  short         *value() const { return data_; }
 
   static Fl_File_Icon *find(const char *filename, int filetype = ANY);
 
   /** Returns a pointer to the first icon in the list.*/
-  static Fl_File_Icon *first() { return (first_); }
+  static Fl_File_Icon *first() { return first_; }
   static void   load_system_icons(void);
 };
 

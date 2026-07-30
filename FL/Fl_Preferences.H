@@ -2,6 +2,7 @@
 // Preferences implementation for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002-2023 by Matthias Melcher.
+// Copyright 2023-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -207,7 +208,7 @@ public:
 
   /** Return an ID that can later be reused to open more references to this dataset.
    */
-  ID id() { return (ID)node; }
+  ID id() const { return (ID)node; }
 
   /** Remove the group with this ID from a database.
    */
@@ -215,11 +216,11 @@ public:
 
   /** Return the name of this entry.
    */
-  const char *name() { return node->name(); }
+  const char *name() const { return node->name(); }
 
   /** Return the full path to this entry.
    */
-  const char *path() { return node->path(); }
+  const char *path() const { return node->path(); }
 
   int groups();
   const char *group( int num_group );
@@ -297,7 +298,7 @@ public:
        Return the Name as a "C" string.
        \internal
      */
-    operator const char *() { return data_; }
+    operator const char *() const { return data_; }
     ~Name();
   };
 
@@ -344,32 +345,32 @@ public:  // older Sun compilers need this (public definition of the following cl
     ~Node();
     // node methods
     int write( FILE *f );
-    const char *name();
-    const char *path() { return path_; }
+    const char *name() const;
+    const char *path() const { return path_; }
     Node *find( const char *path );
     Node *search( const char *path, int offset=0 );
     Node *childNode( int ix );
     Node *addChild( const char *path );
     void setParent( Node *parent );
-    Node *parent() { return top_?0L:parent_; }
+    Node *parent() const { return top_?0L:parent_; }
     void setRoot(RootNode *r) { root_node_ = r; top_ = 1; }
-    RootNode *findRoot();
+    RootNode *findRoot() const;
     char remove();
-    char dirty();
+    char dirty() const;
     void clearDirtyFlags();
     void deleteAllChildren();
     // entry methods
-    int nChildren();
+    int nChildren() const;
     const char *child( int ix );
     void set( const char *name, const char *value );
     void set( const char *line );
     void add( const char *line );
-    const char *get( const char *name );
-    int getEntry( const char *name );
+    const char *get( const char *name ) const;
+    int getEntry( const char *name ) const;
     char deleteEntry( const char *name );
     void deleteAllEntries();
-    int nEntry() { return nEntry_; }
-    Entry &entry(int i) { return entry_[i]; }
+    int nEntry() const { return nEntry_; }
+    Entry &entry(int i) const { return entry_[i]; }
   };
   friend class Node;
 
@@ -386,8 +387,8 @@ public:  // older Sun compilers need this (public definition of the following cl
     int read();
     int write();
     char getPath( char *path, int pathlen );
-    char *filename() { return filename_; }
-    Root root() { return root_type_; }
+    char *filename() const { return filename_; }
+    Root root() const { return root_type_; }
   };
   friend class RootNode;
 

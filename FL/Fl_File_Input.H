@@ -1,7 +1,7 @@
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 // Original version Copyright 1998 by Curtis Edwards.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -57,10 +57,10 @@ public:
 
   Fl_File_Input(int X, int Y, int W, int H, const char *L=0);
 
-  int handle(int event) override;
+  int           handle(int event) override;
 
 protected:
-  void draw() override;
+  void          draw() override;
 
 public:
   /** Gets the box type used for the navigation bar. */
@@ -68,35 +68,14 @@ public:
   /** Sets the box type to use for the navigation bar.  */
   void          down_box(Fl_Boxtype b) { down_box_ = (uchar)b; }
 
-  /**
-    Gets the current error color.
-
-    Returns \p FL_RED since FLTK 1.4.0 (default in 1.3.x).
-    Retained for backwards compatibility.
-
-    \deprecated Will be removed in FLTK 1.5.0 or higher.
-    \todo Remove Fl_File_Input::errorcolor() in FLTK 1.5.0 or higher.
-  */
-  Fl_Color      errorcolor() const { return FL_RED; }
-
-  /**
-    Sets the current error color to \p c.
-
-    Does nothing since FLTK 1.4.0. Retained for backwards compatibility.
-
-    \deprecated Will be removed in FLTK 1.5.0 or higher.
-    \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
-    */
-  void          errorcolor(Fl_Color c) {(void)c;}
-
-  int   value(const char *str);
-  int   value(const char *str, int len);
+  int           value(const char *str);
+  int           value(const char *str, int len);
 
   /**
     Returns the current value, which is a pointer to an internal buffer
     and is valid only until the next event is handled.
   */
-  const char    *value() { return Fl_Input_::value(); }
+  const char    *value() const { return Fl_Input_::value(); }
 };
 
 #endif // !Fl_File_Input_H

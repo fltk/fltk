@@ -1,6 +1,6 @@
 /* pnglibconf.h - library build configuration */
 
-/* libpng version 1.6.54 */
+/* libpng version 1.6.58 */
 
 /* Copyright (c) 2018-2026 Cosmin Truta */
 /* Copyright (c) 1998-2002,2004,2006-2018 Glenn Randers-Pehrson */
@@ -229,7 +229,7 @@
 #define PNG_Z_DEFAULT_NOFILTER_STRATEGY 0
 #define PNG_Z_DEFAULT_STRATEGY 1
 #define PNG_ZBUF_SIZE 8192
-#define PNG_ZLIB_VERNUM 0x1310
+#define PNG_ZLIB_VERNUM 0x1320
 /* end of settings */
 #define png_access_version_number fltk_png_access_version_number
 #define png_benign_error fltk_png_benign_error

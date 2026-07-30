@@ -34,11 +34,11 @@ extern Fl_Tabs* cv_tab;
 #include <FL/Fl_Group.H>
 extern Fl_Group* cv_source_tab;
 #include "widgets/Code_Viewer.h"
-extern fld::widget::Code_Viewer* cv_source;
-extern fld::widget::Code_Viewer* cv_header;
+extern fluid::widget::Code_Viewer* cv_source;
+extern fluid::widget::Code_Viewer* cv_header;
 #include "widgets/Text_Viewer.h"
-extern fld::widget::Text_Viewer* cv_strings;
-extern fld::widget::Text_Viewer* cv_project;
+extern fluid::widget::Text_Viewer* cv_strings;
+extern fluid::widget::Text_Viewer* cv_project;
 extern Fl_Group* cv_find_row;
 #include <FL/Fl_Button.H>
 extern Fl_Button* cv_find_text_case;
@@ -54,6 +54,6 @@ extern Fl_Choice* cv_code_choice_w;
 extern void toggle_codeview_b_cb(Fl_Button*, void*);
 Fl_Double_Window* make_codeview();
 extern Fl_Menu_Item menu_cv_code_choice_w[];
-#endif
+#endif // codeview_panel_h
 
 //

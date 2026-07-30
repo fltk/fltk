@@ -1,10 +1,10 @@
 //
-// Widget panel for the Fast Light Tool Kit (FLTK).
+// Widget Panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2021 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
+// the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
 //     https://www.fltk.org/COPYING.php
@@ -31,14 +31,14 @@ extern Fl_Group* image_panel_imagegroup;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Shared_Image.H>
 extern Fl_Box* image_panel_data;
-extern fld::widget::Formula_Input* image_panel_imagew;
-extern fld::widget::Formula_Input* image_panel_imageh;
+extern fluid::widget::Formula_Input* image_panel_imagew;
+extern fluid::widget::Formula_Input* image_panel_imageh;
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Check_Button.H>
 extern Fl_Group* image_panel_deimagegroup;
 extern Fl_Box* image_panel_dedata;
-extern fld::widget::Formula_Input* image_panel_deimagew;
-extern fld::widget::Formula_Input* image_panel_deimageh;
+extern fluid::widget::Formula_Input* image_panel_deimagew;
+extern fluid::widget::Formula_Input* image_panel_deimageh;
 extern Fl_Button* image_panel_close;
 Fl_Double_Window* make_image_panel();
 void run_image_panel();
@@ -61,10 +61,10 @@ extern void align_cb(Fl_Button*, void*);
 extern void align_text_image_cb(Fl_Choice*, void*);
 extern void align_position_cb(Fl_Choice*, void*);
 extern void position_group_cb(Fl_Group*, void*);
-extern fld::widget::Formula_Input* widget_x_input;
-extern fld::widget::Formula_Input* widget_y_input;
-extern fld::widget::Formula_Input* widget_w_input;
-extern fld::widget::Formula_Input* widget_h_input;
+extern fluid::widget::Formula_Input* widget_x_input;
+extern fluid::widget::Formula_Input* widget_y_input;
+extern fluid::widget::Formula_Input* widget_w_input;
+extern fluid::widget::Formula_Input* widget_h_input;
 extern Fl_Group* wp_gui_flexp;
 #include <FL/Fl_Value_Input.H>
 extern Fl_Value_Input* widget_flex_size;
@@ -95,12 +95,13 @@ extern Fl_Group* wp_cpp_tab;
 extern Fl_Group* wp_cpp_class;
 extern Fl_Group* wp_cpp_name;
 extern void name_public_cb(Fl_Choice*, void*);
-extern Fl_Input* v_input[4];
-#include <FL/Fl_Tile.H>
+extern Fl_Button* code_choice[6];
+extern Fl_Wizard* w_cpp_code_wiz;
 #include <FL/Fl_Text_Editor.H>
 extern Fl_Text_Editor* wComment;
 #include "widgets/Code_Editor.h"
-extern fld::widget::Code_Editor* wCallback;
+extern fluid::widget::Code_Editor* v_code_input[4];
+extern fluid::widget::Code_Editor* wCallback;
 extern Fl_Group* wp_cpp_callback;
 extern Fl_Menu_Item whenmenu[];
 #include <FL/Fl_Input_Choice.H>
@@ -123,6 +124,7 @@ extern Fl_Tabs* declblock_tabs;
 extern Fl_Group* declblock_tabs_main;
 extern Fl_Tabs* decl_tabs;
 extern Fl_Group* decl_tabs_main;
+#include <FL/Fl_Tile.H>
 extern Fl_Tabs* codeblock_tabs;
 extern Fl_Group* codeblock_tabs_main;
 extern Fl_Tabs* code_tabs;
@@ -151,4 +153,4 @@ extern Fl_Menu_Item menu_9[];
 extern Fl_Menu_Item menu_a[];
 extern Fl_Menu_Item menu_b[];
 extern Fl_Menu_Item menu_c[];
-#endif
+#endif // widget_panel_h

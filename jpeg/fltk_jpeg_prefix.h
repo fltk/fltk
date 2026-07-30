@@ -27,8 +27,6 @@
 #define _jinit_memory_mgr fltk__jinit_memory_mgr
 #define _jinit_merged_upsampler fltk__jinit_merged_upsampler
 #define _jinit_upsampler fltk__jinit_upsampler
-#define _jpeg_CreateCompress fltk__jpeg_CreateCompress
-#define _jpeg_CreateDecompress fltk__jpeg_CreateDecompress
 #define _jpeg_abort fltk__jpeg_abort
 #define _jpeg_abort_compress fltk__jpeg_abort_compress
 #define _jpeg_abort_decompress fltk__jpeg_abort_decompress
@@ -41,6 +39,8 @@
 #define _jpeg_consume_input fltk__jpeg_consume_input
 #define _jpeg_copy_critical_parameters fltk__jpeg_copy_critical_parameters
 #define _jpeg_core_output_dimensions fltk__jpeg_core_output_dimensions
+#define _jpeg_CreateCompress fltk__jpeg_CreateCompress
+#define _jpeg_CreateDecompress fltk__jpeg_CreateDecompress
 #define _jpeg_default_colorspace fltk__jpeg_default_colorspace
 #define _jpeg_default_qtables fltk__jpeg_default_qtables
 #define _jpeg_destroy fltk__jpeg_destroy

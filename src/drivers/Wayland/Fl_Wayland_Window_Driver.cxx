@@ -18,11 +18,14 @@
 #include "Fl_Wayland_Window_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
 #include "Fl_Wayland_Graphics_Driver.H"
-#include "Fl_Wayland_Pen_Events.H"
+#include "Fl_Wayland_Pen_Driver.H"
 #include <FL/filename.H>
 #include <wayland-cursor.h>
 #include "../../../libdecor/build/fl_libdecor.h"
 #include "xdg-shell-client-protocol.h"
+#if HAVE_XDG_ACTIVATION
+#  include "xdg-activation-client-protocol.h"
+#endif
 #include "gtk-shell-client-protocol.h"
 #if HAVE_XDG_DIALOG
 #  include "xdg-dialog-client-protocol.h"
@@ -164,15 +167,12 @@ void Fl_Wayland_Window_Driver::take_focus()
   struct wld_window *w = fl_wl_xid(pWindow);
   if (w) {
     Fl_Window *old_first = Fl::first_window();
-    struct wld_window *first_xid = (old_first ? fl_wl_xid(old_first->top_window()) : NULL);
-    if (first_xid && first_xid != w && xdg_toplevel()) {
-      // this will move the target window to the front
-      Fl_Wayland_Window_Driver *top_dr =
-        Fl_Wayland_Window_Driver::driver(old_first->top_window());
-      xdg_toplevel_set_parent(xdg_toplevel(), top_dr->xdg_toplevel());
-      // this will remove the parent-child relationship
-      xdg_toplevel_set_parent(xdg_toplevel(), NULL);
-      wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
+    if (old_first) {
+      if (old_first->parent()) old_first = old_first->top_window();
+      if (old_first != pWindow && xdg_toplevel()) {
+        // let the current active window activate this window
+        Fl_Wayland_Window_Driver::driver(old_first)->activate_(pWindow);
+      }
     }
     // this sets the first window
     fl_wl_find(w);
@@ -1253,7 +1253,7 @@ bool Fl_Wayland_Window_Driver::in_flush_ = false;
 static const char *get_prog_name() {
   pid_t pid = getpid();
   char fname[100];
-  snprintf(fname, 100, "/proc/%u/cmdline", pid);
+  snprintf(fname, 100, "/proc/%u/cmdline", (unsigned int)pid);
   FILE *in = fopen(fname, "r");
   if (in) {
     static char line[200];
@@ -1372,7 +1372,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
 //printf("window=%p menutitle=%p bartitle=%d leftorigin=%p y=%d\n", pWindow, Fl_Window_Driver::menu_title(pWindow), Fl_Window_Driver::menu_bartitle(pWindow), Fl_Window_Driver::menu_leftorigin(pWindow), pWindow->y());
   struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
   //xdg_positioner_get_version(positioner) <== gives 1 under Debian and Sway
-  int popup_x, popup_y;
+  int popup_x, popup_y, offset_y = 0;
   if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
     int X, Y;
     Fl_Window_Driver::current_menu_button->top_window_offset(X, Y);
@@ -1403,14 +1403,19 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
       // prevent first popup from going above the permissible source window
       popup_y = fl_max(popup_y, - pWindow->h() * f);
     }
-    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active())
-      libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y,
-                                          &popup_x, &popup_y);
-    xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
-    popup_y++;
+    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active()) {
+      libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, 0,
+                                          &popup_x, &offset_y);
+      popup_y += offset_y;
+    }
+    if (!pWindow->tooltip_window()) {
+      xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
+      popup_y++;
+    }
   }
   int positioner_H = pWindow->h();
-  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN) {
+  if (!pWindow->tooltip_window() &&
+      Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN) {
     // Under KWIN, limiting the height of the positioner to the work area height
     // results in tall popup windows starting at the top of the screen, what we want.
     // Unfortunately, we know the work area height exactly only for single-screen systems,
@@ -1430,7 +1435,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   int top_menubar = pWindow->y() -
     (Fl_Window_Driver::menu_bartitle(pWindow) && Fl_Window_Driver::menu_title(pWindow) ?
                                     Fl_Window_Driver::menu_title(pWindow)->h() : 0);
-  if ( !(parent_win->fullscreen_active() &&
+  if (!pWindow->tooltip_window() && !(parent_win->fullscreen_active() &&
         Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
         ((!Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) ||
           Fl_Window_Driver::menu_bartitle(pWindow)) && top_menubar < 10 &&
@@ -1444,7 +1449,21 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     }
     xdg_positioner_set_constraint_adjustment(positioner, constraint);
   }
-  if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
+  if (pWindow->tooltip_window()) { // process tooltips and transient scale factor windows
+    int delta = 1;
+    // Exclude transient scale factor windows
+    if (pWindow->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+      // Prevent top of popup window from laying below bottom of parent window
+      popup_y = fl_min(popup_y, parent_win->h() * f + offset_y);
+      // Compute offset between mouse and top of popup window to prevent
+      // flipped popup window from landing there
+      delta = fl_max(1, popup_y - Fl::event_y() * f);
+    }
+    xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y - delta, 1, delta);
+    xdg_positioner_set_constraint_adjustment(positioner,
+      XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
+      XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y);
+  } else if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
     xdg_positioner_set_offset(positioner, 0, popup_y);
   }
   new_window->xdg_popup = xdg_surface_get_popup(new_window->xdg_surface,
@@ -2202,4 +2221,54 @@ void Fl_Wayland_Window_Driver::un_maximize() {
   struct wld_window *xid = (struct wld_window *)Fl_X::flx(pWindow)->xid;
   if (xid->kind == DECORATED) libdecor_frame_unset_maximized(xid->frame);
   else Fl_Window_Driver::un_maximize();
+}
+
+
+#if HAVE_XDG_ACTIVATION
+
+static void xdg_activation_done(void *data,
+                         struct xdg_activation_token_v1 *xdg_activation_token_v1,
+                         const char *token) {
+  Fl_Wayland_Screen_Driver *screen_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  xdg_activation_v1_activate(screen_driver->xdg_activation, token, (struct wl_surface*)data);
+  xdg_activation_token_v1_destroy(xdg_activation_token_v1);
+}
+
+
+static struct xdg_activation_token_v1_listener xdg_activation_token_listener = {
+  .done = xdg_activation_done
+};
+
+#endif // HAVE_XDG_ACTIVATION
+
+
+/* This function lets one toplevel window, currently active, activate
+ another toplevel window given in its target parameter.
+ Wayland requires the "XDG activation" protocol for that.
+ This function also implements a fallback method used in absence of this protocol
+ which brings the target to front but doesn't activate it.
+ */
+void Fl_Wayland_Window_Driver::activate_(Fl_Window *target) {
+  struct wl_surface *target_surface = fl_wl_xid(target)->wl_surface;
+#if HAVE_XDG_ACTIVATION
+  Fl_Wayland_Screen_Driver *screen_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  if (screen_driver->xdg_activation) {
+    struct xdg_activation_token_v1 *token = xdg_activation_v1_get_activation_token(screen_driver->xdg_activation);
+    const char *appid = pWindow->xclass() ? pWindow->xclass() : get_prog_name();
+    xdg_activation_token_v1_set_app_id(token, appid);
+    xdg_activation_token_v1_set_surface(token, fl_wl_xid(pWindow)->wl_surface);
+    xdg_activation_token_v1_set_serial(token, screen_driver->seat->serial,
+                                       screen_driver->seat->wl_seat);
+    xdg_activation_token_v1_add_listener(token, &xdg_activation_token_listener, target_surface);
+    xdg_activation_token_v1_commit(token);
+  } else
+#endif // HAVE_XDG_ACTIVATION
+  { // Fallback in absence of support of the adequate Wayland protocol.
+    // this will move the target window to the front
+    Fl_Wayland_Window_Driver *top_dr = Fl_Wayland_Window_Driver::driver(target);
+    xdg_toplevel_set_parent(top_dr->xdg_toplevel(), xdg_toplevel());
+    // this will remove the parent-child relationship
+    xdg_toplevel_set_parent(top_dr->xdg_toplevel(), NULL);
+    wl_surface_commit(target_surface);
+  }
 }

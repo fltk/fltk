@@ -1,7 +1,7 @@
 //
-// Shell Command database coe for the Fast Light Tool Kit (FLTK).
+// Shell Command database code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -62,7 +62,7 @@
 // TODO: make the settings dialog resizable
 // TODO: make g_shell_config static, not a pointer, but don't load anything in batch mode
 
-// FEATURE: fld::Tool_Store icons are currently redundant with @file and @save and could be improved
+// FEATURE: fluid::Tool_Store icons are currently redundant with @file and @save and could be improved
 // FEATURE: hostname, username, getenv support?
 // FEATURE: add the files ./fluid.prefs and ./fluid.user.prefs as tool locations
 // FEATURE: interpret compiler output, for example: clang, and highlight errors and warnings
@@ -99,18 +99,28 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
+#include "io/file_chooser.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
+#include "nodes/Widget_Node.h"
 #include "panels/settings_panel.h"
 #include "widgets/App_Menu_Bar.h"
 
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_message.H>
 #include <FL/fl_string_functions.h>
+#include <FL/fl_utf8.h>
 
 #include <errno.h>
 
-using namespace fld;
+#if defined(_WIN32) && !defined(__CYGWIN__)
+#  include <lmcons.h> // for UNLEN
+#else
+#  include <pwd.h>
+#endif
+
+using namespace fluid;
 
 static std::string fltk_config_cmd;
 static Fl_Process s_proc;
@@ -129,8 +139,7 @@ bool shell_command_running() {
 /**
  Create a process manager
  */
-Fl_Process::Fl_Process() {
-}
+Fl_Process::Fl_Process() = default;
 
 /**
  Destroy the project manager.
@@ -275,7 +284,7 @@ void Fl_Process::clean_close(HANDLE& h) {
 static bool prepare_shell_command(int flags)  {
 //  settings_window->hide();
   if (s_proc.desc()) {
-    fl_alert("Previous shell command still running!");
+    fluid_alert("Previous shell command still running!");
     return false;
   }
   if (flags & Fd_Shell_Command::SAVE_PROJECT) {
@@ -382,7 +391,7 @@ void show_terminal_window() {
  */
 void run_shell_command(const std::string &cmd, int flags) {
   if (cmd.empty()) {
-    fl_alert("No shell command entered!");
+    fluid_alert("No shell command entered!");
     return;
   }
 
@@ -426,7 +435,7 @@ void run_shell_command(const std::string &cmd, int flags) {
  */
 Fd_Shell_Command::Fd_Shell_Command()
 : shortcut(0),
-  storage(fld::Tool_Store::USER),
+  storage(fluid::Tool_Store::USER),
   condition(0),
   flags(0),
   shell_menu_item_(nullptr)
@@ -460,7 +469,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 : name(in_name),
   label(in_name),
   shortcut(0),
-  storage(fld::Tool_Store::USER),
+  storage(fluid::Tool_Store::USER),
   condition(Fd_Shell_Command::ALWAYS),
   command("echo \"Hello, FLUID!\""),
   flags(Fd_Shell_Command::SAVE_PROJECT|Fd_Shell_Command::SAVE_SOURCECODE),
@@ -483,7 +492,7 @@ Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name)
 Fd_Shell_Command::Fd_Shell_Command(const std::string &in_name,
                  const std::string &in_label,
                  Fl_Shortcut in_shortcut,
-                 fld::Tool_Store in_storage,
+                 fluid::Tool_Store in_storage,
                  int in_condition,
                  const std::string &in_condition_data,
                  const std::string &in_command,
@@ -527,6 +536,57 @@ void Fd_Shell_Command::update_shell_menu() {
 }
 
 /**
+ Get the name of the user that is currently running FLUID.
+
+ \return the current user name, or an empty string if it can't be determined
+ */
+static std::string get_current_user_name() {
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  // Use the wide-character API and convert to UTF-8 so that user names
+  // containing international characters are handled correctly.
+  wchar_t wbuf[UNLEN + 1];
+  DWORD wlen = UNLEN + 1;
+  if (!GetUserNameW(wbuf, &wlen))
+    return std::string();
+  char buf[(UNLEN + 1) * 4]; // worst case 4 bytes per UTF-16 code unit
+  unsigned n = fl_utf8fromwc(buf, sizeof(buf), wbuf, (unsigned)wlen - 1);
+  return std::string(buf, n);
+#else
+  struct passwd pwd, *result = nullptr;
+  char buf[16384];
+  if (getpwuid_r(geteuid(), &pwd, buf, sizeof(buf), &result) == 0 && result)
+    return std::string(pwd.pw_name);
+  return std::string();
+#endif
+}
+
+/**
+ Get the name of the host that is currently running FLUID.
+
+ \return the current host name, or an empty string if it can't be determined
+ */
+static std::string get_current_host_name() {
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  // Use the wide-character API and convert to UTF-8 so that host names
+  // containing international characters are handled correctly.
+  wchar_t wbuf[MAX_COMPUTERNAME_LENGTH + 1];
+  DWORD wlen = MAX_COMPUTERNAME_LENGTH + 1;
+  if (!GetComputerNameW(wbuf, &wlen))
+    return std::string();
+  char buf[(MAX_COMPUTERNAME_LENGTH + 1) * 4]; // worst case 4 bytes per UTF-16 code unit
+  unsigned n = fl_utf8fromwc(buf, sizeof(buf), wbuf, (unsigned)wlen);
+  return std::string(buf, n);
+#else
+  char buf[256];
+  if (gethostname(buf, sizeof(buf)) == 0) {
+    buf[sizeof(buf) - 1] = '\0';
+    return std::string(buf);
+  }
+  return std::string();
+#endif
+}
+
+/**
  Check if the set condition is met.
 
  \return true if this command appears in the main menu
@@ -551,8 +611,14 @@ bool Fd_Shell_Command::is_active() {
     case WIN_ONLY: return false;
     case MAC_AND_UX_ONLY: return true;
 #endif
-    case USER_ONLY: return false; // TODO: get user name
-    case HOST_ONLY: return false; // TODO: get host name
+    case USER_ONLY: {
+      std::string user = get_current_user_name();
+      return !user.empty() && (user == condition_data);
+    }
+    case HOST_ONLY: {
+      std::string host = get_current_host_name();
+      return !host.empty() && (host == condition_data);
+    }
     case ENV_ONLY: {
       const char *value = fl_getenv(condition_data.c_str());
       if (value && *value) return true;
@@ -569,7 +635,7 @@ void Fd_Shell_Command::read(Fl_Preferences &prefs) {
   prefs.get("shortcut", tmp, 0);
   shortcut = (Fl_Shortcut)tmp;
   prefs.get("storage", tmp, -1);
-  if (tmp != -1) storage = (fld::Tool_Store)tmp;
+  if (tmp != -1) storage = (fluid::Tool_Store)tmp;
   prefs.get("condition", condition, ALWAYS);
   prefs.get("condition_data", condition_data, "");
   prefs.get("command", command, "");
@@ -587,10 +653,10 @@ void Fd_Shell_Command::write(Fl_Preferences &prefs, bool save_location) {
   if (flags != 0) prefs.set("flags", flags);
 }
 
-void Fd_Shell_Command::read(class fld::io::Project_Reader *in) {
+void Fd_Shell_Command::read(class fluid::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  storage = fld::Tool_Store::PROJECT;
+  storage = fluid::Tool_Store::PROJECT;
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -613,7 +679,7 @@ void Fd_Shell_Command::read(class fld::io::Project_Reader *in) {
   }
 }
 
-void Fd_Shell_Command::write(class fld::io::Project_Writer *out) {
+void Fd_Shell_Command::write(class fluid::io::Project_Writer *out) {
   out->write_string("\n  command {");
   out->write_string("\n    name "); out->write_word(name);
   out->write_string("\n    label "); out->write_word(label);
@@ -633,9 +699,7 @@ void Fd_Shell_Command::write(class fld::io::Project_Writer *out) {
 /**
  Manage a list of shell commands and their parameters.
  */
-Fd_Shell_Command_List::Fd_Shell_Command_List()
-{
-}
+Fd_Shell_Command_List::Fd_Shell_Command_List() = default;
 
 /**
  Release all shell commands and destroy this class.
@@ -672,7 +736,7 @@ void Fd_Shell_Command_List::clear() {
 /**
  remove all shell commands of the given storage location from the list.
  */
-void Fd_Shell_Command_List::clear(fld::Tool_Store storage) {
+void Fd_Shell_Command_List::clear(fluid::Tool_Store storage) {
   for (int i=list_size-1; i>=0; i--) {
     if (list[i]->storage == storage) {
       remove(i);
@@ -683,7 +747,7 @@ void Fd_Shell_Command_List::clear(fld::Tool_Store storage) {
 /**
  Read shell configuration from a preferences group.
  */
-void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::Tool_Store storage) {
+void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fluid::Tool_Store storage) {
   // import the old shell commands from previous user settings
   if (&Fluid.preferences == &prefs) {
     int version;
@@ -691,7 +755,7 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::Tool_Store storage)
     if (version == 0) {
       int save_fl, save_code, save_strings;
       Fd_Shell_Command *cmd = new Fd_Shell_Command();
-      cmd->storage = fld::Tool_Store::USER;
+      cmd->storage = fluid::Tool_Store::USER;
       cmd->name = "Sample Shell Command";
       cmd->label = "Sample Shell Command";
       cmd->shortcut = FL_ALT+'g';
@@ -712,7 +776,7 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::Tool_Store storage)
   for (int i=0; i<n; i++) {
     Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
     Fd_Shell_Command *cmd = new Fd_Shell_Command();
-    cmd->storage = fld::Tool_Store::USER;
+    cmd->storage = fluid::Tool_Store::USER;
     cmd->read(cmd_prefs);
     add(cmd);
   }
@@ -721,12 +785,12 @@ void Fd_Shell_Command_List::read(Fl_Preferences &prefs, fld::Tool_Store storage)
 /**
  Write shell configuration to a preferences group.
  */
-void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fld::Tool_Store storage) {
+void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fluid::Tool_Store storage) {
   Fl_Preferences shell_commands(prefs, "shell_commands");
   shell_commands.delete_all_groups();
   int index = 0;
   for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == fld::Tool_Store::USER) {
+    if (list[i]->storage == fluid::Tool_Store::USER) {
       Fl_Preferences cmd(shell_commands, Fl_Preferences::Name(index++));
       list[i]->write(cmd);
     }
@@ -736,10 +800,10 @@ void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fld::Tool_Store storage
 /**
  Read shell configuration from a project file.
  */
-void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
+void Fd_Shell_Command_List::read(fluid::io::Project_Reader *in) {
   const char *c = in->read_word(1);
   if (strcmp(c, "{")!=0) return; // expecting start of group
-  clear(fld::Tool_Store::PROJECT);
+  clear(fluid::Tool_Store::PROJECT);
   for (;;) {
     c = in->read_word(1);
     if (strcmp(c, "}")==0) break; // end of command list
@@ -756,16 +820,16 @@ void Fd_Shell_Command_List::read(fld::io::Project_Reader *in) {
 /**
  Write shell configuration to a project file.
  */
-void Fd_Shell_Command_List::write(fld::io::Project_Writer *out) {
+void Fd_Shell_Command_List::write(fluid::io::Project_Writer *out) {
   int n_in_project_file = 0;
   for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == fld::Tool_Store::PROJECT)
+    if (list[i]->storage == fluid::Tool_Store::PROJECT)
       n_in_project_file++;
   }
   if (n_in_project_file > 0) {
     out->write_string("\nshell_commands {");
     for (int i=0; i<list_size; i++) {
-      if (list[i]->storage == fld::Tool_Store::PROJECT)
+      if (list[i]->storage == fluid::Tool_Store::PROJECT)
         list[i]->write(out);
     }
     out->write_string("\n}");
@@ -910,15 +974,18 @@ void Fd_Shell_Command_List::export_selected() {
   if (!g_shell_config || (g_shell_config->list_size == 0)) return;
   if (!w_settings_shell_list) return;
 
-  Fl_Native_File_Chooser dialog;
-  dialog.title("Export selected shell commands:");
-  dialog.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(Fluid.proj.projectfile_path().c_str());
-  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
-  if (dialog.show() != 0) return;
+  std::string filename = fluid::io::filechooser(
+    fluid::io::FileChooserType::SAVE_FILE,
+    fluid::io::FileChooserPath::ABSOLUTE_PATH,
+    "Export Shell Commands",
+    "Can't create shell commands file:\n%s.",
+    Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".flcmd",
+    Fluid.proj.projectfile_path(),
+    "Fluid Shell Commands\t*.flcmd"
+  );
+  if (filename.empty()) return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
+  Fl_Preferences file(filename.c_str(), "flcmd.fluid.fltk.org", nullptr, (Fl_Preferences::Root)(Fl_Preferences::C_LOCALE|Fl_Preferences::CLEAR));
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, index = 0, n = w_settings_shell_list->size();
   for (i = 0; i < n; i++) {
@@ -939,21 +1006,25 @@ void Fd_Shell_Command_List::import_from_file() {
   if (!g_shell_config || (g_shell_config->list_size == 0)) return;
   if (!w_settings_shell_list) return;
 
-  Fl_Native_File_Chooser dialog;
-  dialog.title("Import shell commands:");
-  dialog.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  dialog.filter("FLUID Files\t*.flcmd\n");
-  dialog.directory(Fluid.proj.projectfile_path().c_str());
-  dialog.preset_file((Fluid.proj.basename() + ".flcmd").c_str());
-  if (dialog.show() != 0) return;
+  std::string filename = fluid::io::filechooser(
+    fluid::io::FileChooserType::LOAD_FILE,
+    fluid::io::FileChooserPath::ABSOLUTE_PATH,
+    "Import Shell Commands",
+    "Can't open shell commands file:\n%s.",
+    Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".flcmd",
+    Fluid.proj.projectfile_path(),
+    "Fluid Shell Commands\t*.flcmd"
+  );
+  if (filename.empty())
+    return;
 
-  Fl_Preferences file(dialog.filename(), "flcmd.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
+  Fl_Preferences file(filename.c_str(), "flcmd.fluid.fltk.org", nullptr, Fl_Preferences::C_LOCALE);
   Fl_Preferences shell_commands(file, "shell_commands");
   int i, n = shell_commands.groups();
   for (i = 0; i < n; i++) {
     Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(i));
     Fd_Shell_Command *cmd = new Fd_Shell_Command();
-    cmd->storage = fld::Tool_Store::USER;
+    cmd->storage = fluid::Tool_Store::USER;
     cmd->read(cmd_prefs);
     g_shell_config->add(cmd);
   }

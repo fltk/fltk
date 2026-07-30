@@ -1,7 +1,7 @@
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2022 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -366,7 +366,7 @@ private:
 
   Fl_RGB_Image *copy_scale_down_2h_() const;
   Fl_RGB_Image *copy_scale_down_2v_() const;
-  Fl_RGB_Image *copy_bilinear_(int W, int H) const;
+  Fl_RGB_Image *copy_bilinear_(uint32_t W, uint32_t H) const;
   Fl_RGB_Image *copy_nearest_neighbor_(int W, int H) const;
   Fl_RGB_Image *copy_optimize_(int W, int H) const;
 public:
@@ -384,8 +384,8 @@ public:
   void label(Fl_Widget*w) override;
   void label(Fl_Menu_Item*m) override;
   void uncache() override;
-  int cache_w() {return cache_w_;}
-  int cache_h() {return cache_h_;}
+  int cache_w() const { return cache_w_; }
+  int cache_h() const { return cache_h_; }
   /** Sets the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
 
    The image size in bytes of an Fl_RGB_Image object is the value of the product w() * h() * d().

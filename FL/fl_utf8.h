@@ -90,6 +90,9 @@ FL_EXPORT unsigned fl_utf8froma (char *dst, unsigned dstlen, const char *src, un
 /* F2: Returns true if the current O/S locale is UTF-8 */
 FL_EXPORT int fl_utf8locale(void);
 
+/* Test if byte is in the middle of a UTF-8 character */
+FL_EXPORT int fl_utf8_is_continuation(char byte);
+
 /* F2: Examine the first len characters of src, to determine if the input text is UTF-8 or not
  * NOTE: The value returned is not simply boolean - it contains information about the probable
  * type of the src text. */

@@ -18,7 +18,7 @@
 #ifndef FLUID_WIDGETS_STYLE_PARSER_H
 #define FLUID_WIDGETS_STYLE_PARSER_H
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 // Class to manage style parsing, friend of Code_Editor
@@ -54,6 +54,6 @@ public:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_WIDGETS_STYLE_PARSER_H

@@ -24,6 +24,7 @@
 #include "app/Snap_Action.h"
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
@@ -31,6 +32,7 @@
 #include "nodes/factory.h"
 #include "nodes/Group_Node.h"
 #include "nodes/Grid_Node.h"
+#include "nodes/Menu_Node.h"
 #include "panels/settings_panel.h"
 #include "panels/widget_panel.h"
 #include "widgets/Node_Browser.h"
@@ -77,19 +79,19 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
     c->value(static_cast<int>(Fluid.proj.i18n.type));
   } else {
     Fluid.proj.undo.checkpoint();
-    Fluid.proj.i18n.type = static_cast<fld::I18n_Type>(c->value());
+    Fluid.proj.i18n.type = static_cast<fluid::I18n_Type>(c->value());
     Fluid.proj.set_modflag(1);
   }
   switch (Fluid.proj.i18n.type) {
-  case fld::I18n_Type::NONE : /* None */
+  case fluid::I18n_Type::NONE : /* None */
       i18n_gnu_group->hide();
       i18n_posix_group->hide();
       break;
-  case fld::I18n_Type::GNU : /* GNU gettext */
+  case fluid::I18n_Type::GNU : /* GNU gettext */
       i18n_gnu_group->show();
       i18n_posix_group->hide();
       break;
-  case fld::I18n_Type::POSIX : /* POSIX cat */
+  case fluid::I18n_Type::POSIX : /* POSIX cat */
       i18n_gnu_group->hide();
       i18n_posix_group->show();
       break;
@@ -231,13 +233,13 @@ int Overlay_Window::handle(int e) {
 Node *Window_Node::make(Strategy strategy) {
   Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
-  while (p && (!p->is_code_block() || p->is_a(Type::Widget_Class))) {
+  while (p && (!p->is_code_block() || dynamic_cast<Widget_Class_Node*>(p))) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   if (!p) {
-    fl_message("Please select a function");
+    fluid_message("Please select a function");
     return nullptr;
   }
   Window_Node *myo = new Window_Node();
@@ -339,7 +341,7 @@ void Window_Node::ideal_size(int &w, int &h) {
     Fl::screen_work_area(sx, sy, sw, sh, screen);
     w = std::min(w, sw*3/4); h = std::min(h, sh*3/4);
   }
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 
@@ -359,7 +361,7 @@ void Overlay_Window::resize(int X,int Y,int W,int H) {
   if (X!=x() || Y!=y() || W!=w() || H!=h()) {
     // Set a checkpoint on the first resize event, ignore further resizes until
     // a different type of checkpoint is triggered.
-    if (Fluid.proj.undo.checkpoint(fld::proj::Undo::OnceType::WINDOW_RESIZE))
+    if (Fluid.proj.undo.checkpoint(fluid::proj::Undo::OnceType::WINDOW_RESIZE))
       Fluid.proj.set_modflag(1);
   }
 
@@ -404,8 +406,8 @@ void Window_Node::newdx() {
         break;
       }
     }
-    fld::app::Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Widget_Node*)selection, this };
-    fld::app::Snap_Action::check_all(data);
+    fluid::app::Snap_Data data = { mydx, mydy, bx, by, br, bt, drag, 4, 4, mydx, mydy, (Widget_Node*)selection, this };
+    fluid::app::Snap_Action::check_all(data);
     if (data.x_dist < 4) mydx = data.dx_out;
     if (data.y_dist < 4) mydy = data.dy_out;
   }
@@ -508,7 +510,7 @@ void Window_Node::draw_out_of_bounds() {
   draw_out_of_bounds(this, 0, 0, o->w(), o->h());
   for (Node *q=next; q && q->level>level; q = q->next) {
     // don't do this for Fl_Scroll (which we currently can't handle in FLUID anyway)
-    if (q->is_a(Type::Group) && !q->is_a(Type::Scroll)) {
+    if (dynamic_cast<Group_Node*>(q) && !dynamic_cast<Scroll_Node*>(q)) {
       Widget_Node *w = (Widget_Node*)q;
       draw_out_of_bounds(w, w->o->x(), w->o->y(), w->o->w(), w->o->h());
     }
@@ -596,7 +598,7 @@ void Window_Node::draw_overlay() {
       newposition(myo,x,y,r,t);
       if (Fluid.show_guides) {
         // If we are in a drag operation, and the parent is a grid, show the grid overlay
-        if (drag && q->parent && q->parent->is_a(Type::Grid)) {
+        if (drag && q->parent && dynamic_cast<Grid_Node*>(q->parent)) {
           Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Grid_Node*)q->parent)->o);
           grid->draw_overlay();
         }
@@ -610,7 +612,7 @@ void Window_Node::draw_overlay() {
           } else {
             draw_height(wgt->x()+15, wgt->y(), wgt->y()+wgt->h(), FL_ALIGN_CENTER);
           }
-        } else if (q->is_a(Type::Grid)) {
+        } else if (dynamic_cast<Grid_Node*>(q)) {
           Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Grid_Node*)q)->o);
           grid->draw_overlay();
         }
@@ -652,8 +654,8 @@ void Window_Node::draw_overlay() {
   fl_rectf(mysx,myst-5,5,5);
 
   if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
-    fld::app::Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
-    fld::app::Snap_Action::draw_all(data);
+    fluid::app::Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
+    fluid::app::Snap_Action::draw_all(data);
   }
 }
 
@@ -671,17 +673,17 @@ void check_redraw_corresponding_parent(Node *s) {
   Widget_Node * prev_parent = nullptr;
   if( !s || !s->selected || !s->is_widget()) return;
   for (Node *i=s; i && i->parent; i=i->parent) {
-    if (i->is_a(Type::Group) && prev_parent) {
-      if (i->is_a(Type::Tabs)) {
+    if (dynamic_cast<Group_Node*>(i) && prev_parent) {
+      if (dynamic_cast<Tabs_Node*>(i)) {
         ((Fl_Tabs*)((Widget_Node*)i)->o)->value(prev_parent->o);
         return;
       }
-      if (i->is_a(Type::Wizard)) {
+      if (dynamic_cast<Wizard_Node*>(i)) {
         ((Fl_Wizard*)((Widget_Node*)i)->o)->value(prev_parent->o);
         return;
       }
     }
-    if (i->is_a(Type::Group) && s->is_widget())
+    if (dynamic_cast<Group_Node*>(i) && s->is_widget())
       prev_parent = (Widget_Node*)i;
   }
 }
@@ -689,7 +691,7 @@ void check_redraw_corresponding_parent(Node *s) {
 // do that for every window (when selected set changes):
 void redraw_overlays() {
   for (Node *o=Fluid.proj.tree.first; o; o=o->next)
-    if (o->is_a(Type::Window)) ((Window_Node*)o)->fix_overlay();
+    if (dynamic_cast<Window_Node*>(o)) ((Window_Node*)o)->fix_overlay();
 }
 
 void toggle_overlays(Fl_Widget *,void *) {
@@ -704,7 +706,7 @@ void toggle_overlays(Fl_Widget *,void *) {
   }
 
   for (Node *o=Fluid.proj.tree.first; o; o=o->next)
-    if (o->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(o)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -727,7 +729,7 @@ void toggle_guides(Fl_Widget *,void *) {
     guides_button->value(Fluid.show_guides);
 
   for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (o->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(o)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -759,7 +761,7 @@ void toggle_restricted(Fl_Widget *,void *) {
     restricted_button->value(Fluid.show_restricted);
 
   for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (o->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(o)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw_overlay();
     }
@@ -773,7 +775,7 @@ void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
   Fluid.show_ghosted_outline = !Fluid.show_ghosted_outline;
   Fluid.preferences.set("Fluid.show_ghosted_outline", Fluid.show_ghosted_outline);
   for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (o->is_a(Type::Window)) {
+    if (dynamic_cast<Window_Node*>(o)) {
       Widget_Node* w = (Widget_Node*)o;
       ((Overlay_Window*)(w->o))->redraw();
     }
@@ -821,7 +823,7 @@ void Window_Node::moveallchildren(int key)
       Widget_Node* myo = (Widget_Node*)i;
       int x,y,r,t,ow=myo->o->w(),oh=myo->o->h();
       newposition(myo,x,y,r,t);
-      if (myo->is_a(Type::Flex) || myo->is_a(Type::Grid)) {
+      if (dynamic_cast<Flex_Node*>(myo) || dynamic_cast<Grid_Node*>(myo)) {
         // Flex and Grid need to be able to layout their children.
         Fluid.proj.tree.allow_layout++;
         myo->o->resize(x,y,r-x,t-y);
@@ -857,7 +859,7 @@ void Window_Node::moveallchildren(int key)
         Fluid.proj.tree.allow_layout++;
         f->layout();
         Fluid.proj.tree.allow_layout--;
-      } else if (myo->parent && myo->parent->is_a(Type::Grid)) {
+      } else if (myo->parent && dynamic_cast<Grid_Node*>(myo->parent)) {
         Grid_Node* gt = (Grid_Node*)myo->parent;
         Fl_Grid* g = (Fl_Grid*)gt->o;
         if (key) {
@@ -873,14 +875,14 @@ void Window_Node::moveallchildren(int key)
         g->layout();
         Fluid.proj.tree.allow_layout--;
         update_widget_panel = true;
-      } else if (myo->parent && myo->parent->is_a(Type::Group)) {
+      } else if (myo->parent && dynamic_cast<Group_Node*>(myo->parent)) {
         Group_Node* gt = (Group_Node*)myo->parent;
         ((Fl_Group*)gt->o)->init_sizes();
       }
       // move all the children, whether selected or not:
       Node* p;
       for (p = myo->next; p && p->level>myo->level; p = p->next)
-        if (p->is_true_widget() && !myo->is_a(Type::Flex) && !myo->is_a(Type::Grid)) {
+        if (p->is_true_widget() && !dynamic_cast<Flex_Node*>(myo) && !dynamic_cast<Grid_Node*>(myo)) {
           Widget_Node* myo2 = (Widget_Node*)p;
           int X,Y,R,T;
           newposition(myo2,X,Y,R,T);
@@ -919,7 +921,7 @@ int Window_Node::handle(int event) {
       // find the innermost item clicked on:
       selection = this;
       for (Node* i=next; i && i->level>level; i=i->next)
-        if (i->is_a(Type::Group)) {
+        if (dynamic_cast<Group_Node*>(i)) {
           Widget_Node* myo = (Widget_Node*)i;
           if (Fl::event_inside(myo->o) && myo->o->visible_r()) {
             selection = myo;
@@ -985,13 +987,13 @@ int Window_Node::handle(int event) {
           // printf("DND image = %s\n", fn);
           if (Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R)) {
           //if (Fl::event_alt()) { // TODO: X11/Wayland does not set the e_state on DND events
-            tgt->inactive_image.set(rel, tgt->is_a(Type::Window) ? nullptr : tgt->o, true);
-            if (!tgt->is_a(Type::Window)) tgt->redraw();
+            tgt->inactive_image.set(rel, dynamic_cast<Window_Node*>(tgt) ? nullptr : tgt->o, true);
+            if (!dynamic_cast<Window_Node*>(tgt)) tgt->redraw();
             tgt->inactive_image.compress = 1;
             tgt->inactive_image.bind = 0;
           } else {
-            tgt->active_image.set(rel, tgt->is_a(Type::Window) ? nullptr : tgt->o, false);
-            if (!tgt->is_a(Type::Window)) tgt->redraw();
+            tgt->active_image.set(rel, dynamic_cast<Window_Node*>(tgt) ? nullptr : tgt->o, false);
+            if (!dynamic_cast<Window_Node*>(tgt)) tgt->redraw();
             tgt->active_image.compress = 1;
             tgt->active_image.bind = 0;
           }
@@ -1073,7 +1075,7 @@ int Window_Node::handle(int event) {
       } else {
         deselect();
         select(t, 1);
-        if (t->is_a(Type::Menu_Item)) t->open();
+        if (dynamic_cast<Menu_Item_Node*>(t)) t->open();
       }
       selection = t;
       drag = 0;
@@ -1165,9 +1167,9 @@ int Window_Node::handle(int event) {
       if (Fl::event_state(FL_COMMAND)) {
         int x_step, y_step;
         if (drag & (FD_RIGHT|FD_BOTTOM))
-          fld::app::Snap_Action::get_resize_stepsize(x_step, y_step);
+          fluid::app::Snap_Action::get_resize_stepsize(x_step, y_step);
         else
-          fld::app::Snap_Action::get_move_stepsize(x_step, y_step);
+          fluid::app::Snap_Action::get_move_stepsize(x_step, y_step);
         dx *= x_step;
         dy *= y_step;
       }
@@ -1202,7 +1204,7 @@ int Window_Node::handle(int event) {
  Write the C++ code that comes before the children of the window are written.
  \param f the source code output stream
  */
-void Window_Node::write_code1(fld::io::Code_Writer& f) {
+void Window_Node::write_code1(fluid::io::Code_Writer& f) {
   Widget_Node::write_code1(f);
 }
 
@@ -1211,42 +1213,46 @@ void Window_Node::write_code1(fld::io::Code_Writer& f) {
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Window_Node::write_code2(fld::io::Code_Writer& f) {
+void Window_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = is_class() ? "this" : name() ? name() : "o";
   // make the window modal or non-modal
   if (modal) {
-    f.write_c("%s%s->set_modal();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->set_modal();\n");
   } else if (non_modal) {
-    f.write_c("%s%s->set_non_modal();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->set_non_modal();\n");
   }
   // clear the window border
   if (!((Fl_Window*)o)->border()) {
-    f.write_c("%s%s->clear_border();\n", f.indent(), var);
+    f.write_c(f.indent() + var + "->clear_border();\n");
   }
   // set the xclass of the window
   if (xclass) {
-    f.write_c("%s%s->xclass(", f.indent(), var);
+    f.write_c(f.indent() + var + "->xclass(");
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
   // make the window resizable
   if (((Fl_Window*)o)->resizable() == o)
-    f.write_c("%s%s->resizable(%s);\n", f.indent(), var, var);
+    f.write_c(f.indent() + var + "->resizable(" + std::string(var) + ");\n");
   // set the size range last
   if (sr_max_w || sr_max_h) {
-    f.write_c("%s%s->size_range(%d, %d, %d, %d);\n", f.indent(), var,
-            sr_min_w, sr_min_h, sr_max_w, sr_max_h);
+    f.write_c(f.indent() + var + "->size_range(" +
+            std::to_string(sr_min_w) + ", " + std::to_string(sr_min_h) + ", " +
+            std::to_string(sr_max_w) + ", " + std::to_string(sr_max_h) + ");\n");
   } else if (sr_min_w || sr_min_h) {
-    f.write_c("%s%s->size_range(%d, %d);\n", f.indent(), var, sr_min_w, sr_min_h);
+    f.write_c(f.indent() + var + "->size_range(" +
+            std::to_string(sr_min_w) + ", " + std::to_string(sr_min_h) + ");\n");
   }
   // insert extra code from user, may call `show()`
-  write_extra_code(f);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
   // stop adding widgets to this window
-  f.write_c("%s%s->end();\n", f.indent(), var);
+  f.write_c(f.indent() + var + "->end();\n");
   write_block_close(f);
 }
 
-void Window_Node::write_properties(fld::io::Project_Writer &f) {
+void Window_Node::write_properties(fluid::io::Project_Writer &f) {
   Widget_Node::write_properties(f);
   if (modal) f.write_string("modal");
   else if (non_modal) f.write_string("non_modal");
@@ -1257,7 +1263,7 @@ void Window_Node::write_properties(fld::io::Project_Writer &f) {
   if (o->visible() || override_visible_) f.write_string("visible");
 }
 
-void Window_Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Window_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"modal")) {
     modal = 1;
   } else if (!strcmp(c,"non_modal")) {
@@ -1345,7 +1351,7 @@ Node *Widget_Class_Node::make(Strategy strategy) {
   return myo;
 }
 
-void Widget_Class_Node::write_properties(fld::io::Project_Writer &f) {
+void Widget_Class_Node::write_properties(fluid::io::Project_Writer &f) {
   Window_Node::write_properties(f);
   if (wc_relative==1)
     f.write_string("position_relative");
@@ -1353,7 +1359,7 @@ void Widget_Class_Node::write_properties(fld::io::Project_Writer &f) {
     f.write_string("position_relative_rescale");
 }
 
-void Widget_Class_Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Widget_Class_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"position_relative")) {
     wc_relative = 1;
   } else if (!strcmp(c,"position_relative_rescale")) {
@@ -1376,9 +1382,9 @@ static const char *trimclassname(const char *n) {
 }
 
 
-void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
+void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
 #if 0
-  Widget_Node::write_code1(fld::io::Code_Writer& f);
+  Widget_Node::write_code1(fluid::io::Code_Writer& f);
 #endif // 0
 
   current_widget_class = this;
@@ -1388,92 +1394,98 @@ void Widget_Class_Node::write_code1(fld::io::Code_Writer& f) {
   if (c.empty()) c = "Fl_Group";
 
   f.write_c("\n");
+  f.write_h("\n");
   write_comment_h(f);
-  f.write_h("\nclass %s : public %s {\n", name(), c.c_str());
+  f.write_h("class " + std::string(name()) + " : public " + c + " {\n");
   if (c.find("Window")!=c.npos) {
-    f.write_h("%svoid _%s();\n", f.indent(1), trimclassname(name()));
+    f.write_h(f.indent(1) + "void _" + std::string(trimclassname(name())) + "();\n");
     f.write_h("public:\n");
-    f.write_h("%s%s(int X, int Y, int W, int H, const char* L=nullptr);\n", f.indent(1), trimclassname(name()));
-    f.write_h("%s%s(int W, int H, const char* L=nullptr);\n", f.indent(1), trimclassname(name()));
-    f.write_h("%s%s();\n", f.indent(1), trimclassname(name()));
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int W, int H, const char* L=nullptr);\n");
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "();\n");
 
     // a constructor with all four dimensions plus label
-    f.write_c("%s::%s(int X, int Y, int W, int H, const char* L) :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c.c_str());
-    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L) :\n");
+    f.write_c(f.indent(1) + c + "(X, Y, W, H, L)\n{\n");
+    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
     f.write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
-    f.write_c("%s::%s(int W, int H, const char* L) :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c.c_str());
-    f.write_c("%sclear_flag(16);\n", f.indent(1));
-    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int W, int H, const char* L) :\n");
+    f.write_c(f.indent(1) + c + "(0, 0, W, H, L)\n{\n");
+    f.write_c(f.indent(1) + "clear_flag(16);\n");
+    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
     f.write_c("}\n\n");
 
     // a constructor that takes size and label from the Fluid database
-    f.write_c("%s::%s() :\n", name(), trimclassname(name()));
-    f.write_c("%s%s(0, 0, %d, %d, ", f.indent(1), c.c_str(), o->w(), o->h());
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "() :\n");
+    f.write_c(f.indent(1) + c + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()) + ", ");
     const char *cstr = label();
     if (cstr) f.write_cstring(cstr);
     else f.write_c("nullptr");
     f.write_c(")\n{\n");
-    f.write_c("%sclear_flag(16);\n", f.indent(1));
-    f.write_c("%s_%s();\n", f.indent(1), trimclassname(name()));
+    f.write_c(f.indent(1) + "clear_flag(16);\n");
+    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
     f.write_c("}\n\n");
 
-    f.write_c("void %s::_%s() {\n", name(), trimclassname(name()));
+    f.write_c("void " + std::string(name()) + "::_" + std::string(trimclassname(name())) + "() {\n");
 //    f.write_c("%s%s* w = this;\n", f.indent(1), name());
   } else {
     f.write_h("public:\n");
-    f.write_h("%s%s(int X, int Y, int W, int H, const char* L=nullptr);\n",
-            f.indent(1), trimclassname(name()));
-    f.write_c("%s::%s(int X, int Y, int W, int H, const char* L) :\n", name(), trimclassname(name()));
+    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
+    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L) :\n");
     if (wc_relative==1)
-      f.write_c("%s%s(0, 0, W, H, L)\n{\n", f.indent(1), c.c_str());
+      f.write_c(f.indent(1) + c + "(0, 0, W, H, L)\n{\n");
     else if (wc_relative==2)
-      f.write_c("%s%s(0, 0, %d, %d, L)\n{\n", f.indent(1), c.c_str(), o->w(), o->h());
+      f.write_c(f.indent(1) + c + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()) + ", L)\n{\n");
     else
-      f.write_c("%s%s(X, Y, W, H, L)\n{\n", f.indent(1), c.c_str());
+      f.write_c(f.indent(1) + c + "(X, Y, W, H, L)\n{\n");
   }
 
 //  f.write_c("%s%s* o = this;\n", f.indent(1), name());
 
-  f.indentation++;
+  f.indent_more();
   write_widget_code(f);
+
+  if (!extra_code(2).empty()) {
+    f.write_c_indented(extra_code(2), 0, '\n');
+  }
 }
 
 /**
  Write the C++ code that comes after the children of the window are written.
  \param f the source code output stream
  */
-void Widget_Class_Node::write_code2(fld::io::Code_Writer& f) {
+void Widget_Class_Node::write_code2(fluid::io::Code_Writer& f) {
   // make the window modal or non-modal
   if (modal) {
-    f.write_c("%sset_modal();\n", f.indent());
+    f.write_c(f.indent() + "set_modal();\n");
   } else if (non_modal) {
-    f.write_c("%sset_non_modal();\n", f.indent());
+    f.write_c(f.indent() + "set_non_modal();\n");
   }
   // clear the window border
-  if (!((Fl_Window*)o)->border()) f.write_c("%sclear_border();\n", f.indent());
+  if (!((Fl_Window*)o)->border()) f.write_c(f.indent() + "clear_border();\n");
   // set the xclass of the window
   if (xclass) {
-    f.write_c("%sxclass(", f.indent());
+    f.write_c(f.indent() + "xclass(");
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
   // make the window resizable
   if (((Fl_Window*)o)->resizable() == o)
-    f.write_c("%sresizable(this);\n", f.indent());
+    f.write_c(f.indent() + "resizable(this);\n");
   // insert extra code from user
-  write_extra_code(f);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
   // stop adding widgets to this window
-  f.write_c("%send();\n", f.indent());
+  f.write_c(f.indent() + "end();\n");
   // reposition or resize the Widget Class to fit into the target
   if (wc_relative==1)
-    f.write_c("%sposition(X, Y);\n", f.indent());
+    f.write_c(f.indent() + "position(X, Y);\n");
   else if (wc_relative==2)
-    f.write_c("%sresize(X, Y, W, H);\n", f.indent());
-  f.indentation--;
+    f.write_c(f.indent() + "resize(X, Y, W, H);\n");
+  f.indent_less();
   f.write_c("}\n");
 }
 

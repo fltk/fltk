@@ -79,7 +79,6 @@ void sides_cb(Fl_Widget *o, void *p) {
 
 int main(int argc, char **argv) {
 
-  Fl::use_high_res_GL(1);
   Fl_Window window(300, 330);
 
 // the shape window could be it's own window, but here we make it

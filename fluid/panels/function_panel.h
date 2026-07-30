@@ -25,6 +25,6 @@ extern Fl_Window* widgetbin_panel;
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 Fl_Window* make_widgetbin();
-#endif
+#endif // function_panel_h
 
 //

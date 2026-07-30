@@ -777,10 +777,19 @@ inline void fl_transformed_vertex(double xf, double yf) {
 }
 
 /** Copy a rectangular area of the given offscreen buffer into the current drawing destination.
-  \param x,y        position where to draw the copied rectangle
-  \param w,h        size of the copied rectangle
+ This function is typically used when part of the GUI is drawn in an offscreen buffer created by
+ \ref fl_create_offscreen and copied, possibly in part, to the screen. A key condition for this to work independently
+ of the screen scaling and resolution is to call \ref fl_create_offscreen when the destination window
+ of the offscreen graphics is show()'n and current. Another condition is to resize the offscreen
+ when the display containing this window is rescaled. This can be done calling \ref fl_rescale_offscreen
+ which resizes the offscreen while preserving its graphical content. Another approach is to
+ delete and re-create the offscreen, and redraw its content. FLTK test program offscreen
+ gives an example of proper use of these functions.
+  \param x,y        position where to draw the copied rectangle in destination window
+  \param w,h        size of the copied rectangle in FLTK units
   \param pixmap     offscreen buffer containing the rectangle to copy
   \param srcx,srcy  origin in offscreen buffer of rectangle to copy
+ \see fl_create_offscreen, fl_rescale_offscreen.
 */
 inline void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);

@@ -1,7 +1,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -73,6 +73,10 @@ Fl_Callback_Reason Fl::callback_reason_ = FL_REASON_UNKNOWN;
 
 unsigned char   Fl::Private::options_[] = { 0, 0 };
 unsigned char   Fl::Private::options_read_ = 0;
+
+// Global pen position at pen down event
+int             Fl::Private::e_x_down { 0 };
+int             Fl::Private::e_y_down { 0 };
 
 int             Fl::Private::selection_to_clipboard_ = 0;
 
@@ -1623,8 +1627,10 @@ int Fl::handle_(int e, Fl_Window* window)
     // changing the text and falling through to FL_SHORTCUT case:
     {
       unsigned char* c = (unsigned char*)event_text(); // cast away const
-      if (!isalpha(*c)) return 0;
-      *c = isupper(*c) ? tolower(*c) : toupper(*c);
+      if (!fl_ascii_isalpha(*c)) return 0;
+      unsigned char old_c = *c;
+      *c = fl_ascii_isupper(*c) ? fl_ascii_tolower(*c) : fl_ascii_toupper(*c);
+      if (*c == old_c) return 0; // no change, so don't try again
     }
     e_number = e = FL_SHORTCUT;
 
@@ -2252,20 +2258,22 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker()
   Fl::release_widget_pointer(wp_); // remove pointer from watch list
 }
 
-int Fl::Private::use_high_res_GL_ = 0;
+int Fl::Private::use_high_res_GL_ = 1; // default value changed beginning FLTK 1.5
 
-/**  sets whether GL windows should be drawn at high resolution on Apple
-  computers with retina displays
-  \version 1.3.4
+/**  Sets whether GL windows should be drawn at high resolution on Apple
+  computers with retina displays.
+ Because the default value is \c 1, this function is useful only in the very unlikely situation where a macOS app
+ would choose to draw low resolution GL graphics when mapped on a retina display.
+ This function has effect only under macOS.
+ \version 1.3.4 (default value changed in 1.5)
  */
 void Fl::use_high_res_GL(int val) {
   Private::use_high_res_GL_ = val;
 }
 
-/**  returns whether GL windows should be drawn at high resolution on Apple
+/**  Returns whether GL windows should be drawn at high resolution on Apple
   computers with retina displays.
-  Default is no.
-  \version 1.3.4
+  \version Default value set to 1 starting with FLTK 1.5
  */
 int Fl::use_high_res_GL() {
   return Private::use_high_res_GL_;

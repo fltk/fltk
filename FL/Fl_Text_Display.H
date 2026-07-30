@@ -1,7 +1,7 @@
 //
 // Header file for Fl_Text_Display class.
 //
-// Copyright 2001-2023 by Bill Spitzak and others.
+// Copyright 2001-2026 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -257,7 +257,8 @@ public:
    \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed.
   */
-  int scrollbar_width() const {
+  FL_DEPRECATED("since 1.4.0 - use scrollbar_size() instead",
+  int scrollbar_width() const ) {
       return scrollbar_width_ ? scrollbar_width_ : Fl::scrollbar_size();
   }
 
@@ -266,7 +267,8 @@ public:
    \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed
   */
-  void scrollbar_width(int width) {
+  FL_DEPRECATED("since 1.4.0 - use scrollbar_size() instead",
+  void scrollbar_width(int width) ) {
       Fl::scrollbar_size(width);
       scrollbar_width_ = 0;
   }
@@ -539,8 +541,8 @@ protected:
   void maintain_absolute_top_line_number(int state);
 public:
   int get_absolute_top_line_number() const;
-  int scroll_row() { return mTopLineNum; }
-  int scroll_col() { return mHorizOffset; }
+  int scroll_row() const { return mTopLineNum; }
+  int scroll_col() const { return mHorizOffset; }
 protected:
   void absolute_top_line_number(int oldFirstChar);
   int maintaining_absolute_top_line_number() const;

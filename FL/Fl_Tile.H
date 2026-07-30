@@ -1,7 +1,7 @@
 //
 // Tile header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file. If this
@@ -47,7 +47,7 @@ protected:
     \see Fl_Tile::set_cursor(int)
   */
 
-  Fl_Cursor cursor(int n) {
+  Fl_Cursor cursor(int n) const {
     return cursors_[n];
   }
 

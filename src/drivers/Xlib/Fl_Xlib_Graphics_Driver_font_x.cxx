@@ -1,7 +1,7 @@
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -205,7 +205,7 @@ static int ultrasort(const void *aa, const void *bb) {
     // 2 non-x fonts are matched by "numeric sort"
     int ret = 0;
     for (;;) {
-      if (isdigit(*a) && isdigit(*b)) {
+      if (fl_ascii_isdigit(*a) && fl_ascii_isdigit(*b)) {
         int na = strtol(a, (char **)&a, 10);
         int nb = strtol(b, (char **)&b, 10);
         if (!ret) ret = na-nb;
@@ -429,13 +429,13 @@ static char* fl_find_fontsize(char* name) {
   // for standard x font names, try after 7th dash:
   if (*c == '-') {
     c = (char*)fl_font_word(c,7);
-    if (*c++ && isdigit(*c)) return c;
+    if (*c++ && fl_ascii_isdigit(*c)) return c;
     return 0; // malformed x font name?
   }
   char* r = 0;
   // find last set of digits:
   for (c++;* c; c++)
-    if (isdigit(*c) && !isdigit(*(c-1))) r = c;
+    if (fl_ascii_isdigit(*c) && !fl_ascii_isdigit(*(c-1))) r = c;
   return r;
 }
 
@@ -551,7 +551,7 @@ static char *put_font_size(const char *n, int size)
                         buf[i] = ',';
                         i++;
                 }
-                while(isspace(*ptr)) ptr++;
+                while(fl_ascii_isspace(*ptr)) ptr++;
         }
         buf[i] = '\0';
         free(name);

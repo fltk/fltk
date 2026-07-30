@@ -64,6 +64,7 @@ private:
   struct gl_start_support *gl_start_support_; // for support of gl_start/gl_finish
   bool is_popup_window_;
   bool previous_border_; // records whether window before being turned fullscreen had a border
+  void activate_(Fl_Window *);
 public:
   inline Fl_Cursor standard_cursor() { return standard_cursor_; }
   bool in_handle_configure; // distinguish OS and user window resize

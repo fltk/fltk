@@ -2,7 +2,7 @@
 // FLTK images library core.
 //
 // Copyright 1997-2010 by Easy Software Products.
-// Copyright 2011-2022 by Bill Spitzak and others.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,6 +34,7 @@
 #include <FL/Fl_SVG_Image.H>
 #include <FL/Fl_ICO_Image.H>
 #include <FL/fl_utf8.h>
+#include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -159,7 +160,7 @@ fl_check_images(const char *name,               // I - Filename
 
   // Check svg or xml signature
 
-  while (count && isspace(buf[0])) { buf++; count--; }
+  while (count && fl_ascii_isspace(buf[0])) { buf++; count--; }
   if ((count >= 5 &&
        (memcmp(buf, "<?xml", 5) == 0 ||
         memcmp(buf, "<svg", 4) == 0  ||

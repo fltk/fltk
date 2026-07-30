@@ -1,7 +1,7 @@
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -72,8 +72,8 @@ public:
   void label(Fl_Widget*w) override;
   void label(Fl_Menu_Item*m) override;
   void uncache() override;
-  int cache_w() {return cache_w_;}
-  int cache_h() {return cache_h_;}
+  int cache_w() const { return cache_w_; }
+  int cache_h() const { return cache_h_; }
 };
 
 #endif

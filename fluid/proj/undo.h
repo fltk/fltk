@@ -21,7 +21,7 @@
 
 class Fl_Widget;
 
-namespace fld {
+namespace fluid {
 
 class Project;
 
@@ -86,7 +86,7 @@ public:
   static void undo_cb(Fl_Widget *, void *);
 };
 
-} // namespace fld
+} // namespace fluid
 } // namespace proj
 
 

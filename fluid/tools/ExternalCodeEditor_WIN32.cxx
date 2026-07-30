@@ -19,16 +19,16 @@
 #include "tools/ExternalCodeEditor_WIN32.h"
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
-#include <FL/fl_ask.H>  // fl_alert()
 #include <FL/fl_utf8.h> // fl_utf8fromwc()
 #include <FL/fl_string_functions.h> // fl_strdup()
 
 #include <stdio.h>      // snprintf()
 #include <stdlib.h>
 
-using namespace fld;
+using namespace fluid;
 
 // Static local data
 static int L_editors_open = 0;                          // keep track of #editors open
@@ -183,11 +183,11 @@ void ExternalCodeEditor::close_editor() {
       case -2:  // no editor running (unlikely to happen)
         return;
       case -1:  // error
-        fl_alert("Error reaping external editor\npid=%ld file=%s\nOS error message=%s",
+        fluid_alert("Error reaping external editor\npid=%ld file=%s\nOS error message=%s",
                  long(pinfo_.dwProcessId), filename(), get_ms_errmsg());
         break;
       case 0:   // process still running
-        switch ( fl_choice("Please close external editor\npid=%ld file=%s",
+        switch ( fluid_choice("Please close external editor\npid=%ld file=%s",
                            "Force Close",       // button 0
                            "Closed",            // button 1
                            0,                   // button 2
@@ -215,7 +215,7 @@ void ExternalCodeEditor::kill_editor() {
   if ( !is_editing() ) return;
   switch ( terminate_app(pinfo_.dwProcessId, 500) ) {  // kill editor, wait up to 1/2 sec to die
     case -1: { // error
-      fl_alert("Can't seem to close editor of file: %s\n"
+      fluid_alert("Can't seem to close editor of file: %s\n"
                "Please close editor and hit OK", filename());
       break;
     }
@@ -286,12 +286,12 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
     char *buf = (char*)malloc((size_t)buflen + 1);
     DWORD count;
     if ( ReadFile(fh, buf, buflen, &count, 0) == 0 ) {
-      fl_alert("ERROR: ReadFile() failed for %s: %s",
+      fluid_alert("ERROR: ReadFile() failed for %s: %s",
                filename(), get_ms_errmsg());
       free((void*)buf); buf = 0;
       ret = -1;      // fallthru to CloseHandle()
     } else if ( count != buflen ) {
-      fl_alert("ERROR: ReadFile() failed for %s:\n"
+      fluid_alert("ERROR: ReadFile() failed for %s:\n"
                "expected %ld bytes, got %ld",
                filename(), long(buflen), long(count));
       free((void*)buf); buf = 0;
@@ -322,7 +322,7 @@ int ExternalCodeEditor::remove_tmpfile() {
     if ( Fluid.debug_external_editor ) printf("Removing tmpfile '%s'\n", tmpfile);
     utf8_to_wchar(tmpfile, wbuf);
     if (DeleteFileW(wbuf) == 0) {
-      fl_alert("WARNING: Can't DeleteFile() '%s': %s", tmpfile, get_ms_errmsg());
+      fluid_alert("WARNING: Can't DeleteFile() '%s': %s", tmpfile, get_ms_errmsg());
       return -1;
     }
   } else {
@@ -361,7 +361,7 @@ void ExternalCodeEditor::tmpdir_clear() {
     if ( Fluid.debug_external_editor ) printf("Removing tmpdir '%s'\n", tmpdir);
     utf8_to_wchar(tmpdir, wbuf);
     if ( RemoveDirectoryW(wbuf) == 0 ) {
-      fl_alert("WARNING: Can't RemoveDirectory() '%s': %s",
+      fluid_alert("WARNING: Can't RemoveDirectory() '%s': %s",
                tmpdir, get_ms_errmsg());
     }
   }
@@ -375,7 +375,7 @@ const char* ExternalCodeEditor::create_tmpdir() {
   if ( ! is_dir(dirname) ) {
     utf8_to_wchar(dirname, wbuf);
     if (CreateDirectoryW(wbuf, 0) == 0) {
-      fl_alert("can't create directory '%s': %s",
+      fluid_alert("can't create directory '%s': %s",
         dirname, get_ms_errmsg());
       return nullptr;
     }
@@ -418,7 +418,7 @@ static int save_file(const char *filename,
                          FILE_ATTRIBUTE_NORMAL,   // misc flags
                          nullptr);                   // templates
   if ( fh == INVALID_HANDLE_VALUE ) {
-    fl_alert("ERROR: couldn't create file '%s': %s",
+    fluid_alert("ERROR: couldn't create file '%s': %s",
              filename, get_ms_errmsg());
     return(-1);
   }
@@ -427,10 +427,10 @@ static int save_file(const char *filename,
   DWORD count = 0;
   int ret = 0;
   if ( WriteFile(fh, code, clen, &count, nullptr) == 0 ) {
-    fl_alert("ERROR: WriteFile() '%s': %s", filename, get_ms_errmsg());
+    fluid_alert("ERROR: WriteFile() '%s': %s", filename, get_ms_errmsg());
     ret = -1; // fallthru to CloseHandle()
   } else if ( count != clen ) {
-    fl_alert("ERROR: WriteFile() '%s': wrote only %lu bytes, expected %lu",
+    fluid_alert("ERROR: WriteFile() '%s': wrote only %lu bytes, expected %lu",
              filename, (unsigned long)count, (unsigned long)clen);
     ret = -1; // fallthru to CloseHandle()
   }
@@ -438,11 +438,11 @@ static int save_file(const char *filename,
   {
     FILETIME ftCreate, ftAccess, ftWrite;
     if ( GetFileSizeEx(fh, &file_size) == 0 ) {
-      fl_alert("ERROR: save_file(%s): GetFileSizeEx() failed: %s\n",
+      fluid_alert("ERROR: save_file(%s): GetFileSizeEx() failed: %s\n",
                filename, get_ms_errmsg());
     }
     if ( GetFileTime(fh, &ftCreate, &ftAccess, &ftWrite) == 0 ) {
-      fl_alert("ERROR: save_file(%s): GetFileTime() failed: %s\n",
+      fluid_alert("ERROR: save_file(%s): GetFileTime() failed: %s\n",
                filename, get_ms_errmsg());
     }
     file_mtime = ftWrite;
@@ -484,7 +484,7 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
                     nullptr,               // current dir
                     &sinfo,             // startup info
                     &pinfo_) == 0 ) {   // process info
-    fl_alert("CreateProcess() failed to start '%s': %s",
+    fluid_alert("CreateProcess() failed to start '%s': %s",
              cmd, get_ms_errmsg());
     return(-1);
   }
@@ -571,11 +571,11 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
         case -2:        // no editor running (unlikely to happen)
           break;
         case -1:        // wait failed
-          fl_alert("ERROR: WaitForSingleObject() failed: %s\nfile='%s', pid=%ld",
+          fluid_alert("ERROR: WaitForSingleObject() failed: %s\nfile='%s', pid=%ld",
             get_ms_errmsg(), filename(), long(pinfo_.dwProcessId));
           return -1;
         case 0:         // process still running
-          fl_alert("Editor Already Open\n  file='%s'\n  pid=%ld",
+          fluid_alert("Editor Already Open\n  file='%s'\n  pid=%ld",
             filename(), long(pinfo_.dwProcessId));
           return 0;
         case 1:         // process reaped, wpid is pid reaped

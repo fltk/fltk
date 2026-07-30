@@ -38,4 +38,4 @@ void template_clear();
 void template_delete_cb(Fl_Button *, void *);
 void template_install(const char *path, const char *name, const uchar *inSrc, int inSrcLen, int inDstLen);
 void template_load();
-#endif
+#endif // template_panel_h

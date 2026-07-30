@@ -1,7 +1,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -80,7 +80,6 @@ extern Fl_Group* w_settings_layout_tab;
 extern Fl_Choice* layout_choice;
 #include <FL/Fl_Menu_Button.H>
 extern Fl_Menu_Button* w_layout_menu;
-#include <FL/Fl_Native_File_Chooser.H>
 extern void edit_layout_preset_cb(Fl_Button*, void*);
 extern Fl_Button* preset_choice[3];
 #include <FL/Fl_Value_Input.H>
@@ -95,6 +94,7 @@ extern Fl_Menu_Button* w_settings_shell_menu;
 extern Fl_Button* w_settings_shell_play;
 extern Fl_Group* w_settings_shell_cmd;
 #include <FL/Fl_Shortcut_Button.H>
+extern Fl_Input* w_shell_cond_text;
 extern Fl_Text_Editor* w_settings_shell_command;
 extern Fl_Menu_Button* w_settings_shell_text_macros;
 extern Fl_Box* w_settings_shell_fd_project;
@@ -136,4 +136,4 @@ extern Fl_Double_Window* shell_run_window;
 extern Fl_Terminal* shell_run_terminal;
 extern Fl_Return_Button* shell_run_button;
 Fl_Double_Window* make_shell_window();
-#endif
+#endif // settings_panel_h

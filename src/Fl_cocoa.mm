@@ -20,6 +20,7 @@ extern "C" {
 
 #include <config.h>
 #include <FL/Fl.H>
+#include <src/Fl_Private.H>
 #include <FL/platform.H>
 #include "Fl_Window_Driver.H"
 #include "Fl_Screen_Driver.H"
@@ -1016,14 +1017,6 @@ static bool cocoaTabletHandler(NSEvent *theEvent, bool lock)
 }
 
 #endif // FLTK_HAVE_PEN_SUPPORT
-
-namespace Fl {
-namespace Private {
-// Global mouse position at mouse down event
-int e_x_down { 0 };
-int e_y_down { 0 };
-}; // namespace Private
-}; // namespace Fl
 
 /*
  * Cocoa Mouse Button Handler

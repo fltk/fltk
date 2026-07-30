@@ -1,7 +1,7 @@
 //
 // Syntax highlighting for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 // Copyright 2020 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -17,13 +17,15 @@
 
 #include "Style_Parser.h"
 
+#include "src/flstring.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>     // bsearch()
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 // Sorted list of C/C++ keywords...
 static const char * const code_keywords[] = {
@@ -170,7 +172,7 @@ int Style_Parser::parse_over_white() {
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
 int Style_Parser::parse_over_alpha() {
-  while ( len > 0 && isalpha(*tbuff) )
+  while ( len > 0 && fl_ascii_isalpha(*tbuff) )
     { if ( !parse_over_char() ) return 0; }
   return 1;
 }
@@ -210,7 +212,7 @@ void Style_Parser::buffer_keyword() {
   char *key  = keyword;
   char *kend = key + sizeof(keyword) - 1; // end of buffer
   for ( const char *s=tbuff;
-        (islower(*s) || *s=='_') && (key < kend);
+        (fl_ascii_islower(*s) || *s=='_') && (key < kend);
         *key++ = *s++ ) { }
   *key = 0;     // terminate
 }
@@ -326,6 +328,6 @@ int Style_Parser::parse_escape() {
 //    Returns 0 if hit end of buffer, 1 otherwise.
 //
 int Style_Parser::parse_all_else() {
-  last = isalnum(*tbuff) || *tbuff == '_' || *tbuff == '.';
+  last = fl_ascii_isalnum(*tbuff) || *tbuff == '_' || *tbuff == '.';
   return parse_over_char();
 }

@@ -1,7 +1,7 @@
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -229,10 +229,10 @@ void fl_draw(
       char *symptr;
       // Start with a symbol...
       for (symptr = symbol[0];
-           *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
+           *str && !fl_ascii_isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
            *symptr++ = *str++) {/*empty*/}
       *symptr = '\0';
-      if (isspace(*str)) str++;
+      if (fl_ascii_isspace(*str)) str++;
       symwidth[0] = (w < h ? w : h);
     }
 
@@ -503,8 +503,8 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
     // Symbol at beginning of string?
     const char *sym2 = (str[0]=='@' && str[1]=='@') ? str+2 : str;      // sym2 check will skip leading @@
     if (str[0] == '@' && str[1] != '@') {
-      while (*str && !isspace(*str)) { ++str; }         // skip over symbol
-      if (isspace(*str)) ++str;                         // skip over trailing space
+      while (*str && !fl_ascii_isspace(*str)) { ++str; }         // skip over symbol
+      if (fl_ascii_isspace(*str)) ++str;                         // skip over trailing space
       sym2 = str;                                       // sym2 check will skip leading symbol
       symwidth[0] = h;
     }

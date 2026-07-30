@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "proj/Image_Asset.h"
 #include "proj/mergeback.h"
 #include "proj/undo.h"
@@ -25,6 +26,7 @@
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
 #include "nodes/Window_Node.h"
+#include "nodes/Function_Node.h"
 #include "widgets/Formula_Input.h"
 #include "widgets/Node_Browser.h"
 
@@ -44,8 +46,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace fld;
-using namespace fld::proj;
+using namespace fluid;
+using namespace fluid::proj;
 
 Fl_Menu_Item menu_item_type_menu[] = {
   {"Normal",0,nullptr,(void*)nullptr},
@@ -135,7 +137,7 @@ void Input_Choice_Node::build_menu() {
       if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-        (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : level;
+        (q->next && dynamic_cast<Menu_Item_Node*>(q->next)) ? q->next->level : level;
       while (lvl > l1) {m->label(nullptr); m++; lvl--;}
       lvl = l1;
     }
@@ -163,13 +165,13 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
   Node *anchor = Fluid.proj.tree.current, *p = anchor;
   if (p && (strategy.placement() == Strategy::AFTER_CURRENT))
     p = p->parent;
-  while (p && !(p->is_a(Type::Menu_Manager_) || p->is_a(Type::Submenu))) {
+  while (p && !(dynamic_cast<Menu_Manager_Node*>(p) || dynamic_cast<Submenu_Node*>(p))) {
     anchor = p;
     strategy.placement(Strategy::AFTER_CURRENT);
     p = p->parent;
   }
   if (!p) {
-    fl_message("Please select a menu widget or a menu item");
+    fluid_message("Please select a menu widget or a menu item");
     return nullptr;
   }
   if (!o) {
@@ -198,13 +200,13 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
 
 void group_selected_menuitems() {
   // The group will be created in the parent group of the current menuitem
-  if (!Fluid.proj.tree.current->is_a(Type::Menu_Item)) {
+  if (!dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
     return;
   }
   Menu_Item_Node *q = static_cast<Menu_Item_Node*>(Fluid.proj.tree.current);
   Node *qq = Fluid.proj.tree.current->parent;
-  if (!qq || !(qq->is_a(Type::Menu_Manager_) || qq->is_a(Type::Submenu))) {
-    fl_message("Can't create a new submenu here.");
+  if (!qq || !(dynamic_cast<Menu_Manager_Node*>(qq) || dynamic_cast<Submenu_Node*>(qq))) {
+    fluid_message("Can't create a new submenu here.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -229,8 +231,8 @@ void ungroup_selected_menuitems() {
   Node *qq = Fluid.proj.tree.current->parent;
   Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
   int q_level = q->level;
-  if (!qq || !qq->is_a(Type::Submenu)) {
-    fl_message("Only menu items inside a submenu can be ungrouped.");
+  if (!qq || !dynamic_cast<Submenu_Node*>(qq)) {
+    fluid_message("Only menu items inside a submenu can be ungrouped.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -295,17 +297,17 @@ Submenu_Node Submenu_Node::prototype;
 // Writing the C code:
 
 // test functions in Widget_Node.C:
-int is_name(const char *c);
+bool is_function_name(const std::string& name);
+bool is_lambda(const std::string& name);
 const char *array_name(Widget_Node *o);
-int isdeclare(const char *c);
 
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
 // to this menu item.
-const char* Menu_Item_Node::menu_name(fld::io::Code_Writer& f, int& i) {
+std::string Menu_Item_Node::menu_name(fluid::io::Code_Writer& f, int& i) {
   i = 0;
   Node* t = prev;
-  while (t && t->is_a(Type::Menu_Item)) {
+  while (t && dynamic_cast<Menu_Item_Node*>(t)) {
     // be sure to count the {0} that ends a submenu:
     if (t->level > t->next->level) i += (t->level - t->next->level);
     // detect empty submenu:
@@ -314,23 +316,33 @@ const char* Menu_Item_Node::menu_name(fld::io::Code_Writer& f, int& i) {
     i++;
   }
   if (!t) return "\n#error Menu_Item_Node::menu_name, invalid f\n";
-  return f.unique_id(t, "menu", t->name(), t->label());
+  return f.unique_id(t, "menu", (t->name()?t->name():""), (t->label()?t->label():""));
 }
 
-void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
+void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
   if (active_image.asset && label() && label()[0]) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
-  if (callback() && is_name(callback()) && !user_defined(callback()))
-    f.write_h_once("extern void %s(Fl_Menu_*, %s);",
-                   callback(),
-                   user_data_type_or_voidp().c_str());
-  for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (!extra_code(n).empty() && isdeclare(extra_code(n).c_str()))
-      f.write_h_once("%s", extra_code(n).c_str());
+  if (callback() && is_function_name(callback())) {
+    std::string callback_name_pattern = std::string(callback()) + "(*)";
+    Node* pClass = find_parent_class_node();
+    if (pClass && pClass->has_function("static void", callback_name_pattern)) {
+      // nothing to do, method already exists
+    } else if (has_toplevel_function("*void", callback_name_pattern)) {
+      // nothing to do, function already exists
+    } else {
+      f.write_h_once("extern void " + std::string(callback()) + "(Fl_Menu_*, " + user_data_type_or_voidp() + ");");
+    }
   }
-  if (callback() && !is_name(callback()) && (callback()[0] != '[')) {
+  if (!extra_code(0).empty()) {
+    f.write_block_h_once(extra_code(0));
+  }
+  if (!extra_code(1).empty()) {
+    f.write_h(extra_code(1));
+    f.write_h("\n");
+  }
+  if (callback() && !is_function_name(callback()) && !is_lambda(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
@@ -341,16 +353,16 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
       do d++; while (is_id(*d));
       while (*d && !is_id(*d)) d++;
     }
-    const char* cn = callback_name(f);
+    std::string cn = callback_name(f);
     const char* k = class_name(1);
     if (k) {
-      f.write_c("\nvoid %s::%s_i(Fl_Menu_*", k, cn);
+      f.write_c("\nvoid " + std::string(k) + "::" + cn + "_i(Fl_Menu_*");
     } else {
-      f.write_c("\nstatic void %s(Fl_Menu_*", cn);
+      f.write_c("\nstatic void " + cn + "(Fl_Menu_*");
     }
     if (use_o) f.write_c(" o");
     std::string ut = user_data_type_or_voidp();
-    f.write_c(", %s", ut.c_str());
+    f.write_c(", " + ut);
     if (use_v) f.write_c(" v");
     f.write_c(") {\n");
     f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::MENU_CALLBACK, 0);
@@ -373,28 +385,25 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     // k is the name of the enclosing class (or classes)
     if (k) {
       // Implement the callback as a static member function
-      f.write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut.c_str());
+      f.write_c("void " + std::string(k) + "::" + std::string(cn) + "(Fl_Menu_* o, " + ut + " v) {\n");
       // Find the Fl_Menu_ container for this menu item
-      Node* t = parent; while (t->is_a(Type::Menu_Item)) t = t->parent;
+      Node* t = parent; while (dynamic_cast<Menu_Item_Node*>(t)) t = t->parent;
       if (t) {
         Widget_Node *tw = (t->is_widget()) ? static_cast<Widget_Node*>(t) : nullptr;
         Node *q = nullptr;
         // Generate code to call the callback
-        if (tw->is_a(Type::Menu_Bar) && ((Menu_Bar_Node*)tw)->is_sys_menu_bar()) {
+        if (dynamic_cast<Menu_Bar_Node*>(tw) && ((Menu_Bar_Node*)tw)->is_sys_menu_bar()) {
           // Fl_Sys_Menu_Bar removes itself from any parent on macOS, so we
           // wrapped it in a class and remeber the parent class in a new
           // class memeber variable.
           Menu_Bar_Node *tmb = (Menu_Bar_Node*)tw;
-          f.write_c("%s%s* sys_menu_bar = ((%s*)o);\n", f.indent(1),
-                    tmb->sys_menubar_proxy_name(), tmb->sys_menubar_proxy_name());
-          f.write_c("%s%s* parent_class = ((%s*)sys_menu_bar->_parent_class);\n",
-                    f.indent(1), k, k);
-          f.write_c("%sparent_class->%s_i(o,v);\n}\n",
-                    f.indent(1), cn);
+          f.write_c(f.indent(1) + tmb->sys_menubar_proxy_name() + "* sys_menu_bar = ((" + tmb->sys_menubar_proxy_name() + "*)o);\n");
+          f.write_c(f.indent(1) + k + "* parent_class = ((" + k + "*)sys_menu_bar->_parent_class);\n");
+          f.write_c(f.indent(1) + "parent_class->" + cn + "_i(o,v);\n}\n");
         } else {
-          f.write_c("%s((%s*)(o", f.indent(1), k);
+          f.write_c(f.indent(1) + "((" + k + "*)(o");
           // The class pointer is in the user_data field of the top widget
-          if (t && t->is_a(Type::Input_Choice)) {
+          if (t && dynamic_cast<Input_Choice_Node*>(t)) {
             // Go up one more level for Fl_Input_Choice, as these are groups themselves
             f.write_c("->parent()");
           }
@@ -402,9 +411,9 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
           for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
             f.write_c("->parent()");
           // user_data is cast into a pointer to the
-          if (!q || !q->is_a(Type::Widget_Class))
+          if (!q || !dynamic_cast<Widget_Class_Node*>(q))
             f.write_c("->user_data()");
-          f.write_c("))->%s_i(o,v);\n}\n", cn);
+          f.write_c("))->" + std::string(cn) + "_i(o,v);\n}\n");
         }
       } else {
         f.write_c("#error Enclosing Fl_Menu_* not found\n");
@@ -412,23 +421,23 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
     }
   }
   active_image.write_static(f);
-  if (next && next->is_a(Type::Menu_Item)) return;
+  if (next && dynamic_cast<Menu_Item_Node*>(next)) return;
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
   const char* k = class_name(1);
   if (k) {
     int i;
-    f.write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(f, i));
+    f.write_c("\nFl_Menu_Item " + std::string(k) + "::" + menu_name(f, i) + "[] = {\n");
   } else {
     int i;
-    f.write_c("\nFl_Menu_Item %s[] = {\n", menu_name(f, i));
+    f.write_c("\nFl_Menu_Item " + menu_name(f, i) + "[] = {\n");
   }
-  Node* t = prev; while (t && t->is_a(Type::Menu_Item)) t = t->prev;
-  for (Node* q = t->next; q && q->is_a(Type::Menu_Item); q = q->next) {
+  Node* t = prev; while (t && dynamic_cast<Menu_Item_Node*>(t)) t = t->prev;
+  for (Node* q = t->next; q && dynamic_cast<Menu_Item_Node*>(q); q = q->next) {
     ((Menu_Item_Node*)q)->write_item(f);
     int thislevel = q->level; if (q->can_have_children()) thislevel++;
     int nextlevel =
-      (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : t->level+1;
+      (q->next && dynamic_cast<Menu_Item_Node*>(q->next)) ? q->next->level : t->level+1;
     while (thislevel > nextlevel) {
       // text, shortcut, callback, user_data, flags, labeltype, labelfont, labelsize, labelcolor
       f.write_c(" { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 },\n");
@@ -439,20 +448,20 @@ void Menu_Item_Node::write_static(fld::io::Code_Writer& f) {
 
   if (k) {
     // Write menu item variables...
-    t = prev; while (t && t->is_a(Type::Menu_Item)) t = t->prev;
-    for (Node* q = t->next; q && q->is_a(Type::Menu_Item); q = q->next) {
+    t = prev; while (t && dynamic_cast<Menu_Item_Node*>(t)) t = t->prev;
+    for (Node* q = t->next; q && dynamic_cast<Menu_Item_Node*>(q); q = q->next) {
       Menu_Item_Node *m = (Menu_Item_Node*)q;
       const char *c = array_name(m);
       if (c) {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
           int i;
-          const char* n = ((Menu_Item_Node *)q)->menu_name(f, i);
-          f.write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
+          std::string n = ((Menu_Item_Node *)q)->menu_name(f, i);
+          f.write_c("Fl_Menu_Item* " + std::string(k) + "::" + std::string(c) + " = " + std::string(k) + "::" + n + " + " + std::to_string(i) + ";\n");
         } else {
           // if the name is an array, only define the array.
-          // The actual assignment is in write_code1(fld::io::Code_Writer& f)
-          f.write_c("Fl_Menu_Item* %s::%s;\n", k, c);
+          // The actual assignment is in write_code1(fluid::io::Code_Writer& f)
+          f.write_c("Fl_Menu_Item* " + std::string(k) + "::" + std::string(c) + ";\n");
         }
       }
     }
@@ -475,7 +484,7 @@ int Menu_Item_Node::flags() {
   return i;
 }
 
-void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
+void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
   static const char * const labeltypes[] = {
     "FL_NORMAL_LABEL",
     "FL_NO_LABEL",
@@ -494,13 +503,13 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
   // Label, can not be nullptr which has a special meaning here
   if (label() && label()[0])
     switch (Fluid.proj.i18n.type) {
-      case fld::I18n_Type::GNU:
+      case fluid::I18n_Type::GNU:
         // we will call i18n when the menu is instantiated for the first time
-        f.write_c("%s(", Fluid.proj.i18n.gnu_static_function.c_str());
+        f.write_c(Fluid.proj.i18n.gnu_static_function + "(");
         f.write_cstring(label());
         f.write_c(")");
         break;
-      case fld::I18n_Type::POSIX:
+      case fluid::I18n_Type::POSIX:
         // fall through: strings can't be translated before a catalog is chosen
       default:
         f.write_cstring(label());
@@ -521,31 +530,31 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
     }
     if (s & FL_SHIFT) { f.write_c("FL_SHIFT|"); s &= ~FL_SHIFT; }
     if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
-    if ((s < 127) && isprint(s))
-      f.write_c("'%c', ", s);
+    if ((s < 127) && fl_ascii_isprint(s))
+      f.write_c("'" + std::string(1, (char)s) + "'");
     else
-      f.write_c("0x%08x, ", s);
+      f.write_c("0x" + fluid::io::to_string_8x(s) + ", ");
   } else {
     f.write_c(", 0, ");
   }
 
   // Write callback or nullptr
   if (callback()) {
-    if (callback()[0] == '[') {
+    if (is_lambda(callback())) {
       // Write lambda expressions inline, allow mergeback
       f.write_c("\n");
       f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
       f.write_c_indented(callback(), 1, 0);
       f.write_c("\n");
       f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
-      f.write_c("%s, ", f.indent_plus(1));
+      f.write_c(f.indent_plus(1) + ", ");
     } else {
       // Write named callback, try to qualify it with the class name if possible
-      const char* k = is_name(callback()) ? nullptr : class_name(1);
+      const char* k = is_function_name(callback()) ? nullptr : class_name(1);
       if (k) {
-        f.write_c(" (Fl_Callback*)%s::%s,", k, callback_name(f));
+        f.write_c(" (Fl_Callback*)" + std::string(k) + "::" + std::string(callback_name(f)) + ",");
       } else {
-        f.write_c(" (Fl_Callback*)%s,", callback_name(f));
+        f.write_c(" (Fl_Callback*)" + std::string(callback_name(f)) + ",");
       }
     }
   } else
@@ -553,33 +562,34 @@ void Menu_Item_Node::write_item(fld::io::Code_Writer& f) {
 
   // Write user_data or nullptr
   if (!user_data().empty())
-    f.write_c(" (void*)(%s),", user_data().c_str());
+    f.write_c(" (void*)(" + user_data() + "),");
   else
     f.write_c(" nullptr,");
 
   // Write flags, labeltype, labelfont, labelsize, and labelcolor
-  f.write_c(" %d, (uchar)%s, %d, %d, %d ", flags(),
-          labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
+  f.write_c(" " + std::to_string(flags()) + ", (uchar)" + labeltypes[o->labeltype()] + ", "
+           + std::to_string(o->labelfont()) + ", " + std::to_string(o->labelsize()) + ", " + std::to_string(o->labelcolor()) + " ");
   f.write_c("},\n");
 }
 
-void start_menu_initialiser(fld::io::Code_Writer& f, int &initialized, const char *name, int index) {
+void start_menu_initialiser(fluid::io::Code_Writer& f, int &initialized, const char *name, int index) {
   if (!initialized) {
     initialized = 1;
-    f.write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", f.indent(), name, index);
-    f.indentation++;
+    f.write_c(f.indent() + "{ Fl_Menu_Item* o = &" + std::string(name) + "[" + std::to_string(index) + "];\n");
+    f.indent_more();
   }
 }
 
-void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
-  int i; const char* mname = menu_name(f, i);
+void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
+  int i;
+  std::string mname = menu_name(f, i);
 
-  if (!prev->is_a(Type::Menu_Item)) {
+  if (!dynamic_cast<Menu_Item_Node*>(prev)) {
     // for first menu item, declare the array
     if (class_name(1)) {
-      f.write_h("%sstatic Fl_Menu_Item %s[];\n", f.indent(1), mname);
+      f.write_h(f.indent(1) + "static Fl_Menu_Item " + mname + "[];\n");
     } else {
-      f.write_h("extern Fl_Menu_Item %s[];\n", mname);
+      f.write_h("extern Fl_Menu_Item " + mname + "[];\n");
     }
   }
 
@@ -587,86 +597,84 @@ void Menu_Item_Node::write_code1(fld::io::Code_Writer& f) {
   if (c) {
     if (class_name(1)) {
       f.write_public(public_);
-      f.write_h("%sstatic Fl_Menu_Item* %s;\n", f.indent(1), c);
+      f.write_h(f.indent(1) + "static Fl_Menu_Item* " + std::string(c) + ";\n");
     } else {
       if (c==name())
-        f.write_h("#define %s (%s+%d)\n", c, mname, i);
+        f.write_h("#define " + std::string(c) + " (" + mname + "+" + std::to_string(i) + ")\n");
       else
-        f.write_h("extern Fl_Menu_Item* %s;\n", c);
+        f.write_h("extern Fl_Menu_Item* " + std::string(c) + ";\n");
     }
   }
 
   if (callback()) {
-    if (!is_name(callback()) && (callback()[0] != '[') && class_name(1)) {
-      const char* cn = callback_name(f);
+    if (!is_function_name(callback()) && !is_lambda(callback()) && class_name(1)) {
+      std::string cn = callback_name(f);
       std::string ut = user_data_type_or_voidp();
       f.write_public(0);
-      f.write_h("%sinline void %s_i(Fl_Menu_*, %s);\n", f.indent(1), cn, ut.c_str());
-      f.write_h("%sstatic void %s(Fl_Menu_*, %s);\n", f.indent(1), cn, ut.c_str());
+      f.write_h(f.indent(1) + "inline void " + cn + "_i(Fl_Menu_*, " + ut + ");\n");
+      f.write_h(f.indent(1) + "static void " + cn + "(Fl_Menu_*, " + ut + ");\n");
     }
   }
 
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name() && strchr(name(), '[')) {
-    f.write_c("%s%s = &%s[%d];\n", f.indent_plus(1), name(), mname, i);
+    f.write_c(f.indent_plus(1) + std::string(name()) + " = &" + mname + "[" + std::to_string(i) + "];\n");
   }
   if (active_image.asset) {
-    start_menu_initialiser(f, menuItemInitialized, mname, i);
+    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
     if (label() && label()[0]) {
-      f.write_c("%sFl_Multi_Label* ml = new Fl_Multi_Label;\n", f.indent());
-      f.write_c("%sml->labela = (char*)", f.indent());
+      f.write_c(f.indent() + "Fl_Multi_Label* ml = new Fl_Multi_Label;\n");
+      f.write_c(f.indent() + "ml->labela = (char*)");
       active_image.asset->write_inline(f);
       f.write_c(";\n");
-      if (Fluid.proj.i18n.type==fld::I18n_Type::NONE) {
-        f.write_c("%sml->labelb = o->label();\n", f.indent());
-      } else if (Fluid.proj.i18n.type==fld::I18n_Type::GNU) {
-        f.write_c("%sml->labelb = %s(o->label());\n",
-                f.indent(), Fluid.proj.i18n.gnu_function.c_str());
-      } else if (Fluid.proj.i18n.type==fld::I18n_Type::POSIX) {
-        f.write_c("%sml->labelb = catgets(%s,%s,i+%d,o->label());\n",
-                  f.indent(),
-                  Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
-                  Fluid.proj.i18n.posix_set.c_str(), msgnum());
+      if (Fluid.proj.i18n.type==fluid::I18n_Type::NONE) {
+        f.write_c(f.indent() + "ml->labelb = o->label();\n");
+      } else if (Fluid.proj.i18n.type==fluid::I18n_Type::GNU) {
+        f.write_c(f.indent() + "ml->labelb = " + Fluid.proj.i18n.gnu_function + "(o->label());\n");
+      } else if (Fluid.proj.i18n.type==fluid::I18n_Type::POSIX) {
+        f.write_c(f.indent() + "ml->labelb = catgets(" +
+                  (Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file) + "," +
+                  Fluid.proj.i18n.posix_set + "," + std::to_string(msgnum()) + ",o->label());\n");
       }
-      f.write_c("%sml->typea = FL_IMAGE_LABEL;\n", f.indent());
-      f.write_c("%sml->typeb = FL_NORMAL_LABEL;\n", f.indent());
-      f.write_c("%sml->label(o);\n", f.indent());
+      f.write_c(f.indent() + "ml->typea = FL_IMAGE_LABEL;\n");
+      f.write_c(f.indent() + "ml->typeb = FL_NORMAL_LABEL;\n");
+      f.write_c(f.indent() + "ml->label(o);\n");
     } else {
       active_image.asset->write_code(f, 0, "o");
     }
   }
-  if ((Fluid.proj.i18n.type != fld::I18n_Type::NONE) && label() && label()[0]) {
+  if ((Fluid.proj.i18n.type != fluid::I18n_Type::NONE) && label() && label()[0]) {
     Fl_Labeltype t = o->labeltype();
     if (active_image.asset) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
-      start_menu_initialiser(f, menuItemInitialized, mname, i);
-      if (Fluid.proj.i18n.type==fld::I18n_Type::GNU) {
-        f.write_c("%so->label(%s(o->label()));\n",
-                f.indent(), Fluid.proj.i18n.gnu_function.c_str());
-      } else if (Fluid.proj.i18n.type==fld::I18n_Type::POSIX) {
-        f.write_c("%so->label(catgets(%s,%s,i+%d,o->label()));\n",
-                  f.indent(),
-                  Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file.c_str(),
-                  Fluid.proj.i18n.posix_set.c_str(), msgnum());
+      start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+      if (Fluid.proj.i18n.type==fluid::I18n_Type::GNU) {
+        f.write_c(f.indent() + "o->label(" + Fluid.proj.i18n.gnu_function + "(o->label()));\n");
+      } else if (Fluid.proj.i18n.type==fluid::I18n_Type::POSIX) {
+        f.write_c(f.indent() + "o->label(catgets(" +
+                  (Fluid.proj.i18n.posix_file.empty() ? "_catalog" : Fluid.proj.i18n.posix_file) + "," +
+                  Fluid.proj.i18n.posix_set + "," + std::to_string(msgnum()) + ",o->label()));\n");
       }
     }
   }
-  for (int n=0; n < NUM_EXTRA_CODE; n++) {
-    if (!extra_code(n).empty() && !isdeclare(extra_code(n).c_str())) {
-      start_menu_initialiser(f, menuItemInitialized, mname, i);
-      f.write_c("%s%s\n", f.indent(), extra_code(n).c_str());
-    }
+  if (!extra_code(2).empty()) {
+    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    f.write_c_indented(extra_code(2), 0, '\n');
+  }
+  if (!extra_code(3).empty()) {
+    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    f.write_c_indented(extra_code(3), 0, '\n');
   }
   if (menuItemInitialized) {
-    f.indentation--;
-    f.write_c("%s}\n",f.indent());
+    f.indent_less();
+    f.write_c(f.indent() + "}\n");
   }
 }
 
-void Menu_Item_Node::write_code2(fld::io::Code_Writer&) {}
+void Menu_Item_Node::write_code2(fluid::io::Code_Writer&) {}
 
 ////////////////////////////////////////////////////////////////
 // This is the base class for widgets that contain a menu (ie
@@ -731,7 +739,7 @@ void Menu_Base_Node::build_menu() {
       if (q->can_have_children()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-        (q->next && q->next->is_a(Type::Menu_Item)) ? q->next->level : level;
+        (q->next && dynamic_cast<Menu_Item_Node*>(q->next)) ? q->next->level : level;
       while (lvl > l1) {m->label(nullptr); m++; lvl--;}
       lvl = l1;
     }
@@ -758,10 +766,10 @@ Node* Menu_Base_Node::click_test(int, int) {
   return this;
 }
 
-void Menu_Manager_Node::write_code2(fld::io::Code_Writer& f) {
-  if (next && next->is_a(Type::Menu_Item)) {
-    f.write_c("%s%s->menu(%s);\n", f.indent(), name() ? name() : "o",
-            f.unique_id(this, "menu", name(), label()));
+void Menu_Manager_Node::write_code2(fluid::io::Code_Writer& f) {
+  if (next && dynamic_cast<Menu_Item_Node*>(next)) {
+    f.write_c(f.indent() + (name() ? name() : "o") + "->menu(" +
+            f.unique_id(this, "menu", (name()?name():""), (label()?label():"")) + ");\n");
   }
   Widget_Node::write_code2(f);
 }
@@ -838,13 +846,11 @@ Fl_Menu_Item menu_bar_type_menu[] = {
   {nullptr}};
 
 Menu_Bar_Node::Menu_Bar_Node()
-: _proxy_name(nullptr)
 {
 }
 
-Menu_Bar_Node::~Menu_Bar_Node() {
-  if (_proxy_name)
-    ::free(_proxy_name);
+Menu_Bar_Node::~Menu_Bar_Node()
+{
 }
 
 /**
@@ -864,43 +870,36 @@ std::string Menu_Bar_Node::sys_menubar_name() const {
     return "Fl_Sys_Menu_Bar";
 }
 
-const char *Menu_Bar_Node::sys_menubar_proxy_name() {
-  if (!_proxy_name)
-    _proxy_name = (char*)::malloc(128);
-  ::snprintf(_proxy_name, 63, "%s_Proxy", sys_menubar_name().c_str());
-  return _proxy_name;
+std::string Menu_Bar_Node::sys_menubar_proxy_name() const {
+  return sys_menubar_name() + "_Proxy";
 }
 
 
-void Menu_Bar_Node::write_static(fld::io::Code_Writer& f) {
+void Menu_Bar_Node::write_static(fluid::io::Code_Writer& f) {
   super::write_static(f);
   if (is_sys_menu_bar()) {
     f.write_h_once("#include <FL/Fl_Sys_Menu_Bar.H>");
     if (is_in_class()) {
       // Make room for a pointer to the enclosing class.
       f.write_c_once( // must be less than 1024 bytes!
-                     "\nclass %s: public %s {\n"
+                     "\nclass " + sys_menubar_proxy_name() + ": public " + sys_menubar_name() + " {\n"
                      "public:\n"
-                     "  %s(int x, int y, int w, int h, const char* l=nullptr)\n"
-                     "  : %s(x, y, w, h, l) { }\n"
+                     "  " + sys_menubar_proxy_name() + "(int x, int y, int w, int h, const char* l=nullptr)\n"
+                     "  : " + sys_menubar_name() + "(x, y, w, h, l) { }\n"
                      "  void* _parent_class;\n"
-                     "};\n",
-                     sys_menubar_proxy_name(), sys_menubar_name().c_str(),
-                     sys_menubar_proxy_name(), sys_menubar_name().c_str()
-                     );
+                     "};\n");
     }
   }
 }
 
-void Menu_Bar_Node::write_code1(fld::io::Code_Writer& f) {
+void Menu_Bar_Node::write_code1(fluid::io::Code_Writer& f) {
   super::write_code1(f);
   if (is_sys_menu_bar() && is_in_class()) {
-    f.write_c("%s((%s*)%s)->_parent_class = (void*)this;\n",
-              f.indent(), sys_menubar_proxy_name(), name() ? name() : "o");
+    f.write_c(f.indent() + "((" + sys_menubar_proxy_name() + "*)" + (name() ? name() : "o") + ")->_parent_class = (void*)this;\n");
   }
 }
 
-//void Menu_Bar_Node::write_code2(fld::io::Code_Writer& f) {
+//void Menu_Bar_Node::write_code2(fluid::io::Code_Writer& f) {
 //  super::write_code2(f);
 //}
 

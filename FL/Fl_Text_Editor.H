@@ -1,7 +1,7 @@
 //
 // Header file for Fl_Text_Editor class.
 //
-// Copyright 2001-2023 by Bill Spitzak and others.
+// Copyright 2001-2026 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -62,7 +62,7 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
         is inserted before the current cursor position. Otherwise, new
         text replaces text at the current cursor position.
     */
-    int insert_mode() { return insert_mode_; }
+    int insert_mode() const { return insert_mode_; }
     void tab_nav(int val);
     int tab_nav() const;
     void add_key_binding(int key, int state, Key_Func f, Key_Binding** list);

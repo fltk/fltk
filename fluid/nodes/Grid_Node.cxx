@@ -343,7 +343,7 @@ void Grid_Node::copy_properties_for_children() {
   d->layout();
 }
 
-void Grid_Node::write_properties(fld::io::Project_Writer &f)
+void Grid_Node::write_properties(fluid::io::Project_Writer &f)
 {
   super::write_properties(f);
   Fl_Grid* grid = (Fl_Grid*)o;
@@ -408,7 +408,7 @@ void Grid_Node::write_properties(fld::io::Project_Writer &f)
   }
 }
 
-void Grid_Node::read_property(fld::io::Project_Reader &f, const char *c)
+void Grid_Node::read_property(fluid::io::Project_Reader &f, const char *c)
 {
   Fl_Grid* grid = (Fl_Grid*)o;
   if (!strcmp(c,"dimensions")) {
@@ -458,7 +458,7 @@ void Grid_Node::read_property(fld::io::Project_Reader &f, const char *c)
   }
 }
 
-void Grid_Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) {
+void Grid_Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate) {
   Fl_Grid *grid;
   Fl_Widget *child_widget;
   Fl_Grid::Cell *cell;
@@ -505,7 +505,7 @@ void Grid_Node::write_parent_properties(fld::io::Project_Writer &f, Node *child,
 // NOTE: we have to do this in a loop just as ::read_property() in case a new
 //    property is added. In the current setup, all the remaining properties
 //    will be skipped
-void Grid_Node::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) {
+void Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property) {
   if (!child->is_true_widget()) {
     super::read_parent_property(f, child, property);
     return;
@@ -533,7 +533,7 @@ void Grid_Node::read_parent_property(fld::io::Project_Reader &f, Node *child, co
     int align = atoi(f.read_word());
     Fl_Grid::Cell *cell = grid->cell(child_widget);
     if (cell) cell->align((Fl_Grid_Align)align);
-  } if (!strcmp(property, "minsize")) {
+  } else if (!strcmp(property, "minsize")) {
     int min_w = 20, min_h = 20;
     const char *value = f.read_word();
     sscanf(value, "%d %d", &min_w, &min_h);
@@ -544,71 +544,71 @@ void Grid_Node::read_parent_property(fld::io::Project_Reader &f, Node *child, co
   }
 }
 
-void Grid_Node::write_code1(fld::io::Code_Writer& f) {
+void Grid_Node::write_code1(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
   Widget_Node::write_code1(f);
   int i, rows = grid->rows(), cols = grid->cols();
-  f.write_c("%s%s->layout(%d, %d);\n", f.indent(), var, rows, cols);
+  f.write_c(f.indent() + var + "->layout(" + std::to_string(rows) + ", " + std::to_string(cols) + ");\n");
   int lm, tm, rm, bm;
   grid->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    f.write_c("%s%s->margin(%d, %d, %d, %d);\n", f.indent(), var, lm, tm, rm, bm);
+    f.write_c(f.indent() + var + "->margin(" + std::to_string(lm) + ", " + std::to_string(tm) + ", " + std::to_string(rm) + ", " + std::to_string(bm) + ");\n");
   int rg, cg;
   grid->gap(&rg, &cg);
   if (rg!=0 || cg!=0)
-    f.write_c("%s%s->gap(%d, %d);\n", f.indent(), var, rg, cg);
+    f.write_c(f.indent() + var + "->gap(" + std::to_string(rg) + ", " + std::to_string(cg) + ");\n");
   // -- write all row heights if one of them is not the default 0
   for (i=0; i<rows; i++) if (grid->row_height(i)!=0) break;
   if (i<rows) {
-    f.write_c("%sstatic const int rowheights[] = { %d", f.indent(), grid->row_height(0));
-    for (i=1; i<rows; i++) f.write_c(", %d", grid->row_height(i));
+    f.write_c(f.indent() + "static const int rowheights[] = { " + std::to_string(grid->row_height(0)));
+    for (i=1; i<rows; i++) f.write_c(", " + std::to_string(grid->row_height(i)));
     f.write_c(" };\n");
-    f.write_c("%s%s->row_height(rowheights, %d);\n", f.indent(), var, rows);
+    f.write_c(f.indent() + var+ "->row_height(rowheights, " + std::to_string(rows) + ");\n");
   }
   // -- write all row weights if one of them is not the default 50
   for (i=0; i<rows; i++) if (grid->row_weight(i)!=50) break;
   if (i<rows) {
-    f.write_c("%sstatic const int rowweights[] = { %d", f.indent(), grid->row_weight(0));
-    for (i=1; i<rows; i++) f.write_c(", %d", grid->row_weight(i));
+    f.write_c(f.indent() + "static const int rowweights[] = { " + std::to_string(grid->row_weight(0)));
+    for (i=1; i<rows; i++) f.write_c(", " + std::to_string(grid->row_weight(i)));
     f.write_c(" };\n");
-    f.write_c("%s%s->row_weight(rowweights, %d);\n", f.indent(), var, rows);
+    f.write_c(f.indent() + var + "->row_weight(rowweights, " + std::to_string(rows) + ");\n");
   }
   // -- write all row gaps if one of them is not the default -1
   for (i=0; i<rows; i++) if (grid->row_gap(i)!=-1) break;
   if (i<rows) {
-    f.write_c("%sstatic const int rowgaps[] = { %d", f.indent(), grid->row_gap(0));
-    for (i=1; i<rows; i++) f.write_c(", %d", grid->row_gap(i));
+    f.write_c(f.indent() + "static const int rowgaps[] = { " + std::to_string(grid->row_gap(0)));
+    for (i=1; i<rows; i++) f.write_c(", " + std::to_string(grid->row_gap(i)));
     f.write_c(" };\n");
-    f.write_c("%s%s->row_gap(rowgaps, %d);\n", f.indent(), var, rows);
+    f.write_c(f.indent() + var + "->row_gap(rowgaps, " + std::to_string(rows) + ");\n");
   }
   // -- write all col widths if one of them is not the default 0
   for (i=0; i<cols; i++) if (grid->col_width(i)!=0) break;
   if (i<cols) {
-    f.write_c("%sstatic const int colwidths[] = { %d", f.indent(), grid->col_width(0));
-    for (i=1; i<cols; i++) f.write_c(", %d", grid->col_width(i));
+    f.write_c(f.indent() + "static const int colwidths[] = { " + std::to_string(grid->col_width(0)));
+    for (i=1; i<cols; i++) f.write_c(", " + std::to_string(grid->col_width(i)));
     f.write_c(" };\n");
-    f.write_c("%s%s->col_width(colwidths, %d);\n", f.indent(), var, cols);
+    f.write_c(f.indent() + var + "->col_width(colwidths, " + std::to_string(cols) + ");\n");
   }
   // -- write all col weights if one of them is not the default 50
   for (i=0; i<cols; i++) if (grid->col_weight(i)!=50) break;
   if (i<cols) {
-    f.write_c("%sstatic const int colweights[] = { %d", f.indent(), grid->col_weight(0));
-    for (i=1; i<cols; i++) f.write_c(", %d", grid->col_weight(i));
+    f.write_c(f.indent() + "static const int colweights[] = { " + std::to_string(grid->col_weight(0)));
+    for (i=1; i<cols; i++) f.write_c(", " + std::to_string(grid->col_weight(i)));
     f.write_c(" };\n");
-    f.write_c("%s%s->col_weight(colweights, %d);\n", f.indent(), var, cols);
+    f.write_c(f.indent() + var + "->col_weight(colweights, " + std::to_string(cols) + ");\n");
   }
   // -- write all col gaps if one of them is not the default -1
   for (i=0; i<cols; i++) if (grid->col_gap(i)!=-1) break;
   if (i<cols) {
-    f.write_c("%sstatic const int colgaps[] = { %d", f.indent(), grid->col_gap(0));
-    for (i=1; i<cols; i++) f.write_c(", %d", grid->col_gap(i));
+    f.write_c(f.indent() + "static const int colgaps[] = { " + std::to_string(grid->col_gap(0)));
+    for (i=1; i<cols; i++) f.write_c(", " + std::to_string(grid->col_gap(i)));
     f.write_c(" };\n");
-    f.write_c("%s%s->col_gap(colgaps, %d);\n", f.indent(), var, cols);
+    f.write_c(f.indent() + var + "->col_gap(colgaps, " + std::to_string(cols) + ");\n");
   }
 }
 
-void Grid_Node::write_code2(fld::io::Code_Writer& f) {
+void Grid_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
   bool first_cell = true;
@@ -617,15 +617,20 @@ void Grid_Node::write_code2(fld::io::Code_Writer& f) {
     Fl_Grid::Cell *cell = grid->cell(c);
     if (cell) {
       if (first_cell) {
-        f.write_c("%sFl_Grid::Cell* cell = nullptr;\n", f.indent());
+        f.write_c(f.indent() + "Fl_Grid::Cell* cell = nullptr;\n");
         first_cell = false;
       }
-      f.write_c("%scell = %s->widget(%s->child(%d), %d, %d, %d, %d, %d);\n",
-                f.indent(), var, var, i, cell->row(), cell->col(),
-                cell->rowspan(), cell->colspan(), cell->align());
+      f.write_c(f.indent() + "cell = " + var + "->widget(" + var
+                            + "->child(" + std::to_string(i) + "), "
+                            + std::to_string(cell->row()) + ", "
+                            + std::to_string(cell->col()) + ", "
+                            + std::to_string(cell->rowspan()) + ", "
+                            + std::to_string(cell->colspan()) + ", "
+                            + std::to_string(cell->align()) + ");\n");
       int min_w = 20, min_h = 20;
       cell->minimum_size(&min_w, &min_h);
-      f.write_c("%sif (cell) cell->minimum_size(%d, %d);\n", f.indent(), min_w, min_h);
+      f.write_c(f.indent() + "if (cell) cell->minimum_size("
+                + std::to_string(min_w) + ", " + std::to_string(min_h) + ");\n");
     }
   }
   super::write_code2(f);
@@ -676,7 +681,7 @@ void Grid_Node::child_resized(Widget_Node *child_type) {
 
 /** Return the currently selected Grid widget if is a Grid Type. */
 Fl_Grid *Grid_Node::selected() {
-  if (current_widget && current_widget->is_a(Type::Grid))
+  if (current_widget && dynamic_cast<Grid_Node*>(current_widget))
     return ((Fl_Grid*)((Grid_Node*)current_widget)->o);
   return nullptr;
 }

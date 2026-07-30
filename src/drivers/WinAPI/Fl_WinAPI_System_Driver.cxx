@@ -1,7 +1,7 @@
 //
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -625,9 +625,9 @@ Fl_WinAPI_System_Driver::filename_relative(char *to,    // O - Relative filename
   }
 
   // if there is a drive letter, make sure both paths use the same drive
-  if (   (unsigned)base_dir[0] < 128 && isalpha(base_dir[0]) && base_dir[1] == ':'
-      && (unsigned)dest_dir[0] < 128 && isalpha(dest_dir[0]) && dest_dir[1] == ':') {
-    if (tolower(base_dir[0]) != tolower(dest_dir[0])) {
+  if (   fl_ascii_isalpha(base_dir[0]) && base_dir[1] == ':'
+      && fl_ascii_isalpha(dest_dir[0]) && dest_dir[1] == ':') {
+    if (fl_ascii_tolower(base_dir[0]) != fl_ascii_tolower(dest_dir[0])) {
       strlcpy(to, dest_dir, tolen);
       return 0;
     }
@@ -763,7 +763,7 @@ int Fl_WinAPI_System_Driver::filename_isdir(const char *n) {
   // This workaround brought to you by the fine folks at Microsoft!
   // (read lots of sarcasm in that...)
 
-  if (length == 2 && isalpha(n[0]) && n[1] == ':') { // trailing '/' already "removed"
+  if (length == 2 && fl_ascii_isalpha(n[0]) && n[1] == ':') { // trailing '/' already "removed"
     // Always use "X:/" for drive letters
     fn[0] = n[0];
     strcpy(fn + 1, ":/");

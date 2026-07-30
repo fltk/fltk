@@ -27,6 +27,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "../utf8_internal.h"
+#include "../flstring.h"
+
 
 /* External auto generated functions : */
 #include "ucs2fontmap.c"
@@ -81,7 +83,7 @@ get_font_list(
   while (*ptr) {
     int l = 0, i = 0;
 
-    while(isspace((int)(unsigned char)*ptr)) ptr++;
+    while(fl_ascii_isspace(*ptr)) ptr++;
     p = ptr;
     while (*ptr && *ptr != ',') { ptr++; l++; }
     if (l > 2) {

@@ -1,7 +1,7 @@
 //
 // Fluid Project Templates code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +17,7 @@
 #include "app/templates.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "io/Project_Writer.h"
 #include "nodes/factory.h"
 #include "nodes/Tree.h"
@@ -24,18 +25,17 @@
 #include "panels/template_panel.h"
 
 #include <FL/filename.H>
-#include <FL/fl_ask.H>
 #include <FL/Fl_PNG_Image.H>
-#include "../src/flstring.h"
+#include "../../src/flstring.h"
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 /**
  Save a design template.
  \todo We should document the concept of templates.
  */
-void fld::app::save_template() {
+void fluid::app::save_template() {
   // Setup the template panel...
   if (!template_panel) make_template_panel();
 
@@ -68,7 +68,7 @@ void fld::app::save_template() {
   char savename[FL_PATH_MAX], *saveptr;
   strlcpy(savename, c, sizeof(savename));
   for (saveptr = savename; *saveptr; saveptr ++) {
-    if (isspace(*saveptr)) *saveptr = '_';
+    if (fl_ascii_isspace(*saveptr)) *saveptr = '_';
   }
 
   // Find the templates directory...
@@ -83,7 +83,7 @@ void fld::app::save_template() {
 
   char *ext = filename + strlen(filename);
   if (ext >= (filename + sizeof(filename) - 5)) {
-    fl_alert("The template name \"%s\" is too long!", c);
+    fluid_alert("The template name \"%s\" is too long!", c);
     return;
   }
 
@@ -91,13 +91,13 @@ void fld::app::save_template() {
   strcpy(ext, ".fl");
 
   if (!fl_access(filename, 0)) {
-    if (fl_choice("The template \"%s\" already exists.\n"
+    if (fluid_choice("The template \"%s\" already exists.\n"
                   "Do you want to replace it?", "Cancel",
                   "Replace", nullptr, c) == 0) return;
   }
 
-  if (!fld::io::write_file(Fluid.proj, filename)) {
-    fl_alert("Error writing %s: %s", filename, strerror(errno));
+  if (!fluid::io::write_file(Fluid.proj, filename)) {
+    fluid_alert("Error writing template file '%s':\n%s", filename, strerror(errno));
     return;
   }
 
@@ -107,7 +107,7 @@ void fld::app::save_template() {
 
   for (t = Fluid.proj.tree.first; t; t = t->next) {
     // Find the first window...
-    if (t->is_a(Type::Window)) break;
+    if (dynamic_cast<Window_Node*>(t)) break;
   }
 
   if (!t) return;
@@ -125,7 +125,7 @@ void fld::app::save_template() {
   errno = 0;
   if (fl_write_png(filename, pixels, w, h, 3) != 0) {
     delete[] pixels;
-    fl_alert("Error writing %s: %s", filename, strerror(errno));
+    fluid_alert("Error writing template snapshot '%s':\n%s", filename, strerror(errno));
     return;
   }
 

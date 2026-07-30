@@ -1,7 +1,7 @@
 //
 // MergeBack code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2023-2025 by Bill Spitzak and others.
+// Copyright 2023-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,13 +17,14 @@
 #include "proj/mergeback.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "proj/undo.h"
 #include "io/Code_Writer.h"
 #include "nodes/Function_Node.h"
 #include "nodes/Widget_Node.h"
 
 #include <FL/Fl_Window.H>
-#include <FL/fl_ask.H>
+#include "../../src/flstring.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -35,8 +36,8 @@ extern void propagate_load(Fl_Group*, void*);
 extern void load_panel();
 extern void redraw_browser();
 
-using namespace fld;
-using namespace fld::proj;
+using namespace fluid;
+using namespace fluid::proj;
 
 // TODO: add application user setting to control mergeback
 //        [] new projects default to mergeback
@@ -92,7 +93,7 @@ using namespace fld::proj;
  Returns 0 if nothing changed, and 1 if it merged any changes back, and -1 if
  there were conflicts.
 
- \note this function is currently part of fld::io::Code_Writer to get easy access
+ \note this function is currently part of fluid::io::Code_Writer to get easy access
  to our crc32 code that also wrote the code file originally.
 
  \param[in] s path and filename of the source code file
@@ -138,8 +139,8 @@ void Mergeback::unindent(char *s) {
   bool line_start = true;
   while (*s) {
     if (line_start) {
-      if (*s>0 && isspace(*s)) s++;
-      if (*s>0 && isspace(*s)) s++;
+      if (*s>0 && fl_ascii_isspace(*s)) s++;
+      if (*s>0 && fl_ascii_isspace(*s)) s++;
       line_start = false;
     }
     if (*s=='\r') s++;
@@ -181,7 +182,7 @@ std::string Mergeback::read_and_unindent_block(long start, long end) {
  */
 int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &proj_filename) {
   if (tag_error) {
-    fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+    fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                "MergeBack found an error in line %d while reading tags\n"
                "from the source code. Merging code back is not possible.",
                code_filename.c_str(), proj_filename.c_str(), line_no);
@@ -191,7 +192,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     return 0;
   }
   if (num_changed_structure && !num_changed_code) {
-    fl_message("Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
+    fluid_message("Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
                "MergeBack found %3$d modifications in the project structure\n"
                "of the source code. These kind of changes can not be\n"
                "merged back and will be lost when the source code is\n"
@@ -218,7 +219,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     "from the open project.";
 
   if (num_changed_code==num_uid_not_found) {
-    fl_message(msg.c_str(),
+    fluid_message(msg.c_str(),
                code_filename.c_str(), proj_filename.c_str(),
                num_changed_code, num_uid_not_found,
                num_changed_structure, num_possible_override);
@@ -227,7 +228,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
     "Click Merge to merge all code changes back into\n"
     "the open project.";
-    int c = fl_choice(msg.c_str(), "Cancel", "Merge", nullptr,
+    int c = fluid_choice(msg.c_str(), "Cancel", "Merge", nullptr,
                       code_filename.c_str(), proj_filename.c_str(),
                       num_changed_code, num_uid_not_found,
                       num_changed_structure, num_possible_override);
@@ -243,7 +244,7 @@ void Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_crc, 
   Node *tp = proj_.tree.find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
-    unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
+    uint32_t project_crc = fluid::CRC32::block(cb);
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
       num_changed_code++;
@@ -263,9 +264,9 @@ void Mergeback::analyse_callback(unsigned long code_crc, unsigned long tag_crc, 
  */
 void Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, int uid) {
   Node *tp = proj_.tree.find_by_uid(uid);
-  if (tp && tp->is_a(Type::Code)) {
+  if (tp && dynamic_cast<Code_Node*>(tp)) {
     std::string code = tp->name(); code += "\n";
-    unsigned long project_crc = fld::io::Code_Writer::block_crc(code.c_str());
+    unsigned long project_crc = fluid::CRC32::block(code);
     // check if the code and project crc are the same, so this modification was already applied
     if (project_crc!=code_crc) {
       num_changed_code++;
@@ -384,16 +385,23 @@ std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, ui
   // Write the first 32 bit word as an encoded divider line
   uint32_t pt = static_cast<uint32_t>(prev_type);
   uint32_t nt = static_cast<uint32_t>(next_type);
-  uint32_t word = (0<<24) | (pt<<16) | (uid); // top 8 bit available for encoding type
+  uint32_t word = ((0<<24)&0xff000000) | ((pt<<16)&0x00ff0000) | ((uid)&0x0000ffff); // top 8 bit available for encoding type
   for (int i=30; i>=0; i-=3) result += lut[(word>>i)&7];
   // Write a string indicating the type of editable text
+  #if 0
   if ( next_type != Tag::GENERIC) {
-    result += tag_lut[nt];
+    result += tag_lut[(nt%4)];
   } else if (prev_type != Tag::GENERIC) {
-    result += tag_lut[nt];
+    result += tag_lut[(pt%4)];
+  } else {
+    result += tag_lut[0];
   }
+  #else
+  result += tag_lut[(nt%4)];
+  #endif
   // Write the second 32 bit word as an encoded divider line
   for (int i=30; i>=0; i-=3) result += lut[(crc>>i)&7];
+  // printf("  uid=%d, prev_type=%d, next_type=%d, crc=%u\n", uid, pt, nt, crc);
   // Repeat the intro pattern
   result += ' ';
   if (prev_type != Tag::GENERIC) result += "▲";
@@ -422,8 +430,7 @@ std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, ui
  */
 int Mergeback::analyse() {
   // initialize local variables
-  unsigned long code_crc = 0;
-  bool line_start = true;
+  fluid::CRC32 crc;
   char line[1024];
   // bail if the caller has not opened a file yet
   if (!code) return 0;
@@ -434,7 +441,6 @@ int Mergeback::analyse() {
   num_changed_structure = 0;
   num_uid_not_found = 0;
   num_possible_override = 0;
-  code_crc = 0;
   // loop through all lines in the code file
   ::fseek(code, 0, SEEK_SET);
   for (;;) {
@@ -444,7 +450,7 @@ int Mergeback::analyse() {
     const char *tag = find_mergeback_tag(line);
     if (!tag) {
       // if this line has no tag, add the contents to the CRC and continue
-      code_crc = fld::io::Code_Writer::block_crc(line, -1, code_crc, &line_start);
+      crc.update(line);
     } else {
       // if this line has a tag, read all tag data
       Tag tag_type = Tag::UNUSED_;
@@ -455,24 +461,23 @@ int Mergeback::analyse() {
         tag_error = 1;
         return -1;
       }
-      if (code_crc != tag_crc) {
+      if (crc.value() != tag_crc) {
         switch (tag_type) {
           case Tag::GENERIC:
             num_changed_structure++;
             break;
           case Tag::MENU_CALLBACK:
           case Tag::WIDGET_CALLBACK:
-            analyse_callback(code_crc, tag_crc, uid);
+            analyse_callback(crc.value(), tag_crc, uid);
             break;
           case Tag::CODE:
-            analyse_code(code_crc, tag_crc, uid);
+            analyse_code(crc.value(), tag_crc, uid);
             break;
           default: break;
         }
       }
       // reset everything for the next block
-      code_crc = 0;
-      line_start = true;
+      crc.reset();
     }
   }
   return 0;
@@ -485,7 +490,7 @@ int Mergeback::apply_callback(long block_end, long block_start, unsigned long co
   Node *tp = proj_.tree.find_by_uid(uid);
   if (tp && tp->is_true_widget()) {
     std::string cb = tp->callback(); cb += "\n";
-    unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
+    uint32_t project_crc = fluid::CRC32::block(cb);
     if (project_crc!=code_crc) {
       tp->callback(read_and_unindent_block(block_start, block_end).c_str());
       return 1;
@@ -499,9 +504,9 @@ int Mergeback::apply_callback(long block_end, long block_start, unsigned long co
  */
 int Mergeback::apply_code(long block_end, long block_start, unsigned long code_crc, int uid) {
   Node *tp = proj_.tree.find_by_uid(uid);
-  if (tp && tp->is_a(Type::Code)) {
+  if (tp && dynamic_cast<Code_Node*>(tp)) {
     std::string cb = tp->name(); cb += "\n";
-    unsigned long project_crc = fld::io::Code_Writer::block_crc(cb.c_str());
+    uint32_t project_crc = fluid::CRC32::block(cb);
     if (project_crc!=code_crc) {
       tp->name(read_and_unindent_block(block_start, block_end).c_str());
       return 1;
@@ -516,8 +521,7 @@ int Mergeback::apply_code(long block_end, long block_start, unsigned long code_c
  */
 int Mergeback::apply() {
   // initialize local variables
-  unsigned long code_crc = 0;
-  bool line_start = true;
+  fluid::CRC32 crc;
   char line[1024];
   int changed = 0;
   long block_start = 0;
@@ -527,7 +531,6 @@ int Mergeback::apply() {
   // initialize member variables to return our findings
   line_no = 0;
   tag_error = 0;
-  code_crc = 0;
   // loop through all lines in the code file
   ::fseek(code, 0, SEEK_SET);
   for (;;) {
@@ -537,7 +540,7 @@ int Mergeback::apply() {
     const char *tag = find_mergeback_tag(line);
     if (!tag) {
       // if this line has no tag, add the contents to the CRC and continue
-      code_crc = fld::io::Code_Writer::block_crc(line, -1, code_crc, &line_start);
+      crc.update(line);
       block_end = ::ftell(code);
     } else {
       // if this line has a tag, read all tag data
@@ -549,16 +552,15 @@ int Mergeback::apply() {
         tag_error = 1;
         return -1;
       }
-      if (code_crc != tag_crc) {
+      if (crc.value() != tag_crc) {
         if (tag_type==Tag::MENU_CALLBACK || tag_type==Tag::WIDGET_CALLBACK) {
-          changed |= apply_callback(block_end, block_start, code_crc, uid);
+          changed |= apply_callback(block_end, block_start, crc.value(), uid);
         } else if (tag_type==Tag::CODE) {
-          changed |= apply_code(block_end, block_start, code_crc, uid);
+          changed |= apply_code(block_end, block_start, crc.value(), uid);
         }
       }
       // reset everything for the next block
-      code_crc = 0;
-      line_start = true;
+      crc.reset();
       block_start = ::ftell(code);
     }
   }
@@ -647,7 +649,7 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
   }
   if (!proj.write_mergeback_data) {
     if (feedback & Mergeback::CHATTY) {
-      fl_message("MergeBack is not enabled for this project.\n"
+      fluid_message("MergeBack is not enabled for this project.\n"
                  "Please enable MergeBack in the project settings\n"
                  "dialog and re-save the project file and the code.");
     }
@@ -684,11 +686,11 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
   if (!Fluid.batch_mode) proj.leave_project_dir();
 
   if (feedback & Mergeback::CHATTY) {
-    if (c==0) fl_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
+    if (c==0) fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                          "MergeBack found no external modifications\n"
                          "in the source code.",
                          code_filename.c_str(), proj_filename.c_str());
-    if (c==-2) fl_message("No corresponding source code file found.");
+    if (c==-2) fluid_message("No corresponding source code file found.");
   }
   recursion_lock = false;
   return c;

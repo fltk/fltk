@@ -6,7 +6,7 @@
 //           |______________||____|
 //
 // Copyright 2004 by Greg Ercolano.
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -188,12 +188,12 @@ public:
     }
     \endcode
   */
-  Fl_Menu_Button *menubutton() { return menu_; }
+  Fl_Menu_Button* menubutton() const { return menu_; }
 
   /** Returns a pointer to the internal Fl_Input widget.
     This can be used to directly access all of the Fl_Input widget's methods.
   */
-  Fl_Input *input() { return inp_; }
+  Fl_Input* input() const { return inp_; }
 };
 
 #endif // !Fl_Input_Choice_H

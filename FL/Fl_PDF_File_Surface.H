@@ -1,7 +1,7 @@
 //
 // Declaration of class Fl_PDF_File_Surface for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2024-2025 by Bill Spitzak and others.
+// Copyright 2024-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -81,7 +81,7 @@ public:
   int end_page(void) override {return platform_surface_->end_page();}
   void end_job(void) override {return platform_surface_->end_job();}
   /** Returns the name of the PDF document */
-  inline const char *pdf_filename() { return *out_filename_; }
+  inline const char *pdf_filename() const { return *out_filename_; }
   void set_current() override { if (platform_surface_) platform_surface_->set_current(); }
   bool is_current() override { return surface() == platform_surface_; }
 };

@@ -23,7 +23,7 @@
 
 #include <FL/Fl_Text_Display.H>
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 /**
@@ -40,6 +40,6 @@ public:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_WIDGETS_TEXT_VIEWER_H

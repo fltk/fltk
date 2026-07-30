@@ -70,14 +70,12 @@ protected:
   void newposition(Widget_Node *,int &x,int &y,int &w,int &h);
   int handle(int);
   void setlabel(const char *) override;
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   Widget_Node *_make() override {return nullptr;} // we don't call this
   Fl_Widget *widget(int,int,int,int) override {return nullptr;}
   int recalc;           // set by fix_overlay()
   void moveallchildren(int key=0);
-  Type type() const override { return Type::Window; }
-  bool is_a(Type inType) const override { return (inType==Type::Window) ? true : super::is_a(inType); }
   void open_();
 
 public:
@@ -108,8 +106,8 @@ public:
   void fix_overlay();                   // Update the bounding box, etc
   uchar *read_image(int &ww, int &hh);  // Read an image of the window
 
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
   int read_fdesign(const char*, const char*) override;
 
   void add_child(Node*, Node*) override;
@@ -127,7 +125,7 @@ public:
   static int popupx, popupy;
 };
 
-class Widget_Class_Node : private Window_Node
+class Widget_Class_Node : public Window_Node
 {
 public:
   typedef Window_Node super;
@@ -145,15 +143,13 @@ public:
   char write_public_state; // true when public: has been printed
   char wc_relative; // if 1, reposition all children, if 2, reposition and resize
 
-  void write_properties(fld::io::Project_Writer &f) override;
-  void read_property(fld::io::Project_Reader &f, const char *) override;
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
 
-  void write_code1(fld::io::Code_Writer& f) override;
-  void write_code2(fld::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void write_code2(fluid::io::Code_Writer& f) override;
   Node *make(Strategy strategy) override;
   const char *type_name() override {return "widget_class";}
-  Type type() const override { return Type::Widget_Class; }
-  bool is_a(Type inType) const override { return (inType==Type::Widget_Class) ? true : super::is_a(inType); }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_decl_block() const override {return 1;}

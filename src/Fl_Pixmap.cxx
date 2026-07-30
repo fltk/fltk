@@ -27,9 +27,9 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
+#include "flstring.h"
 
 #include <stdio.h>
-#include "flstring.h"
 #include <ctype.h>
 
 void Fl_Pixmap::measure() {
@@ -271,14 +271,14 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
       const char *p = data()[color + 1] + chars_per_pixel + 1;
       const char *previous_word = p;
       for (;;) {
-        while (*p && isspace(*p)) p++;
+        while (*p && fl_ascii_isspace(*p)) p++;
         char what = *p++;
-        while (*p && !isspace(*p)) p++;
-        while (*p && isspace(*p)) p++;
+        while (*p && !fl_ascii_isspace(*p)) p++;
+        while (*p && fl_ascii_isspace(*p)) p++;
         if (!*p) {p = previous_word; break;}
         if (what == 'c') break;
         previous_word = p;
-        while (*p && !isspace(*p)) p++;
+        while (*p && !fl_ascii_isspace(*p)) p++;
       }
 
       if (fl_parse_color(p, r, g, b)) {
@@ -351,14 +351,14 @@ void Fl_Pixmap::desaturate() {
       const char *p = data()[i + 1] + chars_per_pixel + 1;
       const char *previous_word = p;
       for (;;) {
-        while (*p && isspace(*p)) p++;
+        while (*p && fl_ascii_isspace(*p)) p++;
         char what = *p++;
-        while (*p && !isspace(*p)) p++;
-        while (*p && isspace(*p)) p++;
+        while (*p && !fl_ascii_isspace(*p)) p++;
+        while (*p && fl_ascii_isspace(*p)) p++;
         if (!*p) {p = previous_word; break;}
         if (what == 'c') break;
         previous_word = p;
-        while (*p && !isspace(*p)) p++;
+        while (*p && !fl_ascii_isspace(*p)) p++;
       }
 
       if (fl_parse_color(p, r, g, b)) {

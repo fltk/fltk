@@ -487,7 +487,7 @@ Type "Fl_Widget" <word> : C++ variable name
   "headline" : menu item headline flag
   "class" <word> : superclass
   "shortcut" <word> : integer
-  "code0" or "code1" or "code2" or "code3" <word> : C++ extra code lines
+  "code0" or "code1" or "code2" or "code3" <word> : C++ extra code lines, see "Changes" below
   "extra_code" <word> : C++ extra code lines
   ... : inherits more from Node
 
@@ -538,6 +538,29 @@ Type "Fl_Grid" <word> : C++ variable name
   "rowspan" <int>
   "align" <int> : see Fl_Grid_Align enum
   "min_size" <word> : {int width, int height}
+
+Changes:
+
+  - 2026-Jul-14
+    - Changed the MergeBack CRC calculation. Loading an old project file with
+      a newer version of Fluid will generate many false positives once.
+    - Changed the use of the "code0".."code3" tags. Code generation used to
+      depend on the content: text starting with '#', "extern", "typedef",
+      or "using" was emitted to the header; everything else was emitted at
+      the end of the node instantiation.
+    - "code0" now always writes lines to the header, avoiding duplicate lines
+      within the file. This is meant for `#include` directives and similar.
+    - "code1" writes code verbatim to the header without any checks for
+      duplicates.
+    - "code2" writes code after node instantiation, before instantiating
+      children.
+    - "code3" writes code after instantiating children.
+    - Reading a pre-1.5.0.20 file with a newer version of Fluid reassigns
+      code blocks according to the rules above. New project files should
+      still read correctly in older versions of Fluid, though generated
+      code may differ somewhat — hopefully without impact on compilation.
+
+
 
 Please report errors and omissions to the fltk.coredev or fltk.general
 Google group. Thank you.

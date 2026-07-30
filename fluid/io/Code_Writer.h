@@ -21,8 +21,9 @@
 
 #include <FL/fl_attr.h>
 
-#include <stdarg.h>
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 #include <string>
 #include <set>
 #include <map>
@@ -35,11 +36,51 @@ struct Fd_Pointer_Tree;
 
 int is_id(char c);
 
-namespace fld {
+struct TextSpan2;
+
+namespace fluid {
 
 class Project;
 
+// Note: data_ can be nullptr!
+struct string_view {
+    const char *data_;
+    size_t size_;
+
+    string_view() : data_(nullptr), size_(0) {}
+    string_view(const char *s) : data_(s), size_(strlen(s)) {}
+    string_view(const char *s, size_t n) : data_(s), size_(n) {}
+    string_view(const std::string &s) : data_(s.data()), size_(s.size()) {}
+
+    const char *data() const { return data_; }
+    size_t size() const { return size_; }
+    bool empty() const { return (data_ == nullptr) || (size_ == 0); }
+    char operator[](size_t i) const { return data_[i]; }
+
+    std::string str() const { return std::string(data_, size_); }
+
+    string_view substr(size_t pos, size_t len = size_t(-1)) const {
+        if (len == size_t(-1) || pos + len > size_) len = size_ - pos;
+        return string_view(data_ + pos, len);
+    }
+};
+
+class CRC32 {
+  uint32_t crc_ { 0 };
+  bool multi_space_ { false };
+  bool line_start_ { true };
+public:
+  CRC32() = default;
+  void update(fluid::string_view block);
+  uint32_t value() const { return crc_; }
+  void reset() { crc_ = 0; multi_space_ = false; line_start_ = true; }
+  static uint32_t block(fluid::string_view block);
+};
+
 namespace io {
+
+extern std::string to_string_8x(uint32_t value);
+extern std::string to_string_g(double value);
 
 class Code_Writer
 {
@@ -48,9 +89,13 @@ private:
   Project &proj_;
 
   /// string stream buffer for generating C++ code file content
-  std::ostringstream code_buffer;
+  std::ostringstream code_buffer { };
   /// string stream buffer for generating C++ header file content
-  std::ostringstream header_buffer;
+  std::ostringstream header_buffer { };
+
+  std::string header_filename { };
+  std::string code_filename { };
+  std::string header_guard_macro_ { };
 
   /// tree of unique but human-readable identifiers
   std::map<std::string, void*> unique_id_list { };
@@ -62,80 +107,95 @@ private:
   std::set<void*> ptr_in_code { };
 
   /// crc32 for blocks of text written to the code file
-  unsigned long block_crc_ = 0;
-  /// if set, we are at the start of a line and can ignore leading spaces in crc
-  bool block_line_start_ = true;
-  /// expanding buffer for vsnprintf
-  char *block_buffer_ = nullptr;
-  /// size of expanding buffer for vsnprintf
-  int block_buffer_size_ = 0;
+  fluid::CRC32 crc_ { };
 
-  void crc_add(const void *data, int n=-1);
-  int crc_printf(const char *format, ...);
-  int crc_vprintf(const char *format, va_list args);
-  int crc_puts(const char *text);
-  int crc_putc(int c);
+  /// current level of source code indentation
+  int indentation { 0 };
 
-  bool file_content_matches(const char *filename, const std::string &content);
-  bool write_file_if_changed(const char *filename, const std::string &content);
+  bool file_content_matches(const std::string& filename, const std::string& content);
+  bool write_file_if_changed(const std::string& filename, const std::string& content);
+  int flush();
 
   /// Return the current write position in the code output stream.
   int code_pos() { return (int)code_buffer.tellp(); }
   /// Return the current write position in the header output stream.
   int header_pos() { return (int)header_buffer.tellp(); }
 
+protected:
+  int crc_puts(const std::string& text);
+  int crc_putc(int c);
+
 public:
-  /// current level of source code indentation
-  int indentation = 0;
   /// set if we write abbreviated file for the source code previewer
   /// (disables binary data blocks, for example)
-  bool write_codeview = false;
+  bool write_codeview { false };
   /// silly thing to prevent declaring unused variables:
   /// When this symbol is on, all attempts to write code don't write
   /// anything, but set a variable if it looks like the variable "o" is used:
-  int varused_test = 0;
+  int varused_test { 0 };
   /// set to 1 if varused_test found that a variable is actually used
-  int varused = 0;
+  int varused { 0 };
 
 public:
   Code_Writer(Project &proj);
-  ~Code_Writer();
-  const char* unique_id(void* o, const char*, const char*, const char*);
+  Code_Writer(const Code_Writer &) = delete;
+  Code_Writer &operator=(const Code_Writer &) = delete;
+  Code_Writer(Code_Writer &&) = delete;
+  Code_Writer &operator=(Code_Writer &&) = delete;
+  ~Code_Writer() = default;
+
+  std::string unique_id(void* o, const std::string& type, const std::string& name, const std::string& label);
+
   /// Increment source code indentation level.
   void indent_more() { indentation++; }
   /// Decrement source code indentation level.
   void indent_less() { indentation--; }
-  const char *indent();
-  const char *indent(int set);
-  const char *indent_plus(int offset);
-  int write_h_once(const char *, ...) __fl_attr((__format__ (__printf__, 2, 3)));
-  int write_c_once(const char *, ...) __fl_attr((__format__ (__printf__, 2, 3)));
+  void indent_reset() { indentation = 0; }
+  std::string indent() const;
+  std::string indent(int set) const;
+  std::string indent_plus(int offset) const;
+
   bool c_contains(void* ptr);
-  void write_cstring(const char *,int length);
-  void write_cstring(const char *);
-  void write_cdata(const char *,int length);
-  void vwrite_c(const char* format, va_list args);
-  void write_c(const char*, ...) __fl_attr((__format__ (__printf__, 2, 3)));
-  void write_cc(const char *, int, const char*, const char*);
-  void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 2, 3)));
-  void write_hc(const char *, int, const char*, const char*);
-  void write_c_indented(const char *textlines, int inIndent, char inTrailwWith);
+
+  int write_h_once(const std::string& code);
+  void write_block_h_once(const std::string& code);
+  int write_c_once(const std::string& code);
+  void write_cstring(fluid::string_view text);
+  void write_cdata(fluid::string_view block);
+  void write_c(const std::string& code);
+  void write_h(const std::string& code);
+  void write_cc(const std::string& indent, const std::string& code, const std::string& comment);
+  void write_hc(const std::string& indent, const std::string& code, const std::string& comment);
+  void write_c_indented(const std::string& codeblock, int additional_indent, char trail_char);
+  void write_public(int state); // writes pubic:/private: as needed
+
   Node* write_static(Node* p);
   Node* write_code(Node* p);
-  int write_code(const char *cfile, const char *hfile, bool to_codeview=false);
-  void write_public(int state); // writes pubic:/private: as needed
+
+  int write_code(const std::string& code_arg, const std::string& header_arg, bool to_codeview=false);
+  Node* write_prologue_comment();
+  void write_prologue();
+  void write_i18n_prologue();
+  void write_epilogue();
+  void write_epilogue_comment();
 
   /// Return the generated source code as a string (valid after write_code() with to_codeview=true).
   std::string code_string() const { return code_buffer.str(); }
   /// Return the generated header code as a string (valid after write_code() with to_codeview=true).
   std::string header_string() const { return header_buffer.str(); }
 
+  /// Return the predefined header guard, or generate one based on the header filename if not set.
+  std::string header_guard_macro();
+  /// Remember the last destination for later MergeBack calls.
+  void remember_mergeback_paths();
+
   void tag(proj::Mergeback::Tag prev_type, proj::Mergeback::Tag next_type, unsigned short uid);
 
-  static unsigned long block_crc(const void *data, int n=-1, unsigned long in_crc=0, bool *inout_line_start=nullptr);
+  void mark_start(TextSpan2& span);
+  void mark_end(TextSpan2& span);
 };
 
 } // namespace io
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_IO_CODE_WRITER_H

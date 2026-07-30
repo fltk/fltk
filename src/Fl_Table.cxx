@@ -3,7 +3,7 @@
 //
 // Copyright 2002 by Greg Ercolano.
 // Copyright (c) 2004 O'ksi'D
-// Copyright 2009-2025 by Bill Spitzak and others.
+// Copyright 2009-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -193,7 +193,7 @@ Fl_Table::~Fl_Table() {
 
   \returns Number of columns.
 */
-int Fl_Table::col_size() {
+int Fl_Table::col_size() const {
   return int(_colwidths->size());
 }
 
@@ -204,7 +204,7 @@ int Fl_Table::col_size() {
 
   \returns Number of rows.
 */
-int Fl_Table::row_size() {
+int Fl_Table::row_size() const {
   return int(_rowheights->size());
 }
 
@@ -1176,7 +1176,7 @@ void Fl_Table::_redraw_cell(TableContext context, int r, int c) {
   See if the cell at row \p r and column \p c is selected.
   \returns 1 if the cell is selected, 0 if not.
 */
-int Fl_Table::is_selected(int r, int c) {
+int Fl_Table::is_selected(int r, int c) const {
   int s_left, s_right, s_top, s_bottom;
 
   if (select_col > current_col) {
@@ -1397,13 +1397,13 @@ void Fl_Table::draw() {
 /**
   Returns the current height of the specified row as a value in pixels.
 */
-int Fl_Table::row_height(int row) {
+int Fl_Table::row_height(int row) const {
   return((row < 0 || row >= row_size()) ? 0 : (*_rowheights)[row]);
 }
 
 /**
   Returns the current width of the specified column in pixels.
 */
-int Fl_Table::col_width(int col) {
+int Fl_Table::col_width(int col) const {
   return((col < 0 || col >= col_size()) ? 0 : (*_colwidths)[col]);
 }

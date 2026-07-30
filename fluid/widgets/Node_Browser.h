@@ -21,7 +21,7 @@
 
 class Node;
 
-namespace fld {
+namespace fluid {
 namespace widget {
 
 class Node_Browser : public Fl_Browser_
@@ -74,7 +74,7 @@ public:
 };
 
 } // namespace widget
-} // namespace fld
+} // namespace fluid
 
 extern void redraw_browser();
 extern Fl_Widget *make_widget_browser(int x,int y,int w,int h);
@@ -84,6 +84,6 @@ extern void select_only(Node *o);
 extern void deselect();
 extern void reveal_in_browser(Node *t);
 
-extern fld::widget::Node_Browser *widget_browser;
+extern fluid::widget::Node_Browser *widget_browser;
 
 #endif // FLUID_WIDGETS_NODE_BROWSER_H

@@ -1,7 +1,7 @@
 #
 # ZLIB library CMake configuration for the Fast Light Toolkit (FLTK).
 #
-# Copyright 1998-2024 by Bill Spitzak and others.
+# Copyright 1998-2026 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -69,6 +69,30 @@ endif(FLTK_BUILD_SHARED_LIBS)
 
 set(FLTK_LIBRARIES ${FLTK_LIBRARIES} PARENT_SCOPE)
 set(FLTK_LIBRARIES_SHARED ${FLTK_LIBRARIES_SHARED} PARENT_SCOPE)
+
+#######################################################################
+# Fix legacy MinGW (mingw.org) build - since zlib 1.3.2
+#######################################################################
+
+# The older MinGW (from the earlier mingw.org website) does not
+# provide EWOULDBLOCK whose *usage* was introduced in zlib 1.3.2.
+# If it doesn't exist we
+#   #define EWOULDBLOCK EAGAIN
+# for zlib compilation (for both static and shared libs).
+# This check and related target_compile_definitions() may be removed
+# if this is "fixed" upstream in a later zlib version.
+
+include(CheckSymbolExists)
+check_symbol_exists(EWOULDBLOCK "errno.h" HAVE_EWOULDBLOCK)
+mark_as_advanced(HAVE_EWOULDBLOCK)
+
+if(NOT HAVE_EWOULDBLOCK)
+  foreach(_tgt fltk_z fltk_z-shared)
+    if(TARGET ${_tgt})
+      target_compile_definitions(${_tgt} PRIVATE EWOULDBLOCK=EAGAIN)
+    endif()
+  endforeach()
+endif()
 
 #######################################################################
 # Install the library headers

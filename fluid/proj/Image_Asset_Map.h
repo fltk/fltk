@@ -23,19 +23,19 @@
 
 class Image_Asset;
 
-namespace fld { class Project; }
+namespace fluid { class Project; }
 
 /**
  \brief Cache of all active Image_Asset objects for a project, keyed by filename.
 
  Holds weak references so assets are released automatically when no
  Widget_Node holds a shared_ptr to them anymore. Each map is owned by
- one fld::Project and holds a reference to it to avoid using the global Fluid.proj.
+ one fluid::Project and holds a reference to it to avoid using the global Fluid.proj.
  */
 class Image_Asset_Map {
   friend class Image_Asset;
 
-  fld::Project& proj_;
+  fluid::Project& proj_;
   mutable std::unordered_map<std::string, std::weak_ptr<Image_Asset>> map_;
 
   void insert(const std::string& name, std::shared_ptr<Image_Asset> asset);
@@ -43,12 +43,12 @@ class Image_Asset_Map {
 
 public:
   /// Construct the map and bind it to \p proj for directory and error access.
-  Image_Asset_Map(fld::Project& proj) : proj_(proj) {}
+  Image_Asset_Map(fluid::Project& proj) : proj_(proj) {}
   Image_Asset_Map(const Image_Asset_Map&) = delete;
   Image_Asset_Map& operator=(const Image_Asset_Map&) = delete;
 
   /// Return the project that owns this map.
-  fld::Project& project() const { return proj_; }
+  fluid::Project& project() const { return proj_; }
 
   /// Look up an asset by filename. Returns nullptr if not cached or expired.
   std::shared_ptr<Image_Asset> find(const std::string& name) const;

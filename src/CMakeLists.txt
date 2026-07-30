@@ -353,10 +353,10 @@ elseif(FLTK_USE_WAYLAND)
   if(UNIX AND FLTK_USE_WAYLAND)
     if(FLTK_HAVE_PEN_SUPPORT)
 	    list(APPEND DRIVER_FILES
-	      drivers/Wayland/Fl_Wayland_Pen_Events.cxx
+	      drivers/Wayland/Fl_Wayland_Pen_Driver.cxx
 	    )
 	    list(APPEND DRIVER_HEADER_FILES
-	      drivers/Wayland/Fl_Wayland_Pen_Events.H
+	      drivers/Wayland/Fl_Wayland_Pen_Driver.H
 	    )
     endif(FLTK_HAVE_PEN_SUPPORT)
   endif(UNIX AND FLTK_USE_WAYLAND)
@@ -434,10 +434,10 @@ else()
 
   if(FLTK_HAVE_PEN_SUPPORT)
     list(APPEND DRIVER_FILES
-      drivers/WinAPI/Fl_WinAPI_Pen_Events.cxx
+      drivers/WinAPI/Fl_WinAPI_Pen_Driver.cxx
     )
     list(APPEND DRIVER_HEADER_FILES
-      drivers/WinAPI/Fl_WinAPI_Pen_Events.H
+      drivers/WinAPI/Fl_WinAPI_Pen_Driver.H
     )
   endif(FLTK_HAVE_PEN_SUPPORT)
 
@@ -447,10 +447,10 @@ endif(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
 
 if(FLTK_HAVE_PEN_SUPPORT)
   list(APPEND DRIVER_FILES
-    drivers/Base/Fl_Base_Pen_Events.cxx
+    drivers/Base/Fl_Base_Pen_Driver.cxx
   )
   list(APPEND DRIVER_HEADER_FILES
-    drivers/Base/Fl_Base_Pen_Events.H
+    drivers/Base/Fl_Base_Pen_Driver.H
   )
 endif(FLTK_HAVE_PEN_SUPPORT)
 
@@ -602,7 +602,7 @@ if(FLTK_USE_WAYLAND)
       ${FLTK_SOURCE_DIR}/libdecor/build/fl_libdecor-plugins.c
       ${FLTK_SOURCE_DIR}/libdecor/src/os-compatibility.c
       ${FLTK_SOURCE_DIR}/libdecor/src/desktop-settings.c
-      ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Pen_Events.cxx
+      ${FLTK_SOURCE_DIR}/src/drivers/Wayland/Fl_Wayland_Pen_Driver.cxx
       PROPERTIES COMPILE_DEFINITIONS "${CDEFS}"
       INCLUDE_DIRECTORIES "${IDIRS}"
       COMPILE_OPTIONS "${COPTS}"
@@ -665,7 +665,7 @@ if(APPLE AND NOT FLTK_BACKEND_X11)
   )
   if(FLTK_HAVE_PEN_SUPPORT)
     list(APPEND MMFILES
-      drivers/Cocoa/Fl_Cocoa_Pen_Events.mm
+      drivers/Cocoa/Fl_Cocoa_Pen_Driver.mm
     )
   endif()
   source_group("ObjC Source Files" FILES ${MMFILES})
@@ -816,6 +816,19 @@ if(UNIX AND FLTK_USE_WAYLAND)
   )
   list(APPEND STATIC_FILES "xdg-shell-protocol.c")
   list(APPEND SHARED_FILES "xdg-shell-protocol.c")
+
+  if(HAVE_XDG_ACTIVATION)
+    set(INFILE ${PROTOCOLS}/staging/xdg-activation/xdg-activation-v1.xml)
+    add_custom_command(
+      OUTPUT xdg-activation-protocol.c xdg-activation-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} xdg-activation-protocol.c
+      COMMAND wayland-scanner client-header ${INFILE} xdg-activation-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "xdg-activation-protocol.c")
+    list(APPEND SHARED_FILES "xdg-activation-protocol.c")
+  endif()
 
   if(NOT USE_SYSTEM_LIBDECOR)
     set(INFILE ${PROTOCOLS}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)

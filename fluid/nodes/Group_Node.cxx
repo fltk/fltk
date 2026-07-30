@@ -21,11 +21,13 @@
 #include "nodes/Group_Node.h"
 
 #include "Fluid.h"
+#include "message.h"
 #include "proj/undo.h"
 #include "app/Snap_Action.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
+#include "nodes/Menu_Node.h"
 #include "widgets/Node_Browser.h"
 
 #include <FL/Fl.H>
@@ -73,7 +75,7 @@ void Fl_Group_Proxy::draw() {
  \brief Enlarge the group size, so all children fit within.
  */
 void fix_group_size(Node *tt) {
-  if (!tt || !tt->is_a(Type::Group)) return;
+  if (!tt || !dynamic_cast<Group_Node*>(tt)) return;
   Group_Node* t = (Group_Node*)tt;
   int X = t->o->x();
   int Y = t->o->y();
@@ -95,25 +97,25 @@ extern void group_selected_menuitems();
 
 void group_cb(Fl_Widget *, void *) {
   if (!Fluid.proj.tree.current) {
-    fl_message("No widgets selected.");
+    fluid_message("No widgets selected.");
     return;
   }
   if (!Fluid.proj.tree.current->is_widget()) {
-    fl_message("Only widgets and menu items can be grouped.");
+    fluid_message("Only widgets and menu items can be grouped.");
     return;
   }
-  if (Fluid.proj.tree.current->is_a(Type::Menu_Item)) {
+  if (dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
     group_selected_menuitems();
     return;
   }
   // The group will be created in the parent group of the current widget
   Node *qq = Fluid.proj.tree.current->parent;
   Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
-  while (qq && !qq->is_a(Type::Group)) {
+  while (qq && !dynamic_cast<Group_Node*>(qq)) {
     qq = qq->parent;
   }
   if (!qq) {
-    fl_message("Can't create a new group here.");
+    fluid_message("Can't create a new group here.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -143,14 +145,14 @@ extern void ungroup_selected_menuitems();
 
 void ungroup_cb(Fl_Widget *, void *) {
   if (!Fluid.proj.tree.current) {
-    fl_message("No widgets selected.");
+    fluid_message("No widgets selected.");
     return;
   }
   if (!Fluid.proj.tree.current->is_widget()) {
-    fl_message("Only widgets and menu items can be ungrouped.");
+    fluid_message("Only widgets and menu items can be ungrouped.");
     return;
   }
-  if (Fluid.proj.tree.current->is_a(Type::Menu_Item)) {
+  if (dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
     ungroup_selected_menuitems();
     return;
   }
@@ -159,8 +161,8 @@ void ungroup_cb(Fl_Widget *, void *) {
   int q_level = q->level;
   Node *qq = Fluid.proj.tree.current->parent;
   while (qq && !qq->is_true_widget()) qq = qq->parent;
-  if (!qq || !qq->is_a(Type::Group)) {
-    fl_message("Only menu widgets inside a group can be ungrouped.");
+  if (!qq || !dynamic_cast<Group_Node*>(qq)) {
+    fluid_message("Only menu widgets inside a group can be ungrouped.");
     return;
   }
   Fluid.proj.undo.checkpoint();
@@ -194,19 +196,21 @@ void Group_Node::ideal_size(int &w, int &h) {
     w = 140;
     h = 140;
   }
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
-void Group_Node::write_code1(fld::io::Code_Writer& f) {
+void Group_Node::write_code1(fluid::io::Code_Writer& f) {
   Widget_Node::write_code1(f);
 }
 
-void Group_Node::write_code2(fld::io::Code_Writer& f) {
+void Group_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
-  write_extra_code(f);
-  f.write_c("%s%s->end();\n", f.indent(), var);
+  if (!extra_code(3).empty()) {
+    f.write_c_indented(extra_code(3), 0, '\n');
+  }
+  f.write_c(f.indent() + var + "->end();\n");
   if (resizable()) {
-    f.write_c("%sFl_Group::current()->resizable(%s);\n", f.indent(), var);
+    f.write_c(f.indent() + "Fl_Group::current()->resizable(" + var + ");\n");
   }
   write_block_close(f);
 }
@@ -214,9 +218,11 @@ void Group_Node::write_code2(fld::io::Code_Writer& f) {
 // This is called when o is created.  If it is in the tab group make
 // sure it is visible:
 void Group_Node::add_child(Node* cc, Node* before) {
-  Widget_Node* c = (Widget_Node*)cc;
-  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
-  ((Fl_Group*)o)->insert(*(c->o), b);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
+    ((Fl_Group*)o)->insert(*(c->o), b);
+  }
   o->redraw();
 }
 
@@ -232,9 +238,11 @@ void Group_Node::remove_child(Node* cc) {
 
 // move, don't change selected value:
 void Group_Node::move_child(Node* cc, Node* before) {
-  Widget_Node* c = (Widget_Node*)cc;
-  Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
-  ((Fl_Group*)o)->insert(*(c->o), b);
+  if (cc->is_widget()) {
+    Widget_Node* c = (Widget_Node*)cc;
+    Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
+    ((Fl_Group*)o)->insert(*(c->o), b);
+  }
   o->redraw();
 }
 
@@ -352,7 +360,7 @@ void Flex_Node::copy_properties_for_children() {
   d->layout();
 }
 
-void Flex_Node::write_properties(fld::io::Project_Writer &f)
+void Flex_Node::write_properties(fluid::io::Project_Writer &f)
 {
   Group_Node::write_properties(f);
   Fl_Flex* flex = (Fl_Flex*)o;
@@ -377,7 +385,7 @@ void Flex_Node::write_properties(fld::io::Project_Writer &f)
   }
 }
 
-void Flex_Node::read_property(fld::io::Project_Reader &f, const char *c)
+void Flex_Node::read_property(fluid::io::Project_Reader &f, const char *c)
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
@@ -425,20 +433,19 @@ void Flex_Node::postprocess_read()
   suspend_auto_layout = 0;
 }
 
-void Flex_Node::write_code2(fld::io::Code_Writer& f) {
+void Flex_Node::write_code2(fluid::io::Code_Writer& f) {
   const char *var = name() ? name() : "o";
   Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
   flex->margin(&lm, &tm, &rm, &bm);
   if (lm!=0 || tm!=0 || rm!=0 || bm!=0)
-    f.write_c("%s%s->margin(%d, %d, %d, %d);\n", f.indent(), var, lm, tm, rm, bm);
+    f.write_c(f.indent() + var + "->margin(" + std::to_string(lm) + ", " + std::to_string(tm) + ", " + std::to_string(rm) + ", " + std::to_string(bm) + ");\n");
   if (flex->gap())
-    f.write_c("%s%s->gap(%d);\n", f.indent(), var, flex->gap());
+    f.write_c(f.indent() + var + "->gap(" + std::to_string(flex->gap()) + ");\n");
   for (int i=0; i<flex->children(); ++i) {
     Fl_Widget *ci = flex->child(i);
     if (flex->fixed(ci))
-      f.write_c("%s%s->fixed(%s->child(%d), %d);\n", f.indent(), var, var, i,
-                flex->horizontal() ? ci->w() : ci->h());
+      f.write_c(f.indent() + var + "->fixed(" + var + "->child(" + std::to_string(i) + "), " + std::to_string(flex->horizontal() ? ci->w() : ci->h()) + ");\n");
   }
   Group_Node::write_code2(f);
 }
@@ -510,7 +517,7 @@ void Flex_Node::change_subtype_to(int n) {
 int Flex_Node::parent_is_flex(Node *t) {
   return (t->is_widget()
           && t->parent
-          && t->parent->is_a(Type::Flex));
+          && dynamic_cast<Flex_Node*>(t->parent));
 }
 
 /**
@@ -576,7 +583,7 @@ void Flex_Node::keyboard_move_child(Widget_Node *child, int key) {
 int Flex_Node::size(Node *t, char fixed_only) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
-  if (!t->parent->is_a(Type::Flex)) return 0;
+  if (!dynamic_cast<Flex_Node*>(t->parent)) return 0;
   Flex_Node* ft = (Flex_Node*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Widget_Node*)t)->o;
@@ -587,7 +594,7 @@ int Flex_Node::size(Node *t, char fixed_only) {
 int Flex_Node::is_fixed(Node *t) {
   if (!t->is_widget()) return 0;
   if (!t->parent) return 0;
-  if (!t->parent->is_a(Type::Flex)) return 0;
+  if (!dynamic_cast<Flex_Node*>(t->parent)) return 0;
   Flex_Node* ft = (Flex_Node*)t->parent;
   Fl_Flex* f = (Fl_Flex*)ft->o;
   Fl_Widget *w = ((Widget_Node*)t)->o;
@@ -683,7 +690,7 @@ void Table_Node::add_child(Node* cc, Node* before) {
   Widget_Node* c = (Widget_Node*)cc;
   Fl_Widget* b = before ? ((Widget_Node*)before)->o : nullptr;
   if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
-    fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
+    fluid_message("Inserting child widgets into an Fl_Table is not recommended.\n"
                "Please refer to the documentation on Fl_Table.");
   }
   ((Fl_Table*)o)->insert(*(c->o), b);
@@ -714,7 +721,7 @@ Fl_Widget *Table_Node::enter_live_mode(int) {
 void Table_Node::ideal_size(int &w, int &h) {
   w = 160;
   h = 120;
-  fld::app::Snap_Action::better_size(w, h);
+  fluid::app::Snap_Action::better_size(w, h);
 }
 
 // ---- Tabs_Node --------------------------------------------------- MARK: -

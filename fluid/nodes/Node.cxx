@@ -1,7 +1,7 @@
 //
 // Node base class code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -98,6 +98,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "app/Snap_Action.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
@@ -114,7 +115,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
-#include "../src/flstring.h"
+#include "../../src/flstring.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -273,13 +274,13 @@ void select_all_cb(Fl_Widget *,void *) {
   for (;;) {
     if (p) {
       int foundany = 0;
-      for (Node *t = p->next; t && t->level>p->level; t = t->next) {
+      for (auto *t : p->descendants()) {
         if (!t->new_selected) {widget_browser->select(t,1,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next)
+      for (auto *t : Fluid.proj.tree.all_nodes())
         widget_browser->select(t,1,0);
       break;
     }
@@ -297,13 +298,13 @@ void select_none_cb(Fl_Widget *,void *) {
   for (;;) {
     if (p) {
       int foundany = 0;
-      for (Node *t = p->next; t && t->level>p->level; t = t->next) {
+      for (auto *t : p->descendants()) {
         if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
-      for (Node *t = Fluid.proj.tree.first; t; t = t->next)
+      for (auto *t : Fluid.proj.tree.all_nodes())
         widget_browser->select(t,0,0);
       break;
     }
@@ -320,9 +321,8 @@ void earlier_cb(Fl_Widget*,void*) {
   for (f = Fluid.proj.tree.first; f; ) {
     Node* nxt = f->next;
     if (f->selected) {
-      Node* g;
-      for (g = f->prev; g && g->level > f->level; g = g->prev) {/*empty*/}
-      if (g && g->level == f->level && !g->selected) {
+      Node* g = f->prev_sibling();
+      if (g && !g->selected) {
         if (!mod) Fluid.proj.undo.checkpoint();
         f->move_before(g);
         if (f->parent) f->parent->layout_widget();
@@ -345,9 +345,8 @@ void later_cb(Fl_Widget*,void*) {
   for (f = Fluid.proj.tree.last; f; ) {
     Node* prv = f->prev;
     if (f->selected) {
-      Node* g;
-      for (g = f->next; g && g->level > f->level; g = g->next) {/*empty*/}
-      if (g && g->level == f->level && !g->selected) {
+      Node* g = f->next_sibling();
+      if (g && !g->selected) {
         if (!mod) Fluid.proj.undo.checkpoint();
         g->move_before(f);
         if (f->parent) f->parent->layout_widget();
@@ -361,64 +360,20 @@ void later_cb(Fl_Widget*,void*) {
   widget_browser->rebuild();
 }
 
-/** \brief Delete all children of a Type.
+/**
+ Delete all children of this  Node.
+ This is a low level function that does not update the browser or the undo stack.
  */
-static void delete_children(Node *p) {
+void Node::delete_children() {
   Node *f;
   // find all types following p that are higher in level, effectively finding
   // the last child of the last child
-  for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
+  for (f = this; f && f->next && f->next->level > this->level; f = f->next) {/*empty*/}
   // now loop back up to p, deleting all children on the way
-  for (; f != p; ) {
+  for (; f != this; ) {
     Node *g = f->prev;
     delete f;
     f = g;
-  }
-}
-
-/** Delete all nodes in the Types tree and reset project settings, or delete selected nodes.
- Also calls the browser to refresh.
- \note Please refactor this into two separate methods of Project.
- \param[in] selected_only if set, delete only the selected widgets and
- don't reset the project.
- */
-void delete_all(int selected_only) {
-  if (widget_browser) {
-    if (selected_only)
-      widget_browser->save_scroll_position();
-    widget_browser->new_list();
-  }
-  for (Node *f = Fluid.proj.tree.first; f;) {
-    if (f->selected || !selected_only) {
-      delete_children(f);
-      Node *g = f->next;
-      delete f;
-      f = g;
-    } else {
-      f = f->next;
-    }
-  }
-  if(!selected_only) {
-    // reset the setting for the external shell command
-    if (g_shell_config) {
-      g_shell_config->clear(fld::Tool_Store::PROJECT);
-      g_shell_config->rebuild_shell_menu();
-      g_shell_config->update_settings_dialog();
-    }
-    if (widget_browser) {
-      widget_browser->hposition(0);
-      widget_browser->vposition(0);
-    }
-    Fluid.layout_list.remove_all(fld::Tool_Store::PROJECT);
-    Fluid.layout_list.current_suite(0);
-    Fluid.layout_list.current_preset(0);
-    Fluid.layout_list.update_dialogs();
-  }
-  selection_changed(nullptr);
-  if (widget_browser) {
-    if (selected_only)
-      widget_browser->restore_scroll_position();
-    widget_browser->rebuild();
   }
 }
 
@@ -435,9 +390,9 @@ int storestring(const char *n, const char * & p, int nostrip) {
   Fluid.proj.undo.checkpoint();
   int length = 0;
   if (n) { // see if blank, strip leading & trailing blanks
-    if (!nostrip) while (isspace((int)(unsigned char)*n)) n++;
+    if (!nostrip) while (fl_ascii_isspace(*n)) n++;
     const char *e = n + strlen(n);
-    if (!nostrip) while (e > n && isspace((int)(unsigned char)*(e-1))) e--;
+    if (!nostrip) while (e > n && fl_ascii_isspace(*(e-1))) e--;
     length = int(e-n);
     if (!length) n = nullptr;
   }
@@ -468,16 +423,16 @@ int storestring(const std::string& n, std::string& p, int nostrip) {
   return ret;
 }
 
-/** Update the `visible` flag for `p` and all its descendants.
- \param[in] p start here and update all descendants
+/**
+ Update the `visible` flag for this node and all its descendants.
  */
-void update_visibility_flag(Node *p) {
-  Node *t = p;
+void Node::update_visibility_flag() {
+  Node *t = this;
   for (;;) {
     if (t->parent) t->visible = t->parent->visible && !t->parent->folded_;
     else t->visible = 1;
     t = t->next;
-    if (!t || t->level <= p->level) break;
+    if (!t || t->level <= this->level) break;
   }
 }
 
@@ -504,35 +459,6 @@ void update_visibility_flag(Node *p) {
  If this is nullptr, we are at the beginning of the list.
  Used for simulating a tree structure via a doubly linked list.
  */
-
-/**
- Constructor and base for any node in the widget tree.
- */
-Node::Node() :
-  name_(nullptr),
-  label_(nullptr),
-  callback_(nullptr),
-  comment_(nullptr),
-  uid_(0),
-  parent(nullptr),
-  new_selected(0),
-  selected(0),
-  folded_(0),
-  visible(0),
-  level(0),
-  next(nullptr), prev(nullptr),
-  factory(nullptr),
-  code_static_start(-1), code_static_end(-1),
-  code1_start(-1), code1_end(-1),
-  code2_start(-1), code2_end(-1),
-  header1_start(-1), header1_end(-1),
-  header2_start(-1), header2_end(-1),
-  header_static_start(-1), header_static_end(-1),
-  proj1_start(-1), proj1_end(-1),
-  proj2_start(-1), proj2_end(-1)
-{
-}
-
 
 /**
  Destructor for any node in the tree.
@@ -578,7 +504,7 @@ Node *Node::next_sibling() {
 // Return the first child or nullptr
 Node *Node::first_child() {
   Node *n = next;
-  if (n->level > level)
+  if (n && n->level > level)
     return n;
   return nullptr;
 }
@@ -599,7 +525,7 @@ Window_Node *Node::window() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
-    if (t->is_a(Type::Window))
+    if (dynamic_cast<Window_Node*>(t))
       return (Window_Node*)t;
   return nullptr;
 }
@@ -612,7 +538,7 @@ Group_Node *Node::group() {
   if (!is_widget())
     return nullptr;
   for (Node *t = this; t; t=t->parent)
-    if (t->is_a(Type::Group))
+    if (dynamic_cast<Group_Node*>(t))
       return (Group_Node*)t;
   return nullptr;
 }
@@ -719,7 +645,7 @@ void Node::add(Node *anchor, Strategy strategy) {
   for (Node *t = this; t && t!=end->next; t = t->next) {
     if (target_parent && (t->level == target_level))
       target_parent->add_child(t, nullptr);
-    update_visibility_flag(t);
+    t->update_visibility_flag();
   }
 
   Fluid.proj.set_modflag(1);
@@ -737,7 +663,7 @@ void Node::add(Node *anchor, Strategy strategy) {
  Add `this` list/tree of widgets as a new sibling before `g`.
 
  `This` is not part of the widget browser. `g` must be in the
- widget_browser, so `Fluid.proj.tree.first` and `Fluid.proj.tree.last` are valid for `g .
+ widget_browser, so `Fluid.proj.tree.first` and `Fluid.proj.tree.last` are valid for `g`.
 
  This methods updates the widget_browser.
 
@@ -759,7 +685,7 @@ void Node::insert(Node *g) {
   if (prev) prev->next = this; else Fluid.proj.tree.first = this;
   end->next = g;
   g->prev = end;
-  update_visibility_flag(this);
+  update_visibility_flag();
   { // make sure that we have no duplicate uid's
     Node *tp = this;
     do {
@@ -827,7 +753,7 @@ Node *Node::remove() {
 }
 
 void Node::name(const char *n) {
-  int nostrip = is_a(Type::Comment);
+  int nostrip = dynamic_cast<Comment_Node*>(this) != nullptr;
   if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
@@ -859,7 +785,7 @@ void Node::comment(const char *n) {
 }
 
 void Node::open() {
-  printf("Open of '%s' is not yet implemented\n",type_name());
+  fluid_alert("Opening node type '%s' is not yet implemented\n",type_name());
 }
 
 // returns pointer to whatever is after f & children
@@ -891,9 +817,9 @@ void Node::move_before(Node* g) {
 
 
 // write a widget and all its children:
-void Node::write(fld::io::Project_Writer &f) {
-  if (f.write_codeview()) proj1_start = (int)ftell(f.file()) + 1;
-  if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
+void Node::write(fluid::io::Project_Writer &f) {
+  if (f.write_codeview()) proj1.start = (int)ftell(f.file()) + 1;
+  if (f.write_codeview()) proj2.start = (int)ftell(f.file()) + 1;
   f.write_indent(level);
   f.write_word(type_name());
 
@@ -908,22 +834,21 @@ void Node::write(fld::io::Project_Writer &f) {
   write_properties(f);
   if (parent) parent->write_parent_properties(f, this, true);
   f.write_close(level);
-  if (f.write_codeview()) proj1_end = (int)ftell(f.file());
+  if (f.write_codeview()) proj1.end = (int)ftell(f.file());
   if (!can_have_children()) {
-    if (f.write_codeview()) proj2_end = (int)ftell(f.file());
+    if (f.write_codeview()) proj2.end = (int)ftell(f.file());
     return;
   }
   // now do children:
   f.write_open();
-  Node *child;
-  for (child = next; child && child->level > level; child = child->next)
-    if (child->level == level+1) child->write(f);
-  if (f.write_codeview()) proj2_start = (int)ftell(f.file()) + 1;
+  for (auto *child : children())
+    child->write(f);
+  if (f.write_codeview()) proj2.start = (int)ftell(f.file()) + 1;
   f.write_close(level);
-  if (f.write_codeview()) proj2_end = (int)ftell(f.file());
+  if (f.write_codeview()) proj2.end = (int)ftell(f.file());
 }
 
-void Node::write_properties(fld::io::Project_Writer &f) {
+void Node::write_properties(fluid::io::Project_Writer &f) {
   // repeat this for each attribute:
   if (Fluid.proj.write_mergeback_data && uid_) {
     f.write_word("uid");
@@ -957,7 +882,7 @@ void Node::write_properties(fld::io::Project_Writer &f) {
   if (selected) f.write_word("selected");
 }
 
-void Node::read_property(fld::io::Project_Reader &f, const char *c) {
+void Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"uid")) {
     const char *hex = f.read_word();
     int x = 0;
@@ -995,7 +920,7 @@ void Node::read_property(fld::io::Project_Reader &f, const char *c) {
       f.read_word();  // skip the entire block (this should generate a warning)
     }
   else
-    f.read_error("Unknown property \"%s\"", c);
+    f.read_error("Unknown property \"%.32s\" in line %d", c, f.current_line_number());
 }
 
 /** Write parent properties into the child property list.
@@ -1022,13 +947,13 @@ void Node::read_property(fld::io::Project_Reader &f, const char *c) {
  Lastly, this method should call the super class to give it a chance to append
  its own properties.
 
- \see Grid_Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
+ \see Grid_Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate)
 
  \param[in] f the project file writer
  \param[in] child write properties for this child, make sure it has the correct type
  \param[in] encapsulate write the `parent_properties {}` block if true before writing any properties
  */
-void Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate) {
+void Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate) {
   (void)f; (void)child; (void)encapsulate;
   // nothing to do here
   // put the following code into your implementation of write_parent_properties
@@ -1055,16 +980,16 @@ void Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool
  method reads back those properties. This function is virtual, so if a Type
  does not support a property, it will propagate to its super class.
 
- \see Node::write_parent_properties(fld::io::Project_Writer &f, Node *child, bool encapsulate)
- \see Grid_Node::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property)
+ \see Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate)
+ \see Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property)
 
  \param[in] f the project file writer
  \param[in] child read properties for this child
  \param[in] property the name of a property, or "}" when we reach the end of the list
  */
-void Node::read_parent_property(fld::io::Project_Reader &f, Node *child, const char *property) {
+void Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property) {
   (void)child;
-  f.read_error("Unknown parent property \"%s\"", property);
+  f.read_error("Unknown parent property \"%s\" in line %d", property, f.current_line_number());
 }
 
 
@@ -1074,91 +999,94 @@ int Node::read_fdesign(const char*, const char*) {return 0;}
  Write a comment into the header file.
  \param[in] pre indent the comment by this string
 */
-void Node::write_comment_h(fld::io::Code_Writer& f, const char *pre)
+void Node::write_comment_h(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    f.write_h("%s/**\n", pre);
+    f.write_h(std::string(pre) + "/**\n");
     const char *s = comment();
-    f.write_h("%s ", pre);
+    f.write_h(std::string(pre) + " ");
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          f.write_h("\n%s ", pre);
+          f.write_h("\n" + std::string(pre) + " ");
         }
       } else {
-        f.write_h("%c", *s); // FIXME this is much too slow!
+        f.write_h(std::string(1, *s)); // FIXME this is much too slow!
       }
       s++;
     }
-    f.write_h("\n%s*/\n", pre);
+    f.write_h("\n" + std::string(pre) + "*/\n");
   }
 }
 
 /**
   Write a comment into the source file.
 */
-void Node::write_comment_c(fld::io::Code_Writer& f, const char *pre)
+void Node::write_comment_c(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    f.write_c("%s/**\n", pre);
+    f.write_c(std::string(pre) + "/**\n");
     const char *s = comment();
     if (*s && *s!='\n')
-      f.write_c("%s ", pre);
+      f.write_c(std::string(pre) + " ");
     while(*s) {
       if (*s=='\n') {
         f.write_c("\n");
         if (s[1] && s[1]!='\n') {
-          f.write_c("%s ", pre);
+          f.write_c(std::string(pre) + " ");
         }
       } else {
-        f.write_c("%c", *s); // FIXME this is much too slow!
+        f.write_c(std::string(1, *s)); // FIXME this is much too slow!
       }
       s++;
     }
-    f.write_c("\n%s*/\n", pre);
+    f.write_c("\n" + std::string(pre) + "*/\n");
   }
 }
 
 /**
   Write a comment into the source file.
 */
-void Node::write_comment_inline_c(fld::io::Code_Writer& f, const char *pre)
+void Node::write_comment_inline_c(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
     const char *s = comment();
     if (strchr(s, '\n')==nullptr) {
       // single line comment
-      if (pre) f.write_c("%s", pre);
-      f.write_c("// %s\n", s);
-      if (!pre) f.write_c("%s", f.indent_plus(1));
+      if (pre) f.write_c(std::string(pre));
+      f.write_c("// " + std::string(s) + "\n");
+      if (!pre) f.write_c(f.indent_plus(1));
     } else {
-      f.write_c("%s/*\n", pre?pre:"");
+      if (pre)
+        f.write_c(std::string(pre) + "/*\n");
+      else
+        f.write_c("/*\n");
       if (*s && *s!='\n') {
         if (pre)
-          f.write_c("%s ", pre);
+          f.write_c(std::string(pre) + " ");
         else
-          f.write_c("%s ", f.indent_plus(1));
+          f.write_c(f.indent_plus(1) + " ");
       }
       while(*s) {
         if (*s=='\n') {
           f.write_c("\n");
           if (s[1] && s[1]!='\n') {
             if (pre)
-              f.write_c("%s ", pre);
+              f.write_c(std::string(pre) + " ");
             else
-              f.write_c("%s ", f.indent_plus(1));
+              f.write_c(f.indent_plus(1) + " ");
           }
         } else {
-          f.write_c("%c", *s); // FIXME this is much too slow!
+          f.write_c(std::string(1, *s)); // FIXME this is much too slow!
         }
         s++;
       }
       if (pre)
-        f.write_c("\n%s */\n", pre);
+        f.write_c("\n" + std::string(pre) + " */\n");
       else
-        f.write_c("\n%s */\n", f.indent_plus(1));
+        f.write_c("\n" + f.indent_plus(1) + " */\n");
       if (!pre)
-        f.write_c("%s", f.indent_plus(1));
+        f.write_c(f.indent_plus(1));
     }
   }
 }
@@ -1185,26 +1113,9 @@ void Node::leave_live_mode() {
 void Node::copy_properties() {
 }
 
-/**
-  Check whether callback \p cbname is declared anywhere else by the user.
-
-  \b Warning: this just checks that the name is declared somewhere,
-  but it should probably also check that the name corresponds to a
-  plain function or a member function within the same class and that
-  the parameter types match.
- */
-int Node::user_defined(const char* cbname) const {
-  for (Node* p = Fluid.proj.tree.first; p ; p = p->next)
-    if (p->is_a(Type::Function) && p->name() != nullptr)
-      if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
-        if (p->name()[strlen(cbname)] == '(')
-          return 1;
-  return 0;
-}
-
-const char *Node::callback_name(fld::io::Code_Writer& f) {
-  if (is_name(callback())) return callback();
-  return f.unique_id(this, "cb", name(), label());
+std::string Node::callback_name(fluid::io::Code_Writer& f) {
+  if (is_function_name(callback())) return callback();
+  return f.unique_id(this, "cb", (name()?name():""), (label()?label():""));
 }
 
 /**
@@ -1255,18 +1166,31 @@ bool Node::is_in_class() const {
   return false;
 }
 
-void Node::write_static(fld::io::Code_Writer&) {
+/**
+ Find the nearest parent Class_Node or Widget_Class_Node.
+ \return the nearest parent class node, or nullptr if none is found
+ */
+Node* Node::find_parent_class_node() const {
+  Node* p = parent;
+  while (p) {
+    if (p->is_class()) return static_cast<Class_Node*>(p);
+    p = p->parent;
+  }
+  return nullptr;
 }
 
-void Node::write_static_after(fld::io::Code_Writer&) {
+void Node::write_static(fluid::io::Code_Writer&) {
 }
 
-void Node::write_code1(fld::io::Code_Writer& f) {
-  f.write_h("// Header for %s\n", title());
-  f.write_c("// Code for %s\n", title());
+void Node::write_static_after(fluid::io::Code_Writer&) {
 }
 
-void Node::write_code2(fld::io::Code_Writer&) {
+void Node::write_code1(fluid::io::Code_Writer& f) {
+  f.write_h("// Header for " + std::string(title()) + "\n");
+  f.write_c("// Code for " + std::string(title()) + "\n");
+}
+
+void Node::write_code2(fluid::io::Code_Writer&) {
 }
 
 /** Set a uid that is unique within the project.
@@ -1301,6 +1225,32 @@ unsigned short Node::set_uid(unsigned short suggested_uid) {
   }
   uid_ = suggested_uid;
   return suggested_uid;
+}
+
+/**
+ Check if this class has a function with the given return type and signature.
+ This node must be of type Class_Node, Widget_Class_Node, of DeclBlock_Node.
+ \param[in] return_type_regex regex for the return type of the function,
+    or empty for any type
+ \param[in] function_sig_regex regex for the name and arguments of the function
+ \return true if a matching function is found, false otherwise
+ */
+bool Node::has_function(const std::string& return_type_regex, const std::string& function_sig_regex) const
+{
+  for (const Node *child : children()) {
+    // Check for direct children
+    if (dynamic_cast<const Function_Node*>(child)) {
+      const Function_Node *fn = (const Function_Node*)child;
+      if (fn->has_signature(return_type_regex, function_sig_regex))
+        return true;
+    }
+    // Recursive search into declaration block
+    if (dynamic_cast<const DeclBlock_Node*>(child)) {
+      if (child->has_function(return_type_regex, function_sig_regex))
+        return true;
+    }
+  }
+  return false;
 }
 
 

@@ -6,7 +6,7 @@
 // They are somewhat similar to tcl, using matching { and }
 // to quote strings.
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,15 +23,19 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "nodes/Node.h"
 #include "app/shell_command.h"
 #include "proj/undo.h"
 #include "app/Snap_Action.h"
 
+#include "../../src/flstring.h"
+
+
 /// \defgroup flfile .fl Project File Operations
 /// \{
 
-using namespace fld;
-using namespace fld::io;
+using namespace fluid;
+using namespace fluid::io;
 
 /** \brief Write an .fl design description file.
 
@@ -42,7 +46,7 @@ using namespace fld::io;
     is used to implement copy and paste.
  \return 0 if the operation failed, 1 if it succeeded
  */
-int fld::io::write_file(Project &proj, const char *filename, int selected_only, bool to_codeview) {
+int fluid::io::write_file(Project &proj, const char *filename, int selected_only, bool to_codeview) {
   Project_Writer out(proj);
   return out.write_project(filename, selected_only, to_codeview);
 }
@@ -105,8 +109,17 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
     proj_.undo.resume();
     return 0;
   }
+#if (FL_MAJOR_VERSION==1) && (FL_MINOR_VERSION==5) && (FL_PATCH_VERSION==0)
+  // For Fluid 1.5.0 write the version tag as 1.050020 instead of 1.5000 to
+  // indicate changes in the file format during 1.5.0 development. Reading
+  // project files with a version below 1.050020 will be reshuffled to match
+  // the new format. Back compatibility should be maintained.
+  write_string("# data file for the Fltk User Interface Designer (fluid)\n"
+               "version %.4f20",FL_VERSION);
+#else
   write_string("# data file for the Fltk User Interface Designer (fluid)\n"
                "version %.4f",FL_VERSION);
+#endif
   if(!proj_.include_H_from_C)
     write_string("\ndo_not_include_H_from_C");
   if(proj_.use_FL_COMMAND)
@@ -192,7 +205,7 @@ void Project_Writer::write_string(const char *format, ...) {
   if (needspace && *format != '\n') fputc(' ',fout);
   vfprintf(fout, format, args);
   va_end(args);
-  needspace = !isspace(format[strlen(format)-1] & 255);
+  needspace = !fl_ascii_isspace(format[strlen(format)-1]);
 }
 
 /**

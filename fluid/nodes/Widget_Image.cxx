@@ -76,7 +76,7 @@ void Widget_Image::apply_to_widget(Fl_Widget* w, bool deimage) const {
  Delegates to Image_Asset::write_static() using this slot's \c compress setting.
  Does nothing when no asset is loaded or the asset has already been written.
  */
-void Widget_Image::write_static(fld::io::Code_Writer& f) const {
+void Widget_Image::write_static(fluid::io::Code_Writer& f) const {
   if (asset && !f.c_contains(asset.get()))
     asset->write_static(f, compress);
 }
@@ -88,20 +88,20 @@ void Widget_Image::write_static(fld::io::Code_Writer& f) const {
  of \c scale_w or \c scale_h is nonzero, the matching \c ->scale() call.
  Does nothing when no asset is loaded.
  */
-void Widget_Image::write_code(fld::io::Code_Writer& f, const char* var, bool deimage) const {
+void Widget_Image::write_code(fluid::io::Code_Writer& f, const char* var, bool deimage) const {
   if (!asset) return;
   asset->write_code(f, bind, var, deimage ? 1 : 0);
   if (scale_w || scale_h) {
     const char* getter = deimage ? "deimage" : "image";
-    f.write_c("%s%s->%s()->scale(", f.indent(), var, getter);
+    f.write_c(f.indent() + var + "->" + getter + "()->scale(");
     if (scale_w > 0)
-      f.write_c("%d, ", scale_w);
+      f.write_c(std::to_string(scale_w) + ", ");
     else
-      f.write_c("%s->%s()->data_w(), ", var, getter);
+      f.write_c(std::string(var) + "->" + getter + "()->data_w(), ");
     if (scale_h > 0)
-      f.write_c("%d, 0, 1);\n", scale_h);
+      f.write_c(std::to_string(scale_h) + ", 0, 1);\n");
     else
-      f.write_c("%s->%s()->data_h(), 0, 1);\n", var, getter);
+      f.write_c(std::string(var) + "->" + getter + "()->data_h(), 0, 1);\n");
   }
 }
 
@@ -112,7 +112,7 @@ void Widget_Image::write_code(fld::io::Code_Writer& f, const char* var, bool dei
  Writes nothing when \c name is empty; omits the scale and bind entries when they
  hold their default values.
  */
-void Widget_Image::write_properties(fld::io::Project_Writer& f, bool deimage) const {
+void Widget_Image::write_properties(fluid::io::Project_Writer& f, bool deimage) const {
   if (!name.empty()) {
     if (scale_w || scale_h)
       f.write_string(deimage ? "scale_deimage {%d %d}" : "scale_image {%d %d}", scale_w, scale_h);

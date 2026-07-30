@@ -1,5 +1,5 @@
 //
-// Copyright 2001-2023 by Bill Spitzak and others.
+// Copyright 2001-2026 by Bill Spitzak and others.
 //
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
@@ -233,7 +233,7 @@ static void kill_selection(Fl_Text_Editor* e) {
 */
 int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   // FIXME: this function is a mess! Fix this!
-  if (!c || (!(c > 0 && c < 127 && isprint(c)) && c != '\t')) return 0;
+  if (!c || (!(fl_ascii_isprint(c)) && c != '\t')) return 0;
   char s[2] = "\0";
   s[0] = (char)c;
   kill_selection(e);

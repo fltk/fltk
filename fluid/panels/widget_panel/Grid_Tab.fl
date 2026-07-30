@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {.h}
 code_name {.cxx}
 include_guard {}
@@ -54,7 +54,7 @@ if (v == LOAD) {
   }
 }}
       tooltip {Number of horizontal rows in the Grid group} xywh {85 30 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {125 30 30 20}
@@ -66,7 +66,7 @@ if (v == LOAD) {
   widget_grid_rows->do_callback();
 }}
         xywh {125 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -75,7 +75,7 @@ if (v == LOAD) {
   widget_grid_rows->do_callback();
 }}
         xywh {140 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Input widget_grid_cols {
@@ -104,7 +104,7 @@ if (v == LOAD) {
   }
 }}
       tooltip {Number of vertical columns in the Grid group} xywh {165 30 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {205 30 30 20}
@@ -116,7 +116,7 @@ if (v == LOAD) {
   widget_grid_cols->do_callback();
 }}
         xywh {205 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -125,7 +125,7 @@ if (v == LOAD) {
   widget_grid_cols->do_callback();
 }}
         xywh {220 30 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {
@@ -296,7 +296,7 @@ if (v == LOAD) {
   widget_grid_curr_row_attributes->do_callback(widget_grid_curr_row_attributes, LOAD);
 }}
       xywh {85 145 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {
       callback propagate_load open
@@ -309,7 +309,7 @@ if (v == LOAD) {
   widget_grid_curr_row->do_callback();
 }}
         xywh {125 145 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -318,7 +318,7 @@ if (v == LOAD) {
   widget_grid_curr_row->do_callback();
 }}
         xywh {140 145 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {
@@ -347,7 +347,7 @@ if (v == LOAD) {
   }
 }}
         xywh {170 145 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Weight:}
@@ -367,7 +367,7 @@ if (v == LOAD) {
   }
 }}
         xywh {230 145 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Gap:}
@@ -387,7 +387,7 @@ if (v == LOAD) {
   }
 }}
         xywh {290 145 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
     }
     Fl_Box {} {
@@ -413,7 +413,7 @@ if (v == LOAD) {
   widget_grid_curr_col_attributes->do_callback(widget_grid_curr_col_attributes, LOAD);
 }}
       xywh {85 180 40 20} labelsize 11 align 5 textsize 11
-      class {fld::widget::Formula_Input}
+      class {fluid::widget::Formula_Input}
     }
     Fl_Group {} {open
       xywh {125 180 30 20}
@@ -425,7 +425,7 @@ if (v == LOAD) {
   widget_grid_curr_col->do_callback();
 }}
         xywh {125 180 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
       Fl_Button {} {
         label {+}
@@ -434,7 +434,7 @@ if (v == LOAD) {
   widget_grid_curr_col->do_callback();
 }}
         xywh {140 180 15 20} labelsize 11
-        code0 {o->clear_visible_focus();} compact 1
+        code3 {o->clear_visible_focus();} compact 1
       }
     }
     Fl_Box {} {
@@ -463,7 +463,7 @@ if (v == LOAD) {
   }
 }}
         xywh {170 180 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Weight:}
@@ -483,7 +483,7 @@ if (v == LOAD) {
   }
 }}
         xywh {230 180 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
       Fl_Input {} {
         label {Gap:}
@@ -503,7 +503,7 @@ if (v == LOAD) {
   }
 }}
         xywh {290 180 55 20} labelsize 11 align 5 textsize 11
-        class {fld::widget::Formula_Input}
+        class {fluid::widget::Formula_Input}
       }
     }
     Fl_Box {} {

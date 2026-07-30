@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "src/drivers/Base/Fl_Base_Pen_Events.H"
+#include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
 
 class Fl_Widget;
@@ -100,6 +100,7 @@ Trait Fl::Pen::Driver::pen_traits(int pen_id) {
 }
 
 // ---- Fl::Pen API ------------------------------------------------------------
+Fl::Pen::Driver& Fl::Pen::driver = newPenDriver();
 
 void Fl::Pen::subscribe(Fl_Widget* widget) {
   driver.subscribe(widget);

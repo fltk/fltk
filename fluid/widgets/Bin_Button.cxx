@@ -24,11 +24,11 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Window.H>
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 
-/** \class fld::widget::Bin_Button
+/** \class fluid::widget::Bin_Button
  The Bin_Button button is a button that can be used in the widget bin to
  allow the user to drag and drop widgets into a window or group. This feature
  makes it easy for the user to position a widget at a specific location within
@@ -38,7 +38,7 @@ using namespace fld::widget;
 /**
  Convert mouse dragging into a drag and drop event.
  */
-int fld::widget::Bin_Button::handle(int inEvent)
+int fluid::widget::Bin_Button::handle(int inEvent)
 {
   int ret = 0;
   switch (inEvent) {
@@ -67,7 +67,7 @@ int fld::widget::Bin_Button::handle(int inEvent)
   return Fl_Button::handle(inEvent);
 }
 
-/** \class fld::widget::Bin_Window_Button
+/** \class fluid::widget::Bin_Window_Button
  The Bin_Window_Button button is used in the widget bin to create new
  windows by dragging and dropping. When the button is dragged and dropped onto
  the desktop, a new window will be created at the drop location.
@@ -79,7 +79,7 @@ int fld::widget::Bin_Button::handle(int inEvent)
 /**
  Convert mouse dragging into a drag and drop event.
  */
-int fld::widget::Bin_Window_Button::handle(int inEvent)
+int fluid::widget::Bin_Window_Button::handle(int inEvent)
 {
   static Fl_Window *drag_win = nullptr;
   int ret = 0;
@@ -112,7 +112,7 @@ int fld::widget::Bin_Window_Button::handle(int inEvent)
         Node *prototype = typename_to_prototype((char*)user_data());
         if (prototype) {
           Node *new_type = add_new_widget_from_user(prototype, Strategy::AFTER_CURRENT);
-          if (new_type && new_type->is_a(Type::Window)) {
+          if (new_type && dynamic_cast<Window_Node*>(new_type)) {
             Window_Node *new_window = (Window_Node*)new_type;
             Fl_Window *w = (Fl_Window *)new_window->o;
             w->position(Fl::event_x_root(), Fl::event_y_root());

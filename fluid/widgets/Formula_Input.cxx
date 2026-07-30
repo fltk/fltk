@@ -1,7 +1,7 @@
 //
 // Formula Int Input widget code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,10 +23,10 @@
 #include <ctype.h>
 #include <string.h>
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
-/** \class fld::widget::Formula_Input
+/** \class fluid::widget::Formula_Input
  The Formula_Input widget is an input field for entering widget coordinates
  and sizes. It includes basic math capabilities and allows the use of variables
  in formulas. This widget is useful for specifying precise positions and
@@ -68,7 +68,7 @@ int Formula_Input::eval_var(uchar *&s) const {
     return 0;
   // find the end of the variable name
   uchar *v = s;
-  while (isalpha(*s)) s++;
+  while (fl_ascii_isalpha(*s)) s++;
   int n = (int)(s-v);
   // find the variable in the list
   for (Formula_Input_Vars *vars = vars_; vars->name_; vars++) {
@@ -105,7 +105,7 @@ int Formula_Input::eval(uchar *&s, int prio) const {
       v = v*10 + (c-'0');
       c = *s++;
     }
-  } else if (isalpha(c)) {
+  } else if (fl_ascii_isalpha(c)) {
     v = eval_var(--s);
     c = *s++;
   } else if (c=='(') {

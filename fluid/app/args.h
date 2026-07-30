@@ -19,7 +19,7 @@
 
 #include <string>
 
-namespace fld {
+namespace fluid {
 namespace app {
 
 class Args {
@@ -49,7 +49,7 @@ public:
 };
 
 } // namespace app
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_APP_ARGS_H
 

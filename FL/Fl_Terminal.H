@@ -2,7 +2,7 @@
 // Fl_Terminal - A terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022 by Greg Ercolano.
-// Copyright 2024-2025 by Bill Spitzak and others.
+// Copyright 2024-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,6 +27,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scrollbar.H>
 #include <FL/Fl_Rect.H>
+#include <FL/fl_utf8.h>         // fl_utf8_is_continuation()
 
 #include <stdarg.h>             // va_list (MinGW)
 
@@ -482,7 +483,7 @@ protected:
       if (charflags() & BG_XTERM) bgcolor_xterm(defaultbgcolor_);
       else                        bgcolor(defaultbgcolor_);
     }
-    int  onoff(bool flag, Attrib a) { return (flag ? (attrib_ | a) : (attrib_ & ~a)); }
+    int  onoff(bool flag, Attrib a) const { return (flag ? (attrib_ | a) : (attrib_ & ~a)); }
     void sgr_bold(bool val)      { attrib_ = (uchar)onoff(val, Fl_Terminal::BOLD);      } // e.g. ESC[1m
     void sgr_dim(bool val)       { attrib_ = (uchar)onoff(val, Fl_Terminal::DIM);       } // e.g. ESC[2m
     void sgr_italic(bool val)    { attrib_ = (uchar)onoff(val, Fl_Terminal::ITALIC);    } // e.g. ESC[3m
@@ -563,7 +564,7 @@ protected:
     //
     const char* text_utf8(void) const { return text_; }
     // Return the attribute for this char
-    uchar attrib(void)    const { return attrib_; }
+    uchar attrib(void) const { return attrib_; }
     uchar charflags(void) const { return charflags_; }
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
@@ -651,7 +652,7 @@ private:
     void disp_rows(int val) { disp_rows_ = val; }
 
     // History use
-    inline int  hist_use(void)  const       { return hist_use_; }
+    inline int  hist_use(void) const        { return hist_use_; }
     inline void hist_use(int val)           { hist_use_ = val; }
     inline int  hist_use_srow(void) const   { return((offset_ + hist_rows_ - hist_use_) % ring_rows_); }
     inline Utf8Char *ring_chars(void)       { return ring_chars_; }  // access ring buffer directly
@@ -706,7 +707,7 @@ private:
     void push_rowcol(int row,int col,bool char_right) {
       push_row_ = row; push_col_ = col; push_char_right_ = char_right; }
     void start_push() { start(push_row_, push_col_, push_char_right_); }
-    bool dragged_off(int row,int col,bool char_right) {
+    bool dragged_off(int row,int col,bool char_right) const {
       return (push_row_ != row) || (push_col_+push_char_right_ != col+char_right); }
     void selectionfgcolor(Fl_Color val) { selectionfgcolor_ = val; }
     void selectionbgcolor(Fl_Color val) { selectionbgcolor_ = val; }
@@ -783,19 +784,7 @@ private:
     void clear(void) { buflen_ = clen_ = 0; }    // clear the buffer
     PartialUtf8Buf(void) { clear(); }            // Ctor
     // Is byte 'c' in the middle of a UTF-8 encoded byte sequence?
-    bool is_continuation(char c) {
-      //           Byte 1    Byte 2    Byte 3   ..etc..
-      //   ASCII:  0xxxxxxx
-      // UTF8(2):  110xxxxx  10xxxxxx
-      // UTF8(3):  1110xxxx  10xxxxxx  10xxxxxx
-      // UTF8(4):  11110xxx  10xxxxxx  10xxxxxx  10xxxxxx
-      // UTF8(5):  111110xx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
-      // UTF8(6):  1111110x  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx  10xxxxxx
-      //           \______/  \______________________________________________/
-      //          Start byte           Continuation bytes
-      //                               (c & 0xc0) == 0x80
-      return ((c & 0xc0) == 0x80);
-    }
+    bool is_continuation(char c) { return fl_utf8_is_continuation(c); }  // issue #1541
     // Access buffer
     const char* buf(void) const { return buf_; }
     // Access buffer length
@@ -1168,7 +1157,7 @@ public:
   RedrawStyle redraw_style(void) const;
   void  redraw_style(RedrawStyle val);
 private:
-  bool  is_redraw_style(RedrawStyle val) { return redraw_style_ == val; }
+  bool  is_redraw_style(RedrawStyle val) const { return redraw_style_ == val; }
 public:
   float redraw_rate(void) const;
   void  redraw_rate(float val);

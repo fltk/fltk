@@ -17,6 +17,12 @@
 #ifndef _FLUID_MAIN_H
 #define _FLUID_MAIN_H
 
+#ifdef FLUID_CMD
+constexpr bool FLUID_CONFIG_CONSOLE = true;
+#else
+constexpr bool FLUID_CONFIG_CONSOLE = false;
+#endif
+
 extern int main(int argc,char **argv);
 
 #endif // _FLUID_MAIN_H

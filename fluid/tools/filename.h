@@ -25,11 +25,11 @@
 
 std::string fl_filename_shortened(const std::string &filename, int maxchars);
 
-namespace fld {
+namespace fluid {
 
 extern std::string end_with_slash(const std::string &fn);
 extern std::string fix_separators(const std::string &fn);
 
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_TOOLS_FILENAME_H

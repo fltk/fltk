@@ -1,7 +1,7 @@
 //
 // Code editor widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,9 +22,10 @@
 
 #include <stdlib.h>
 #include "widgets/Code_Editor.h"
+#include "../../src/flstring.h"
 
-using namespace fld;
-using namespace fld::widget;
+using namespace fluid;
+using namespace fluid::widget;
 
 // ---- Code_Editor implementation
 
@@ -92,7 +93,7 @@ void Code_Editor::style_parse(const char *in_tbuff,         // text buffer to pa
       if ( !sp.parse_quoted_string('\'', 'H') ) break;
     } else if ( c == '#' && sp.lwhite ) {                 // Start of '#' directive?
       if ( !sp.parse_directive() ) break;
-    } else if ( !sp.last && (islower(c) || c == '_') ) {  // Possible C/C++ keyword?
+    } else if ( !sp.last && (fl_ascii_islower(c) || c == '_') ) {  // Possible C/C++ keyword?
       if ( !sp.parse_keyword() ) break;
     } else {                                              // All other chars?
       if ( !sp.parse_all_else() ) break;
@@ -175,7 +176,7 @@ int Code_Editor::auto_indent(int, Code_Editor* e) {
   char *text = e->buffer()->text_range(start, pos);
   char *ptr;
 
-  for (ptr = text; isspace(*ptr); ptr ++) {/*empty*/}
+  for (ptr = text; fl_ascii_isspace(*ptr); ptr ++) {/*empty*/}
   *ptr = '\0';
   if (*text) {
     // use only a single 'insert' call to avoid redraw issues

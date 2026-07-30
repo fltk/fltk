@@ -18,6 +18,7 @@
 
 #include "Fluid.h"
 #include "Project.h"
+#include "message.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "nodes/Node.h"
@@ -28,7 +29,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/fl_ask.H>
 #include "tools/filename.h"
 #include "../src/flstring.h"
 
@@ -47,8 +47,8 @@
 
 extern Fl_Window* the_panel;
 
-using namespace fld;
-using namespace fld::proj;
+using namespace fluid;
+using namespace fluid::proj;
 
 
 Undo::Undo(Project &p)
@@ -95,7 +95,7 @@ void Undo::redo() {
     widget_browser->new_list();
   }
   int reload_panel = (the_panel && the_panel->visible());
-  if (!fld::io::read_file(proj_, filename(current_ + 1), 0)) {
+  if (!fluid::io::read_file(proj_, filename(current_ + 1), 0)) {
     // Unable to read checkpoint file, don't redo...
     widget_browser->rebuild();
     proj_.update_settings_dialog();
@@ -134,7 +134,7 @@ void Undo::undo() {
   }
 
   if (current_ == last_) {
-    fld::io::write_file(proj_, filename(current_));
+    fluid::io::write_file(proj_, filename(current_));
   }
 
   suspend();
@@ -146,7 +146,7 @@ void Undo::undo() {
     widget_browser->new_list();
   }
   int reload_panel = (the_panel && the_panel->visible());
-  if (!fld::io::read_file(proj_, filename(current_ - 1), 0)) {
+  if (!fluid::io::read_file(proj_, filename(current_ - 1), 0)) {
     // Unable to read checkpoint file, don't undo...
     widget_browser->rebuild();
     proj_.update_settings_dialog();
@@ -155,11 +155,9 @@ void Undo::undo() {
     return;
   }
   if (reload_panel) {
-    for (Node *t = Fluid.proj.tree.first; t; t=t->next) {
-      if (t->is_widget() && t->selected) {
-        t->open();
-        break;
-      }
+    for (auto *t : Fluid.proj.tree.all_selected_widgets()) {
+      t->open();
+      break;
     }
   }
   // Restore old browser position.
@@ -213,7 +211,7 @@ void Undo::checkpoint() {
 
   // Save the current UI to a checkpoint file...
   const char *file = filename(current_);
-  if (!fld::io::write_file(proj_, file)) {
+  if (!fluid::io::write_file(proj_, file)) {
     // Don't attempt to do undo stuff if we can't write a checkpoint file...
     perror(file);
     return;

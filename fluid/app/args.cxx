@@ -16,14 +16,15 @@
 
 #include "app/args.h"
 
+#include "main.h"
 #include "Fluid.h"
+#include "message.h"
 
 #include <FL/Fl.H>
 #include <FL/filename.H>
-#include <FL/fl_ask.H>
 
-using namespace fld;
-using namespace fld::app;
+using namespace fluid;
+using namespace fluid::app;
 
 /**
  Load args from command line into variables.
@@ -32,6 +33,10 @@ using namespace fld::app;
  \param[in] argv pointer to an array of arguments
  \return 0 if the args were handled successfully, -1 if there was an error
     and the usage message was shown.
+
+ \todo argument to override the application directory, helpful when running in batch mode
+ \todo argument to run a specific shell command as set in shell_command list
+ \todo maybe argument to extract embedded files, i.e. CMakeLists.txt ?
  */
 int Args::load(int argc,char **argv) {
   int i = 1;
@@ -56,8 +61,11 @@ int Args::load(int argc,char **argv) {
     if ( !app_name || !app_name[0])
       app_name = "fluid";
 #ifdef _MSC_VER
-    // TODO: if this is fluid-cmd, use stderr and not fl_message
-    fl_message(msg, app_name);
+    if (FLUID_CONFIG_CONSOLE) {
+      fprintf(stderr, msg, app_name);
+    } else {
+      fluid_message(msg, app_name);
+    }
 #else
     fprintf(stderr, msg, app_name);
 #endif

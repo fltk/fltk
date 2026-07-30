@@ -21,10 +21,14 @@
 
 #include <FL/filename.H>
 
-namespace fld {
+namespace fluid {
 namespace app {
 
-class History {
+class History
+{
+private:
+  std::string latest_project_path_ { };
+
 public:
   /// Stores the absolute filename of the last 10 project files, saved in app preferences.
   char abspath[10][FL_PATH_MAX] { };
@@ -36,10 +40,12 @@ public:
   void load();
   // Add a new file to the project history using absolute paths.
   void update(std::string project_file);
+  // Return the path to the last opened project file, or an empty string if none.
+  std::string latest_project_path() const { return latest_project_path_; }
 };
 
 } // namespace app
-} // namespace fld
+} // namespace fluid
 
 #endif // FLUID_APP_HISTORY_H
 

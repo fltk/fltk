@@ -105,7 +105,6 @@ void chooser_cb(Fl_Widget *, Gl_Image_Window *mainwin) {
 
 
 int main(int argc, char **argv) {
-  Fl::use_high_res_GL(1);
   fl_register_images();
   Gl_Image_Window mainwin(600, 600, "GL Image Viewer");
   mainwin.show(argc, argv);

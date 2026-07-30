@@ -450,7 +450,6 @@ int main(int argc, char** argv) {
   Fl::get_system_colors();
   Fl::scheme(Fl::scheme()); // init scheme before instantiating tests
   Fl::visual(FL_RGB);
-  Fl::use_high_res_GL(1);
   mainwin = new Ut_Main_Window(UT_MAINWIN_W, UT_MAINWIN_H, "FLTK Unit Tests");
   mainwin->size_range(UT_MAINWIN_W, UT_MAINWIN_H);
   browser = new Fl_Hold_Browser(UT_BROWSER_X, UT_BROWSER_Y, UT_BROWSER_W, UT_BROWSER_H, "Unit Tests");

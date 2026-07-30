@@ -19,8 +19,8 @@
  \brief Pen event handling variables and functions.
 */
 
-#ifndef Fl_core_pen_events_H
-#define Fl_core_pen_events_H
+#ifndef FL_CORE_PEN_DRIVER_H
+#define FL_CORE_PEN_DRIVER_H
 
 #include <FL/fl_config.h>             // build configuration
 #include <FL/Fl_Export.H>             // for FL_EXPORT
@@ -228,6 +228,8 @@ enum Event {
 
   /**
    Pen went from hovering to touching the surface.
+   If the event handler returns 1, the widget will be marked Fl::pushed() and
+   will receive DRAW events until the tip or eraser is released.
    event_trigger() returns TIP_DOWN or ERASER_DOWN.
    */
   TOUCH,
@@ -246,6 +248,8 @@ enum Event {
 
   /**
    A pen button was pushed.
+   If the event handler returns 1, the widget will be marked Fl::pushed() and
+   will receive DRAW events until the button is released.
    event_trigger() returns BUTTON0, BUTTON1, BUTTON2, or BUTTON3.
    */
   BUTTON_PUSH,
@@ -438,33 +442,4 @@ FL_EXPORT extern State event_trigger();
 
 } // namespace Fl
 
-
-/*
- Resources:
-
- Windows:
- 1. Legacy WinTab API (Win2k), Wintab32.dll, wintab.h
-    https://developer.wacom.com/en-us/developer-dashboard/downloads
- 2. Windows Ink API (Modern, Win10), Windows.UI.Input.Inking (WinRT API), InkCanvas(), etc.
-    https://learn.microsoft.com/windows/uwp/design/input/windows-ink
- 3. Pointer Input / WM_POINTER API (Win8), WM_POINTERUPDATE, GetPointerPenInfo
-    https://learn.microsoft.com/windows/win32/inputmsg/wm-pointerupdate
-      return WTInfo(0, 0, NULL) > 0; // Wintab check
-
- Linux:
- 1. Low-level: evdev, /dev/input/event*, libevdev,
-    https://www.kernel.org/doc/html/latest/input/event-codes.html
- 2. Mid-level: XInput2 (for X11), XI_Motion, XI_ButtonPress
-    https://www.x.org/releases/current/doc/inputproto/XI2proto.txt
-    https://www.freedesktop.org/wiki/Software/libevdev/
- 3. Mid-level: Wayland tablet protocol, tablet-v2 protocol,
-    zwp_tablet_tool_v2_listener, zwp_tablet_v2, zwp_tablet_seat_v2
-    https://wayland.app/protocols/tablet-v2
-
- SDL3:
-    https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_pen.h
-    https://wiki.libsdl.org/SDL3/CategoryPen
- */
-
-
-#endif // !Fl_core_pen_events_H
+#endif // !FL_CORE_PEN_DRIVER_H

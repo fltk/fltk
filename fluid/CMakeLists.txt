@@ -61,6 +61,7 @@ macro(make_target TARGET GUI SOURCES LIBS EXPORT_NAME EXPORT)
     add_executable(${TARGET} WIN32 MACOSX_BUNDLE ${SOURCES} ${ICON_PATH})
   else()
     add_executable(${TARGET} ${SOURCES})
+    target_compile_definitions(${TARGET} PUBLIC FLUID_CMD)
   endif(${GUI})
 
   if(${EXPORT})
@@ -111,6 +112,7 @@ set(MAIN_FILES main.cxx main.h fluid.rc)
 set(CPPFILES
   Fluid.cxx
   Project.cxx
+  message.cxx
   fluid_icon.cxx
   app/args.cxx
   app/Snap_Action.cxx
@@ -119,6 +121,7 @@ set(CPPFILES
   app/shell_command.cxx
   app/templates.cxx
   io/Code_Writer.cxx
+  io/file_chooser.cxx
   io/Project_Writer.cxx
   io/Project_Reader.cxx
   io/String_Writer.cxx
@@ -127,11 +130,13 @@ set(CPPFILES
   nodes/Function_Node.cxx
   nodes/Grid_Node.cxx
   nodes/Group_Node.cxx
+  nodes/iterators.cxx
   nodes/Menu_Node.cxx
   nodes/Node.cxx
   nodes/Widget_Image.cxx
   nodes/Widget_Node.cxx
   nodes/Window_Node.cxx
+  nodes/attributes.cxx
   nodes/callbacks.cxx
   nodes/factory.cxx
   panels/about_panel.cxx
@@ -140,6 +145,7 @@ set(CPPFILES
   panels/settings_panel.cxx
   panels/template_panel.cxx
   panels/widget_panel.cxx
+  panels/widget_panel_callbacks.cxx
   panels/widget_panel/Grid_Tab.cxx
   panels/widget_panel/Grid_Child_Tab.cxx
   proj/align_widget.cxx
@@ -167,6 +173,7 @@ set(CPPFILES
 set(HEADERFILES
   Fluid.h
   Project.h
+  message.h
   fluid_icon.h
   app/args.h
   app/Snap_Action.h
@@ -175,6 +182,7 @@ set(HEADERFILES
   app/shell_command.h
   app/templates.h
   io/Code_Writer.h
+  io/file_chooser.h
   io/Project_Writer.h
   io/Project_Reader.h
   io/String_Writer.h
@@ -183,11 +191,13 @@ set(HEADERFILES
   nodes/Function_Node.h
   nodes/Grid_Node.h
   nodes/Group_Node.h
+  nodes/iterators.h
   nodes/Menu_Node.h
   nodes/Node.h
   nodes/Widget_Image.h
   nodes/Widget_Node.h
   nodes/Window_Node.h
+  nodes/attributes.h
   nodes/callbacks.h
   nodes/factory.h
   panels/about_panel.h

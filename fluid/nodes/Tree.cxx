@@ -18,70 +18,68 @@
 #include "nodes/Tree.h"
 
 #include "Project.h"
+#include "nodes/Node.h"
+#include "nodes/Widget_Node.h"
+#include "widgets/Node_Browser.h"
 
-using namespace fld;
-using namespace fld::node;
-
-
-Tree::Iterator::Iterator(Node *t, bool only_selected)
-: type_(t)
-, only_selected_(only_selected)
-{
-  if (t) {
-    if (only_selected_) {
-      if (!type_->selected) {
-        operator++();
-      }
-    }
-  }
-}
-
-Tree::Iterator &Tree::Iterator::operator++() {
-  if (only_selected_) {
-    do {
-      type_ = type_->next;
-    } while (type_ && !type_->selected);
-  } else {
-    type_ = type_->next;
-  }
-  return *this;
-}
-
-Tree::WIterator::WIterator(Node *t, bool only_selected)
-: type_(t)
-, only_selected_(only_selected)
-{
-  if (t) {
-    if (only_selected_) {
-      if (!type_->selected || !type_->is_widget()) {
-        operator++();
-      }
-    } else {
-      if (!type_->is_widget()) {
-        operator++();
-      }
-    }
-  }
-}
-
-Tree::WIterator& Tree::WIterator::operator++() {
-  if (only_selected_) {
-    do {
-      type_ = type_->next;
-    } while (type_ && (!type_->selected || !type_->is_widget()));
-  } else {
-    do {
-      type_ = type_->next;
-    } while (type_ && !type_->is_widget());
-  }
-  return *this;
-}
+using namespace fluid;
+using namespace fluid::node;
 
 
 Tree::Tree(Project &proj)
 : proj_(proj)
 { (void)proj_; }
 
+
+/**
+ Delete all nodes in the tree.
+ Refreshes the widget browser and resets the selection.
+ */
+void Tree::delete_all_nodes() {
+  if (widget_browser) {
+    widget_browser->new_list();
+  }
+  for (Node *f = first; f;) {
+    f->delete_children();
+    Node *g = f->next;
+    delete f;
+    f = g;
+  }
+  if (widget_browser) {
+    widget_browser->hposition(0);
+    widget_browser->vposition(0);
+  }
+  selection_changed(nullptr);
+  if (widget_browser) {
+    widget_browser->rebuild();
+  }
+}
+
+/**
+  Delete all selected nodes in the tree.
+  Refreshes the widget browser and resets the selection.
+ */
+void Tree::delete_selected_nodes() {
+  if (widget_browser) {
+    widget_browser->save_scroll_position();
+    widget_browser->new_list();
+  }
+  for (Node *f = first; f;) {
+    if (f->selected) {
+      f->delete_children();
+      Node *g = f->next;
+      delete f;
+      f = g;
+    } else {
+      f = f->next;
+    }
+  }
+  selection_changed(nullptr);
+  if (widget_browser) {
+    widget_browser->restore_scroll_position();
+    widget_browser->rebuild();
+  }
+}
 
 /** Find a node by its unique id.
 
@@ -109,18 +107,18 @@ Node *Tree::find_in_text(int text_type, int crsr) {
   for (auto node: all_nodes()) {
     switch (text_type) {
       case 0:
-        if (crsr >= node->code1_start && crsr < node->code1_end) return node;
-        if (crsr >= node->code2_start && crsr < node->code2_end) return node;
-        if (crsr >= node->code_static_start && crsr < node->code_static_end) return node;
+        if (crsr >= node->setup_node.c.start && crsr < node->setup_node.c.end) return node;
+        if (crsr >= node->finalize_node.c.start && crsr < node->finalize_node.c.end) return node;
+        if (crsr >= node->static_data.c.start && crsr < node->static_data.c.end) return node;
         break;
       case 1:
-        if (crsr >= node->header1_start && crsr < node->header1_end) return node;
-        if (crsr >= node->header2_start && crsr < node->header2_end) return node;
-        if (crsr >= node->header_static_start && crsr < node->header_static_end) return node;
+        if (crsr >= node->setup_node.h.start && crsr < node->setup_node.h.end) return node;
+        if (crsr >= node->finalize_node.h.start && crsr < node->finalize_node.h.end) return node;
+        if (crsr >= node->static_data.h.start && crsr < node->static_data.h.end) return node;
         break;
       case 2:
-        if (crsr >= node->proj1_start && crsr < node->proj1_end) return node;
-        if (crsr >= node->proj2_start && crsr < node->proj2_end) return node;
+        if (crsr >= node->proj1.start && crsr < node->proj1.end) return node;
+        if (crsr >= node->proj2.start && crsr < node->proj2.end) return node;
         break;
     }
   }

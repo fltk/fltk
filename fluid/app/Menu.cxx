@@ -35,7 +35,7 @@ extern void layout_suite_marker(Fl_Widget *, void *user_data);
 extern void select_layout_preset_cb(Fl_Widget *, void *user_data);
 extern Fl_Menu_Item main_layout_submenu_[];
 
-using namespace fld;
+using namespace fluid;
 
 
 void write_cb(Fl_Widget *, void *) {
@@ -52,7 +52,7 @@ void about_cb(Fl_Widget *, void *) { Fluid.about(); }
 void help_cb(Fl_Widget *, void *) {
   Fluid.show_help("fluid.html");
 }
-static void save_template_cb(Fl_Widget *, void *) { fld::app::save_template(); }
+static void save_template_cb(Fl_Widget *, void *) { fluid::app::save_template(); }
 void mergeback_cb(Fl_Widget *, void *);
 
 void manual_cb(Fl_Widget *, void *) {
@@ -116,8 +116,8 @@ Fl_Menu_Item Application::main_menu[] = {
   {"&Quit", FL_COMMAND+'q', exit_cb},
   {nullptr},
   {"&Edit",0,nullptr,nullptr,FL_SUBMENU},
-  {"&Undo", FL_COMMAND+'z', fld::proj::Undo::undo_cb},
-  {"&Redo", FL_COMMAND+FL_SHIFT+'z', fld::proj::Undo::redo_cb, nullptr, FL_MENU_DIVIDER},
+  {"&Undo", FL_COMMAND+'z', fluid::proj::Undo::undo_cb},
+  {"&Redo", FL_COMMAND+FL_SHIFT+'z', fluid::proj::Undo::redo_cb, nullptr, FL_MENU_DIVIDER},
   {"C&ut", FL_COMMAND+'x', cut_cb},
   {"&Copy", FL_COMMAND+'c', copy_cb},
   {"&Paste", FL_COMMAND+'v', paste_cb},

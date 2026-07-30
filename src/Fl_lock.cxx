@@ -72,7 +72,6 @@ void **Fl_System_Driver::awake_data_ = nullptr;
 int Fl_System_Driver::awake_ring_size_ = 0;
 int Fl_System_Driver::awake_ring_head_ = 0;
 int Fl_System_Driver::awake_ring_tail_ = 0;
-bool Fl_System_Driverawake_pending_ = false;
 
 #endif
 
