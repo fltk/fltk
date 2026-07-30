@@ -1372,7 +1372,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
 //printf("window=%p menutitle=%p bartitle=%d leftorigin=%p y=%d\n", pWindow, Fl_Window_Driver::menu_title(pWindow), Fl_Window_Driver::menu_bartitle(pWindow), Fl_Window_Driver::menu_leftorigin(pWindow), pWindow->y());
   struct xdg_positioner *positioner = xdg_wm_base_create_positioner(scr_driver->xdg_wm_base);
   //xdg_positioner_get_version(positioner) <== gives 1 under Debian and Sway
-  int popup_x, popup_y;
+  int popup_x, popup_y, offset_y = 0;
   if (Fl_Window_Driver::current_menu_button && !Fl_Window_Driver::menu_leftorigin(pWindow)) {
     int X, Y;
     Fl_Window_Driver::current_menu_button->top_window_offset(X, Y);
@@ -1403,14 +1403,19 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
       // prevent first popup from going above the permissible source window
       popup_y = fl_max(popup_y, - pWindow->h() * f);
     }
-    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active())
-      libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, popup_y,
-                                          &popup_x, &popup_y);
-    xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
-    popup_y++;
+    if (parent_xid->kind == Fl_Wayland_Window_Driver::DECORATED && !origin_win->fullscreen_active()) {
+      libdecor_frame_translate_coordinate(parent_xid->frame, popup_x, 0,
+                                          &popup_x, &offset_y);
+      popup_y += offset_y;
+    }
+    if (!pWindow->tooltip_window()) {
+      xdg_positioner_set_anchor_rect(positioner, popup_x, 0, 1, 1);
+      popup_y++;
+    }
   }
   int positioner_H = pWindow->h();
-  if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN) {
+  if (!pWindow->tooltip_window() &&
+      Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::KWIN) {
     // Under KWIN, limiting the height of the positioner to the work area height
     // results in tall popup windows starting at the top of the screen, what we want.
     // Unfortunately, we know the work area height exactly only for single-screen systems,
@@ -1430,7 +1435,7 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
   int top_menubar = pWindow->y() -
     (Fl_Window_Driver::menu_bartitle(pWindow) && Fl_Window_Driver::menu_title(pWindow) ?
                                     Fl_Window_Driver::menu_title(pWindow)->h() : 0);
-  if ( !(parent_win->fullscreen_active() &&
+  if (!pWindow->tooltip_window() && !(parent_win->fullscreen_active() &&
         Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::MUTTER &&
         ((!Fl_Window_Driver::menu_title(pWindow) && !Fl_Window_Driver::menu_leftorigin(pWindow)) ||
           Fl_Window_Driver::menu_bartitle(pWindow)) && top_menubar < 10 &&
@@ -1444,8 +1449,17 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     }
     xdg_positioner_set_constraint_adjustment(positioner, constraint);
   }
-  if (pWindow->tooltip_window()) {
-    xdg_positioner_set_anchor_rect(positioner, popup_x, Fl::event_y() * f, 1, 1);
+  if (pWindow->tooltip_window()) { // process tooltips and transient scale factor windows
+    int delta = 1;
+    // Exclude transient scale factor windows
+    if (pWindow->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+      // Prevent top of popup window from laying below bottom of parent window
+      popup_y = fl_min(popup_y, parent_win->h() * f + offset_y);
+      // Compute offset between mouse and top of popup window to prevent
+      // flipped popup window from landing there
+      delta = fl_max(1, popup_y - Fl::event_y() * f);
+    }
+    xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y - delta, 1, delta);
     xdg_positioner_set_constraint_adjustment(positioner,
       XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
       XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y);
