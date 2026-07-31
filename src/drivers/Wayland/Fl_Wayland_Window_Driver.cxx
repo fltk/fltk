@@ -1428,7 +1428,8 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
     if (positioner_H > work_area_H) positioner_H = work_area_H;
   }
   xdg_positioner_set_size(positioner, pWindow->w() * f , positioner_H * f );
-  xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
+  if (!pWindow->tooltip_window())
+    xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_LEFT);
   xdg_positioner_set_gravity(positioner, XDG_POSITIONER_GRAVITY_BOTTOM_RIGHT);
   // prevent menuwindow from expanding beyond display limits
   int constraint = 0;
@@ -1456,13 +1457,18 @@ bool Fl_Wayland_Window_Driver::process_menu_or_tooltip(struct wld_window *new_wi
       // Prevent top of popup window from laying below bottom of parent window
       popup_y = fl_min(popup_y, parent_win->h() * f + offset_y);
       // Compute offset between mouse and top of popup window to prevent
-      // flipped popup window from landing there
+      // vertically flipped popup window from landing there
       delta = fl_max(1, popup_y - Fl::event_y() * f);
+      // Prevent bottom of vert. flipped popup from laying above top of parent window
+      if (popup_y - delta < offset_y) delta = 1;
     }
-    xdg_positioner_set_anchor_rect(positioner, popup_x, popup_y - delta, 1, delta);
+    xdg_positioner_set_anchor(positioner, XDG_POSITIONER_ANCHOR_BOTTOM_RIGHT);
+    xdg_positioner_set_anchor_rect(positioner,
+                                   popup_x - 1, popup_y - delta, 1, delta);
     xdg_positioner_set_constraint_adjustment(positioner,
       XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X |
-      XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y);
+      XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y |
+      XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X);
   } else if (!(Fl_Window_Driver::menu_title(pWindow) && Fl_Window_Driver::menu_bartitle(pWindow))) {
     xdg_positioner_set_offset(positioner, 0, popup_y);
   }
