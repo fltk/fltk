@@ -316,6 +316,7 @@ void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int
     Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
     Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
     Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w2, h2);
+    img2->normalize(); // necessary when img is an Fl_SVG_Image
     Fl_Image::RGB_scaling(keep);
     cache(img2);
     draw_fixed(img2, XP, YP, WP, HP, cx, cy);
