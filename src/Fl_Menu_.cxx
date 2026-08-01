@@ -24,7 +24,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_.H>
 #include "flstring.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define SAFE_STRCAT(s) { len += (int) strlen(s); if ( len >= namelen ) { *name='\0'; return(-2); } else strcat(name,(s)); }

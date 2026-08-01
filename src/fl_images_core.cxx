@@ -35,9 +35,6 @@
 #include <FL/Fl_ICO_Image.H>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "flstring.h"
 #if defined(HAVE_LIBZ)
 #include <zlib.h>
 #endif

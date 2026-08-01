@@ -31,7 +31,6 @@
 #include <FL/filename.H>                // fl_open_uri()
 #include <FL/fl_string_functions.h>     // fl_strdup()
 #include <FL/fl_draw.H>
-#include <FL/filename.H>
 #include "flstring.h"
 
 //
@@ -41,7 +40,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <ctype.h>
 #include <errno.h>
 #include <math.h>
 #include <map>

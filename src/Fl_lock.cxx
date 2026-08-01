@@ -14,7 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
 

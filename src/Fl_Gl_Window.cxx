@@ -29,7 +29,6 @@ extern int fl_gl_load_plugin;
 #include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H"
 
-#include <stdlib.h>
 #  if (HAVE_DLSYM && HAVE_DLFCN_H)
 #    include <dlfcn.h>
 #  endif // (HAVE_DLSYM && HAVE_DLFCN_H)

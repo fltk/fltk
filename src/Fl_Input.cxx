@@ -20,8 +20,6 @@
 // In theory you can replace this code with another subclass to change
 // the keybindings.
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/Fl_Window.H>

@@ -25,8 +25,6 @@
 #include <FL/Fl_Rect.H>
 #include <FL/fl_draw.H>
 
-#include <stdlib.h> // malloc etc.
-
 Fl_Group* Fl_Group::current_;
 
 /**

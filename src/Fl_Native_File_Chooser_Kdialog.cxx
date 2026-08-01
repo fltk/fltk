@@ -20,7 +20,6 @@
  \{
  */
 
-#include <config.h>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "Fl_Native_File_Chooser_Kdialog.H"
 #include "Fl_Window_Driver.H"

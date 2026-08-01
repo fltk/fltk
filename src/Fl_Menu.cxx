@@ -26,7 +26,6 @@
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
-#include <stdio.h>
 #include "flstring.h"
 
 // This file will declare:

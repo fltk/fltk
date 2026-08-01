@@ -29,8 +29,6 @@
 #include <dlfcn.h>   // for dlopen et al
 #include "drivers/Posix/Fl_Posix_System_Driver.H"
 #include "drivers/Unix/Fl_Unix_Screen_Driver.H"
-#include "Fl_Window_Driver.H"
-#include "Fl_Screen_Driver.H"
 
 /* --------------------- Type definitions from GLIB and GTK --------------------- */
 /* all of this is from the public gnome API, so unlikely to change */

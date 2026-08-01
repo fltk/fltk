@@ -17,11 +17,8 @@
 #include <config.h>
 #if HAVE_GL
 
-#include <FL/Fl.H>
-#include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Window_Driver.H"
-#include <stdlib.h>
 
 /**
  Returns true if the hardware overlay is possible.  If this is false,
