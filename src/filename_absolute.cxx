@@ -24,7 +24,6 @@
 #include <FL/Fl.H>
 #include <FL/fl_string_functions.h>
 #include "Fl_System_Driver.H"
-#include <stdlib.h>
 #include "flstring.h"
 
 static inline int isdirsep(int c) {return c == '/';}
