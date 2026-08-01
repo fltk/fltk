@@ -14,7 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
 #if !defined(FL_DOXYGEN)
 
 // Return the current state of a key.  This is the X version.  I identify

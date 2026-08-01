@@ -14,13 +14,9 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
-#include <FL/Enumerations.H>
-#include <stdlib.h>
-#include "flstring.h"
 
 /**
  \cond DriverDev

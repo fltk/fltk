@@ -14,7 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Device.H>

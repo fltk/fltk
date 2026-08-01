@@ -17,7 +17,6 @@
  Fl_Double_Window implementation.
  */
 
-#include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>

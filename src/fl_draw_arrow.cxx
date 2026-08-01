@@ -21,7 +21,6 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_utf8.h>
 #include "fl_oxy.h"
 
 // Debug mode: if you design a widget or want to check its layout,
