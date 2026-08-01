@@ -76,6 +76,18 @@ set(export_targets
     ${FLUID_EXPORT}
     ${FLTK_OPTIONS_EXPORT}
 )
+
+# If we built the bundled zlib-ng subproject, append its internal
+# targets so export() includes them. This prevents errors when
+# exported FLTK targets (e.g. fltk_png) link to zlib-ng or
+# zlib-ng-static which otherwise would not be part of the export set.
+if(TARGET zlib-ng)
+  list(APPEND export_targets zlib-ng)
+endif()
+if(TARGET zlib-ng-static)
+  list(APPEND export_targets zlib-ng-static)
+endif()
+
 export(TARGETS
           ${export_targets}
        FILE

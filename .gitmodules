@@ -1,0 +1,4 @@
+[submodule "zlib-ng"]
+    path = zlib-ng
+    url = https://github.com/zlib-ng/zlib-ng.git
+    branch = stable

@@ -911,7 +911,7 @@ libraries and their aliases in the FLTK build tree.
     fltk_images    fltk::images   fltk::images-shared     [2]
     fltk_jpeg      fltk::jpeg     fltk::jpeg-shared       [3]
     fltk_png       fltk::png      fltk::png-shared        [3]
-    fltk_z         fltk::z        fltk::z-shared          [3]
+    fltk_z         fltk::zlib-ng  fltk::zlib-ng-shared    [3]
 
   [1] The basic FLTK library. Use this if you don't need any of the other
       libraries for your application.

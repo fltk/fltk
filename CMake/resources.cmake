@@ -225,7 +225,7 @@ find_library(LIB_GL GL)
 find_library(LIB_MesaGL MesaGL)
 find_library(LIB_jpeg jpeg)
 find_library(LIB_png png)
-find_library(LIB_zlib z)
+find_library(LIB_zlib zlib-ng)
 find_library(LIB_m m)
 
 mark_as_advanced(LIB_dl LIB_fontconfig LIB_freetype)

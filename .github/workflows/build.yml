@@ -29,6 +29,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     - name: install prerequisites
       run: |
@@ -87,6 +89,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     - name: Install prerequisites
       run: |
@@ -141,6 +145,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     - name: Install prerequisites
       run: |
@@ -191,6 +197,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     # note: `brew install ninja` is not necessary because it's already installed
     # on current macOS CI images. Therefore the following lines are commented out.
@@ -238,6 +246,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
@@ -265,6 +275,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build

@@ -178,12 +178,31 @@ endif()
 
 if(FLTK_USE_BUNDLED_ZLIB)
 
-  add_subdirectory(zlib)
+  add_subdirectory(zlib-ng)
 
-  set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+  set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-ng)
 
   # FIXME - include_directories()
   include_directories(${ZLIB_INCLUDE_DIR})
+
+  # Create FLTK-style alias targets for the bundled zlib-ng so other
+  # FLTK CMake files can link to "fltk::zlib-ng" and
+  # "fltk::zlib-ng-shared" regardless of how zlib-ng's own CMake names
+  # its targets (zlib-ng, zlib-ng-static, etc.). This matches the
+  # aliasing convention documented in README.CMake.txt (see section 3.2).
+  if(TARGET zlib-ng-static)
+    add_library(fltk::zlib-ng ALIAS zlib-ng-static)
+  elseif(TARGET zlib-ng)
+    add_library(fltk::zlib-ng ALIAS zlib-ng)
+  endif()
+
+  if(TARGET zlib-ng)
+    add_library(fltk::zlib-ng-shared ALIAS zlib-ng)
+  elseif(TARGET zlib-ng-static)
+    # If only a static target exists, provide the shared alias as an
+    # alias to the static target so consumers still find a target.
+    add_library(fltk::zlib-ng-shared ALIAS zlib-ng-static)
+  endif()
 
 endif()
 

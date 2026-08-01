@@ -77,8 +77,8 @@ if test -f "$libdir/libfltk_jpeg.a" -a -d $includedir/jpeg; then
 fi
 
 if test -f "$libdir/libfltk_z.a" -a -d $includedir/zlib; then
-    CFLAGS="-I$includedir/zlib $CFLAGS"
-    CXXFLAGS="-I$includedir/zlib $CXXFLAGS"
+    CFLAGS="-I$includedir/zlib-ng $CFLAGS"
+    CXXFLAGS="-I$includedir/zlib-ng $CXXFLAGS"
 fi
 
 if test -f "$libdir/libfltk_png.a" -a -d $includedir/png; then

@@ -98,7 +98,7 @@ set(include_dirs
 fl_add_library(fltk_png STATIC "${PNG_SRCS}")
 set(target     fltk_png)
 
-target_link_libraries     (${target} PUBLIC fltk::z)
+target_link_libraries     (${target} PUBLIC fltk::zlib-ng)
 target_compile_definitions(${target} PUBLIC ${compile_defs})
 target_include_directories(${target} PUBLIC ${include_dirs})
 
@@ -120,7 +120,7 @@ if(FLTK_BUILD_SHARED_LIBS)
   fl_add_library(fltk_png SHARED "${PNG_SRCS}")
   set(target     fltk_png-shared)
 
-  target_link_libraries     (${target} PUBLIC fltk::z-shared)
+  target_link_libraries     (${target} PUBLIC fltk::zlib-ng-shared)
   target_compile_definitions(${target} PUBLIC ${compile_defs})
   target_include_directories(${target} PUBLIC ${include_dirs})
 

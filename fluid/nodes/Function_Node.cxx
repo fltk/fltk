@@ -970,7 +970,7 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
           uncompressedDataSize = nData;
           uLong nzData = compressBound(nData);
           Bytef *zdata = (Bytef*)::malloc(nzData);
-          if (compress(zdata, &nzData, (Bytef*)data, nData) != Z_OK) { /* error */ }
+          if (compress2(zdata, &nzData, (Bytef*)data, nData, Z_DEFAULT_COMPRESSION) != Z_OK) { /* error */ }
           ::free(data);
           data = (char*)zdata;
           nData = (int)nzData;

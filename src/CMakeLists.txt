@@ -971,7 +971,7 @@ endif()
 
 if(FLTK_USE_BUNDLED_ZLIB)
   target_include_directories(fltk_images PUBLIC
-    $<BUILD_INTERFACE:${FLTK_SOURCE_DIR}/zlib>
+    $<BUILD_INTERFACE:${FLTK_SOURCE_DIR}/zlib-ng>
     $<INSTALL_INTERFACE:include/FL/images>)
 endif()
 
