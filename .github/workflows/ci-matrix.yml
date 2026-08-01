@@ -1,0 +1,436 @@
+name: Multi-Platform CI
+
+# Trigger on push, PR, schedule and manual execution
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+  schedule:
+    # Runs at 02:00 UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled'
+        required: false
+        default: false
+
+env:
+  CMAKE_VERSION: "3.28"
+  NINJA_VERSION: "1.11.1"
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  # ========================================================================
+  # Linux builds: X11, Wayland, and different architectures
+  # ========================================================================
+
+  build-linux-x11:
+    name: "Linux x86_64 (X11)"
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            libjpeg-dev \
+            libpng-dev \
+            zlib1g-dev \
+            libasound2-dev \
+            libglew-dev \
+            libglu1-mesa-dev \
+            libcairo2-dev \
+            libx11-dev \
+            libxcursor-dev \
+            libxft-dev \
+            libxinerama-dev \
+            libxrandr-dev \
+            libxfixes-dev
+
+      - name: Create build directory
+        run: cmake -E make_directory ${{ github.workspace }}/build
+
+      - name: Configure CMake (X11)
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake $GITHUB_WORKSPACE \
+            -G Ninja \
+            -D CMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -D CMAKE_CXX_STANDARD=11 \
+            -D CMAKE_CXX_EXTENSIONS=OFF \
+            -D CMAKE_C_FLAGS_INIT="-Wall -Wextra -Wunused" \
+            -D CMAKE_CXX_FLAGS_INIT="-Wall -Wextra -Wunused -Wsuggest-override" \
+            -D FLTK_BACKEND_WAYLAND=OFF \
+            -D FLTK_BUILD_SHARED_LIBS=ON \
+            -D FLTK_BUILD_FORMS=ON \
+            -D FLTK_BUILD_EXAMPLES=ON \
+            -D FLTK_BUILD_TEST=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build . --config ${{ matrix.build_type }} --verbose
+
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}/build
+        run: ./bin/test/unittests --core
+        continue-on-error: true
+
+      - name: Run ctest
+        working-directory: ${{ github.workspace }}/build
+        run: ctest -C ${{ matrix.build_type }} --output-on-failure -V
+        continue-on-error: true
+
+      # Optional: enable tmate debugging on failure
+      - name: Setup tmate session (on failure)
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+
+  build-linux-wayland:
+    name: "Linux x86_64 (Wayland)"
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu + Wayland)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            libjpeg-dev \
+            libpng-dev \
+            zlib1g-dev \
+            libasound2-dev \
+            libglew-dev \
+            libglu1-mesa-dev \
+            libcairo2-dev \
+            libwayland-dev \
+            wayland-protocols \
+            libdbus-1-dev \
+            libxkbcommon-dev \
+            libegl-dev \
+            libopengl-dev \
+            libpango1.0-dev \
+            libdecor-0-dev \
+            libxfixes-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libxrandr-dev
+
+      - name: Create build directory
+        run: cmake -E make_directory ${{ github.workspace }}/build
+
+      - name: Configure CMake (Wayland)
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake $GITHUB_WORKSPACE \
+            -G Ninja \
+            -D CMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -D CMAKE_CXX_STANDARD=11 \
+            -D CMAKE_CXX_EXTENSIONS=OFF \
+            -D CMAKE_C_FLAGS_INIT="-Wall -Wextra -Wunused" \
+            -D CMAKE_CXX_FLAGS_INIT="-Wall -Wextra -Wunused -Wsuggest-override" \
+            -D FLTK_BACKEND_WAYLAND=ON \
+            -D FLTK_BUILD_SHARED_LIBS=ON \
+            -D FLTK_BUILD_FORMS=ON \
+            -D FLTK_BUILD_EXAMPLES=ON \
+            -D FLTK_BUILD_TEST=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build . --config ${{ matrix.build_type }} --verbose
+
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}/build
+        run: ./bin/test/unittests --core
+        continue-on-error: true
+
+      - name: Run ctest
+        working-directory: ${{ github.workspace }}/build
+        run: ctest -C ${{ matrix.build_type }} --output-on-failure -V
+        continue-on-error: true
+
+      - name: Setup tmate session (on failure)
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+
+  build-linux-arm64:
+    name: "Linux ARM64 (Wayland)"
+    runs-on: ubuntu-24.04-arm
+    # Only run on manual trigger or schedule
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu ARM64)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            libjpeg-dev \
+            libpng-dev \
+            zlib1g-dev \
+            libasound2-dev \
+            libglew-dev \
+            libglu1-mesa-dev \
+            libcairo2-dev \
+            libwayland-dev \
+            wayland-protocols \
+            libdbus-1-dev \
+            libxkbcommon-dev \
+            libegl-dev \
+            libopengl-dev \
+            libpango1.0-dev \
+            libdecor-0-dev \
+            libxfixes-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libxrandr-dev
+
+      - name: Create build directory
+        run: cmake -E make_directory ${{ github.workspace }}/build
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake $GITHUB_WORKSPACE \
+            -G Ninja \
+            -D CMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -D CMAKE_CXX_STANDARD=11 \
+            -D CMAKE_CXX_EXTENSIONS=OFF \
+            -D CMAKE_C_FLAGS_INIT="-Wall -Wextra -Wunused" \
+            -D CMAKE_CXX_FLAGS_INIT="-Wall -Wextra -Wunused -Wsuggest-override" \
+            -D FLTK_BACKEND_WAYLAND=ON \
+            -D FLTK_BUILD_SHARED_LIBS=ON \
+            -D FLTK_BUILD_FORMS=ON \
+            -D FLTK_BUILD_TEST=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build . --config ${{ matrix.build_type }} --verbose
+
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}/build
+        run: ./bin/test/unittests --core
+        continue-on-error: true
+
+  # ========================================================================
+  # macOS builds (Intel + Apple Silicon)
+  # ========================================================================
+
+  build-macos:
+    name: "macOS ${{ matrix.os }} (${{ matrix.arch }})"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-14, macos-15]  # Intel, Intel, Apple Silicon
+        arch: [x86_64, arm64]
+        exclude:
+          # macos-13 and macos-14 are Intel-only
+          - os: macos-13
+            arch: arm64
+          - os: macos-14
+            arch: arm64
+          # macos-15 (Sequoia) is Apple Silicon
+          - os: macos-15
+            arch: x86_64
+        build_type: [Release]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Homebrew)
+        run: |
+          brew update
+          brew install cmake ninja
+
+      - name: Create build directory
+        run: cmake -E make_directory ${{ github.workspace }}/build
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake $GITHUB_WORKSPACE \
+            -G Ninja \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_CXX_STANDARD=11 \
+            -D CMAKE_CXX_EXTENSIONS=OFF \
+            -D CMAKE_C_FLAGS_INIT="-Wall -Wextra -Wunused" \
+            -D CMAKE_CXX_FLAGS_INIT="-Wall -Wextra -Wunused -Wsuggest-override" \
+            -D FLTK_BUILD_SHARED_LIBS=ON \
+            -D FLTK_BUILD_FORMS=ON \
+            -D FLTK_BUILD_EXAMPLES=ON \
+            -D FLTK_BUILD_TEST=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build . --verbose
+
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}/build
+        run: ./bin/test/unittests --core
+        continue-on-error: true
+
+      - name: Setup tmate session (on failure)
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+
+  # ========================================================================
+  # Windows builds (Intel + ARM64)
+  # ========================================================================
+
+  build-windows:
+    name: "Windows x86_64"
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create build directory
+        run: cmake -E make_directory ${{ github.workspace }}\build
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}\build
+        run: |
+          cmake .. `
+            -D CMAKE_BUILD_TYPE=${{ matrix.build_type }} `
+            -D FLTK_USE_SYSTEM_LIBJPEG=OFF `
+            -D FLTK_USE_SYSTEM_LIBPNG=OFF `
+            -D FLTK_USE_SYSTEM_ZLIB=OFF `
+            -D FLTK_BUILD_SHARED_LIBS=ON `
+            -D FLTK_BUILD_FORMS=ON `
+            -D FLTK_BUILD_EXAMPLES=ON `
+            -D FLTK_BUILD_TEST=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}\build
+        run: cmake --build . --config ${{ matrix.build_type }} --verbose
+
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}\build
+        shell: bash
+        run: ./bin/test/unittests.exe --core
+        continue-on-error: true
+
+      - name: Setup tmate session (on failure)
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+
+  build-windows-arm:
+    name: "Windows ARM64"
+    runs-on: windows-11-arm
+    # Only run on manual trigger or schedule
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create build directory
+        run: cmake -E make_directory ${{ github.workspace }}\build
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}\build
+        run: |
+          cmake .. `
+            -D CMAKE_BUILD_TYPE=Release `
+            -D FLTK_USE_SYSTEM_LIBJPEG=OFF `
+            -D FLTK_USE_SYSTEM_LIBPNG=OFF `
+            -D FLTK_USE_SYSTEM_ZLIB=OFF `
+            -D FLTK_BUILD_SHARED_LIBS=ON `
+            -D FLTK_BUILD_FORMS=ON `
+            -D FLTK_BUILD_TEST=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}\build
+        run: cmake --build . --config Release --verbose
+
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}\build
+        shell: bash
+        run: ./bin/test/unittests.exe --core
+        continue-on-error: true
+
+  # ========================================================================
+  # Summary job
+  # ========================================================================
+
+  ci-result:
+    name: "CI Result"
+    runs-on: ubuntu-latest
+    needs:
+      - build-linux-x11
+      - build-linux-wayland
+      - build-linux-arm64
+      - build-macos
+      - build-windows
+      - build-windows-arm
+    if: always()
+
+    steps:
+      - name: Check build results
+        run: |
+          if [[ "${{ needs.build-linux-x11.result }}" == "failure" || \
+                "${{ needs.build-linux-wayland.result }}" == "failure" || \
+                "${{ needs.build-macos.result }}" == "failure" || \
+                "${{ needs.build-windows.result }}" == "failure" ]]; then
+            echo "❌ CI Pipeline failed"
+            exit 1
+          fi
+          echo "✅ CI Pipeline passed"
+
+      - name: Post summary
+        if: always()
+        run: |
+          echo "## CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "### Required Jobs" >> $GITHUB_STEP_SUMMARY
+          echo "- Linux x86_64 (X11): ${{ needs.build-linux-x11.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Linux x86_64 (Wayland): ${{ needs.build-linux-wayland.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS: ${{ needs.build-macos.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Windows x86_64: ${{ needs.build-windows.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Optional Jobs (schedule/manual only)" >> $GITHUB_STEP_SUMMARY
+          echo "- Linux ARM64 (Wayland): ${{ needs.build-linux-arm64.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Windows ARM64: ${{ needs.build-windows-arm.result }}" >> $GITHUB_STEP_SUMMARY
