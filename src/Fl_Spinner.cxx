@@ -18,7 +18,6 @@
    Fl_Spinner widget . */
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Rect.H>

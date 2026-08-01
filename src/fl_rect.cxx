@@ -24,7 +24,6 @@
 // Also all fl_*_clip routines, since they are always linked in so
 // that minimal update works.
 
-#include <FL/platform.H>
 #include <FL/Fl_Graphics_Driver.H>
 
 // -----------------------------------------------------------------------------

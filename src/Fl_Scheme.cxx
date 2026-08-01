@@ -27,7 +27,6 @@
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
 #include <FL/Fl_Scheme.H>
 #include <FL/fl_string_functions.h> // fl_strdup
 

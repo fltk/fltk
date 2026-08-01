@@ -35,7 +35,6 @@
 #  include <windows.h>
 #  include <commdlg.h>          // OPENFILENAMEW, GetOpenFileName()
 #  include <shlobj.h>           // BROWSEINFOW, SHBrowseForFolder()
-#  include <FL/filename.H>      // FL_EXPORT
 #include <FL/platform.H>        // fl_open_display
 
 

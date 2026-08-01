@@ -22,12 +22,10 @@
 // Include necessary headers...
 //
 
-#include <config.h>
 #include <FL/filename.H>
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
 #include <stdio.h>
-#include <stdlib.h>
 #include "flstring.h"
 
 /** \addtogroup filenames

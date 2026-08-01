@@ -26,7 +26,6 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/math.h>
-#include "flstring.h"
 
 #include <string>
 #include <unordered_map>

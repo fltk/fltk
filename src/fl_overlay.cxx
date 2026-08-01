@@ -19,15 +19,12 @@
 // to erase the overlay before drawing anything that might intersect
 // it.
 
-#include <FL/fl_config.h>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 
 static int px,py,pw,ph;
 
-#include <stdlib.h>
 #include "Fl_Screen_Driver.H"
-#include <FL/Fl_RGB_Image.H>
 static Fl_RGB_Image *s_bgN = 0, *s_bgS = 0, *s_bgE = 0, *s_bgW = 0;
 
 static int bgx, bgy, bgw, bgh;

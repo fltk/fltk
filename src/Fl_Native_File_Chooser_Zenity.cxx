@@ -20,7 +20,6 @@
  \{
  */
 
-#include <config.h>
 #include "Fl_Native_File_Chooser_Zenity.H"
 #include <stdio.h>
 #include <stdlib.h>

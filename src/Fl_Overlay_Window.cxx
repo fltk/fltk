@@ -19,7 +19,6 @@
 // on top of that.  Uses the hardware to draw the overlay if
 // possible, otherwise it just draws in the front buffer.
 
-#include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
 #include "Fl_Window_Driver.H"
 

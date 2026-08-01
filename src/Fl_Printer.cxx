@@ -16,7 +16,6 @@
 //
 
 #include <FL/Fl_Printer.H>
-#include <config.h>
 
 #if defined(FL_NO_PRINT_SUPPORT)
 #include <FL/Fl_PostScript.H>

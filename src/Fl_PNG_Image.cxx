@@ -34,7 +34,6 @@
 #include <FL/fl_utf8.h>
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
 extern "C"
