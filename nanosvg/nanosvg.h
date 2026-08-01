@@ -646,7 +646,7 @@ static NSVGparser* nsvg__createParser(void)
 
 error:
 	if (p) {
-		if (p->image) free(p->image);
+		free(p->image);
 		free(p);
 	}
 	return NULL;
@@ -656,8 +656,7 @@ static void nsvg__deletePaths(NSVGpath* path)
 {
 	while (path) {
 		NSVGpath *next = path->next;
-		if (path->pts != NULL)
-			free(path->pts);
+		free(path->pts);
 		free(path);
 		path = next;
 	}
@@ -1023,7 +1022,7 @@ static void nsvg__addShape(NSVGparser* p)
 	return;
 
 error:
-	if (shape) free(shape);
+	free(shape);
 }
 
 static void nsvg__addPath(NSVGparser* p, char closed)
@@ -1081,7 +1080,7 @@ static void nsvg__addPath(NSVGparser* p, char closed)
 
 error:
 	if (path != NULL) {
-		if (path->pts != NULL) free(path->pts);
+		free(path->pts);
 		free(path);
 	}
 }
@@ -3050,8 +3049,8 @@ NSVGimage* nsvgParseFromFile(const char* filename, const char* units, float dpi)
 
 error:
 	if (fp) fclose(fp);
-	if (data) free(data);
-	if (image) nsvgDelete(image);
+	free(data);
+	nsvgDelete(image);
 	return NULL;
 }
 

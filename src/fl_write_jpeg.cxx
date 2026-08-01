@@ -185,8 +185,7 @@ int fl_write_jpeg(const char *filename, const char *pixels, int w, int h, int d,
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
 
-  if (row_buf)
-    free(row_buf);
+  free(row_buf);
 
   fclose(fp);
   return 0;

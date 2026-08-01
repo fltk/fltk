@@ -493,7 +493,7 @@ static char *extract_dir_from_path(const char *path)
     return (char*)path;
   }
   if (*path != '/') return NULL;
-  if (dir) free(dir);
+  free(dir);
   dir = fl_strdup(path);
   do {
     char *p = strrchr(dir, '/');

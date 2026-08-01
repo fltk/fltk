@@ -139,8 +139,8 @@ static void fghCircleTable(double **sint,double **cost,const int n)
 
     if (!(*sint) || !(*cost))
     {
-      if (*sint) free(*sint);
-      if (*cost) free(*cost);
+      free(*sint);
+      free(*cost);
       return;
     }
 

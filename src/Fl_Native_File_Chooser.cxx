@@ -286,7 +286,7 @@ char *Fl_Native_File_Chooser_Driver::strnew(const char *val) {
 //    Value can be NULL
 //
 char *Fl_Native_File_Chooser_Driver::strfree(char *val) {
-  if ( val ) delete [] val;
+  delete [] val;
   return(NULL);
 }
 

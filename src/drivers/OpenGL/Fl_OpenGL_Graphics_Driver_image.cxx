@@ -96,7 +96,7 @@ static GLuint compute_texture_rectangle(Fl_RGB_Image *rgb)
   // restore saved GL parameters
   glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
   glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-  if (temp_rgb4) delete temp_rgb4;
+  delete temp_rgb4;
   return texName;
 }
 

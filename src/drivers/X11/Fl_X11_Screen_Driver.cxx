@@ -737,7 +737,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       image = XCreateImage(fl_display, fl_visual->visual,
                            fl_visual->depth, ZPixmap, 0, buf, ws, hs, bpp, 0);
       if (!image) {
-        if (buf) free(buf);
+        free(buf);
         return 0;
       }
 

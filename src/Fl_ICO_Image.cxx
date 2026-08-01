@@ -168,7 +168,7 @@ void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr, int id)
     if (loaded < 0) {
       w(0); h(0); d(0);
       ld(loaded);
-      if (png) delete png;
+      delete png;
       return;
     }
 

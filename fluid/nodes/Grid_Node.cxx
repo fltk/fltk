@@ -61,7 +61,7 @@ Fl_Grid_Proxy::~Fl_Grid_Proxy() {
   int i;
   if (transient_) {
     for (i=0; i<num_transient_; i++) {
-      if (transient_[i].cell) ::free(transient_[i].cell);
+      ::free(transient_[i].cell);
     }
     ::free(transient_);
   }

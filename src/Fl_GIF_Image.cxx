@@ -90,8 +90,7 @@ struct ColorMap {
 */
 static int gif_error(Fl_Image_Reader &rdr, int line, uchar *Image) {
   if (rdr.error()) {
-    if (Image)
-      delete[] Image; // delete temporary image array
+    delete[] Image; // delete temporary image array
 
     Fl::error("[%d] Fl_GIF_Image: %s - unexpected EOF or read error at offset %ld",
               line, rdr.name(), rdr.tell());

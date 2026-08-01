@@ -130,8 +130,7 @@ void Fl_Flex::init(int t) {
 }
 
 Fl_Flex::~Fl_Flex() {
-  if (fixed_size_)
-    free(fixed_size_);
+  free(fixed_size_);
 }
 
 /*

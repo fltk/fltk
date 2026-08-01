@@ -257,7 +257,7 @@ void Fl_X11_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
 
 void Fl_X11_Window_Driver::shape(const Fl_Image* img) {
   if (shape_data_) {
-    if (shape_data_->effective_bitmap_) { delete shape_data_->effective_bitmap_; }
+    delete shape_data_->effective_bitmap_;
   }
   else {
     shape_data_ = new shape_data_type;

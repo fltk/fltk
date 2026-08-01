@@ -1043,9 +1043,7 @@ bool Fl_Anim_GIF_Image::load(const char *name, const unsigned char *imgdata /* =
   DEBUG(("\nFl_Anim_GIF_Image::load '%s'\n", name));
   clear_frames();
   if (name_ != name) {
-    if (name_) {
-      ::free(name_);
-    }
+    ::free(name_);
     if (name) {
       name_ = fl_strdup(name);
     } else {

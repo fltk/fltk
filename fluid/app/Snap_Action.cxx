@@ -405,8 +405,7 @@ void Layout_Suite::update_label() {
     case fluid::Tool_Store::FILE: sym.assign("@fd_file  "); break;
   }
   sym.append(name_);
-  if (menu_label)
-    ::free(menu_label);
+  ::free(menu_label);
   menu_label = fl_strdup(sym.c_str());
   Fluid.layout_list.update_menu_labels();
 }
@@ -416,8 +415,7 @@ void Layout_Suite::update_label() {
  Also updates the FLUID user interface.
  */
 void Layout_Suite::name(const char *n) {
-  if (name_)
-    ::free(name_);
+  ::free(name_);
   if (n)
     name_ = fl_strdup(n);
   else
@@ -440,7 +438,7 @@ void Layout_Suite::init() {
  */
 Layout_Suite::~Layout_Suite() {
   if (storage_ == fluid::Tool_Store::INTERNAL) return;
-  if (name_) ::free(name_);
+  ::free(name_);
   for (int i = 0; i < 3; ++i) {
     delete layout[i];
   }

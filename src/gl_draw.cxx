@@ -307,7 +307,7 @@ gl_texture_fifo::gl_texture_fifo(int max)
 gl_texture_fifo::~gl_texture_fifo()
 {
   for (int i = 0; i < size_; i++) {
-    if (fifo[i].utf8) free(fifo[i].utf8);
+    free(fifo[i].utf8);
     if (textures_generated) glDeleteTextures(1, &fifo[i].texName);
   }
   free(fifo);
@@ -415,7 +415,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
 {
   current = (current + 1) % size_;
   if (current > last) last = current;
-  if ( fifo[current].utf8 ) free(fifo[current].utf8);
+  free(fifo[current].utf8);
   fifo[current].utf8 = (char *)malloc(n + 1);
   memcpy(fifo[current].utf8, str, n);
   fifo[current].utf8[n] = 0;
@@ -491,7 +491,7 @@ void gl_texture_reset()
 */
 void gl_texture_pile_height(int max)
 {
-  if (gl_fifo) delete gl_fifo;
+  delete gl_fifo;
   gl_fifo = new gl_texture_fifo(max);
 }
 

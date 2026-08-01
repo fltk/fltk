@@ -220,7 +220,7 @@ Fl_Text_Display::~Fl_Text_Display() {
     mBuffer->remove_modify_callback(buffer_modified_cb, this);
     mBuffer->remove_predelete_callback(buffer_predelete_cb, this);
   }
-  if (mLineStarts) delete[] mLineStarts;
+  delete[] mLineStarts;
   if (linenumber_format_) {
     free((void*)linenumber_format_);
     linenumber_format_ = 0;
@@ -592,7 +592,7 @@ void Fl_Text_Display::recalc_display() {
     if (nvlines < 1) nvlines = 1;
     if (mNVisibleLines != nvlines) {
       mNVisibleLines = nvlines;
-      if (mLineStarts) delete[] mLineStarts;
+      delete[] mLineStarts;
       mLineStarts = new int [mNVisibleLines];
     }
 
@@ -1078,8 +1078,7 @@ void Fl_Text_Display::overstrike(const char* text) {
   mCursorToHint = startPos + textLen;
   buf->replace( startPos, endPos, paddedText == NULL ? text : paddedText );
   mCursorToHint = NO_HINT;
-  if ( paddedText != NULL )
-    delete [] paddedText;
+  delete [] paddedText;
 }
 
 

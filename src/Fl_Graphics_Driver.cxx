@@ -63,7 +63,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
 
 /** Destructor */
 Fl_Graphics_Driver::~Fl_Graphics_Driver() {
-  if (xpoint) free(xpoint);
+  free(xpoint);
 }
 
 

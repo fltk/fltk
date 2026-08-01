@@ -100,7 +100,7 @@ int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to, char
 
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
   Fl_PostScript_Graphics_Driver *ps = driver();
-  if (ps) delete ps;
+  delete ps;
 }
 
 void Fl_PostScript_File_Device::set_current() {
@@ -163,7 +163,7 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
 
 /** \brief The destructor. */
 Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
-  if(ps_filename_) free(ps_filename_);
+  free(ps_filename_);
 }
 
 
@@ -1594,7 +1594,7 @@ class Fl_PDF_Pango_File_Surface : public Fl_PostScript_File_Device
 public:
   char *doc_fname;
   Fl_PDF_Pango_File_Surface();
-  ~Fl_PDF_Pango_File_Surface() { if (doc_fname) free(doc_fname); }
+  ~Fl_PDF_Pango_File_Surface() { free(doc_fname); }
   int begin_job(const char *defaultname,
                 char **perr_message = NULL);
   int begin_job(int, int*, int *, char **) FL_OVERRIDE {return 1;} // don't use

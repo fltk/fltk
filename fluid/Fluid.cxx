@@ -290,10 +290,8 @@ void Application::quit() {
     save_position(shell_run_window,"shell_run_Window_pos");
   }
 
-  if (about_panel)
-    delete about_panel;
-  if (help_dialog)
-    delete help_dialog;
+  delete about_panel;
+  delete help_dialog;
 
   if (g_shell_config)
     g_shell_config->write(preferences, fluid::Tool_Store::USER);

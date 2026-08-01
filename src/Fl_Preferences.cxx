@@ -1695,8 +1695,7 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
     if ( strcmp( name, entry_[i].name ) == 0 ) {
       if ( !value ) return; // annotation
       if ( strcmp( value, entry_[i].value ) != 0 ) {
-        if ( entry_[i].value )
-          free( entry_[i].value );
+        free( entry_[i].value );
         entry_[i].value = fl_strdup( value );
         dirty_ = 1;
       }
@@ -1934,8 +1933,7 @@ void Fl_Preferences::Node::updateIndex() {
 }
 
 void Fl_Preferences::Node::deleteIndex() {
-  if (index_)
-    ::free(index_);
+  ::free(index_);
   index_ = NULL;
   NIndex_ = nIndex_ = 0;
   indexed_ = 0;

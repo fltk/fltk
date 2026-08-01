@@ -180,8 +180,7 @@ int Fl_Tooltip::override_text(const char *new_text) {
   if (new_text != override_text_) {
     if (window && window->label()==override_text_)
       ((Fl_Widget *) window)->label(nullptr);
-    if (override_text_)
-      ::free(override_text_);
+    ::free(override_text_);
     override_text_ = nullptr;
     if (new_text)
       override_text_ = fl_strdup(new_text);
