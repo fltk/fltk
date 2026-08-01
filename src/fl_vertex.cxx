@@ -33,7 +33,6 @@
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl.H>
 #include <FL/math.h>
-#include <stdlib.h>
 
 /**
  \cond DriverDev

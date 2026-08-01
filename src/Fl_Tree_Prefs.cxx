@@ -18,8 +18,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <config.h>
-
 #include "Fl_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Image.H>

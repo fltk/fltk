@@ -34,7 +34,6 @@
 #include <FL/fl_draw.H>
 #include <FL/gl.h>
 class Fl_Gl_Choice;
-#include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Window_Driver.H"
 
 /**

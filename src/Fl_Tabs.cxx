@@ -27,7 +27,6 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Window.H>
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #define BORDER 2

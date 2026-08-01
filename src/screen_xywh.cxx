@@ -15,9 +15,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/platform.H>
 #include "Fl_Screen_Driver.H"
-#include <config.h>
 
 
 #ifndef FL_DOXYGEN

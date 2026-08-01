@@ -15,7 +15,6 @@
  */
 
 #include "flstring.h"
-#include <stdlib.h>
 #include <string.h>
 #include <FL/platform_types.h>
 #include <FL/filename.H>

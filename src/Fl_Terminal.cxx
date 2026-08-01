@@ -25,9 +25,7 @@
 #endif
 
 #include <ctype.h>      // isdigit
-#include <stdlib.h>     // malloc
 #include <string.h>     // strlen
-#include <stdarg.h>     // vprintf, va_list
 #include <assert.h>
 #include <string>
 

@@ -21,9 +21,7 @@
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include <FL/fl_string_functions.h>     // fl_strdup()
-#include "flstring.h"
 #include <limits.h>
-#include <ctype.h>
 #include <string.h>
 #include <FL/Fl.H>
 #include <FL/platform.H>

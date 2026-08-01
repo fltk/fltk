@@ -20,10 +20,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-#include <sys/types.h>
 #include <string.h>             // memcpy
 #include <stdio.h>              // fprintf
-#include <stdlib.h>             // realloc/free
 
 
 /** Sets the vertical scroll position so 'row' is at the top,

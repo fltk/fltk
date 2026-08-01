@@ -26,7 +26,6 @@
 #include <FL/Fl_Table_Row.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <stdlib.h>
 
 // for debugging...
 // #define DEBUG 1

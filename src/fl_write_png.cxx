@@ -17,7 +17,6 @@
 #include <config.h>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_RGB_Image.H>
-#include <FL/fl_string_functions.h>
 #include <FL/fl_utf8.h>               // fl_fopen()
 #include <stdio.h>
 
@@ -26,8 +25,6 @@
 // "The error happens only if png.h is included without time.h having
 //  been included before. The fix is to #include time.h before png.h.
 //  A better fix than his hack is desirable."
-
-#include <time.h>
 
 // PNG library include files
 

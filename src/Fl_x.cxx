@@ -26,7 +26,6 @@
 /**** Define this if your keyboard lacks a backspace key... ****/
 /* #define BACKSPACE_HACK 1 */
 
-#  include <config.h>
 #  include <FL/Fl.H>
 #  include <FL/platform.H>
 #  include "Fl_Window_Driver.H"
@@ -34,12 +33,10 @@
 #  include <FL/fl_utf8.h>
 #  include <FL/Fl_Tooltip.H>
 #  include <FL/fl_draw.H>
-#  include <FL/Fl_Paged_Device.H>
 #  include <FL/Fl_Shared_Image.H>
 #  include <FL/fl_ask.H>
 #  include <FL/filename.H>
 #  include <stdio.h>
-#  include <stdlib.h>
 #  include "flstring.h"
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
@@ -54,7 +51,6 @@
 #  include <time.h>
 #  include <sys/time.h>
 #  include <math.h>
-#  include <X11/Xmd.h>
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>

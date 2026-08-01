@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>

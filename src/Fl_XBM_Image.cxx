@@ -22,10 +22,8 @@
 // Include necessary header files...
 //
 
-#include <FL/Fl.H>
 #include <FL/Fl_XBM_Image.H>
 #include <stdio.h>
-#include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
 

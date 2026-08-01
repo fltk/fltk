@@ -18,7 +18,6 @@
 
 #include <FL/Fl.H>
 #include "Fl_System_Driver.H"
-#include <FL/filename.H>
 #include <stdarg.h>
 #include <FL/fl_utf8.h>
 #include "utf8_internal.h"
