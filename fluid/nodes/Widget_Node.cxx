@@ -832,7 +832,9 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   write_widget_code(f);
 
   if (!extra_code(2).empty()) {
+    f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::SETUP, 0);
     f.write_c_indented(extra_code(2), 0, '\n');
+    f.tag(Mergeback::Tag::SETUP, Mergeback::Tag::GENERIC, get_uid());
   }
 }
 
@@ -1066,7 +1068,9 @@ void Widget_Node::write_block_close(fluid::io::Code_Writer& f) {
 
 void Widget_Node::write_code2(fluid::io::Code_Writer& f) {
   if (!extra_code(3).empty()) {
+    f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::FINALIZE, 0);
     f.write_c_indented(extra_code(3), 0, '\n');
+    f.tag(Mergeback::Tag::FINALIZE, Mergeback::Tag::GENERIC, get_uid());
   }
   write_block_close(f);
 }

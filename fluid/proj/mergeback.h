@@ -37,7 +37,15 @@ class Mergeback
 {
 public:
   enum class Tag {
-    GENERIC = 0, CODE, MENU_CALLBACK, WIDGET_CALLBACK, UNUSED_
+    GENERIC = 0,      // Code that is auto generated and can not be edited
+    CODE,             // Code blocks in the Function_Node
+    MENU_CALLBACK,    // Code that is generated for a menu callback function
+    WIDGET_CALLBACK,  // Code for all other widget callbacks
+    CODE0, CODE1,     // Not used
+    SETUP,            // Code that is added at instantiation before children
+    FINALIZE,         // Code that is added at instantiation after children
+    UNUSED_,          // Mark a tag that is not used
+    END_OF_LIST_ = UNUSED_
   };
   enum class Task {
     ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE
@@ -65,8 +73,10 @@ protected:
   std::string read_and_unindent_block(long start, long end);
   void analyse_callback(unsigned long code_crc, unsigned long tag_crc, int uid);
   void analyse_code(unsigned long code_crc, unsigned long tag_crc, int uid);
+  void analyse_extra_code(int index, unsigned long code_crc, unsigned long tag_crc, int uid);
   int apply_callback(long block_end, long block_start, unsigned long code_crc, int uid);
   int apply_code(long block_end, long block_start, unsigned long code_crc, int uid);
+  int apply_extra_code(int index, long block_end, long block_start, unsigned long code_crc, int uid);
 
   static uint32_t decode_trichar32(const char *text);
   static void print_trichar32(FILE *out, uint32_t value);

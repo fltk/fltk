@@ -281,6 +281,29 @@ void Mergeback::analyse_code(unsigned long code_crc, unsigned long tag_crc, int 
   }
 }
 
+/** Analyse the block and its corresponding Code Type.
+ Return findings in num_changed_code, num_changed_code, and num_uid_not_found.
+ */
+void Mergeback::analyse_extra_code(int index, unsigned long code_crc, unsigned long tag_crc, int uid) {
+  Node *tp = proj_.tree.find_by_uid(uid);
+  Widget_Node *wp = dynamic_cast<Widget_Node*>(tp);
+  if (wp) {
+    std::string code = wp->extra_code(index); code += "\n";
+    unsigned long project_crc = fluid::CRC32::block(code);
+    // check if the code and project crc are the same, so this modification was already applied
+    if (project_crc!=code_crc) {
+      num_changed_code++;
+      // check if the block change on the project side as well, so we may override changes
+      if (project_crc!=tag_crc) {
+        num_possible_override++;
+      }
+    }
+  } else {
+    num_changed_code++;
+    num_uid_not_found++;
+  }
+}
+
 /**
  Decode a 22 bytes string of three distinct characters into a 32 bit integer.
  \param[in] text at least 22 characters '-', '~', and '='
@@ -372,7 +395,16 @@ void Mergeback::print_tag(FILE *out, Tag prev_type, Tag next_type, uint16_t uid,
  \return The formatted tag string.
  */
 std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc) {
-  static const char *tag_lut[] = { "----------", "-- code --", " callback ", " callback " };
+  static const char *tag_lut[] = {
+    "----------",
+    "-- code --",
+    " callback ",
+    " callback ",
+    "- code 0 -",
+    "- code 1 -",
+    "- setup --",
+    " finalize "
+  };
   static const char *lut[] = { "--", "-~", "~-", "~~", "-=", "=-", "~=", "=~" };
   std::string result;
   result += "//ﬂ ";                     // Distinct start of tag using utf8
@@ -390,14 +422,14 @@ std::string Mergeback::format_tag(Tag prev_type, Tag next_type, uint16_t uid, ui
   // Write a string indicating the type of editable text
   #if 0
   if ( next_type != Tag::GENERIC) {
-    result += tag_lut[(nt%4)];
+    result += tag_lut[(nt%((int)Tag::END_OF_LIST_))];
   } else if (prev_type != Tag::GENERIC) {
-    result += tag_lut[(pt%4)];
+    result += tag_lut[(pt%((int)Tag::END_OF_LIST_))];
   } else {
     result += tag_lut[0];
   }
   #else
-  result += tag_lut[(nt%4)];
+  result += tag_lut[(nt%((int)Tag::END_OF_LIST_))];
   #endif
   // Write the second 32 bit word as an encoded divider line
   for (int i=30; i>=0; i-=3) result += lut[(crc>>i)&7];
@@ -473,6 +505,12 @@ int Mergeback::analyse() {
           case Tag::CODE:
             analyse_code(crc.value(), tag_crc, uid);
             break;
+          case Tag::CODE0:
+          case Tag::CODE1:
+          case Tag::SETUP:
+          case Tag::FINALIZE:
+            analyse_extra_code(((int)tag_type)-((int)Tag::CODE0), crc.value(), tag_crc, uid);
+            break;
           default: break;
         }
       }
@@ -509,6 +547,23 @@ int Mergeback::apply_code(long block_end, long block_start, unsigned long code_c
     uint32_t project_crc = fluid::CRC32::block(cb);
     if (project_crc!=code_crc) {
       tp->name(read_and_unindent_block(block_start, block_end).c_str());
+      return 1;
+    }
+  }
+  return 0;
+}
+
+/** Apply callback mergebacks from the code file to the project.
+ \return 1 if the project changed
+ */
+int Mergeback::apply_extra_code(int index, long block_end, long block_start, unsigned long code_crc, int uid) {
+  Node *tp = proj_.tree.find_by_uid(uid);
+  Widget_Node *wp = dynamic_cast<Widget_Node*>(tp);
+  if (wp) {
+    std::string cb = wp->extra_code(index); cb += "\n";
+    uint32_t project_crc = fluid::CRC32::block(cb);
+    if (project_crc!=code_crc) {
+      wp->extra_code(index, read_and_unindent_block(block_start, block_end).c_str());
       return 1;
     }
   }
@@ -557,6 +612,8 @@ int Mergeback::apply() {
           changed |= apply_callback(block_end, block_start, crc.value(), uid);
         } else if (tag_type==Tag::CODE) {
           changed |= apply_code(block_end, block_start, crc.value(), uid);
+        } else if (tag_type==Tag::CODE0 || tag_type==Tag::CODE1 || tag_type==Tag::SETUP || tag_type==Tag::FINALIZE) {
+          changed |= apply_extra_code(((int)tag_type)-((int)Tag::CODE0), block_end, block_start, crc.value(), uid);
         }
       }
       // reset everything for the next block
