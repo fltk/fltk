@@ -121,7 +121,7 @@ void Fl_Zenity_Native_File_Chooser_Driver::build_command(std::string& command) {
   }
   command += " ";
   command += option;
-  if (preset != "") {
+  if (!preset.empty()) {
     command += " ";
     command += preset;
   }
