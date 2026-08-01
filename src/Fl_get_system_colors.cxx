@@ -21,10 +21,8 @@
 #include <FL/Fl.H>
 #include "Fl_Screen_Driver.H"
 #include "Fl_System_Driver.H"
-#include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include <FL/math.h>
-#include <FL/fl_utf8.h>
 #include <FL/fl_string_functions.h>
 #include "flstring.h"
 #include <stdio.h>

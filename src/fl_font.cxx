@@ -16,7 +16,6 @@
 
 
 // Select fonts from the FLTK font table.
-#include "flstring.h"
 #include <FL/fl_draw.H>
 #include "Fl_Screen_Driver.H"
 

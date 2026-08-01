@@ -36,7 +36,6 @@
 #include <FL/filename.H>
 #include <FL/fl_string_functions.h>
 #include <FL/Fl_Image.H>        // icon
-#include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
 
