@@ -72,6 +72,7 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>              // fl_alert()
 #include <FL/fl_utf8.h>             // fl_getcwd()
+#include <FL/fl_string_functions.h> // fl_strlcat()
 
 // Define USE_MAC_OS for convenience (below). We use macOS specific features (bundles
 // and paths) if USE_MAC_OS is defined, otherwise we're using X11 (XQuartz) on macOS
@@ -112,7 +113,7 @@ char app_path     [FL_PATH_MAX];          // directory of all demo binaries
 char fluid_path   [FL_PATH_MAX];          // binary directory of fluid
 char options_path [FL_PATH_MAX];          // binary directory of fltk-options
 char data_path    [FL_PATH_MAX];          // working directory of all demos
-char command      [2 * FL_PATH_MAX + 40]; // command to be executed
+char command      [2 * FL_PATH_MAX + 80]; // command to be executed
 
 // platform specific suffix for executable files
 
@@ -410,6 +411,14 @@ void dobut(Fl_Widget *, long arg) {
     snprintf(command, sizeof(command), "%s/%s%s", path, cmdbuf, suffix);
 
 #endif
+
+  // append scaling factor to the command line
+  float f = Fl::screen_scale(0);
+  if (f != 1.0f) {
+    char s[40];
+    snprintf(s, sizeof(s), " -scaling-factor %g", f);
+    fl_strlcat(command, s, sizeof(command));
+  }
 
   // finally, execute program (the system specific part)
 

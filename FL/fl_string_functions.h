@@ -39,6 +39,8 @@ FL_EXPORT char* fl_strdup(const char *s);
 
 FL_EXPORT size_t fl_strlcpy(char *, const char *, size_t);
 
+FL_EXPORT size_t fl_strlcat(char *, const char *, size_t);
+
 /** @} */
 
 #ifdef __cplusplus
