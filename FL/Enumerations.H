@@ -635,6 +635,11 @@ enum Fl_Boxtype { // boxtypes (if you change these you must also change fl_boxty
   FL_FREE_BOXTYPE,              ///< the first free box type for creation of new box types
   FL_MAX_BOXTYPE = 255,          ///< highest legal index for a box type
 
+  // To reduce size at link time, FLTK used a trick to remove rarely used box
+  // types from the main library. FLTK no offers Schems at runtime, so all
+  // box types are now included in the main library. The following symbols
+  // are provided for backward compatibility, but they are not documented and
+  // should not be used in new code.
 #ifndef FL_DOXYGEN
   _FL_SHADOW_BOX = FL_SHADOW_BOX,
   _FL_SHADOW_FRAME = FL_SHADOW_FRAME,

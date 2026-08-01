@@ -438,44 +438,44 @@ static boxtable_t fl_box_table[FL_MAX_BOXTYPE+1] = {
   { fl_oval_shadow_box,     1, 1, 2, 2,  1, fl_oval_focus },      // FL_OSHADOW_BOX
   { fl_oval_frame,          1, 1, 2, 2,  2, fl_oval_focus },      // FL_OVAL_FRAME
   { fl_oval_flat_box,       0, 0, 0, 0,  1, fl_oval_focus },      // FL_OFLAT_BOX
-  { fl_plastic_up_box,      2, 2, 4, 4,  1 },   // _FL_PLASTIC_UP_BOX
-  { fl_plastic_down_box,    2, 2, 4, 4,  1 },   // _FL_PLASTIC_DOWN_BOX
-  { fl_plastic_up_frame,    2, 2, 4, 4,  3 },   // _FL_PLASTIC_UP_FRAME
-  { fl_plastic_down_frame,  2, 2, 4, 4,  3 },   // _FL_PLASTIC_DOWN_FRAME
-  { fl_plastic_thin_up_box, 2, 2, 4, 4,  1 },   // _FL_PLASTIC_THIN_UP_BOX
-  { fl_plastic_down_box,    2, 2, 4, 4,  1 },   // _FL_PLASTIC_THIN_DOWN_BOX
-  { fl_plastic_up_round,    2, 2, 4, 4,  1, fl_round_focus },     // _FL_PLASTIC_ROUND_UP_BOX
-  { fl_plastic_down_round,  2, 2, 4, 4,  1, fl_round_focus },     // _FL_PLASTIC_ROUND_DOWN_BOX
-  { fl_gtk_up_box,          2, 2, 4, 4,  1 },   // _FL_GTK_UP_BOX
-  { fl_gtk_down_box,        2, 2, 4, 4,  1 },   // _FL_GTK_DOWN_BOX
-  { fl_gtk_up_frame,        2, 2, 4, 4,  3 },   // _FL_GTK_UP_FRAME
-  { fl_gtk_down_frame,      2, 2, 4, 4,  3 },   // _FL_GTK_DOWN_FRAME
+  { fl_plastic_up_box,      2, 2, 4, 4,  1 },   // FL_PLASTIC_UP_BOX
+  { fl_plastic_down_box,    2, 2, 4, 4,  1 },   // FL_PLASTIC_DOWN_BOX
+  { fl_plastic_up_frame,    2, 2, 4, 4,  3 },   // FL_PLASTIC_UP_FRAME
+  { fl_plastic_down_frame,  2, 2, 4, 4,  3 },   // FL_PLASTIC_DOWN_FRAME
+  { fl_plastic_thin_up_box, 2, 2, 4, 4,  1 },   // FL_PLASTIC_THIN_UP_BOX
+  { fl_plastic_down_box,    2, 2, 4, 4,  1 },   // FL_PLASTIC_THIN_DOWN_BOX
+  { fl_plastic_up_round,    2, 2, 4, 4,  1, fl_round_focus },     // FL_PLASTIC_ROUND_UP_BOX
+  { fl_plastic_down_round,  2, 2, 4, 4,  1, fl_round_focus },     // FL_PLASTIC_ROUND_DOWN_BOX
+  { fl_gtk_up_box,          2, 2, 4, 4,  1 },   // FL_GTK_UP_BOX
+  { fl_gtk_down_box,        2, 2, 4, 4,  1 },   // FL_GTK_DOWN_BOX
+  { fl_gtk_up_frame,        2, 2, 4, 4,  3 },   // FL_GTK_UP_FRAME
+  { fl_gtk_down_frame,      2, 2, 4, 4,  3 },   // FL_GTK_DOWN_FRAME
   { fl_gtk_thin_up_box,     1, 1, 2, 2,  3 },   // FL_GTK_THIN_UP_BOX
   { fl_gtk_thin_down_box,   1, 1, 2, 2,  3 },   // FL_GTK_THIN_DOWN_BOX
   { fl_gtk_thin_up_frame,   1, 1, 2, 2,  1 },   // FL_GTK_THIN_UP_FRAME
   { fl_gtk_thin_down_frame, 1, 1, 2, 2,  1 },   // FL_GTK_THIN_DOWN_FRAME
   { fl_gtk_round_up_box,    2, 2, 4, 4,  1, fl_round_focus },     // FL_GTK_ROUND_UP_BOX
   { fl_gtk_round_down_box,  2, 2, 4, 4,  1, fl_round_focus },     // FL_GTK_ROUND_DOWN_BOX
-  { fl_gleam_up_box,        2, 2, 4, 4,  1 },   // _FL_GLEAM_UP_BOX
-  { fl_gleam_down_box,      2, 2, 4, 4,  1 },   // _FL_GLEAM_DOWN_BOX
-  { fl_gleam_up_frame,      2, 2, 4, 4,  3 },   // _FL_GLEAM_UP_FRAME
-  { fl_gleam_down_frame,    2, 2, 4, 4,  3 },   // _FL_GLEAM_DOWN_FRAME
-  { fl_gleam_thin_up_box,   2, 2, 4, 4,  1 },   // _FL_GLEAM_THIN_UP_BOX
-  { fl_gleam_thin_down_box, 2, 2, 4, 4,  1 },   // _FL_GLEAM_THIN_DOWN_BOX
-  { fl_gleam_up_box,        2, 2, 4, 4,  1 },   // _FL_GLEAM_ROUND_UP_BOX
-  { fl_gleam_down_box,      2, 2, 4, 4,  1 },   // _FL_GLEAM_ROUND_DOWN_BOX
-  { fl_oxy_up_box,          2, 2, 4, 4,  1 },   // _FL_OXY_UP_BOX,
-  { fl_oxy_down_box,        2, 2, 4, 4,  1 },   // _FL_OXY_DOWN_BOX,
-  { fl_oxy_up_frame,        2, 2, 4, 4,  3 },   // _FL_OXY_UP_FRAME,
-  { fl_oxy_down_frame,      2, 2, 4, 4,  3 },   // _FL_OXY_DOWN_FRAME,
-  { fl_oxy_thin_up_box,     1, 1, 2, 2,  1 },   // _FL_OXY_THIN_UP_BOX,
-  { fl_oxy_thin_down_box,   1, 1, 2, 2,  1 },   // _FL_OXY_THIN_DOWN_BOX,
-  { fl_oxy_thin_up_frame,   1, 1, 2, 2,  3 },   // _FL_OXY_THIN_UP_FRAME,
-  { fl_oxy_thin_down_frame, 1, 1, 2, 2,  3 },   // _FL_OXY_THIN_DOWN_FRAME,
-  { fl_oxy_round_up_box,    2, 2, 4, 4,  1, fl_round_focus },     // _FL_OXY_ROUND_UP_BOX,
-  { fl_oxy_round_down_box,  2, 2, 4, 4,  1, fl_round_focus },     // _FL_OXY_ROUND_DOWN_BOX,
-  { fl_oxy_button_up_box,   2, 2, 4, 4,  1 },   // _FL_OXY_BUTTON_UP_BOX,
-  { fl_oxy_button_down_box, 2, 2, 4, 4,  1 },   // _FL_OXY_BUTTON_DOWN_BOX,
+  { fl_gleam_up_box,        2, 2, 4, 4,  1 },   // FL_GLEAM_UP_BOX
+  { fl_gleam_down_box,      2, 2, 4, 4,  1 },   // FL_GLEAM_DOWN_BOX
+  { fl_gleam_up_frame,      2, 2, 4, 4,  3 },   // FL_GLEAM_UP_FRAME
+  { fl_gleam_down_frame,    2, 2, 4, 4,  3 },   // FL_GLEAM_DOWN_FRAME
+  { fl_gleam_thin_up_box,   2, 2, 4, 4,  1 },   // FL_GLEAM_THIN_UP_BOX
+  { fl_gleam_thin_down_box, 2, 2, 4, 4,  1 },   // FL_GLEAM_THIN_DOWN_BOX
+  { fl_gleam_up_box,        2, 2, 4, 4,  1 },   // FL_GLEAM_ROUND_UP_BOX
+  { fl_gleam_down_box,      2, 2, 4, 4,  1 },   // FL_GLEAM_ROUND_DOWN_BOX
+  { fl_oxy_up_box,          2, 2, 4, 4,  1 },   // FL_OXY_UP_BOX,
+  { fl_oxy_down_box,        2, 2, 4, 4,  1 },   // FL_OXY_DOWN_BOX,
+  { fl_oxy_up_frame,        2, 2, 4, 4,  3 },   // FL_OXY_UP_FRAME,
+  { fl_oxy_down_frame,      2, 2, 4, 4,  3 },   // FL_OXY_DOWN_FRAME,
+  { fl_oxy_thin_up_box,     1, 1, 2, 2,  1 },   // FL_OXY_THIN_UP_BOX,
+  { fl_oxy_thin_down_box,   1, 1, 2, 2,  1 },   // FL_OXY_THIN_DOWN_BOX,
+  { fl_oxy_thin_up_frame,   1, 1, 2, 2,  3 },   // FL_OXY_THIN_UP_FRAME,
+  { fl_oxy_thin_down_frame, 1, 1, 2, 2,  3 },   // FL_OXY_THIN_DOWN_FRAME,
+  { fl_oxy_round_up_box,    2, 2, 4, 4,  1, fl_round_focus },     // FL_OXY_ROUND_UP_BOX,
+  { fl_oxy_round_down_box,  2, 2, 4, 4,  1, fl_round_focus },     // FL_OXY_ROUND_DOWN_BOX,
+  { fl_oxy_button_up_box,   2, 2, 4, 4,  1 },   // FL_OXY_BUTTON_UP_BOX,
+  { fl_oxy_button_down_box, 2, 2, 4, 4,  1 },   // FL_OXY_BUTTON_DOWN_BOX,
   { fl_up_box,              3, 3, 6, 6,  1 },   // FL_FREE_BOX+0
   { fl_down_box,            3, 3, 6, 6,  1 },   // FL_FREE_BOX+1
   { fl_up_box,              3, 3, 6, 6,  1 },   // FL_FREE_BOX+2
