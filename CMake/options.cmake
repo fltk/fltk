@@ -178,9 +178,12 @@ endif()
 
 if(FLTK_USE_BUNDLED_ZLIB)
 
+  set(ZLIB_COMPAT ON CACHE BOOL "Enable zlib-compatible API" FORCE)
   add_subdirectory(zlib-ng)
 
-  set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-ng)
+  # Include both source and binary directories for zlib headers
+  # The binary directory is where cmake generates zlib.h and zconf.h
+  set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib-ng ${CMAKE_CURRENT_BINARY_DIR}/zlib-ng)
 
   # FIXME - include_directories()
   include_directories(${ZLIB_INCLUDE_DIR})

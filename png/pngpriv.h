@@ -1020,22 +1020,6 @@
 #include "pngstruct.h"
 #include "pnginfo.h"
 
-/* Validate the include paths - the include path used to generate pnglibconf.h
- * must match that used in the build, or we must be using pnglibconf.h.prebuilt:
- */
-#if PNG_ZLIB_VERNUM != 0 && PNG_ZLIB_VERNUM != ZLIB_VERNUM
-#  error The include path of <zlib.h> is incorrect
-   /* When pnglibconf.h was built, the copy of zlib.h that it used was not the
-    * same as the one being used here.  Considering how libpng makes decisions
-    * to use the zlib API based on the zlib version number, the -I options must
-    * match.
-    *
-    * A possible cause of this mismatch is that you passed an -I option in
-    * CFLAGS, which is unlikely to work.  All the preprocessor options, and all
-    * the -I options in particular, should be in CPPFLAGS.
-    */
-#endif
-
 /* This is used for 16-bit gamma tables -- only the top level pointers are
  * const; this could be changed:
  */
