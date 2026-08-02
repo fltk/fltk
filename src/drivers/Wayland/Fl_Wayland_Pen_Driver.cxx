@@ -515,54 +515,6 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
     (State::BUTTON0|State::BUTTON1|State::BUTTON2|State::BUTTON3);
   tool->ev.state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER
     ? State::ERASER_HOVERS : State::TIP_HOVERS) | btn_bits;
-
-  if (!tool->focus_win)
-  {
-    // check whether surface is the headerbar of a GTK-decorated window
-    bool found = false;
-
-    auto drvr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    auto seat = drvr->seat;
-    static bool using_GTK = seat->gtk_shell &&
-                            (gtk_shell1_get_version(seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
-    // check whether surface is the headerbar of a GTK-decorated window
-    if (using_GTK)
-    {
-        Fl_X *xp = Fl_X::first;
-        while (xp && using_GTK) { // all mapped windows
-            struct wld_window *xid = (struct wld_window*)xp->xid;
-            if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
-                fl_is_surface_from_GTK_titlebar(surface, xid->frame,
-                                                &using_GTK)) {
-                gtk_shell_surface = surface;
-                tool->focus_frame = xid->frame;
-                gtk_shell_window = xp->w;
-                found = true;
-                break;
-            }
-            xp = xp->next;
-        }
-    }
-
-    if (!found)
-    {
-        // check whether surface is the headerbar of a Cairo-decorated window
-        static bool using_CAIRO = true;
-        Fl_X *xp = Fl_X::first;
-        while (xp && using_CAIRO) { // all mapped windows
-            struct wld_window *xid = (struct wld_window*)xp->xid;
-            if (xid->kind == Fl_Wayland_Window_Driver::DECORATED &&
-                fl_is_surface_from_cairo_titlebar(surface, xid->frame,
-                                                  &using_CAIRO)) {
-                tool->focus_frame = xid->frame;
-                found = true;
-                break;
-            }
-
-            xp = xp->next;
-        }
-    }
-  }
 }
 
 static void tool_cb_proximity_out(void *data, struct zwp_tablet_tool_v2 *) {
