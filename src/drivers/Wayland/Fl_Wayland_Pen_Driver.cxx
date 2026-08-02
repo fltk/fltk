@@ -76,11 +76,6 @@
 #include "gtk-shell-client-protocol.h"
 #include "tablet-client-protocol.h"
 
-extern "C" {
-#include "../../../libdecor/build/fl_libdecor.h"
-#include "../../../libdecor/build/fl_libdecor-plugins.h"
-}
-
 #include <cmath>
 #include <cstring>
 #include <cstdint>
@@ -292,7 +287,7 @@ static bool event_inside(Fl_Widget *w, double x, double y) {
   Handles:
    - Normal widgets
    - Widgets inside groups
-   - Subwindows (Fl_Window as child)
+   - Subwindows (Fl_Window as child with can_expand_outside_parent_)
    - Separate top-level windows that are themselves subscribers
 */
 static Fl_Widget *find_below_pen(Fl_Window *topwin, double x, double y)
@@ -678,145 +673,6 @@ static void tool_cb_button(void *data, struct zwp_tablet_tool_v2 *,
 #include "xdg-shell-client-protocol.h"
 #include "gtk-shell-client-protocol.h"
 
-/**
- * Generic function to handle titlebar events on each backend.  Sadly,
- * libdecor does not expose where are each button, so we rely on offsets
- * from the right of the titlebar.
- *
- * @param win             Fl_Window
- * @param x_from_right    x position to the right of window
- * @param kCloseBtn       min position of the close button from right
- * @param kMaximizeBtn    min position of the maximize button from right
- * @param kMinimizeBtn    min position of the minimize button from right
- */
-static int handle_titlebar_events(Fl_Window* win, TabletTool* tool,
-                                  double x_from_right,
-                                  double kCloseBtn, double kMaximizeBtn,
-                                  double kMinimizeBtn)
-{
-    int out = 0;
-    libdecor_frame_ref(tool->focus_frame);
-    if (x_from_right < kCloseBtn) {
-        // Close button
-        //win->hide(); <-- do not use this.  Crashes on Vulkan
-        libdecor_frame_close(tool->focus_frame);
-        out = 1;
-    } else if (x_from_right < kMaximizeBtn) {
-        // Maximize / restore
-        if (win->maximize_active())
-            win->un_maximize();
-        else
-            win->maximize();
-        out = 1;
-    } else if (x_from_right < kMinimizeBtn) {
-        // Minimize (works)
-        win->iconize();
-        out = 1;
-    } else if (tool->serial) {
-        // Title bar drag → move (works)
-        libdecor_frame_move(tool->focus_frame, g_wl_seat,
-                            tool->serial);
-        out = 1;
-    }
-    libdecor_frame_unref(tool->focus_frame);
-    return out;
-}
-
-/**
- * Convert TabletTool evens to libdecor's cairo plug-in.
- *
- * @param w     Fl_Window
- * @param tool  TabletTool state
- */
-static int handle_cairo_events(Fl_Window* win, TabletTool* tool)
-{
-    if (win) win->show();
-
-    double sx = tool->decor_sx;
-    double sy = tool->decor_sy;
-
-    int left = 0, top = 0;
-    libdecor_frame_translate_coordinate(tool->focus_frame, 0, 0,
-                                        &left, &top);
-
-    float f  = Fl::screen_scale(win->screen_num());
-    // Total decoration surface dimensions in surface-local pixels:
-    double total_decor_w = win->w() * f + 2 * left;
-    double total_decor_h = win->h() * f + top;  // bottom border ≈ left
-
-    /**
-     * Try handling title bar first.  Cairo always exposes all buttons,
-     * regardless of window's capabilities.
-     *
-     */
-    if(sy >= 0 && sy < top) {
-        double kBtnW   = 24.0;
-        double kBtnPad =  4.0;
-        double kRPad   =  6.0;
-        double x_from_right = total_decor_w - tool->decor_sx;
-
-        double kCloseBtn = kRPad + kBtnW;
-        double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
-        double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
-        int ret = handle_titlebar_events(win, tool, x_from_right,
-                                         kCloseBtn, kMaximizeBtn,
-                                         kMinimizeBtn);
-        if (ret)
-            return ret;
-    }
-
-    return 0;
-}
-
-/*
-  Convert pen events over the titlebar or resize area into libdecor actions.
-
-  \return a value that indicate how the caller shall continue processing the event.
-  The return values are yet to be defined.
-*/
-static int handle_gtk_frame_events(Fl_Window* win, TabletTool *tool) {
-    if (win) win->show();
-
-    double sx = tool->decor_sx;
-    double sy = tool->decor_sy;
-
-    float f  = Fl::screen_scale(win->screen_num());
-    int left = 0, top = 0;
-    libdecor_frame_translate_coordinate(tool->focus_frame, 0, 0,
-                                        &left, &top);
-
-    // Total decoration surface dimensions in surface-local pixels:
-    double total_decor_w = win->w() * f + 2 * left;
-    double total_decor_h = win->h() * f + top;  // bottom border ≈ left
-
-    /**
-     * Try handling title bar first.  GTK3 may hide some buttons based
-     * on Window capabilities.
-     *
-     */
-    if(sy >= 0 && sy < top) {
-        double kBtnW   = 24.0;
-        double kBtnPad =  4.0;
-        double kRPad   =  6.0;
-        double x_from_right = total_decor_w - tool->decor_sx;
-
-        double kCloseBtn = kRPad + kBtnW;
-        double kMaximizeBtn = kCloseBtn + kBtnPad + kBtnW;
-        double kMinimizeBtn = kMaximizeBtn + kBtnPad + kBtnW;
-        if (!win->resizable())
-        {
-            kMinimizeBtn = kMaximizeBtn;
-            kMaximizeBtn = -10000;
-        }
-        int ret = handle_titlebar_events(win, tool, x_from_right,
-                                         kCloseBtn, kMaximizeBtn,
-                                         kMinimizeBtn);
-        if (ret)
-            return ret;
-    }
-    return 0;
-}
-
 /*
  tool_cb_frame — the main dispatch point.
 
@@ -881,44 +737,6 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   // No subscribers or no focus window → nothing more to do.
   // Check if over decoration and if so, do an action if needed.
   if (!tool->focus_win || subscriber_list_.empty()) {
-
-      // ── frame down on decoration ───────────────────────────────────────
-      if (tool->focus_frame && tool->frame_down) {
-
-          // Find the Fl_Window that owns this frame.
-          Fl_Window* win = nullptr;
-          for (win = Fl::first_window(); win;
-               win = Fl::next_window(win)) {
-              wld_window* xid = fl_wl_xid(win);
-              if (xid->kind != Fl_Wayland_Window_Driver::DECORATED ||
-                  !xid->frame)
-                  continue;
-              if (xid->frame == tool->focus_frame)
-                  break;
-          }
-
-          if (win) {
-              enum plugin_kind plugin = get_plugin_kind(tool->focus_frame);
-
-              int result;
-
-              switch(plugin)
-              {
-              case SSD:
-                  // Nothing to do.
-                  break;
-              case GTK3:
-                  result = handle_gtk_frame_events(win, tool);
-                  break;
-              case CAIRO:
-              case UNKNOWN:
-                  // Handle titlebar for Cairo and any unknown plugin
-                  result = handle_cairo_events(win, tool);
-                  break;
-              }
-          } // if (win)
-      } // focus_frame && frame_down
-
       tablet_tool_reset_frame(tool);
       tool->prev_state = tool->ev.state;
       return;
