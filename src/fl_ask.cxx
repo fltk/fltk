@@ -396,7 +396,7 @@ std::string fl_input_str(int &ret, int maxchar, const char *fmt, const char *def
   const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar, true);
   va_end(ap);
   ret = (r == NULL) ? -1 : 0;
-  return (r == NULL) ? std::string("") : std::string(r);
+  return (r == NULL) ? std::string() : std::string(r);
 }
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
@@ -410,7 +410,7 @@ std::string fl_input_str(int maxchar, const char *fmt, const char *defstr, ...) 
   va_start(ap, defstr);
   const char *r = msg.input_innards(fmt, ap, defstr, FL_NORMAL_INPUT, maxchar, true);
   va_end(ap);
-  return (r == NULL) ? std::string("") : std::string(r);
+  return (r == NULL) ? std::string() : std::string(r);
 }
 
 
@@ -492,7 +492,7 @@ std::string fl_password_str(int &ret, int maxchar, const char *fmt, const char *
   const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar, true);
   va_end(ap);
   ret = (r == NULL) ? -1 : 0;
-  return (r == NULL) ? std::string("") : std::string(r);
+  return (r == NULL) ? std::string() : std::string(r);
 }
 
 /** Shows an input dialog displaying the \p fmt message with variable arguments.
@@ -506,7 +506,7 @@ std::string fl_password_str(int maxchar, const char *fmt, const char *defstr, ..
   va_start(ap, defstr);
   const char *r = msg.input_innards(fmt, ap, defstr, FL_SECRET_INPUT, maxchar, true);
   va_end(ap);
-  return (r == NULL) ? std::string("") : std::string(r);
+  return (r == NULL) ? std::string() : std::string(r);
 }
 
 
