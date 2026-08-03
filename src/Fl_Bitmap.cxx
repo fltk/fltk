@@ -26,8 +26,6 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
 
-#include <stdlib.h>
-
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw_bitmap(this, XP, YP, WP, HP, cx, cy);
 }

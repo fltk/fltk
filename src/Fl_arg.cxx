@@ -25,8 +25,6 @@
 #include "Fl_Screen_Driver.H"
 #include "flstring.h"
 
-#include <ctype.h>
-
 static int fl_match(const char *a, const char *s, int atleast = 1) {
   const char *b = s;
   while (*a && (*a == *b || fl_ascii_tolower(*a) == *b)) {a++; b++;}

@@ -15,7 +15,6 @@
 //
 
 #include <config.h>
-#include <FL/Fl.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Graphics_Driver.H>
 
