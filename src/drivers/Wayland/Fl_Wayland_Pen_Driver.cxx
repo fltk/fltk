@@ -118,10 +118,6 @@ struct TabletTool {
   struct zwp_tablet_tool_v2      *wl_tool;
   enum zwp_tablet_tool_v2_type    type;
 
-  double         decor_sx { 0 };      // surface-local x when over a decoration surface
-  double         decor_sy { 0 };      // surface-local y when over a decoration surface
-  struct libdecor_frame *focus_frame { nullptr }; // owning frame when over a decoration
-
   uint64_t                        hardware_serial;
   int                             pen_id;       // int-sized pen identity
   Trait                           capabilities; // reported by capability events
@@ -501,7 +497,6 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
                                   struct wl_surface *surface) {
   TabletTool *tool = static_cast<TabletTool *>(data);
   tool->focus_surface      = surface;
-  tool->focus_frame        = nullptr;
   tool->focus_win          = Fl_Wayland_Window_Driver::surface_to_window(surface);
   tool->in_proximity       = true;
   tool->frame_proximity_in = true;
@@ -565,8 +560,6 @@ static void tool_cb_up(void *data, struct zwp_tablet_tool_v2 *) {
 static void tool_cb_motion(void *data, struct zwp_tablet_tool_v2 *,
                             wl_fixed_t x, wl_fixed_t y) {
   TabletTool *tool = static_cast<TabletTool *>(data);
-  tool->decor_sx = wl_fixed_to_double(x);
-  tool->decor_sy = wl_fixed_to_double(y);
   coords_from_surface(tool, x, y);
   tool->frame_motion = true;
 }
