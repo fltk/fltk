@@ -16,7 +16,6 @@
 
 #define DISPLAY_SEARCH_BOTH_WAYS_AT_ONCE
 
-#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Browser_.H>

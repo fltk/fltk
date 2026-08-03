@@ -14,9 +14,6 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "flstring.h"
 #include <FL/fl_draw.H>
 #include <FL/fl_string_functions.h> // fl_strdup()
 #include <FL/Fl_Check_Browser.H>

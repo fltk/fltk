@@ -19,7 +19,6 @@
 #include <FL/Fl_Fill_Dial.H>
 #include <FL/Fl_Line_Dial.H>
 #include <FL/fl_draw.H>
-#include <stdlib.h>
 #include <FL/math.h>
 
 

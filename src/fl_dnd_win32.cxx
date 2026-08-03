@@ -28,11 +28,7 @@
 #include <FL/fl_utf8.h>
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "flstring.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
 #include <objidl.h>
-#include <time.h>
 #if defined(__CYGWIN__)
 #include <sys/time.h>
 #include <unistd.h>
