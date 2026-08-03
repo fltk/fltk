@@ -1,7 +1,7 @@
 //
 // Self-generate snapshots of user interface for FLUID documentation.
 //
-// Copyright 2024-2025 by Bill Spitzak and others.
+// Copyright 2024-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -384,7 +384,7 @@ void run_autodoc(const std::string &target_dir) {
 //  Fl::scheme("gtk+");
 
   // Create a silly project that contains all widgets that we want to document
-  Fluid.new_project(false);
+  Fluid.new_project();
 
   /*Node *t_func = */ add_new_widget_from_user("Function", Strategy::AS_LAST_CHILD, false);
   Window_Node *t_win = (Window_Node*)add_new_widget_from_user("Fl_Window", Strategy::AS_LAST_CHILD, false);

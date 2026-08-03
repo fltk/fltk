@@ -1,7 +1,7 @@
 //
 // Fluid Application header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -153,15 +153,9 @@ public: // Methods
   const char *cutfname(int which = 0);
 
   // Clear the current project and create a new, empty one.
-  bool new_project(bool user_must_confirm = true);
+  void new_project();
   // Open a file chooser and load an exiting project file.
   bool open_project_file(const std::string &filename_arg);
-  // Load a project from the give file name and path.
-  bool merge_project_file(const std::string &filename_arg);
-  // Save the current design to the file given by \c filename.
-  void save_project_file(void *arg);
-  // Reload the file set by \c filename, replacing the current design.
-  void revert_project();
   // Open the template browser and load a new file from templates.
   bool new_project_from_template();
   // Open the dialog to allow the user to print the current window.
@@ -192,8 +186,6 @@ public: // Methods
 
   // Build the main app window and create a few other dialogs.
   void make_main_window();
-  // Give the user the opportunity to save a project before clearing it.
-  bool confirm_project_clear();
   // Ensure that text widgets in the widget panel propagates apply current changes.
   void flush_text_widgets();
   // Position the given window window based on entries in the app preferences.

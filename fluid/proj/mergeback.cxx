@@ -180,12 +180,12 @@ std::string Mergeback::read_and_unindent_block(long start, long end) {
  \return -1 if the user wants to cancel or an error occurred or an issue was presented
         (message or choice dialog was shown)
  */
-int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &proj_filename) {
+int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &project_filename) {
   if (tag_error) {
     fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                "MergeBack found an error in line %d while reading tags\n"
                "from the source code. Merging code back is not possible.",
-               code_filename.c_str(), proj_filename.c_str(), line_no);
+               code_filename.c_str(), project_filename.c_str(), line_no);
     return -1;
   }
   if (!num_changed_code && !num_changed_structure) {
@@ -197,7 +197,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
                "of the source code. These kind of changes can not be\n"
                "merged back and will be lost when the source code is\n"
                "generated again from the open project.",
-               code_filename.c_str(), proj_filename.c_str(), num_changed_structure);
+               code_filename.c_str(), project_filename.c_str(), num_changed_structure);
     return -1;
   }
   std::string msg = "Comparing\n  \"%1$s\"\nto\n  \"%2$s\"\n\n"
@@ -220,7 +220,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
 
   if (num_changed_code==num_uid_not_found) {
     fluid_message(msg.c_str(),
-               code_filename.c_str(), proj_filename.c_str(),
+               code_filename.c_str(), project_filename.c_str(),
                num_changed_code, num_uid_not_found,
                num_changed_structure, num_possible_override);
     return -1;
@@ -229,7 +229,7 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
     "Click Merge to merge all code changes back into\n"
     "the open project.";
     int c = fluid_choice(msg.c_str(), "Cancel", "Merge", nullptr,
-                      code_filename.c_str(), proj_filename.c_str(),
+                      code_filename.c_str(), project_filename.c_str(),
                       num_changed_code, num_uid_not_found,
                       num_changed_structure, num_possible_override);
     if (c==0) return -1;
@@ -700,7 +700,7 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
   recursion_lock = true;
 
   Fluid.flush_text_widgets();
-  if (!proj.proj_filename) {
+  if (proj.proj_filename.empty()) {
     recursion_lock = false;
     return 1;
   }
@@ -714,7 +714,7 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
     return 0;
   }
 
-  std::string proj_filename = proj.projectfile_path() + proj.projectfile_name();
+  std::string project_filename = proj.projectfile_path() + proj.projectfile_name();
   std::string code_filename;
 #if 1
   if (!Fluid.batch_mode) {
@@ -724,16 +724,16 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
     // matching a project, and uses that location instead.
     // TODO: this is not working as expected yet.
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
-    Fl_Preferences path(build_records, proj_filename.c_str());
-    int i, n = (int)proj_filename.size();
-    for (i=0; i<n; i++) if (proj_filename[i]=='\\') proj_filename[i] = '/';
+    Fl_Preferences path(build_records, project_filename.c_str());
+    int i, n = (int)project_filename.size();
+    for (i=0; i<n; i++) if (project_filename[i]=='\\') project_filename[i] = '/';
     path.get("code", code_filename, "");
   }
 #endif
   if (code_filename.empty())
     code_filename = proj.codefile_path() + proj.codefile_name();
   if (!Fluid.batch_mode) proj.enter_project_dir();
-  int c = merge_back(proj, code_filename, proj_filename, Mergeback::Task::INTERACTIVE);
+  int c = merge_back(proj, code_filename, project_filename, Mergeback::Task::INTERACTIVE);
   if (c>0) {
     // update the project to reflect the changes
     proj.set_modflag(1);
@@ -746,7 +746,7 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
     if (c==0) fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                          "MergeBack found no external modifications\n"
                          "in the source code.",
-                         code_filename.c_str(), proj_filename.c_str());
+                         code_filename.c_str(), project_filename.c_str());
     if (c==-2) fluid_message("No corresponding source code file found.");
   }
   recursion_lock = false;

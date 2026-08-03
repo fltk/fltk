@@ -1,7 +1,7 @@
 //
 // Application Main Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -59,17 +59,23 @@ void manual_cb(Fl_Widget *, void *) {
   Fluid.show_help("index.html");
 }
 
-static void menu_file_new_cb(Fl_Widget *, void *) { Fluid.new_project(); }
+static void menu_file_new_cb(Fl_Widget *, void *) {
+  if (Fluid.proj.confirm_clear()) {
+    Fluid.new_project();
+  }
+}
 static void menu_file_new_from_template_cb(Fl_Widget *, void *) { Fluid.new_project_from_template(); }
-static void menu_file_open_cb(Fl_Widget *, void *) { Fluid.open_project_file(""); }
-static void menu_file_insert_cb(Fl_Widget *, void *) { Fluid.merge_project_file(""); }
-void menu_file_save_cb(Fl_Widget *, void *arg) { Fluid.save_project_file(arg); }
+static void menu_file_open_cb(Fl_Widget *, void *) { Fluid.open_project_file(std::string{}); }
+static void menu_file_insert_cb(Fl_Widget *, void *) { Fluid.proj.load_or_merge(std::string{}); }
+void menu_file_save_cb(Fl_Widget *, void *arg) { Fluid.proj.save(); }
+void menu_file_save_as_cb(Fl_Widget *, void *arg) { Fluid.proj.save(Project::SaveOption::ASK_FOR_FILENAME); }
+void menu_file_save_copy_cb(Fl_Widget *, void *arg) { Fluid.proj.save(Project::SaveOption::SAVE_COPY); }
 static void menu_file_print_cb(Fl_Widget *, void *arg) { Fluid.print_snapshots(); }
 void menu_file_open_history_cb(Fl_Widget *, void *v) { Fluid.open_project_file(std::string((const char*)v)); }
 static void menu_layout_sync_resize_cb(Fl_Menu_ *m, void*) {
  if (m->mvalue()->value()) Fluid.proj.tree.allow_layout = 1; else Fluid.proj.tree.allow_layout = 0;
 }
-static void menu_file_revert_cb(Fl_Widget *, void *) { Fluid.revert_project(); }
+static void menu_file_revert_cb(Fl_Widget *, void *) { Fluid.proj.revert(); }
 void exit_cb(Fl_Widget *,void *) { Fluid.quit(); }
 static void write_strings_cb(Fl_Widget *, void *) { Fluid.proj.write_strings(); }
 void toggle_widgetbin_cb(Fl_Widget *, void *) { Fluid.toggle_widget_bin(); }
@@ -94,8 +100,8 @@ Fl_Menu_Item Application::main_menu[] = {
   {"&Open...", FL_COMMAND+'o', menu_file_open_cb},
   {"&Insert...", FL_COMMAND+'i', menu_file_insert_cb, nullptr, FL_MENU_DIVIDER},
   {"&Save", FL_COMMAND+'s', menu_file_save_cb, nullptr},
-  {"Save &As...", FL_COMMAND+FL_SHIFT+'s', menu_file_save_cb, (void*)1},
-  {"Sa&ve A Copy...", 0, menu_file_save_cb, (void*)2},
+  {"Save &As...", FL_COMMAND+FL_SHIFT+'s', menu_file_save_as_cb, (void*)1},
+  {"Sa&ve A Copy...", 0, menu_file_save_copy_cb, (void*)2},
   {"&Revert...", 0, menu_file_revert_cb, nullptr, FL_MENU_DIVIDER},
   {"New &From Template...", FL_COMMAND+'N', menu_file_new_from_template_cb, nullptr},
   {"Save As &Template...", 0, save_template_cb, nullptr, FL_MENU_DIVIDER},

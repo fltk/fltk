@@ -1,7 +1,7 @@
 //
 // Fluid Project header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,7 +70,7 @@ public: // Member Variables
   /// later
   int write_mergeback_data = 0;
   /// Filename of the current .fl project file
-  const char *proj_filename { nullptr };
+  std::string proj_filename;
   /// Hold the default extension for header files, or the entire filename if set via command line.
   std::string header_file_name = ".h";
   /// Hold the default extension for source code  files, or the entire filename if set via command line.
@@ -115,6 +115,17 @@ public: // Methods
   void write_strings();
 
   void set_modflag(int mf, int mfc = -1);
+
+  /// Options for save(), mutually exclusive by nature.
+  enum class SaveOption {
+    NORMAL,            ///< Save using the current filename, or ask if none is set.
+    ASK_FOR_FILENAME,  ///< Always ask the user for a filename before saving.
+    SAVE_COPY          ///< Ask for a filename and save a copy without affecting the current project.
+  };
+  void save(SaveOption option = SaveOption::NORMAL);
+  void revert();
+  bool confirm_clear();
+  bool load_or_merge(const std::string &filename_arg);
 };
 
 } // namespace fluid

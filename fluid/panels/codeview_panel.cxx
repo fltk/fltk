@@ -1,7 +1,7 @@
 //
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -180,7 +180,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
     fluid::io::Code_Writer f(Fluid.proj);
     std::string code_filename = Fluid.proj.codefile_path() + Fluid.proj.codefile_name();
     std::string header_filename = Fluid.proj.headerfile_path() + Fluid.proj.headerfile_name();
-    if (Fluid.proj.proj_filename)
+    if (!Fluid.proj.proj_filename.empty())
       Fluid.proj.enter_project_dir();
     // Setting code_view to true write code files directly into a string buffer
     // and does not write over the code files on disk.
@@ -196,7 +196,7 @@ void update_codeview_cb(class Fl_Button*, void*) {
       // update the source code highlighting
       update_codeview_position();
     }
-    if (Fluid.proj.proj_filename)
+    if (!Fluid.proj.proj_filename.empty())
       Fluid.proj.leave_project_dir();
   }
 }

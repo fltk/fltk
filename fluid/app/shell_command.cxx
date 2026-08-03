@@ -288,7 +288,7 @@ static bool prepare_shell_command(int flags)  {
     return false;
   }
   if (flags & Fd_Shell_Command::SAVE_PROJECT) {
-    Fluid.save_project_file(nullptr);
+    Fluid.proj.save();
   }
   if (flags & Fd_Shell_Command::SAVE_SOURCECODE) {
     Fluid.write_code_files(true);

@@ -1,7 +1,7 @@
 //
 // Fluid Application code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -264,7 +264,7 @@ void Application::quit() {
   flush_text_widgets();
 
   // verify user intention
-  if (confirm_project_clear() == false)
+  if (proj.confirm_clear() == false)
     return;
 
   // Stop any external editor update timers
@@ -452,28 +452,14 @@ const char *Application::cutfname(int which) {
 
 /**
  Clear the current project and create a new, empty one.
-
- If the current project was modified, FLUID will give the user the opportunity
- to save the old project first.
-
- \param[in] user_must_confirm if set, a confimation dialog is presented to the
- user before resetting the project. Default is `true`.
- \return false if the operation was canceled
  */
-bool Application::new_project(bool user_must_confirm) {
-  // verify user intention
-  if ((user_must_confirm) &&  (confirm_project_clear() == false))
-    return false;
-
+void Application::new_project() {
   // clear the current project
   proj.reset();
   proj.set_filename(nullptr);
   proj.set_modflag(0, 0);
   widget_browser->rebuild();
   proj.update_settings_dialog();
-
-  // all is clear to continue
-  return true;
 }
 
 
@@ -490,7 +476,7 @@ bool Application::new_project(bool user_must_confirm) {
  */
 bool Application::open_project_file(const std::string &filename_arg) {
   // verify user intention
-  if (confirm_project_clear() == false)
+  if (proj.confirm_clear() == false)
     return false;
 
   // ask for a filename if none was given
@@ -511,146 +497,10 @@ bool Application::open_project_file(const std::string &filename_arg) {
   }
 
   // clear the project and merge a file by the given name
-  new_project(false);
-  bool success = merge_project_file(new_filename);
+  new_project();
+  bool success = proj.load_or_merge(new_filename);
   if (success) mergeback_on_load();
   return success;
-}
-
-
-/**
- Load a project from the give file name and path.
-
- The project file is inserted at the currently selected type.
-
- If no filename is given, FLUID will open a file chooser dialog.
-
- \param[in] filename_arg path and name of the new project file
- \return false if the operation failed
- */
-bool Application::merge_project_file(const std::string &filename_arg) {
-  bool is_a_merge = (!proj.tree.empty());
-  std::string title = is_a_merge ? "Merge Project File" : "Open Project File";
-
-  // ask for a filename if none was given
-  std::string new_filename = filename_arg;
-  if (new_filename.empty()) {
-    new_filename = fluid::io::filechooser(
-      fluid::io::FileChooserType::LOAD_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE_PATH,
-      title,
-      "Can't open project file:\n%s.",
-      history.latest_project_path(),
-      launch_path(),
-      "Fluid Project Files\t*.f[ld]"
-    );
-    if (new_filename.empty()) {
-      return false;
-    }
-  }
-
-  const char *c = new_filename.c_str();
-  const char *oldfilename = proj.proj_filename;
-  proj.proj_filename    = nullptr;
-  proj.set_filename(c);
-  if (is_a_merge) proj.undo.checkpoint();
-  proj.undo.suspend();
-  if (!fluid::io::read_file(proj, c, is_a_merge)) {
-    proj.undo.resume();
-    widget_browser->rebuild();
-    proj.update_settings_dialog();
-    fluid_message("Can't read %s: %s", c, strerror(errno));
-    free((void *)proj.proj_filename);
-    proj.proj_filename = oldfilename;
-    if (main_window) proj.set_modflag(proj.modflag);
-    return false;
-  }
-  proj.undo.resume();
-  widget_browser->rebuild();
-  if (is_a_merge) {
-    // Inserting a file; restore the original filename...
-    proj.set_filename(oldfilename);
-    proj.set_modflag(1);
-  } else {
-    // Loaded a file; free the old filename...
-    proj.set_modflag(0, 0);
-    proj.undo.clear();
-  }
-  proj.update_settings_dialog();
-  if (oldfilename) free((void *)oldfilename);
-  return true;
-}
-
-
-/**
- Save the current design to the file given by \c filename.
- If automatic, this overwrites an existing file. If interactive, if will
- verify with the user.
- \param[in] v if v is not nullptr, or no filename is set, open a filechooser.
-    if (v is (void*)2, don;t update the project filename ("save copy...")
- */
-void Application::save_project_file(void *v) {
-  flush_text_widgets();
-
-  const char *c = proj.proj_filename;
-  std::string new_filename;
-  if (v || !c || !*c) {
-    new_filename = fluid::io::filechooser(
-      fluid::io::FileChooserType::SAVE_FILE,
-      fluid::io::FileChooserPath::ABSOLUTE_PATH,
-      "Save Project File As",
-      "Can't create project file:\n%s.",
-      c ? c : "",
-      history.latest_project_path(),
-      "Fluid Project Files\t*.fl"
-    );
-    if (new_filename.empty()) return;
-    c = new_filename.c_str();
-
-#if 0 // filechooser is already doing this check, so we don't need to do it again here
-    if (!fl_access(c, 0)) {
-      std::string basename = fl_filename_name_str(c);
-      if (fluid_choice("The file \"%s\" already exists.\n"
-                    "Do you want to replace it?", "Cancel",
-                    "Replace", nullptr, basename.c_str()) == 0) return;
-    }
-#endif
-    if (v != (void *)2) proj.set_filename(c);
-  }
-  if (!fluid::io::write_file(proj, c)) {
-    fluid_alert("Error writing project file '%s':\n%s", c, strerror(errno));
-    return;
-  }
-
-  if (v != (void *)2) {
-    proj.set_modflag(0, 1);
-    proj.undo.save_ = proj.undo.current_;
-  }
-}
-
-
-/**
- Reload the file set by \c filename, replacing the current design.
- If the design was modified, a dialog will ask for confirmation.
- */
-void Application::revert_project() {
-  if ( proj.modflag) {
-    if (!fluid_choice("This user interface has been changed. Really revert?",
-                   "Cancel", "Revert", nullptr)) return;
-  }
-  proj.undo.suspend();
-  if (!fluid::io::read_file(proj, proj.proj_filename, 0)) {
-    proj.undo.resume();
-    widget_browser->rebuild();
-    proj.update_settings_dialog();
-    fluid_message("Can't read %s: %s", proj.proj_filename, strerror(errno));
-    return;
-  }
-  widget_browser->rebuild();
-  proj.undo.resume();
-  proj.set_modflag(0, 0);
-  proj.undo.clear();
-  proj.update_settings_dialog();
 }
 
 
@@ -662,10 +512,14 @@ void Application::revert_project() {
 
  \return false if the operation was canceled or failed otherwise
  */
-bool Application::new_project_from_template() {
-  // clear the current project first
-  if (new_project() == false)
+bool Application::new_project_from_template()
+{
+  // Give the user the opportunity to save a project before clearing it.
+  if (proj.confirm_clear() == false)
     return false;
+
+  // Clear the current project
+  new_project();
 
   // Setup the template panel...
   if (!template_panel) make_template_panel();
@@ -806,7 +660,7 @@ void Application::print_snapshots() {
     fl_draw(date, w - (int)fl_width(date), fl_height());
 
     // Get the base filename...
-    std::string basename = fl_filename_name_str(std::string(proj.proj_filename));
+    std::string basename = fl_filename_name_str(proj.proj_filename);
     fl_draw(basename.c_str(), 0, fl_height());
 
     // print centered and scaled to fit in the page
@@ -853,9 +707,9 @@ int Application::write_code_files(bool dont_show_completion_dialog)
 {
   // -- handle user interface issues
   flush_text_widgets();
-  if (!proj.proj_filename) {
-    save_project_file(nullptr);
-    if (!proj.proj_filename) return 1;
+  if (proj.proj_filename.empty()) {
+    proj.save();
+    if (proj.proj_filename.empty()) return 1;
   }
 
   // -- generate the file names with absolute paths
@@ -1149,14 +1003,8 @@ void Application::show_help(const char *name) {
  Open the "About" dialog.
  */
 void Application::about() {
-#if 1
   if (!about_panel) make_about_panel();
   about_panel->show();
-#else
-  for (auto &n: proj.tree.all_nodes()) {
-    puts(n.name());
-  }
-#endif
 }
 
 
@@ -1204,33 +1052,6 @@ void Application::make_main_window() {
   }
 }
 
-/**
- Give the user the opportunity to save a project before clearing it.
-
- If the project has unsaved changes, this function pops up a dialog, that
- allows the user to save the project, continue without saving the project,
- or to cancel the operation.
-
- If the user chooses to save, and no filename was set, a file dialog allows
- the user to pick a name and location, or to cancel the operation.
-
- \return false if the user aborted the operation and the calling function
- should abort as well
- */
-bool Application::confirm_project_clear() {
-  if (proj.modflag == 0) return true;
-  switch (fluid_choice("This project has unsaved changes. Do you want to save\n"
-                    "the project file before proceeding?",
-                    "Cancel", "Save", "Don't Save"))
-  {
-    case 0 : /* Cancel */
-      return false;
-    case 1 : /* Save */
-      save_project_file(nullptr);
-      if (proj.modflag) return false;  // user canceled the "Save As" dialog
-  }
-  return true;
-}
 
 
 /**
