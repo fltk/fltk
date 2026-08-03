@@ -593,8 +593,9 @@ void Application::save_project_file(void *v) {
   flush_text_widgets();
 
   const char *c = proj.proj_filename;
+  std::string new_filename;
   if (v || !c || !*c) {
-    std::string filename = fluid::io::filechooser(
+    new_filename = fluid::io::filechooser(
       fluid::io::FileChooserType::SAVE_FILE,
       fluid::io::FileChooserPath::ABSOLUTE_PATH,
       "Save Project File As",
@@ -603,8 +604,8 @@ void Application::save_project_file(void *v) {
       history.latest_project_path(),
       "Fluid Project Files\t*.fl"
     );
-    if (filename.empty()) return;
-    c = filename.c_str();
+    if (new_filename.empty()) return;
+    c = new_filename.c_str();
 
 #if 0 // filechooser is already doing this check, so we don't need to do it again here
     if (!fl_access(c, 0)) {
