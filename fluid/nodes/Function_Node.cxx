@@ -1134,7 +1134,7 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
   if (message && !f.write_codeview) {
     fluid_alert("%s\n%s\n", message, fn.c_str());
   }
-  if (data) free(data);
+  free(data);
 }
 
 

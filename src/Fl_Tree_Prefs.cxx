@@ -63,7 +63,7 @@ int Fl_System_Driver::tree_connector_style() {
 void Fl_Tree_Prefs::openicon(Fl_Image *val) {
   _openimage = val ? val : 0;
   // Update deactivated version of icon..
-  if ( _opendeimage ) delete _opendeimage;
+  delete _opendeimage;
   if ( _openimage ) {
     _opendeimage = _openimage->copy();
     _opendeimage->inactive();
@@ -80,7 +80,7 @@ void Fl_Tree_Prefs::openicon(Fl_Image *val) {
 void Fl_Tree_Prefs::closeicon(Fl_Image *val) {
   _closeimage = val ? val : 0;
   // Update deactivated version of icon..
-  if ( _closedeimage ) delete _closedeimage;
+  delete _closedeimage;
   if ( _closeimage ) {
     _closedeimage = _closeimage->copy();
     _closedeimage->inactive();
@@ -125,7 +125,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
 
 /// Fl_Tree_Prefs destructor
 Fl_Tree_Prefs::~Fl_Tree_Prefs() {
-  if ( _opendeimage )  delete _opendeimage;
-  if ( _closedeimage ) delete _closedeimage;
-  if ( _userdeimage )  delete _userdeimage;
+  delete _opendeimage;
+  delete _closedeimage;
+  delete _userdeimage;
 }

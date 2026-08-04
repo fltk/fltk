@@ -320,7 +320,7 @@ public:
   inline void usericon(Fl_Image *val) {
     _userimage = val;
     // Update deactivated version of icon..
-    if ( _userdeimage ) delete _userdeimage;
+    delete _userdeimage;
     if ( _userimage ) {
       _userdeimage = _userimage->copy();
       _userdeimage->inactive();

@@ -88,9 +88,7 @@ Fl_Group((Fl_Group::current(0),0), 0, W, H, l)
 
 Fl_Window::~Fl_Window() {
   hide();
-  if (xclass_) {
-    free(xclass_);
-  }
+  free(xclass_);
   free_icons();
   delete pWindowDriver;
 }

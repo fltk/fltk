@@ -194,10 +194,10 @@ void nsvgDeleteRasterizer(NSVGrasterizer* r)
 		p = next;
 	}
 
-	if (r->edges) free(r->edges);
-	if (r->points) free(r->points);
-	if (r->points2) free(r->points2);
-	if (r->scanline) free(r->scanline);
+	free(r->edges);
+	free(r->points);
+	free(r->points2);
+	free(r->scanline);
 
 	free(r);
 }

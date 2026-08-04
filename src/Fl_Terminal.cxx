@@ -752,7 +752,7 @@ void Fl_Terminal::RingBuffer::new_copy(int drows, int dcols, int hrows, const Ch
     --dst_row;
   }
   // Install new buffer: dump old, install new, adjust internals
-  if (ring_chars_) delete[] ring_chars_;
+  delete[] ring_chars_;
   ring_chars_ = new_ring_chars;
   ring_rows_  = new_ring_rows;
   ring_cols_  = dcols;
@@ -765,7 +765,7 @@ void Fl_Terminal::RingBuffer::new_copy(int drows, int dcols, int hrows, const Ch
 
 // Clear the class, delete previous ring if any
 void Fl_Terminal::RingBuffer::clear(void) {
-  if (ring_chars_) delete[] ring_chars_; // dump our ring
+  delete[] ring_chars_; // dump our ring
   ring_chars_ = 0;
   ring_rows_  = 0;
   ring_cols_  = 0;
@@ -798,7 +798,7 @@ Fl_Terminal::RingBuffer::RingBuffer(int drows, int dcols, int hrows) {
 
 // Dtor
 Fl_Terminal::RingBuffer::~RingBuffer(void) {
-  if (ring_chars_) delete[] ring_chars_;
+  delete[] ring_chars_;
   ring_chars_ = NULL;
 }
 

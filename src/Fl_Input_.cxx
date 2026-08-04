@@ -45,8 +45,7 @@ public:
   undoyankcut(0)
   { }
   ~Fl_Input_Undo_Action() {
-    if (undobuffer)
-      ::free(undobuffer);
+    ::free(undobuffer);
   }
 
   char *undobuffer;

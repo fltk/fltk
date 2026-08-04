@@ -84,8 +84,7 @@ Fl_Image_Reader::~Fl_Image_Reader() {
   if (is_file_ && file_) {
     fclose(file_);
   }
-  if (name_)
-    free(name_);
+  free(name_);
 }
 
 // Read a single byte from memory or a file

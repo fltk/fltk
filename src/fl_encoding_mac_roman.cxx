@@ -66,7 +66,7 @@ const char *Fl_System_Driver::local_to_mac_roman(const char *t, int n)
   if (n==-1) n = (int) strlen(t);
   if (n<=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
-    if (buf) free(buf);
+    free(buf);
     buf = (char*)malloc(n_buf);
   }
   const uchar *src = (const uchar*)t;
@@ -87,7 +87,7 @@ const char *Fl_System_Driver::mac_roman_to_local(const char *t, int n)
   if (n==-1) n = (int) strlen(t);
   if (n<=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
-    if (buf) free(buf);
+    free(buf);
     buf = (char*)malloc(n_buf);
   }
   const uchar *src = (const uchar*)t;

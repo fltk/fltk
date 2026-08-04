@@ -109,8 +109,7 @@ Project_Reader::Project_Reader(Project &proj)
 Project_Reader::~Project_Reader()
 {
   // fname is not copied, so do not free it
-  if (buffer)
-    ::free(buffer);
+  ::free(buffer);
 }
 
 /**

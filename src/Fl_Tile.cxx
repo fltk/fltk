@@ -934,6 +934,5 @@ Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*L)
  Destructor.
  */
 Fl_Tile::~Fl_Tile() {
-  if (size_range_)
-    ::free(size_range_);
+  ::free(size_range_);
 }

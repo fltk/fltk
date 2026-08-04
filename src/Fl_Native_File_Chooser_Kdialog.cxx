@@ -49,9 +49,9 @@ Fl_Kdialog_Native_File_Chooser_Driver::Fl_Kdialog_Native_File_Chooser_Driver(int
 Fl_Kdialog_Native_File_Chooser_Driver::~Fl_Kdialog_Native_File_Chooser_Driver() {
   for (int i = 0; i < _tpathnames; i++) delete[] _pathnames[i];
   delete[] _pathnames;
-  if (_preset_file) free(_preset_file);
-  if (_directory) free(_directory);
-  if (_title) free(_title);
+  free(_preset_file);
+  free(_directory);
+  free(_title);
 }
 
 
@@ -280,7 +280,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::filter(const char *f) {
 }
 
 void Fl_Kdialog_Native_File_Chooser_Driver::preset_file(const char *val) {
-  if (_preset_file) free(_preset_file);
+  free(_preset_file);
   _preset_file = strdup(val);
 }
 
@@ -289,7 +289,7 @@ const char *Fl_Kdialog_Native_File_Chooser_Driver::preset_file() const {
 }
 
 void Fl_Kdialog_Native_File_Chooser_Driver::directory(const char *val) {
-  if (_directory) free(_directory);
+  free(_directory);
   _directory = strdup(val);
 }
 
@@ -299,7 +299,7 @@ const char *Fl_Kdialog_Native_File_Chooser_Driver::directory() const {
 
 void Fl_Kdialog_Native_File_Chooser_Driver::title(const char *val)
 {
-  if (_title) free(_title);
+  free(_title);
   _title = strdup(val);
 }
 

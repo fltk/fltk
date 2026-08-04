@@ -53,7 +53,7 @@ static char **parse_path(const char *path) {
 // INTERNAL: Free an array 'arr' returned by parse_path()
 static void free_path(char **arr) {
   if ( arr ) {
-    if ( arr[0] ) { delete[] arr[0]; }  // deletes cp in parse_path
+    delete[] arr[0];                    // deletes cp in parse_path
     delete[] arr;                       // deletes ptr array
   }
 }

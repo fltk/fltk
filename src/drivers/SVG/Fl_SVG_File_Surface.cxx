@@ -145,14 +145,14 @@ Fl_SVG_Graphics_Driver::Fl_SVG_Graphics_Driver(FILE *f) {
 
 Fl_SVG_Graphics_Driver::~Fl_SVG_Graphics_Driver()
 {
-  if (user_dash_array_) free(user_dash_array_);
-  if (dasharray_) free(dasharray_);
+  free(user_dash_array_);
+  free(dasharray_);
   while (clip_){
     Clip * c= clip_;
     clip_= clip_->prev;
     delete c;
   }
-  if (last_rgb_name_) free(last_rgb_name_);
+  free(last_rgb_name_);
 }
 
 
@@ -229,7 +229,7 @@ Fl_Font Fl_SVG_Graphics_Driver::font() { return Fl_Graphics_Driver::font(); }
 void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   if (user_dash_array_ && user_dash_array_ != dashes) {free(user_dash_array_); user_dash_array_ = NULL;}
   if (dashes && *dashes) {
-    if (dasharray_) free(dasharray_);
+    free(dasharray_);
     int array_len = int(10*strlen(dashes) + 1);
     dasharray_ = (char*)calloc(array_len, 1);
     for (char *p = dashes; *p; p++) {
@@ -252,7 +252,7 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
     float dot = (is_flat ? width_/s : width_*0.6f/s);
     float gap = (is_flat ? width_/s : width_*1.5f/s);
     float big = (is_flat ? 3*width_/s : width_*2.5f/s);
-    if (dasharray_) free(dasharray_);
+    free(dasharray_);
     dasharray_ = (char*)malloc(61);
     if (dash_part == FL_DOT) snprintf(dasharray_, 61, "%.3f,%.3f", dot, gap);
     else if (dash_part == FL_DASH) snprintf(dasharray_, 61, "%.3f,%.3f", big, gap);
@@ -493,7 +493,7 @@ void Fl_SVG_Graphics_Driver::define_rgb_png(Fl_RGB_Image *rgb, const char *name,
     return;
   }
   if (name) {
-    if (last_rgb_name_) free(last_rgb_name_);
+    free(last_rgb_name_);
     last_rgb_name_ = fl_strdup(name);
   }
   float f = rgb->data_w() > rgb->data_h() ? float(rgb->w()) / rgb->data_w(): float(rgb->h()) / rgb->data_h();
@@ -582,7 +582,7 @@ static void term_destination(jpeg_compress_struct *cinfo) {
 
 void Fl_SVG_Graphics_Driver::define_rgb_jpeg(Fl_RGB_Image *rgb, const char *name, int x, int y) {
   if (name) {
-    if (last_rgb_name_) free(last_rgb_name_);
+    free(last_rgb_name_);
     last_rgb_name_ = fl_strdup(name);
   }
   float f = rgb->data_w() > rgb->data_h() ? float(rgb->w()) / rgb->data_w(): float(rgb->h()) / rgb->data_h();

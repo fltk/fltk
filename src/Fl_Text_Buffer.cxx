@@ -94,8 +94,7 @@ public:
     undoyankcut(0)
   { }
   ~Fl_Text_Undo_Action() {
-    if (undobuffer)
-      ::free(undobuffer);
+    ::free(undobuffer);
   }
 
   char *undobuffer;
