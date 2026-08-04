@@ -401,8 +401,8 @@ typedef struct BOXTABLE {
   uchar dx, dy, dw, dh;
   int flags;
   Fl_Box_Draw_Focus_F *ff;
-  bool set() { return flags & 1; }
-  bool bg()  { return !(flags & 2); }
+  bool set() const { return flags & 1; }
+  bool bg() const { return !(flags & 2); }
 } boxtable_t;
 
 static boxtable_t fl_box_table[FL_MAX_BOXTYPE+1] = {

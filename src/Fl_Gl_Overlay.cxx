@@ -28,7 +28,7 @@
  FLTK will try to simulate the overlay, with significant loss of update
  speed.  Calling this will cause FLTK to open the display.
  */
-int Fl_Gl_Window::can_do_overlay() {
+int Fl_Gl_Window::can_do_overlay() const {
   return pGlWindowDriver->can_do_overlay();
 }
 
@@ -72,7 +72,7 @@ void Fl_Gl_Window::make_overlay_current() {
 }
 
 /** Hides the window if it is not this window, does nothing in Windows. */
-void Fl_Gl_Window::hide_overlay() {
+void Fl_Gl_Window::hide_overlay() const {
   pGlWindowDriver->hide_overlay();
 }
 

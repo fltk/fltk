@@ -69,7 +69,7 @@ private:
   void newdir();
   static void previewCB(Fl_File_Chooser *fc);
   void showChoiceCB();
-  void update_favorites();
+  void update_favorites() const;
   void update_preview();
 public:
   Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title);
@@ -128,7 +128,7 @@ private:
   inline void cb_favDownButton_i(Fl_Button*, void*);
   static void cb_favDownButton(Fl_Button*, void*);
   Fl_Button* favCancelButton;
-  inline void cb_favCancelButton_i(Fl_Button*, void*);
+  inline void cb_favCancelButton_i(Fl_Button*, void*) const;
   static void cb_favCancelButton(Fl_Button*, void*);
   Fl_Return_Button* favOkButton;
   inline void cb_favOkButton_i(Fl_Return_Button*, void*);
@@ -136,52 +136,52 @@ private:
 public:
   ~Fl_File_Chooser();
   void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
-  void color(Fl_Color c);
-  Fl_Color color();
+  void color(Fl_Color c) const;
+  Fl_Color color() const;
   int count();
   void directory(const char *d);
   char * directory();
   void filter(const char *p);
-  const char * filter();
-  int filter_value();
+  const char * filter() const;
+  int filter_value() const;
   void filter_value(int f);
-  void iconsize(uchar s);
-  uchar iconsize();
-  void label(const char *l);
-  const char * label();
-  void ok_label(const char *l);
-  const char * ok_label();
+  void iconsize(uchar s) const;
+  uchar iconsize() const;
+  void label(const char *l) const;
+  const char * label() const;
+  void ok_label(const char *l) const;
+  const char * ok_label() const;
   void preview(int e);
   int preview() const { return previewButton->value(); }
 private:
   void showHidden(int e);
-  void remove_hidden_files();
+  void remove_hidden_files() const;
 public:
   void rescan();
   void rescan_keep_filename();
   void show();
   void hide();
-  int shown();
-  void textcolor(Fl_Color c);
-  Fl_Color textcolor();
-  void textfont(Fl_Font f);
-  Fl_Font textfont();
-  void textsize(Fl_Fontsize s);
-  Fl_Fontsize textsize();
+  int shown() const;
+  void textcolor(Fl_Color c) const;
+  Fl_Color textcolor() const;
+  void textfont(Fl_Font f) const;
+  Fl_Font textfont() const;
+  void textsize(Fl_Fontsize s) const;
+  Fl_Fontsize textsize() const;
   void type(int t);
-  int type();
+  int type() const;
   void * user_data() const;
   void user_data(void *d);
   const char *value(int f = 1);
   void value(const char *filename);
-  int visible();
-  void position(int x, int y);
+  int visible() const;
+  void position(int x, int y) const;
   int x() const;
   int y() const;
   int w() const;
   int h() const;
-  void size(int w, int h);
-  void resize(int x, int y, int w, int h);
+  void size(int w, int h) const;
+  void resize(int x, int y, int w, int h) const;
   /**
    [standard text may be customized at run-time]
   */
@@ -248,7 +248,7 @@ private:
 public:
   Fl_Widget* add_extra(Fl_Widget* gr);
 protected:
-  void show_error_box(int val);
+  void show_error_box(int val) const;
 };
 FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);

@@ -269,7 +269,7 @@ static void generate_image(void* vv, int X, int Y, int W, uchar* buf) {
 }
 
 #ifndef FL_DOXYGEN
-int Flcc_HueBox::handle_key(int key) {
+int Flcc_HueBox::handle_key(int key) const {
   int w1 = w()-Fl::box_dw(box())-6;
   int h1 = h()-Fl::box_dh(box())-6;
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
@@ -409,7 +409,7 @@ void Flcc_ValueBox::draw() {
 #endif // !FL_DOXYGEN
 
 #ifndef FL_DOXYGEN
-int Flcc_ValueBox::handle_key(int key) {
+int Flcc_ValueBox::handle_key(int key) const {
   int h1 = h()-Fl::box_dh(box())-6;
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
 

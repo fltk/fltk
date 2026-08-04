@@ -132,15 +132,15 @@ protected:
   int lineno(void *item) const ;
   void swap(FL_BLINE *a, FL_BLINE *b);
 
-  void*& bline_data(FL_BLINE* b) const;
-  const void* bline_data(const FL_BLINE* b) const;
-  char& bline_flags(FL_BLINE* b) const;
-  char bline_flags(const FL_BLINE* b) const;
-  char* bline_txt(FL_BLINE* b) const;
-  const char* bline_txt(const FL_BLINE* b) const;
-  Fl_Image*& bline_icon(FL_BLINE* b) const;
-  const Fl_Image* bline_icon(const FL_BLINE* b) const;
-  short bline_length(const FL_BLINE* b) const;
+  static void*& bline_data(FL_BLINE* b);
+  static const void* bline_data(const FL_BLINE* b);
+  static char& bline_flags(FL_BLINE* b);
+  static char bline_flags(const FL_BLINE* b);
+  static char* bline_txt(FL_BLINE* b);
+  static const char* bline_txt(const FL_BLINE* b);
+  static Fl_Image*& bline_icon(FL_BLINE* b);
+  static const Fl_Image* bline_icon(const FL_BLINE* b);
+  static short bline_length(const FL_BLINE* b);
 
 public:
 

@@ -1201,7 +1201,7 @@ Fl_File_Chooser::showChoiceCB()
 //
 
 void
-Fl_File_Chooser::update_favorites()
+Fl_File_Chooser::update_favorites() const
 {
   int           i;                      // Looping var
   char          pathname[FL_PATH_MAX],  // Pathname
@@ -1585,7 +1585,7 @@ void Fl_File_Chooser::showHidden(int value)
   }
 }
 
-void Fl_File_Chooser::remove_hidden_files()
+void Fl_File_Chooser::remove_hidden_files() const
 {
   int count = fileList->size();
   for(int num = count; num >= 1; num--) {

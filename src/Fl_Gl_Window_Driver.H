@@ -45,14 +45,14 @@ public:
   static int copy;
   static float gl_scale;
   static GLContext gl_start_context;
-  Fl_Gl_Choice* g() {return pWindow->g;}
-  void g(Fl_Gl_Choice *c) {pWindow->g = c;}
-  int mode() {return pWindow->mode_;}
-  void mode(int m) { pWindow->mode_ = m;}
-  const int *alist() {return pWindow->alist;}
-  void alist(const int *l) { pWindow->alist = l;}
-  void* overlay() {return pWindow->overlay;}
-  void draw_overlay() {pWindow->draw_overlay();}
+  Fl_Gl_Choice* g() const { return pWindow->g;}
+  void g(Fl_Gl_Choice *c) const { pWindow->g = c;}
+  int mode() const { return pWindow->mode_;}
+  void mode(int m) const { pWindow->mode_ = m;}
+  const int *alist() const { return pWindow->alist;}
+  void alist(const int *l) const { pWindow->alist = l;}
+  void* overlay() const { return pWindow->overlay;}
+  void draw_overlay() const { pWindow->draw_overlay();}
 
   Fl_Gl_Window_Driver(Fl_Gl_Window *win) : pWindow(win) {current_prog=0;}
   virtual ~Fl_Gl_Window_Driver() {}

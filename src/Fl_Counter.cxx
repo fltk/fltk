@@ -53,7 +53,7 @@ struct arrow_box {
   \param[out]   w1  width of single arrow box
   \param[out]   w2  width of double arrow box
 */
-void Fl_Counter::arrow_widths(int &w1, int &w2) {
+void Fl_Counter::arrow_widths(int &w1, int &w2) const {
   if (type() == FL_SIMPLE_COUNTER) {
     w1 = w() * 20/100;
     w2 = 0;
@@ -152,7 +152,7 @@ void Fl_Counter::repeat_callback(void* v) {
   }
 }
 
-int Fl_Counter::calc_mouseobj() {
+int Fl_Counter::calc_mouseobj() const {
   if (type() == FL_NORMAL_COUNTER) {
     int W = w()*15/100;
     if (Fl::event_inside(x(), y(), W, h())) return 1;

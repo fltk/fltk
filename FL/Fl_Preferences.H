@@ -222,7 +222,7 @@ public:
    */
   const char *path() const { return node->path(); }
 
-  int groups();
+  int groups() const;
   const char *group( int num_group );
   char group_exists( const char *key );
   char delete_group( const char *group );

@@ -28,7 +28,7 @@
   Draws dial at given position and size.
   \param[in] X, Y, W, H position and size
 */
-void Fl_Dial::draw(int X, int Y, int W, int H) {
+void Fl_Dial::draw(int X, int Y, int W, int H) const {
   if (damage()&FL_DAMAGE_ALL) draw_box(box(), X, Y, W, H, color());
   X += Fl::box_dx(box());
   Y += Fl::box_dy(box());

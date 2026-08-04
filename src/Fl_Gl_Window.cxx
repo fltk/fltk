@@ -101,7 +101,7 @@ void Fl_Gl_Window::invalidate() {
   pGlWindowDriver->invalidate();
 }
 
-int Fl_Gl_Window::mode(int m, const int *a) {
+int Fl_Gl_Window::mode(int m, const int *a) const {
   if (m == mode_ && a == alist) return 0;
   return pGlWindowDriver->mode_(m, a);
 }
@@ -162,7 +162,7 @@ void Fl_Gl_Window::ortho() {
   The swap_buffers() method swaps the back and front buffers.
   It is called automatically after the draw() method is called.
 */
-void Fl_Gl_Window::swap_buffers() {
+void Fl_Gl_Window::swap_buffers() const {
   pGlWindowDriver->swap_buffers();
 }
 
@@ -177,7 +177,7 @@ void Fl_Gl_Window::swap_buffers() {
  \param[in] frames set the number of vertical frame blanks between OpenGL
     buffer swaps
  */
-void Fl_Gl_Window::swap_interval(int frames) {
+void Fl_Gl_Window::swap_interval(int frames) const {
   pGlWindowDriver->swap_interval(frames);
 }
 
@@ -423,7 +423,7 @@ void Fl_Gl_Window::draw_begin() {
  To be used as a match for a previous call to Fl_Gl_Window::draw_begin().
  \see \ref opengl_with_fltk_widgets
  */
-void Fl_Gl_Window::draw_end() {
+void Fl_Gl_Window::draw_end() const {
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
@@ -530,7 +530,7 @@ int Fl_Gl_Window::gl_plugin_linkage() {
  Fl::event_y() to the pixel units used by the OpenGL source code.
  \version 1.3.4
  */
-float Fl_Gl_Window::pixels_per_unit() {
+float Fl_Gl_Window::pixels_per_unit() const {
   return pGlWindowDriver->pixels_per_unit();
 }
 

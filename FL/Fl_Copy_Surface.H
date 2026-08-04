@@ -58,9 +58,9 @@ public:
   void set_current() override;
   bool is_current() override;
   /** Returns the pixel width of the copy surface */
-  int w();
+  int w() const;
   /** Returns the pixel height of the copy surface */
-  int h();
+  int h() const;
   void origin(int *x, int *y) override;
   void origin(int x, int y) override;
   int printable_rect(int *w, int *h) override;

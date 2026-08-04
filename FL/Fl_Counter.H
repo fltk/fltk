@@ -49,14 +49,14 @@ class FL_EXPORT Fl_Counter : public Fl_Valuator {
   double lstep_;
   uchar mouseobj_;
   static void repeat_callback(void *);
-  int calc_mouseobj();
+  int calc_mouseobj() const;
   void increment_cb();
 
 protected:
 
   void draw() override;
   // compute widths of arrow boxes
-  void arrow_widths(int &w1, int &w2);
+  void arrow_widths(int &w1, int &w2) const;
 
 public:
 

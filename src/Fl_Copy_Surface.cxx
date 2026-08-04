@@ -48,9 +48,9 @@ void Fl_Copy_Surface::untranslate() {
   if (platform_surface) platform_surface->untranslate();
 }
 
-int Fl_Copy_Surface::w() {return platform_surface ? platform_surface->width : 0;}
+int Fl_Copy_Surface::w() const {return platform_surface ? platform_surface->width : 0;}
 
-int Fl_Copy_Surface::h() {return platform_surface ? platform_surface->height : 0;}
+int Fl_Copy_Surface::h() const {return platform_surface ? platform_surface->height : 0;}
 
 int Fl_Copy_Surface::printable_rect(int *w, int *h)  {
   if (platform_surface)

@@ -49,7 +49,7 @@ class FL_EXPORT Fl_Dial : public Fl_Valuator {
 protected:
 
   // these allow subclasses to put the dial in a smaller area:
-  void draw(int X, int Y, int W, int H);
+  void draw(int X, int Y, int W, int H) const;
   int handle(int event, int X, int Y, int W, int H);
   void draw() override;
 

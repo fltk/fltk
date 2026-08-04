@@ -63,7 +63,7 @@ protected:
   // implement once for each platform
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
-  int filename_relative_(char *to, int tolen, const char *from, const char *base, bool case_sensitive);
+  static int filename_relative_(char *to, int tolen, const char *from, const char *base, bool case_sensitive);
 
   // -- Awake handler stuff --
 public:

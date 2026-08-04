@@ -613,7 +613,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size)
 
    \return 0 for no groups at all
  */
-int Fl_Preferences::groups() {
+int Fl_Preferences::groups() const {
   return node->nChildren();
 }
 

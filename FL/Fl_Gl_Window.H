@@ -69,12 +69,12 @@ class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   void *overlay;
 
   static int can_do(int, const int *);
-  int mode(int, const int *);
+  int mode(int, const int *) const;
   static int gl_plugin_linkage();
 protected:
   void draw_begin();
   void draw() override;
-  void draw_end();
+  void draw_end() const;
 
 public:
   void show() override;
@@ -203,21 +203,21 @@ public:
   GLContext context() const {return context_;}
   void context(GLContext, int destroy_flag = 0);
   void make_current();
-  void swap_buffers();
-  void swap_interval(int);
+  void swap_buffers() const;
+  void swap_interval(int) const;
   int swap_interval() const;
   void ortho();
 
-  int can_do_overlay();
+  int can_do_overlay() const;
   void redraw_overlay();
-  void hide_overlay();
+  void hide_overlay() const;
   void make_overlay_current();
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   Fl_Gl_Window* as_gl_window() override { return this; }
   Fl_Gl_Window const* as_gl_window() const override { return this; }
 
-  float pixels_per_unit();
+  float pixels_per_unit() const;
   /** Gives the window width in OpenGL pixels.
    When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::w()
    which is expressed in FLTK units, may differ from the window width in pixels.

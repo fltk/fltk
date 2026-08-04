@@ -39,7 +39,7 @@ class FL_EXPORT Flcc_HueBox : public Fl_Widget {
   int px, py;
 protected:
   void draw() override;
-  int handle_key(int);
+  int handle_key(int) const;
 public:
   int handle(int) override;
   Flcc_HueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {
@@ -51,7 +51,7 @@ class FL_EXPORT Flcc_ValueBox : public Fl_Widget {
   int py;
 protected:
   void draw() override;
-  int handle_key(int);
+  int handle_key(int) const;
 public:
   int handle(int) override;
   Flcc_ValueBox(int X, int Y, int W, int H) : Fl_Widget(X,Y,W,H) {

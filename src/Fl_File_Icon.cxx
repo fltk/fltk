@@ -201,6 +201,7 @@ Fl_File_Icon::draw(int      x,          // I - Upper-lefthand X
                    int      h,          // I - Height of bounding box
                    Fl_Color ic,         // I - Icon color...
                    int      active)     // I - Active or inactive?
+                   const
 {
   Fl_Color      c,              // Current color
                 oc;             // Outline color
@@ -397,7 +398,7 @@ Fl_File_Icon::draw(int      x,          // I - Upper-lefthand X
   label type as needed.
   \param[in] w widget for which this icon will become the label
 */
-void Fl_File_Icon::label(Fl_Widget *w)  // I - Widget to label
+void Fl_File_Icon::label(Fl_Widget *w) const // I - Widget to label
 {
   w->label(FL_ICON_LABEL, (const char*)this);
 }

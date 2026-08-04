@@ -151,7 +151,7 @@ void Fl_File_Chooser::cb_favDownButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_favDownButton_i(o,v);
 }
 
-void Fl_File_Chooser::cb_favCancelButton_i(Fl_Button*, void*) {
+void Fl_File_Chooser::cb_favCancelButton_i(Fl_Button*, void*) const {
   favWindow->hide();
 }
 void Fl_File_Chooser::cb_favCancelButton(Fl_Button* o, void* v) {
@@ -337,11 +337,11 @@ void Fl_File_Chooser::callback(void (*cb)(Fl_File_Chooser *, void *), void *d ) 
   data_     = d;
 }
 
-void Fl_File_Chooser::color(Fl_Color c) {
+void Fl_File_Chooser::color(Fl_Color c) const {
   fileList->color(c);
 }
 
-Fl_Color Fl_File_Chooser::color() {
+Fl_Color Fl_File_Chooser::color() const {
   return (fileList->color());
 }
 
@@ -349,11 +349,11 @@ char * Fl_File_Chooser::directory() {
   return directory_;
 }
 
-const char * Fl_File_Chooser::filter() {
+const char * Fl_File_Chooser::filter() const {
   return (fileList->filter());
 }
 
-int Fl_File_Chooser::filter_value() {
+int Fl_File_Chooser::filter_value() const {
   return showChoice->value();
 }
 
@@ -362,23 +362,23 @@ void Fl_File_Chooser::filter_value(int f) {
   showChoiceCB();
 }
 
-void Fl_File_Chooser::iconsize(uchar s) {
+void Fl_File_Chooser::iconsize(uchar s) const {
   fileList->iconsize(s);
 }
 
-uchar Fl_File_Chooser::iconsize() {
+uchar Fl_File_Chooser::iconsize() const {
   return (fileList->iconsize());
 }
 
-void Fl_File_Chooser::label(const char *l) {
+void Fl_File_Chooser::label(const char *l) const {
   window->label(l);
 }
 
-const char * Fl_File_Chooser::label() {
+const char * Fl_File_Chooser::label() const {
   return (window->label());
 }
 
-void Fl_File_Chooser::ok_label(const char *l) {
+void Fl_File_Chooser::ok_label(const char *l) const {
   if (l) okButton->label(l);
   int w=0, h=0;
   okButton->measure_label(w, h);
@@ -387,35 +387,35 @@ void Fl_File_Chooser::ok_label(const char *l) {
   okButton->parent()->init_sizes();
 }
 
-const char * Fl_File_Chooser::ok_label() {
+const char * Fl_File_Chooser::ok_label() const {
   return (okButton->label());
 }
 
-int Fl_File_Chooser::shown() {
+int Fl_File_Chooser::shown() const {
   return window->shown();
 }
 
-void Fl_File_Chooser::textcolor(Fl_Color c) {
+void Fl_File_Chooser::textcolor(Fl_Color c) const {
   fileList->textcolor(c);
 }
 
-Fl_Color Fl_File_Chooser::textcolor() {
+Fl_Color Fl_File_Chooser::textcolor() const {
   return (fileList->textcolor());
 }
 
-void Fl_File_Chooser::textfont(Fl_Font f) {
+void Fl_File_Chooser::textfont(Fl_Font f) const {
   fileList->textfont(f);
 }
 
-Fl_Font Fl_File_Chooser::textfont() {
+Fl_Font Fl_File_Chooser::textfont() const {
   return (fileList->textfont());
 }
 
-void Fl_File_Chooser::textsize(Fl_Fontsize s) {
+void Fl_File_Chooser::textsize(Fl_Fontsize s) const {
   fileList->textsize(s);
 }
 
-Fl_Fontsize Fl_File_Chooser::textsize() {
+Fl_Fontsize Fl_File_Chooser::textsize() const {
   return (fileList->textsize());
 }
 
@@ -435,7 +435,7 @@ void Fl_File_Chooser::type(int t) {
     fileList->filetype(Fl_File_Browser::FILES);
 }
 
-int Fl_File_Chooser::type() {
+int Fl_File_Chooser::type() const {
   return (type_);
 }
 
@@ -447,11 +447,11 @@ void Fl_File_Chooser::user_data(void *d) {
   data_ = d;
 }
 
-int Fl_File_Chooser::visible() {
+int Fl_File_Chooser::visible() const {
   return window->visible();
 }
 
-void Fl_File_Chooser::position(int x, int y) {
+void Fl_File_Chooser::position(int x, int y) const {
   window->position(x, y);
 }
 
@@ -471,11 +471,11 @@ int Fl_File_Chooser::h() const {
   return window->h();
 }
 
-void Fl_File_Chooser::size(int w, int h) {
+void Fl_File_Chooser::size(int w, int h) const {
   window->size(w, h);
 }
 
-void Fl_File_Chooser::resize(int x, int y, int w, int h) {
+void Fl_File_Chooser::resize(int x, int y, int w, int h) const {
   window->resize(x, y, w, h);
 }
 
@@ -509,7 +509,7 @@ Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
 /**
  Show error box if val=1, hide if val=0
 */
-void Fl_File_Chooser::show_error_box(int val) {
+void Fl_File_Chooser::show_error_box(int val) const {
   if ( val ) {
     errorBox->color(fileList->color()); // inherit fileList's bg color
     errorBox->show();

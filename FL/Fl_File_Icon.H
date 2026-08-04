@@ -109,9 +109,9 @@ class FL_EXPORT Fl_File_Icon {                  //// Icon data
   /** Clears all icon data from the icon.*/
   void          clear() { num_data_ = 0; }
 
-  void          draw(int x, int y, int w, int h, Fl_Color ic, int active = 1);
+  void          draw(int x, int y, int w, int h, Fl_Color ic, int active = 1) const;
 
-  void          label(Fl_Widget *w);
+  void          label(Fl_Widget *w) const;
 
   static void   labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a);
   void          load(const char *f);
