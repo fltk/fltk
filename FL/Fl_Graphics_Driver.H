@@ -143,8 +143,8 @@ private:
   virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b, int color_count, void **data);
   // some platforms may need to reimplement this
   virtual void set_current_();
-  void draw_image_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
-  void draw_image_mono_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
+  static void draw_image_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
+  static void draw_image_mono_general_(const uchar *buf, int X, int Y, int W, int H, int D, int L);
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
 public:
   /** Creates the graphics driver that is used for core operations. */
@@ -233,7 +233,7 @@ protected:
 
   Fl_Graphics_Driver();
   virtual void cache_size(Fl_Image *img, int &width, int &height);
-  void cache_size_finalize(Fl_Image *img, int &width, int &height);
+  static void cache_size_finalize(Fl_Image *img, int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver();

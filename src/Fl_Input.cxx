@@ -150,7 +150,7 @@ int Fl_Input::kf_page_down() {
 }
 
 // Toggle insert mode
-int Fl_Input::kf_insert_toggle() {
+int Fl_Input::kf_insert_toggle() const {
   if (readonly()) { fl_beep(); return 1; }
   return 1;                             // \todo: needs insert mode
 }

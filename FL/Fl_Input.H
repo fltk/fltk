@@ -229,7 +229,7 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
   int kf_lines_down(int repeat_num);
   int kf_page_up();
   int kf_page_down();
-  int kf_insert_toggle();
+  int kf_insert_toggle() const;
   int kf_delete_word_right();
   int kf_delete_word_left();
   int kf_delete_sol();

@@ -32,7 +32,7 @@ Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
 /**
  Sets the current Fl_Native_File_Chooser::Type of browser.
  */
-void Fl_Native_File_Chooser::type(int t) {
+void Fl_Native_File_Chooser::type(int t) const {
   if (platform_fnfc) platform_fnfc->type(t);
 }
 
@@ -57,7 +57,7 @@ int Fl_Native_File_Chooser::type() const {
  USE_FILTER_EXT    Chooser filter presets the output file extension. Ignored   Used      Used (GTK)
  \endcode
  */
-void Fl_Native_File_Chooser::options(int o) {
+void Fl_Native_File_Chooser::options(int o) const {
   if (platform_fnfc) platform_fnfc->options(o);
 }
 
@@ -118,7 +118,7 @@ const char *Fl_Native_File_Chooser::filename(int i) const {
  If \p val is NULL, or no directory is specified, the chooser will attempt
  to use the last non-cancelled folder.
  */
-void Fl_Native_File_Chooser::directory(const char *val) {
+void Fl_Native_File_Chooser::directory(const char *val) const {
   if (platform_fnfc) platform_fnfc->directory(val);
 }
 
@@ -134,7 +134,7 @@ const char *Fl_Native_File_Chooser::directory() const {
  Can be NULL if no title desired.
  The default title varies according to the platform, so you are advised to set the title explicitly.
  */
-void Fl_Native_File_Chooser::title(const char *t) {
+void Fl_Native_File_Chooser::title(const char *t) const {
   if (platform_fnfc) platform_fnfc->title(t);
 }
 
@@ -172,7 +172,7 @@ const char *Fl_Native_File_Chooser::filter() const {
  On most platforms, each filter is available to the user via a pulldown menu
  in the file chooser. The 'All Files' option is always available to the user.
  */
-void Fl_Native_File_Chooser::filter(const char *f) {
+void Fl_Native_File_Chooser::filter(const char *f) const {
   if (platform_fnfc) platform_fnfc->filter(f);
 }
 
@@ -203,7 +203,7 @@ int Fl_Native_File_Chooser::filters() const {
 
   \see filter(const char *f)
 */
-void Fl_Native_File_Chooser::filter_value(int i) {
+void Fl_Native_File_Chooser::filter_value(int i) const {
   platform_fnfc->filter_value(i);
 }
 
@@ -235,7 +235,7 @@ int Fl_Native_File_Chooser::filter_value() const {
  Mainly used to preset the filename for save dialogs,
  and on most platforms can be used for opening files as well.
  */
-void Fl_Native_File_Chooser::preset_file(const char*f) {
+void Fl_Native_File_Chooser::preset_file(const char*f) const {
   if (platform_fnfc) platform_fnfc->preset_file(f);
 }
 
@@ -262,7 +262,7 @@ const char *Fl_Native_File_Chooser::errmsg() const {
  - 1  -- user cancelled
  - -1 -- failed; errmsg() has reason
  */
-int Fl_Native_File_Chooser::show() {
+int Fl_Native_File_Chooser::show() const {
   return platform_fnfc ? platform_fnfc->show() : 1;
 }
 

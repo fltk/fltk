@@ -73,7 +73,7 @@ void Fl_Group::begin() {current_ = this;}
   <I>Exactly the same as</I> current(this->parent()). Any new widgets
   added to the widget tree will be added to the parent of the group.
 */
-void Fl_Group::end() {current_ = parent();}
+void Fl_Group::end() const {current_ = parent();}
 
 /**
   Returns the currently active group.
@@ -306,7 +306,7 @@ int Fl_Group::handle(int event) {
 }
 
 // try to move the focus in response to a keystroke:
-int Fl_Group::navigation(int key) {
+int Fl_Group::navigation(int key) const {
   if (children() <= 1) return 0;
   int i;
   for (i = 0; ; i++) {
@@ -901,7 +901,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
   border or background. You can call draw_children() from the derived draw() method
   after drawing the box, border, or background.
 */
-void Fl_Group::draw_children() {
+void Fl_Group::draw_children() const {
   Fl_Widget*const* a = array();
 
   if (clip_children()) {
@@ -941,7 +941,8 @@ void Fl_Group::draw() {
 
   \sa Fl_Group::draw_child(Fl_Widget& widget) const
 */
-void Fl_Group::update_child(Fl_Widget& widget) const {
+void Fl_Group::update_child(Fl_Widget& widget)
+{
   if (widget.damage() && widget.visible() && widget.type() < FL_WINDOW &&
       fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
     widget.draw();
@@ -955,7 +956,8 @@ void Fl_Group::update_child(Fl_Widget& widget) const {
   This draws a child widget, if it is not clipped.
   The damage bits are cleared after drawing.
 */
-void Fl_Group::draw_child(Fl_Widget& widget) const {
+void Fl_Group::draw_child(Fl_Widget& widget)
+{
   if (widget.visible() && widget.type() < FL_WINDOW &&
       fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
     // The following call clears all damage flags and then *sets* FL_DAMAGE_ALL

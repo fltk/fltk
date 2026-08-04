@@ -68,7 +68,7 @@ void Fl_Help_Dialog::cb_forward_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_forward__i(o,v);
 }
 
-void Fl_Help_Dialog::cb_smaller__i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_smaller__i(Fl_Button*, void*) const {
   if (view_->textsize() > 8)
     view_->textsize(view_->textsize() - 2);
 
@@ -80,7 +80,7 @@ void Fl_Help_Dialog::cb_smaller_(Fl_Button* o, void* v) {
   ((Fl_Help_Dialog*)(o->parent()->parent()->user_data()))->cb_smaller__i(o,v);
 }
 
-void Fl_Help_Dialog::cb_larger__i(Fl_Button*, void*) {
+void Fl_Help_Dialog::cb_larger__i(Fl_Button*, void*) const {
   if (view_->textsize() < 18)
     view_->textsize(view_->textsize() + 2);
 
@@ -211,38 +211,38 @@ Fl_Help_Dialog::~Fl_Help_Dialog() {
   delete window_;
 }
 
-int Fl_Help_Dialog::h() {
+int Fl_Help_Dialog::h() const {
   return (window_->h());
 }
 
-void Fl_Help_Dialog::hide() {
+void Fl_Help_Dialog::hide() const {
   window_->hide();
 }
 
-int Fl_Help_Dialog::load(const char *f) {
+int Fl_Help_Dialog::load(const char *f) const {
   view_->set_changed();
   int ret = view_->load(f);
   window_->label(view_->title());
   return ret;
 }
 
-void Fl_Help_Dialog::position(int xx, int yy) {
+void Fl_Help_Dialog::position(int xx, int yy) const {
   window_->position(xx, yy);
 }
 
-void Fl_Help_Dialog::resize(int xx, int yy, int ww, int hh) {
+void Fl_Help_Dialog::resize(int xx, int yy, int ww, int hh) const {
   window_->resize(xx, yy, ww, hh);
 }
 
-void Fl_Help_Dialog::show() {
+void Fl_Help_Dialog::show() const {
   window_->show();
 }
 
-void Fl_Help_Dialog::show(int argc, char **argv) {
+void Fl_Help_Dialog::show(int argc, char **argv) const {
   window_->show(argc, argv);
 }
 
-void Fl_Help_Dialog::textsize(Fl_Fontsize s) {
+void Fl_Help_Dialog::textsize(Fl_Fontsize s) const {
   view_->textsize(s);
 
   if (s <= 8)
@@ -256,19 +256,19 @@ void Fl_Help_Dialog::textsize(Fl_Fontsize s) {
     larger_->activate();
 }
 
-Fl_Fontsize Fl_Help_Dialog::textsize() {
+Fl_Fontsize Fl_Help_Dialog::textsize() const {
   return (view_->textsize());
 }
 
-void Fl_Help_Dialog::topline(const char *n) {
+void Fl_Help_Dialog::topline(const char *n) const {
   view_->topline(n);
 }
 
-void Fl_Help_Dialog::topline(int n) {
+void Fl_Help_Dialog::topline(int n) const {
   view_->topline(n);
 }
 
-void Fl_Help_Dialog::value(const char *f) {
+void Fl_Help_Dialog::value(const char *f) const {
   view_->set_changed();
   view_->value(f);
   window_->label(view_->title());
@@ -278,18 +278,18 @@ const char * Fl_Help_Dialog::value() const {
   return view_->value();
 }
 
-int Fl_Help_Dialog::visible() {
+int Fl_Help_Dialog::visible() const {
   return (window_->visible());
 }
 
-int Fl_Help_Dialog::w() {
+int Fl_Help_Dialog::w() const {
   return (window_->w());
 }
 
-int Fl_Help_Dialog::x() {
+int Fl_Help_Dialog::x() const {
   return (window_->x());
 }
 
-int Fl_Help_Dialog::y() {
+int Fl_Help_Dialog::y() const {
   return (window_->y());
 }

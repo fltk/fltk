@@ -36,7 +36,7 @@ struct Fl_Menu_Item;
 class FL_EXPORT Fl_Pixmap : public Fl_Image {
   friend class Fl_Graphics_Driver;
   void copy_data();
-  void delete_data();
+  void delete_data() const;
   void set_data(const char * const *p);
 
 protected:

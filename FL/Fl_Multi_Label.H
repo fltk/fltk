@@ -94,10 +94,10 @@ struct FL_EXPORT Fl_Multi_Label {
   uchar typeb;
 
   // This method is used to associate a Fl_Multi_Label with a Fl_Widget.
-  void label(Fl_Widget*);
+  void label(Fl_Widget*) const;
 
   // This method is used to associate a Fl_Multi_Label with a Fl_Menu_Item.
-  void label(Fl_Menu_Item*);
+  void label(Fl_Menu_Item*) const;
 };
 
 #endif

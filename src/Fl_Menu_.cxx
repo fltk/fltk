@@ -146,7 +146,7 @@ int Fl_Menu_::item_pathname_(char *name,
   \returns The item found, or NULL if not found
   \see find_index(const char*), find_item(Fl_Callback*), item_pathname()
 */
-const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) {
+const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) const {
   int i = find_index(pathname);
   return( (i==-1) ? 0 : (const Fl_Menu_Item*)(menu_+i));
 }
@@ -256,7 +256,7 @@ int Fl_Menu_::find_index(const char *pathname) const {
  \returns The item found, or NULL if not found
  \see find_item(const char*)
  */
-const Fl_Menu_Item * Fl_Menu_::find_item(Fl_Callback *cb) {
+const Fl_Menu_Item * Fl_Menu_::find_item(Fl_Callback *cb) const {
   for ( int t=0; t < size(); t++ ) {
     const Fl_Menu_Item *m = menu_ + t;
     if (m->callback_==cb) {
@@ -273,7 +273,7 @@ const Fl_Menu_Item * Fl_Menu_::find_item(Fl_Callback *cb) {
  \returns The item found, or NULL if not found
  \see find_item(const char*)
  */
-const Fl_Menu_Item* Fl_Menu_::find_item_with_user_data(void *v) {
+const Fl_Menu_Item* Fl_Menu_::find_item_with_user_data(void *v) const {
   for ( int t=0; t < size(); t++ ) {
     const Fl_Menu_Item *m = menu_ + t;
     if (m->user_data_==v) {
@@ -442,7 +442,7 @@ static Fl_Menu_Item *first_submenu_item(Fl_Menu_Item *item, Fl_Menu_Item *start)
 
 
 /** Turns the radio item "on" for the menu item and turns "off" adjacent radio items of the same group. */
-void Fl_Menu_::setonly(Fl_Menu_Item* item) {
+void Fl_Menu_::setonly(Fl_Menu_Item* item) const {
   // find the first item of the (sub)menu containing item
   Fl_Menu_Item* first = first_submenu_item(item, menu_);
   if (!first) return; // item does not belong to our menu

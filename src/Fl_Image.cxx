@@ -69,7 +69,7 @@ void Fl_Image::draw(int XP, int YP, int, int, int, int) {
   an X in it. It can be used to draw any image that lacks image
   data.
 */
-void Fl_Image::draw_empty(int X, int Y) {
+void Fl_Image::draw_empty(int X, int Y) const {
   if (w() > 0 && h() > 0) {
     fl_color(FL_FOREGROUND_COLOR);
     fl_rect(X, Y, w(), h());

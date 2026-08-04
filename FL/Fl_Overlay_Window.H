@@ -55,8 +55,8 @@ public:
   void resize(int,int,int,int) override;
   ~Fl_Overlay_Window();
   /** Returns non-zero if there's hardware overlay support */
-  int can_do_overlay();
-  void redraw_overlay();
+  int can_do_overlay() const;
+  void redraw_overlay() const;
 protected:
   /**
    See Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0)

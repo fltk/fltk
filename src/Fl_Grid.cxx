@@ -1167,7 +1167,7 @@ int Fl_Grid::computed_row_height(int row) const {
 
   \param[in]  level  not yet used (0-127, default = 127)
 */
-void Fl_Grid::debug(int level) {
+void Fl_Grid::debug(int level) const {
   if (level <= 0)
     return;
   fprintf(stderr, "Fl_Grid::layout(%d, %d) at (%d, %d, %d, %d)\n",

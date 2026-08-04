@@ -68,7 +68,7 @@ public:
   };
 
 protected:
-  void draw_filler_(const Fl_Rect& rect);
+  void draw_filler_(const Fl_Rect& rect) const;
   void draw() override;
 
 public:

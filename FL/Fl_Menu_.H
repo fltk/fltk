@@ -73,9 +73,9 @@ public:
 
   int item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem=0) const;
   const Fl_Menu_Item* picked(const Fl_Menu_Item*);
-  const Fl_Menu_Item* find_item(const char *name);
-  const Fl_Menu_Item* find_item(Fl_Callback*);
-  const Fl_Menu_Item* find_item_with_user_data(void*);
+  const Fl_Menu_Item* find_item(const char *name) const;
+  const Fl_Menu_Item* find_item(Fl_Callback*) const;
+  const Fl_Menu_Item* find_item_with_user_data(void*) const;
   const Fl_Menu_Item* find_item_with_argument(long);
   int find_index(const char *name) const;
   int find_index(const Fl_Menu_Item *item) const;
@@ -248,7 +248,7 @@ public:
   Fl_Color down_color() const {return selection_color();}
   /** For back compatibility, same as selection_color() */
   void down_color(unsigned c) {selection_color(c);}
-  void setonly(Fl_Menu_Item* item);
+  void setonly(Fl_Menu_Item* item) const;
 };
 
 #endif

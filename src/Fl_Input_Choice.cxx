@@ -293,7 +293,7 @@ void Fl_Input_Choice::resize(int X, int Y, int W, int H) {
     to that value. Any previous text is cleared.
     \see void value(const char *val)
 */
-void Fl_Input_Choice::value(int val) {
+void Fl_Input_Choice::value(int val) const {
   menu_->value(val);
   inp_->value(menu_->text(val));
 }
@@ -301,7 +301,7 @@ void Fl_Input_Choice::value(int val) {
 /** Sets the changed() state of both input and menu button widgets
     to the specified value.
 */
-void Fl_Input_Choice::set_changed() {
+void Fl_Input_Choice::set_changed() const {
   inp_->set_changed();
   // no need to call Fl_Widget::set_changed()
 }
@@ -341,7 +341,7 @@ void Fl_Input_Choice::clear_changed() {
     \returns 1 if a matching menuitem was found and value set, 0 if not.
     \version 1.4.0
 */
-int Fl_Input_Choice::update_menubutton() {
+int Fl_Input_Choice::update_menubutton() const {
   // Find item in menu
   for ( int i=0; i<menu_->size(); i++ ) {
     const Fl_Menu_Item &item = menu_->menu()[i];

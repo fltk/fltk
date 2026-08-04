@@ -396,7 +396,7 @@ public:
     grid_color = col;
   }
 
-  void debug(int level = 127);
+  void debug(int level = 127) const;
 
 }; // class Fl_Grid
 

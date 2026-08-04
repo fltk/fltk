@@ -85,7 +85,7 @@ Fl_Labeltype fl_define_FL_MULTI_LABEL() {
     widget has been deleted. This may cause memory leaks if Fl_Multi_Label
     is used and reassigned w/o releasing the objects assigned to it.
 */
-void Fl_Multi_Label::label(Fl_Widget* o) {
+void Fl_Multi_Label::label(Fl_Widget* o) const {
   o->label(FL_MULTI_LABEL, (const char*)this); // calls fl_define_FL_MULTI_LABEL()
 }
 
@@ -117,6 +117,6 @@ void Fl_Multi_Label::label(Fl_Widget* o) {
 
   \see Fl_Menu_Item::label(Fl_Multi_Label *)
 */
-void Fl_Multi_Label::label(Fl_Menu_Item* o) {
+void Fl_Multi_Label::label(Fl_Menu_Item* o) const {
   o->label(FL_MULTI_LABEL, (const char*)this); // calls fl_define_FL_MULTI_LABEL()
 }

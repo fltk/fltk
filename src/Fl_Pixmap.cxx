@@ -301,7 +301,7 @@ void Fl_Pixmap::color_average(Fl_Color c, float i) {
   }
 }
 
-void Fl_Pixmap::delete_data() {
+void Fl_Pixmap::delete_data() const {
   if (alloc_data) {
     for (int i = 0; i < count(); i ++) delete[] (char *)data()[i];
     delete[] (char **)data();

@@ -137,7 +137,7 @@ public:
   class Edit_Buffer : public std::string {
   public:
     void add(int ucs);
-    int cmp(const char *str);
+    int cmp(const char *str) const;
     int width() const;
   };
 
@@ -170,7 +170,7 @@ public:
     Fl_Color      c;                    ///< Font Color
     Font_Style(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
     Font_Style() = default;             ///< Default constructor
-    void          get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor);
+    void          get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor) const;
     void          set(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor);
   };
 
@@ -255,14 +255,14 @@ public:
   Text_Block    *add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void          add_link(const std::string &link, int xx, int yy, int ww, int hh);
   void          add_target(const std::string &n, int yy);
-  int           do_align(Text_Block *block, int line, int xx, Align a, int &l);
+  int           do_align(Text_Block *block, int line, int xx, Align a, int &l) const;
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
   Align         get_align(const char *p, Align a);
-  const char    *get_attr(const char *p, const char *n, char *buf, int bufsize);
-  Fl_Color      get_color(const char *n, Fl_Color c);
-  Fl_Shared_Image *get_image(const char *name, int W, int H);
-  int           get_length(const char *l);
+  static const char    *get_attr(const char *p, const char *n, char *buf, int bufsize);
+  static Fl_Color      get_color(const char *n, Fl_Color c);
+  Fl_Shared_Image *get_image(const char *name, int W, int H) const;
+  int           get_length(const char *l) const;
 
   // Font and font stack
 
@@ -277,10 +277,10 @@ public:
 
   // Text selection
 
-  void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
+  void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0) const;
   char          begin_selection();
   char          extend_selection();
-  void          end_selection();
+  static void   end_selection();
 
 protected:
 
@@ -340,7 +340,7 @@ public:
   void          clear_selection();
   void          select_all();
   int           text_selected() const;
-  int           copy(int clipboard=1);
+  int           copy(int clipboard=1) const;
 
   // Scroll bars
 
@@ -473,7 +473,7 @@ void Fl_Help_View::Impl::Edit_Buffer::add(int ucs){
 }
 
 // case insensitive comparison of buffer contents with a string
-int Fl_Help_View::Impl::Edit_Buffer::cmp(const char *str) {
+int Fl_Help_View::Impl::Edit_Buffer::cmp(const char *str) const {
   return !strcasecmp(c_str(), str);
 }
 
@@ -502,7 +502,7 @@ Fl_Help_View::Impl::Font_Style::Font_Style(Fl_Font afont, Fl_Fontsize asize, Fl_
   \param[out] asize  Reference to a variable where the font size will be stored.
   \param[out] acolor Reference to a variable where the font color will be stored.
  */
-void Fl_Help_View::Impl::Font_Style::get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor) {
+void Fl_Help_View::Impl::Font_Style::get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor) const {
   afont=f; asize=s; acolor=c;
 }
 
@@ -842,6 +842,7 @@ int Fl_Help_View::Impl::do_align(
   int xx,
   Align a,
   int &l)
+  const
 {
   int   offset;                                 // Alignment offset
 
@@ -2348,7 +2349,7 @@ Fl_Color Fl_Help_View::Impl::get_color(const char *n, Fl_Color c)
   Fl_Pixmap broken_image, but this is _not_ compatible with the
   return type Fl_Shared_Image (release() must not be called).
 */
-Fl_Shared_Image *Fl_Help_View::Impl::get_image(const char *name, int W, int H)
+Fl_Shared_Image *Fl_Help_View::Impl::get_image(const char *name, int W, int H) const
 {
   std::string url;
   Fl_Shared_Image *ip;                  // Image pointer...
@@ -2421,7 +2422,7 @@ Fl_Shared_Image *Fl_Help_View::Impl::get_image(const char *name, int W, int H)
   \param[in] l string containing the length value
   \return the length in pixels, or 0 if the string is empty.
 */
-int Fl_Help_View::Impl::get_length(const char *l) {
+int Fl_Help_View::Impl::get_length(const char *l) const {
   int val;
 
   if (!l[0]) return 0;
@@ -2467,7 +2468,7 @@ int Fl_Help_View::Impl::get_length(const char *l) {
   \param[in] y Y position to draw at
   \param[in] entity_extra_length (unclear)
  */
-void Fl_Help_View::Impl::hv_draw(const char *t, int x, int y, int entity_extra_length)
+void Fl_Help_View::Impl::hv_draw(const char *t, int x, int y, int entity_extra_length) const
 {
   if (draw_mode_ == Mode::DRAW) {
     if (selected_ && current_pos_<selection_last_ && current_pos_>=selection_first_) {
@@ -3395,7 +3396,7 @@ void Fl_Help_View::Impl::resize(int xx, int yy, int ww, int hh)
   \param[in] val Text to view, or nullptr to clear the widget,
       Fl_Help_View will creat a local copy of the string.
 */
-void Fl_Help_View::value(const char *val) {
+void Fl_Help_View::value(const char *val) const {
   impl_->value(val);
 }
 
@@ -3442,7 +3443,7 @@ void Fl_Help_View::Impl::value(const char *val)
 
   \see fl_open_uri()
 */
-int Fl_Help_View::load(const char *f) {
+int Fl_Help_View::load(const char *f) const {
   return impl_->load(f);
 }
 
@@ -3601,7 +3602,7 @@ int Fl_Help_View::Impl::load(const char *f)
   \param[in] p starting position for search (0,...), Default = 0
   \return the matching position or -1 if not found
 */
-int Fl_Help_View::find(const char *s, int p) {
+int Fl_Help_View::find(const char *s, int p) const {
   return impl_->find(s, p);
 }
 
@@ -3730,7 +3731,7 @@ int Fl_Help_View::Impl::find(const char *s, int p)
 
   \param[in] fn Pointer to the callback function
 */
-void Fl_Help_View::link(Fl_Help_Func *fn) {
+void Fl_Help_View::link(Fl_Help_Func *fn) const {
   impl_->link(fn);
 }
 
@@ -3820,7 +3821,7 @@ const char *Fl_Help_View::Impl::title() const
   \brief Scroll the text to the given anchor.
   \param[in] anchor scroll to this named anchor
 */
-void Fl_Help_View::topline(const char *anchor) {
+void Fl_Help_View::topline(const char *anchor) const {
   impl_->topline(anchor);
 }
 
@@ -3850,7 +3851,7 @@ void Fl_Help_View::Impl::topline(const char *anchor)
 
   \param[in] top top line number in pixels (0 = start of document)
 */
-void Fl_Help_View::topline(int top) {
+void Fl_Help_View::topline(int top) const {
   impl_->topline(top);
 }
 
@@ -3887,7 +3888,7 @@ void Fl_Help_View::Impl::topline(int top)
 
   \param[in] left left column number in pixels (0 = left side)
 */
-void Fl_Help_View::leftline(int left) {
+void Fl_Help_View::leftline(int left) const {
   impl_->leftline(left);
 }
 
@@ -3919,7 +3920,7 @@ void Fl_Help_View::Impl::leftline(int left)
 /**
   \brief Removes the current text selection.
 */
-void Fl_Help_View::clear_selection() {
+void Fl_Help_View::clear_selection() const {
   impl_->clear_selection();
 }
 
@@ -3939,7 +3940,7 @@ void Fl_Help_View::Impl::clear_selection()
 /**
   \brief Selects all the text in the view.
 */
-void Fl_Help_View::select_all() {
+void Fl_Help_View::select_all() const {
   impl_->select_all();
 }
 
@@ -3980,7 +3981,7 @@ int Fl_Help_View::Impl::text_selected() const
   \param[in] clipboard for x11 only, 0=selection buffer, 1=clipboard, 2=both
   \return 1 if text is selected, 0 if no text is selected
  */
-int Fl_Help_View::copy(int clipboard) {
+int Fl_Help_View::copy(int clipboard) const {
   return impl_->copy(clipboard);
 }
 
@@ -3988,7 +3989,7 @@ int Fl_Help_View::copy(int clipboard) {
   \brief If text is selected in this view, copy it to a clipboard.
   \see Fl_Help_View::copy(int clipboard)
  */
-int Fl_Help_View::Impl::copy(int clipboard)
+int Fl_Help_View::Impl::copy(int clipboard) const
 {
   if (!selected_)
     return 0;
@@ -4123,7 +4124,7 @@ int Fl_Help_View::Impl::scrollbar_size() const {
       If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
   \see Fl::scrollbar_size()
 */
-void Fl_Help_View::scrollbar_size(int newSize) {
+void Fl_Help_View::scrollbar_size(int newSize) const {
   impl_->scrollbar_size(newSize);
 }
 
@@ -4408,19 +4409,19 @@ const char *Fl_Help_View::value() const { return impl_->value(); }
 int Fl_Help_View::size() const { return impl_->size(); }
 
 /** Set the default text color. */
-void Fl_Help_View::textcolor(Fl_Color c) { impl_->textcolor(c); }
+void Fl_Help_View::textcolor(Fl_Color c) const { impl_->textcolor(c); }
 
 /** Return the current default text color. */
 Fl_Color Fl_Help_View::textcolor() const { return impl_->textcolor(); }
 
 /** Set the default text font. */
-void Fl_Help_View::textfont(Fl_Font f) { impl_->textfont(f); }
+void Fl_Help_View::textfont(Fl_Font f) const { impl_->textfont(f); }
 
 /** Return the default text font. */
 Fl_Font Fl_Help_View::textfont() const { return impl_->textfont(); }
 
 /** Set the default text size. */
-void Fl_Help_View::textsize(Fl_Fontsize s) { impl_->textsize(s); }
+void Fl_Help_View::textsize(Fl_Fontsize s) const { impl_->textsize(s); }
 
 /** Get the default text size. */
 Fl_Fontsize Fl_Help_View::textsize() const { return impl_->textsize(); }

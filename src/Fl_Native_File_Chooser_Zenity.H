@@ -30,7 +30,7 @@ class Fl_Zenity_Native_File_Chooser_Driver : public Fl_Kdialog_Native_File_Choos
   static bool did_find_zenity;
   static bool have_looked_for_zenity;
   Fl_Zenity_Native_File_Chooser_Driver(int val);
-  void append_filter(std::string& command);
+  void append_filter(std::string& command) const;
   void build_command(std::string& command) FL_OVERRIDE;
 };
 

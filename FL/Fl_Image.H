@@ -115,7 +115,7 @@ protected:
    \see const char* const* data(), count(), w(), h(), data_w(), data_h(), d(), ld()
   */
   void data(const char * const *p, int c) {data_ = p; count_ = c;}
-  void draw_empty(int X, int Y);
+  void draw_empty(int X, int Y) const;
 
   static void labeltype(const Fl_Label *lo, int lx, int ly, int lw, int lh, Fl_Align la);
   static void measure(const Fl_Label *lo, int &lw, int &lh);

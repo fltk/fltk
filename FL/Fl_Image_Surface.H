@@ -66,7 +66,7 @@ class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
   friend class Fl_Graphics_Driver;
 private:
   class Fl_Image_Surface_Driver *platform_surface;
-  Fl_Offscreen get_offscreen_before_delete_();
+  Fl_Offscreen get_offscreen_before_delete_() const;
 protected:
   void translate(int x, int y) override;
   void untranslate() override;
@@ -75,14 +75,14 @@ public:
   ~Fl_Image_Surface();
   void set_current() override;
   bool is_current() override;
-  Fl_RGB_Image *image();
+  Fl_RGB_Image *image() const;
   Fl_Shared_Image *highres_image();
   void origin(int *x, int *y) override;
   void origin(int x, int y) override;
   int printable_rect(int *w, int *h) override;
-  Fl_Offscreen offscreen();
+  Fl_Offscreen offscreen() const;
   void rescale();
-  void mask(const Fl_RGB_Image *);
+  void mask(const Fl_RGB_Image *) const;
 };
 
 

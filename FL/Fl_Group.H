@@ -64,7 +64,7 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
   Fl_Rect *bounds_; // remembered initial sizes of children
   int *sizes_; // remembered initial sizes of children (FLTK 1.3 compat.)
 
-  int navigation(int);
+  int navigation(int) const;
   static Fl_Group *current_;
 
   // unimplemented copy ctor and assignment operator
@@ -73,10 +73,10 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 
 protected:
   void draw() override;
-  void draw_child(Fl_Widget& widget) const;
-  void draw_children();
+  static void draw_child(Fl_Widget& widget);
+  void draw_children() const;
   void draw_outside_label(const Fl_Widget& widget) const ;
-  void update_child(Fl_Widget& widget) const;
+  static void update_child(Fl_Widget& widget);
   Fl_Rect *bounds();
   int  *sizes(); // FLTK 1.3 compatibility
   virtual int on_insert(Fl_Widget*, int);
@@ -87,7 +87,7 @@ public:
 
   int handle(int) override;
   void begin();
-  void end();
+  void end() const;
   static Fl_Group *current();
   static void current(Fl_Group *g);
 

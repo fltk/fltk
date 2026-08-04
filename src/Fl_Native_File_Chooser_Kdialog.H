@@ -48,7 +48,7 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   const char *filename(int i) const FL_OVERRIDE;
   virtual void build_command(std::string& command);
   int show() FL_OVERRIDE;
-  char *parse_filter(const char *f);
+  static char *parse_filter(const char *f);
   const char *filter() const FL_OVERRIDE;
   void filter(const char *f) FL_OVERRIDE;
   int filters() const FL_OVERRIDE;
@@ -58,7 +58,7 @@ class Fl_Kdialog_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_FLTK
   const char *directory() const FL_OVERRIDE;
   void title(const char *val) FL_OVERRIDE;
   const char *title() const FL_OVERRIDE;
-  void shell_quote(std::string& s);
+  static void shell_quote(std::string& s);
 };
 
 /**

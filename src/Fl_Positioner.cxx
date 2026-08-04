@@ -27,13 +27,13 @@ static double flinear(double val, double smin, double smax, double gmin, double 
   else return gmin + (gmax - gmin) * (val - smin) / (smax - smin);
 }
 
-void Fl_Positioner::draw(int X, int Y, int W, int H) {
-  int x1 = X + 4;
-  int y1 = Y + 4;
-  int w1 = W - 2 * 4;
-  int h1 = H - 2 * 4;
-  int xx = int(flinear(xvalue(), xmin, xmax, x1, x1+w1-1)+.5);
-  int yy = int(flinear(yvalue(), ymin, ymax, y1, y1+h1-1)+.5);
+void Fl_Positioner::draw(int X, int Y, int W, int H) const {
+  const int x1 = X + 4;
+  const int y1 = Y + 4;
+  const int w1 = W - 2 * 4;
+  const int h1 = H - 2 * 4;
+  const int xx = int(flinear(xvalue(), xmin, xmax, x1, x1+w1-1)+.5);
+  const int yy = int(flinear(yvalue(), ymin, ymax, y1, y1+h1-1)+.5);
   draw_box(box(), X, Y, W, H, color());
   fl_color(selection_color());
   fl_xyline(x1, yy, x1+w1);

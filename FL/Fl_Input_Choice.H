@@ -120,7 +120,7 @@ public:
   void clear_changed();
 
   // Sets the changed() state of both input and menu button widgets.
-  void set_changed();
+  void set_changed() const;
 
   /** Removes all items from the menu. */
   void clear() { menu_->clear(); }
@@ -168,13 +168,13 @@ public:
 
     \see void value(int val), update_menubutton()
   */
-  void value(const char *val) { inp_->value(val); }
+  void value(const char *val) const { inp_->value(val); }
 
   /* Chooses item# \p val in the menu, and sets the Fl_Input text field
     to that value. Any previous text is cleared. */
-  void value(int val);
+  void value(int val) const;
 
-  int update_menubutton();
+  int update_menubutton() const;
 
   /** Returns a pointer to the internal Fl_Menu_Button widget.
     This can be used to access any of the methods of the menu button, e.g.

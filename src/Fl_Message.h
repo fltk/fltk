@@ -98,7 +98,7 @@ private:
   static void window_cb_(Fl_Widget *w, void *d);
 
   // resize to make text and buttons fit
-  void resizeform();
+  void resizeform() const;
 
 public:
   static Fl_Box *message_icon();

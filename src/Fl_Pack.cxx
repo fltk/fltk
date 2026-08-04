@@ -55,7 +55,7 @@ Fl_Pack::Fl_Pack(int X, int Y, int W, int H, const char *L)
   in widget color.
   \param[in] rect fill this rectangle inside the widget bounds
  */
-void Fl_Pack::draw_filler_(const Fl_Rect& rect) {
+void Fl_Pack::draw_filler_(const Fl_Rect& rect) const {
   if (Fl::box_bg(box())) {
     fl_push_clip(rect.x(), rect.y(), rect.w(), rect.h());
     draw_box();

@@ -42,7 +42,7 @@ class FL_EXPORT Fl_Positioner : public Fl_Widget {
 protected:
 
   // these allow subclasses to put the dial in a smaller area:
-  void draw(int, int, int, int);
+  void draw(int, int, int, int) const;
   int handle(int, int, int, int, int);
   void draw() override;
 

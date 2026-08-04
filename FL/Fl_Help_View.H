@@ -145,11 +145,11 @@ public:
 
   // HTML source and raw data
 
-  void          value(const char *val);
+  void          value(const char *val) const;
   const char    *value() const;
-  int           load(const char *f);
-  int           find(const char *s, int p = 0);
-  void          link(Fl_Help_Func *fn);
+  int           load(const char *f) const;
+  int           find(const char *s, int p = 0) const;
+  void          link(Fl_Help_Func *fn) const;
 
   const char    *filename() const;
   const char    *directory() const;
@@ -158,29 +158,29 @@ public:
   // Rendering attributes
 
   int           size() const;
-  void          textcolor(Fl_Color c);
+  void          textcolor(Fl_Color c) const;
   Fl_Color      textcolor() const;
-  void          textfont(Fl_Font f);
+  void          textfont(Fl_Font f) const;
   Fl_Font       textfont() const;
-  void          textsize(Fl_Fontsize s);
+  void          textsize(Fl_Fontsize s) const;
   Fl_Fontsize   textsize() const;
-  void          topline(const char *n);
-  void          topline(int);
+  void          topline(const char *n) const;
+  void          topline(int) const;
   int           topline() const;
-  void          leftline(int);
+  void          leftline(int) const;
   int           leftline() const;
 
   // Text selection
 
-  void          clear_selection();
-  void          select_all();
+  void          clear_selection() const;
+  void          select_all() const;
   int           text_selected() const;
-  int           copy(int clipboard=1);
+  int           copy(int clipboard=1) const;
 
   // Scroll bars
 
   int scrollbar_size() const;
-  void scrollbar_size(int newSize);
+  void scrollbar_size(int newSize) const;
   /// Return pointer to vertical scrollbar
   Fl_Scrollbar  *scrollbar() { return &scrollbar_; }
   /// Return pointer to horizontal scrollbar

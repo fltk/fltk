@@ -820,7 +820,7 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
   \return 0 if no text is selected, 1 if the selection was copied
   \see Fl::copy(const char *, int, int)
 */
-int Fl_Input_::copy(int clipboard) {
+int Fl_Input_::copy(int clipboard) const {
   int b = insert_position();
   int e = mark();
   if (b != e) {
@@ -1151,7 +1151,7 @@ bool Fl_Input_::can_redo() const {
   \return 0 if the operation did not change the clipboard
   \see copy(int), cut()
 */
-int Fl_Input_::copy_cuts() {
+int Fl_Input_::copy_cuts() const {
   // put the yank buffer into the X clipboard
   if (!undo_->undoyankcut || input_type()==FL_SECRET_INPUT) return 0;
   Fl::copy(undo_->undobuffer, undo_->undoyankcut, 1);
@@ -1546,7 +1546,7 @@ Fl_Input_::~Fl_Input_() {
   Returns the number of lines displayed on a single page.
   \return widget height divided by the font height
 */
-int Fl_Input_::linesPerPage() {
+int Fl_Input_::linesPerPage() const {
   int n = 1;
   if (input_type() == FL_MULTILINE_INPUT) {
     fl_font(textfont(),textsize()); //ensure current font is set to ours

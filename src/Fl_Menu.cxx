@@ -111,7 +111,7 @@ struct Menu_State
   Menu_Window* menubar_button_helper = nullptr;
 
   // check if mouse coordinates are inside any of the menu windows
-  bool is_inside(int mx, int my);
+  bool is_inside(int mx, int my) const;
 
   // set the current menu item
   void set_current_item(const Fl_Menu_Item* i, menu_index_t m, item_index_t n);
@@ -248,13 +248,13 @@ class Menu_Window : public Menu_Window_Basetype
   void draw_entry(const Fl_Menu_Item*, int i, int erase);
 
   // Draw the submenu arrow
-  void draw_submenu_arrow(const Fl_Rect& bbox);
+  static void draw_submenu_arrow(const Fl_Rect& bbox);
 
   // Draw the benu item shortcut text.
-  void draw_shortcut(const Fl_Rect& bbox, const Fl_Menu_Item* mi);
+  void draw_shortcut(const Fl_Rect& bbox, const Fl_Menu_Item* mi) const;
 
   // Draw the menu item divider.
-  void draw_divider(const Fl_Rect& bbox);
+  static void draw_divider(const Fl_Rect& bbox);
 
   // Main event handler
   int handle_part1(int);
@@ -289,20 +289,20 @@ public:
   void set_selected(item_index_t);
 
   // Find the index to the item under the given mouse coordinates.
-  item_index_t find_selected(int mx, int my);
+  item_index_t find_selected(int mx, int my) const;
 
   // Calculate the horizontal position of an item by index for horizontal
   // menus inside a menubar.
-  int titlex(int);
+  int titlex(int) const;
 
   // Scroll so item i is visible on screen. This may move the entire window..
-  void autoscroll(item_index_t i);
+  void autoscroll(item_index_t i) const;
 
   // Also reposition the title (relative to the parent_ window?)
   void position(int x, int y);
 
   // return true, if the given root coordinates are inside the window
-  bool is_inside(int x, int y);
+  bool is_inside(int x, int y) const;
 
   // Fake runtime type information
   Menu_Window* as_menuwindow() override { return this; }
@@ -346,7 +346,7 @@ public:
 /* Find out if any menu window is under the mouse.
   \return 1 if the coordinates are inside any of the menuwindows
 */
-bool Menu_State::is_inside(int mx, int my) {
+bool Menu_State::is_inside(int mx, int my) const {
   for (menu_index_t i=num_menus-1; i>=0; i--) {
     if (menu_window[i]->is_inside(mx, my)) {
       return true;
@@ -1006,7 +1006,7 @@ void Menu_Window::set_selected(item_index_t n) {
  \param[in] mx, my position in pixels
  \return index of item that is under the pixel, or -1 for none
  */
-item_index_t Menu_Window::find_selected(int mx, int my) {
+item_index_t Menu_Window::find_selected(int mx, int my) const {
   if (!menu || !menu->text) return -1;
   mx -= x();
   my -= y();
@@ -1030,7 +1030,7 @@ item_index_t Menu_Window::find_selected(int mx, int my) {
 /* Return horizontal position for item n in a menubar.
  \return position in window in pixels.
  */
-int Menu_Window::titlex(int n) {
+int Menu_Window::titlex(int n) const {
   const Fl_Menu_Item* m;
   int xx = 3;
   for (m=menu->first(); n--; m = m->next())
@@ -1042,7 +1042,7 @@ int Menu_Window::titlex(int n) {
  May scroll or move the window.
  \param[in] n index into visible menu items
  */
-void Menu_Window::autoscroll(item_index_t n) {
+void Menu_Window::autoscroll(item_index_t n) const {
   int scr_y, scr_h;
   int Y = y()+Fl::box_dx(box())+2+n*item_height;
 
@@ -1073,7 +1073,7 @@ void Menu_Window::position(int X, int Y) {
 /* Check if mouse is positions over the window.
  \return 1, if the given root coordinates are inside the window
  */
-bool Menu_Window::is_inside(int mx, int my) {
+bool Menu_Window::is_inside(int mx, int my) const {
   if ( mx < x_root() || mx >= x_root() + w() ||
       my < y_root() || my >= y_root() + h()) {
     return false;
@@ -1141,7 +1141,7 @@ void Menu_Window::draw_submenu_arrow(const Fl_Rect& bbox) {
   \param[in] m take the shortcut from this menu item
  */
 // the shortcuts and arrows assume fl_color() was left set by draw():
-void Menu_Window::draw_shortcut(const Fl_Rect& bbox, const Fl_Menu_Item* m) {
+void Menu_Window::draw_shortcut(const Fl_Rect& bbox, const Fl_Menu_Item* m) const {
   // Draw the shortcut modifiers and key texts
   Fl_Font f = m->labelsize_ || m->labelfont_ ? (Fl_Font)m->labelfont_ :
   button ? button->textfont() : FL_HELVETICA;

@@ -204,7 +204,7 @@ public:
   FL_DEPRECATED("since 1.4.0 - use Fl_Preferences(path, vendor, application, flags) instead",
                 Fl_Preferences( const char *path, const char *vendor, const char *application ) );
 
-  Root filename( char *buffer, size_t buffer_size);
+  Root filename( char *buffer, size_t buffer_size) const;
 
   /** Return an ID that can later be reused to open more references to this dataset.
    */
@@ -222,46 +222,46 @@ public:
    */
   const char *path() const { return node->path(); }
 
-  int groups();
-  const char *group( int num_group );
-  char group_exists( const char *key );
-  char delete_group( const char *group );
-  char delete_all_groups();
+  int groups() const;
+  const char *group( int num_group ) const;
+  char group_exists( const char *key ) const;
+  char delete_group( const char *group ) const;
+  char delete_all_groups() const;
 
-  int entries();
-  const char *entry( int index );
-  char entry_exists( const char *key );
-  char delete_entry( const char *entry );
-  char delete_all_entries();
+  int entries() const;
+  const char *entry( int index ) const;
+  char entry_exists( const char *key ) const;
+  char delete_entry( const char *entry ) const;
+  char delete_all_entries() const;
 
   char clear();
 
   char set( const char *entry, int value );
-  char set( const char *entry, float value );
-  char set( const char *entry, float value, int precision );
+  char set( const char *entry, float value ) const;
+  char set( const char *entry, float value, int precision ) const;
   char set( const char *entry, double value );
-  char set( const char *entry, double value, int precision );
+  char set( const char *entry, double value, int precision ) const;
   char set( const char *entry, const char *value );
   char set( const char *entry, const void *value, int size );
   char set( const char *entry, const std::string &value );
 
-  char get( const char *entry, int &value, int defaultValue );
-  char get( const char *entry, float &value,  float defaultValue );
-  char get( const char *entry, double &value, double defaultValue );
-  char get( const char *entry, char *&value,  const char *defaultValue );
-  char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
-  char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
-  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
-  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int *size );
-  char get( const char *entry, std::string &value, const std::string &defaultValue );
+  char get( const char *entry, int &value, int defaultValue ) const;
+  char get( const char *entry, float &value,  float defaultValue ) const;
+  char get( const char *entry, double &value, double defaultValue ) const;
+  char get( const char *entry, char *&value,  const char *defaultValue ) const;
+  char get( const char *entry, char *value,   const char *defaultValue, int maxSize ) const;
+  char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize ) const;
+  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize ) const;
+  char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int *size ) const;
+  char get( const char *entry, std::string &value, const std::string &defaultValue ) const;
 
-  int size( const char *entry );
+  int size( const char *entry ) const;
 
-  char get_userdata_path( char *path, int pathlen );
+  char get_userdata_path( char *path, int pathlen ) const;
 
-  int flush();
+  int flush() const;
 
-  int dirty();
+  int dirty() const;
 
   /** \cond PRIVATE */
   static const char *newUUID() { return new_UUID(); }
@@ -364,7 +364,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     const char *child( int ix );
     void set( const char *name, const char *value );
     void set( const char *line );
-    void add( const char *line );
+    void add( const char *line ) const;
     const char *get( const char *name ) const;
     int getEntry( const char *name ) const;
     char deleteEntry( const char *name );
@@ -384,9 +384,9 @@ public:  // older Sun compilers need this (public definition of the following cl
     RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application, Root flags );
     RootNode( Fl_Preferences * );
     ~RootNode();
-    int read();
-    int write();
-    char getPath( char *path, int pathlen );
+    int read() const;
+    int write() const;
+    char getPath( char *path, int pathlen ) const;
     char *filename() const { return filename_; }
     Root root() const { return root_type_; }
   };

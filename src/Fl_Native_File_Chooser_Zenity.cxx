@@ -36,7 +36,7 @@ bool Fl_Zenity_Native_File_Chooser_Driver::have_looked_for_zenity = false;
 Fl_Zenity_Native_File_Chooser_Driver::Fl_Zenity_Native_File_Chooser_Driver(int val) :  Fl_Kdialog_Native_File_Chooser_Driver(val) {
 }
 
-void Fl_Zenity_Native_File_Chooser_Driver::append_filter(std::string& ret_command) {
+void Fl_Zenity_Native_File_Chooser_Driver::append_filter(std::string& ret_command) const {
   // TODO: This could probably be simplified + toughened with std::string -erco 1/10/24
   int l;
   int lcommand = 10000;

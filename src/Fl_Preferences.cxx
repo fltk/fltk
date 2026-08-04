@@ -590,7 +590,7 @@ Fl_Preferences::~Fl_Preferences() {
  \return the root type at creation type, or MEMORY for runtime prefs, it does
     not return CORE or LOCALE flags.
  */
-Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size)
+Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size) const
 {
   if (!buffer || buffer_size==0)
     return UNKNOWN_ROOT_TYPE;
@@ -613,7 +613,7 @@ Fl_Preferences::Root Fl_Preferences::filename( char *buffer, size_t buffer_size)
 
    \return 0 for no groups at all
  */
-int Fl_Preferences::groups() {
+int Fl_Preferences::groups() const {
   return node->nChildren();
 }
 
@@ -625,7 +625,7 @@ int Fl_Preferences::groups() {
    \param[in] num_group number indexing the requested group
    \return 'C' string pointer to the group name
  */
-const char *Fl_Preferences::group( int num_group ) {
+const char *Fl_Preferences::group( int num_group ) const {
   return node->child( num_group );
 }
 
@@ -638,7 +638,7 @@ const char *Fl_Preferences::group( int num_group ) {
    \param[in] key name of group that is searched for
    \return 0 if no group by that name was found
  */
-char Fl_Preferences::group_exists( const char *key ) {
+char Fl_Preferences::group_exists( const char *key ) const {
   return node->search( key ) ? 1 : 0 ;
 }
 
@@ -651,7 +651,7 @@ char Fl_Preferences::group_exists( const char *key ) {
    \param[in] group name of the group to delete
    \return 0 if call failed
  */
-char Fl_Preferences::delete_group( const char *group ) {
+char Fl_Preferences::delete_group( const char *group ) const {
   Node *nd = node->search( group );
   if ( nd ) return nd->remove();
   return 0;
@@ -660,7 +660,7 @@ char Fl_Preferences::delete_group( const char *group ) {
 /**
  Delete all groups.
  */
-char Fl_Preferences::delete_all_groups() {
+char Fl_Preferences::delete_all_groups() const {
   node->deleteAllChildren();
   return 1;
 }
@@ -670,7 +670,7 @@ char Fl_Preferences::delete_all_groups() {
 
    \return number of entries
  */
-int Fl_Preferences::entries() {
+int Fl_Preferences::entries() const {
   return node->nEntry();
 }
 
@@ -681,7 +681,7 @@ int Fl_Preferences::entries() {
    \param[in] index number indexing the requested entry
    \return pointer to value cstring
  */
-const char *Fl_Preferences::entry( int index ) {
+const char *Fl_Preferences::entry( int index ) const {
   return node->entry(index).name;
 }
 
@@ -691,7 +691,7 @@ const char *Fl_Preferences::entry( int index ) {
    \param[in] key name of entry that is searched for
    \return 0 if entry was not found
  */
-char Fl_Preferences::entry_exists( const char *key ) {
+char Fl_Preferences::entry_exists( const char *key ) const {
   return node->getEntry( key )>=0 ? 1 : 0 ;
 }
 
@@ -703,14 +703,14 @@ char Fl_Preferences::entry_exists( const char *key ) {
    \param[in] key name of entry to delete
    \return 0 if deleting the entry failed
  */
-char Fl_Preferences::delete_entry( const char *key ) {
+char Fl_Preferences::delete_entry( const char *key ) const {
   return node->deleteEntry( key );
 }
 
 /**
  Delete all entries.
  */
-char Fl_Preferences::delete_all_entries() {
+char Fl_Preferences::delete_all_entries() const {
   node->deleteAllEntries();
   return 1;
 }
@@ -734,7 +734,7 @@ char Fl_Preferences::clear() {
  \param[in] defaultValue default value to be used if no preference was set
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, int &value, int defaultValue ) {
+char Fl_Preferences::get( const char *key, int &value, int defaultValue ) const {
   const char *v = node->get( key );
   value = v ? atoi( v ) : defaultValue;
   return ( v != 0 );
@@ -765,7 +765,7 @@ char Fl_Preferences::set( const char *key, int value ) {
  \param[in] defaultValue default value to be used if no preference was set
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, float &value, float defaultValue ) {
+char Fl_Preferences::get( const char *key, float &value, float defaultValue ) const {
   const char *v = node->get( key );
   if (v) {
     if (rootNode->root() & C_LOCALE) {
@@ -788,7 +788,7 @@ char Fl_Preferences::get( const char *key, float &value, float defaultValue ) {
  \param[in] value set this entry to \p value
  \return 0 if setting the value failed
  */
-char Fl_Preferences::set( const char *key, float value ) {
+char Fl_Preferences::set( const char *key, float value ) const {
   if (rootNode->root() & C_LOCALE) {
     clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%g", value );
   } else {
@@ -808,7 +808,7 @@ char Fl_Preferences::set( const char *key, float value ) {
  \param[in] precision number of decimal digits to represent value
  \return 0 if setting the value failed
  */
-char Fl_Preferences::set( const char *key, float value, int precision ) {
+char Fl_Preferences::set( const char *key, float value, int precision ) const {
   if (rootNode->root() & C_LOCALE) {
     clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%.*g", precision, value );
   } else {
@@ -828,7 +828,7 @@ char Fl_Preferences::set( const char *key, float value, int precision ) {
  \param[in] defaultValue default value to be used if no preference was set
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, double &value, double defaultValue ) {
+char Fl_Preferences::get( const char *key, double &value, double defaultValue ) const {
   const char *v = node->get( key );
   if (v) {
     if (rootNode->root() & C_LOCALE) {
@@ -871,7 +871,7 @@ char Fl_Preferences::set( const char *key, double value ) {
  \param[in] precision number of decimal digits to represent value
  \return 0 if setting the value failed
  */
-char Fl_Preferences::set( const char *key, double value, int precision ) {
+char Fl_Preferences::set( const char *key, double value, int precision ) const {
   if (rootNode->root() & C_LOCALE) {
     clocale_snprintf( nameBuffer, sizeof(nameBuffer), "%.*g", precision, value );
   } else {
@@ -924,7 +924,7 @@ static char *decodeText( const char *src ) {
  \param[in] maxSize maximum length of value plus one byte for a trailing zero
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize ) {
+char Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize ) const {
   const char *v = node->get( key );
   if ( v && strchr( v, '\\' ) ) {
     char *w = decodeText( v );
@@ -950,7 +950,7 @@ char Fl_Preferences::get( const char *key, char *text, const char *defaultValue,
  \param[in] defaultValue default value to be used if no preference was set
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue ) {
+char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue ) const {
   const char *v = node->get( key );
   if ( v && strchr( v, '\\' ) ) {
     text = decodeText( v );
@@ -976,7 +976,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
  \param[in] defaultValue default value to be used if no preference was set
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, std::string &value, const std::string &defaultValue ) {
+char Fl_Preferences::get( const char *key, std::string &value, const std::string &defaultValue ) const {
   const char *v = node->get( key );
   if (v) {
     if ( strchr( v, '\\' ) ) {
@@ -1056,7 +1056,7 @@ static void *decodeHex( const char *src, int &size ) {
 
  \see Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int *maxSize )
  */
-char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int maxSize ) {
+char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int maxSize ) const {
   const char *v = node->get( key );
   if ( v ) {
     int dsize;
@@ -1085,7 +1085,7 @@ char Fl_Preferences::get( const char *key, void *data, const void *defaultValue,
  \param[inout] maxSize maximum length of value and actual number of bytes set
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int *maxSize ) {
+char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int *maxSize ) const {
   if (!maxSize || !data)
     return -1;
   int capacity = *maxSize;
@@ -1122,7 +1122,7 @@ char Fl_Preferences::get( const char *key, void *data, const void *defaultValue,
  \param[in] defaultSize size of default value array
  \return 0 if the default value was used
  */
-char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue, int defaultSize ) {
+char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue, int defaultSize ) const {
   const char *v = node->get( key );
   if ( v ) {
     int dsize;
@@ -1184,7 +1184,7 @@ char Fl_Preferences::set( const char *entry, const std::string &value ) {
  \param[in] key name of entry
  \return size of value
  */
-int Fl_Preferences::size( const char *key ) {
+int Fl_Preferences::size( const char *key ) const {
   const char *v = node->get( key );
   return (int) (v ? strlen( v ) : 0);
 }
@@ -1229,7 +1229,7 @@ int Fl_Preferences::size( const char *key ) {
 
  \see Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
  */
-char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
+char Fl_Preferences::get_userdata_path( char *path, int pathlen ) const {
   if ( rootNode )
     return rootNode->getPath( path, pathlen );
   return 0;
@@ -1249,7 +1249,7 @@ char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
  \return 1 if no data was written to the database and no write attempt
     to disk was made.
  */
-int Fl_Preferences::flush() {
+int Fl_Preferences::flush() const {
   int ret = dirty();
   if (ret != 1)
     return ret;
@@ -1263,7 +1263,7 @@ int Fl_Preferences::flush() {
  \return 0 if the database is unchanged since the last write operation.
  \return -1 f there is an internal database error.
  */
-int Fl_Preferences::dirty() {
+int Fl_Preferences::dirty() const {
   Node *n = node;
   while (n && n->parent())
     n = n->parent();
@@ -1404,7 +1404,7 @@ Fl_Preferences::RootNode::~RootNode() {
 }
 
 // read a preference file and construct the group tree and all entry leaves
-int Fl_Preferences::RootNode::read() {
+int Fl_Preferences::RootNode::read() const {
   if ( (root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::MEMORY ) {
     prefs_->node->clearDirtyFlags();
     return 0;
@@ -1457,7 +1457,7 @@ int Fl_Preferences::RootNode::read() {
 }
 
 // write the group tree and all entry leaves
-int Fl_Preferences::RootNode::write() {
+int Fl_Preferences::RootNode::write() const {
   if ( (root_type_&Fl_Preferences::ROOT_MASK)==Fl_Preferences::MEMORY ) {
     prefs_->node->clearDirtyFlags();
     return 0;
@@ -1499,7 +1499,7 @@ int Fl_Preferences::RootNode::write() {
 // get the path to the preferences directory
 // - copy the path into the buffer at "path"
 // - if the resulting path is longer than "pathlen", it will be cropped
-char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
+char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) const {
   if (!filename_)   // RUNTIME preferences. or filename could not be created
     return 1; // return 1 (not -1) to be consistent with fl_make_path()
 
@@ -1739,7 +1739,7 @@ void Fl_Preferences::Node::set( const char *line ) {
 
 // Append data to an existing node. This is only used in read operations when
 // a single entry stretches over multiple lines in the prefs file.
-void Fl_Preferences::Node::add( const char *line ) {
+void Fl_Preferences::Node::add( const char *line ) const {
   if ( lastEntrySet<0 || lastEntrySet>=nEntry_ ) return;
   char *&dst = entry_[ lastEntrySet ].value;
   size_t a = strlen( dst );

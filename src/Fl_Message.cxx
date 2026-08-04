@@ -210,7 +210,7 @@ Fl_Message::Fl_Message(const char *iconlabel)
   Resizes the form and widgets so that they hold everything
   that is asked of them.
 */
-void Fl_Message::resizeform() {
+void Fl_Message::resizeform() const {
   int i;
   int message_w, message_h;
   int text_height;

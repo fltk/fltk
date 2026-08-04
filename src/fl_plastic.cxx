@@ -112,7 +112,7 @@ static float plastic_color_average() {
   return plastic_average;
 }
 
-inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
+static inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
   return fl_color_average((Fl_Color)gc, bc, plastic_color_average());
 }
 

@@ -216,7 +216,7 @@ protected:
   void yscroll(int yOffset) { yscroll_ = yOffset; damage(FL_DAMAGE_EXPOSE);}
 
   /* Return the number of lines displayed on a single page.  */
-  int linesPerPage();
+  int linesPerPage() const;
 
   /* Apply the current undo/redo operation, called from undo() or redo() */
   int apply_undo();
@@ -392,7 +392,7 @@ public:
   int append(const char* t, int l=0, char keep_selection=0);
 
   /* Put the current selection into the clipboard. */
-  int copy(int clipboard);
+  int copy(int clipboard) const;
 
   /* Undo previous changes to the text buffer. */
   int undo();
@@ -407,7 +407,7 @@ public:
   bool can_redo() const;
 
   /* Copy the yank buffer to the clipboard. */
-  int copy_cuts();
+  int copy_cuts() const;
 
   /** Return the shortcut key associated with this widget.
     \return shortcut keystroke

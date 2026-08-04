@@ -65,7 +65,7 @@ Fl_Overlay_Window::~Fl_Overlay_Window() {
 //  delete overlay; this is done by ~Fl_Group
 }
 
-int Fl_Overlay_Window::can_do_overlay() {
+int Fl_Overlay_Window::can_do_overlay() const {
   return Fl_Window_Driver::driver(this)->can_do_overlay();
 }
 
@@ -75,6 +75,6 @@ int Fl_Overlay_Window::can_do_overlay() {
  called, so if you want an initial display you must call this after
  calling show().
  */
-void Fl_Overlay_Window::redraw_overlay() {
+void Fl_Overlay_Window::redraw_overlay() const {
   Fl_Window_Driver::driver(this)->redraw_overlay();
 }

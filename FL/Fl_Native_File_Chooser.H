@@ -155,26 +155,26 @@ public:
    */
   Fl_Native_File_Chooser(int val = BROWSE_FILE); // each platorm implements it
   ~Fl_Native_File_Chooser();
-  void type(int t);
+  void type(int t) const;
   int type() const ;
-  void options(int o);
+  void options(int o) const;
   int options() const;
   int count() const;
   const char *filename() const ;
   const char *filename(int i) const ;
-  void directory(const char *val) ;
+  void directory(const char *val) const;
   const char *directory() const;
-  void title(const char *t);
+  void title(const char *t) const;
   const char* title() const;
   const char *filter() const ;
-  void filter(const char *f);
+  void filter(const char *f) const;
   int filters() const ;
-  void filter_value(int i) ;
+  void filter_value(int i) const;
   int filter_value() const ;
-  void preset_file(const char*f) ;
+  void preset_file(const char*f) const;
   const char* preset_file() const;
   const char *errmsg() const ;
-  int show() ;
+  int show() const;
   };
 
 /**
@@ -234,8 +234,8 @@ public:
 class Fl_Native_File_Chooser_FLTK_Driver : public Fl_Native_File_Chooser_Driver {
 private:
   void errmsg(const char *msg);
-  int type_fl_file(int val);
-  int exist_dialog();
+  static int type_fl_file(int val);
+  static int exist_dialog();
   void parse_filter();
 protected:
   int   _btype;                 // kind-of browser to show()

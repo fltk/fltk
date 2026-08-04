@@ -74,7 +74,7 @@ void Fl_Image_Surface::untranslate() {
  The returned Fl_Offscreen object is deleted when the Fl_Image_Surface object is deleted,
  unless the Fl_Image_Surface was constructed with non-null Fl_Offscreen argument.
  */
-Fl_Offscreen Fl_Image_Surface::offscreen() {
+Fl_Offscreen Fl_Image_Surface::offscreen() const {
   return platform_surface ? platform_surface->offscreen : (Fl_Offscreen)0;
 }
 
@@ -148,7 +148,7 @@ Fl_RGB_Image *Fl_Image_Surface_Driver::RGB3_to_RGB1(const Fl_RGB_Image *rgb3, in
 
  \see Fl_Image_Surface::mask(Fl_RGB_Image*)
  */
-Fl_RGB_Image *Fl_Image_Surface::image() {
+Fl_RGB_Image *Fl_Image_Surface::image() const {
   bool need_push = (Fl_Surface_Device::surface() != platform_surface);
   if (need_push) Fl_Surface_Device::push_current(platform_surface);
   Fl_RGB_Image *img = platform_surface->image();
@@ -176,7 +176,7 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
 }
 
 // Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen
-Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete_() {
+Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete_() const {
   Fl_Offscreen keep = platform_surface->offscreen;
   platform_surface->offscreen = 0;
   return keep;
@@ -257,7 +257,7 @@ void Fl_Image_Surface::rescale() {
 
  \since 1.4.0
  */
-void Fl_Image_Surface::mask(const Fl_RGB_Image *mask) {
+void Fl_Image_Surface::mask(const Fl_RGB_Image *mask) const {
   platform_surface->mask(mask);
 }
 

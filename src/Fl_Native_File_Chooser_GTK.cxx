@@ -126,9 +126,9 @@ private:
   char *gtkw_title; // the title to be applied to the dialog
   const char *previous_filter;
 
-  void preset_for_loading();
-  void preset_for_saving();
-  void preset_directory();
+  void preset_for_loading() const;
+  void preset_for_saving() const;
+  void preset_directory() const;
   int fl_gtk_chooser_wrapper(); // method that wraps the GTK widget
   Fl_GTK_Native_File_Chooser_Driver(int val);
   ~Fl_GTK_Native_File_Chooser_Driver() FL_OVERRIDE;
@@ -141,7 +141,7 @@ private:
   void title(const char *) FL_OVERRIDE;
   const char* title() const FL_OVERRIDE;
   int show() FL_OVERRIDE;
-  void changed_output_type(const char *filter);
+  void changed_output_type(const char *filter) const;
 
   static int custom_gtk_filter_function(const GtkFileFilterInfo*, Fl_GTK_Native_File_Chooser_Driver::pair*);
   static void free_pair(pair *p);
@@ -443,7 +443,7 @@ const char* Fl_GTK_Native_File_Chooser_Driver::title() const
 }
 
 /* changes the extension of the outfile in the chooser according to newly selected filter */
-void Fl_GTK_Native_File_Chooser_Driver::changed_output_type(const char *filter)
+void Fl_GTK_Native_File_Chooser_Driver::changed_output_type(const char *filter) const
 {
   if ( !(options()&Fl_Native_File_Chooser::USE_FILTER_EXT) ) return;
   if (strchr(filter, '(') || strchr(filter, '{') || strchr(filter+1, '*') || strncmp(filter, "*.", 2)) return;
@@ -638,7 +638,7 @@ static int fnfc_dispatch(int /*event*/, Fl_Window* /*win*/) {
   return 0;
 }
 
-void Fl_GTK_Native_File_Chooser_Driver::preset_for_loading() {
+void Fl_GTK_Native_File_Chooser_Driver::preset_for_loading() const {
   char *p;
   char preset[FL_PATH_MAX];
   size_t len = 0;
@@ -664,7 +664,7 @@ void Fl_GTK_Native_File_Chooser_Driver::preset_for_loading() {
   }
 }
 
-void Fl_GTK_Native_File_Chooser_Driver::preset_for_saving() {
+void Fl_GTK_Native_File_Chooser_Driver::preset_for_saving() const {
   char *p;
   char preset[FL_PATH_MAX];
   size_t len = 0;
@@ -694,7 +694,7 @@ void Fl_GTK_Native_File_Chooser_Driver::preset_for_saving() {
   }
 }
 
-void Fl_GTK_Native_File_Chooser_Driver::preset_directory() {
+void Fl_GTK_Native_File_Chooser_Driver::preset_directory() const {
   char *p;
   if (_directory && _directory[0]) {
     p = extract_dir_from_path(_directory);
