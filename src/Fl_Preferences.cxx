@@ -2135,6 +2135,7 @@ int Fl_Plugin_Manager::loadAll(const char *dirpath, const char *pattern) {
 std::vector<std::string> Fl_Plugin_Manager::klass_list() {
   Fl_Preferences p(0, "plugins");
   std::vector<std::string> pm;
+  pm.reserve(p.groups());
   for (int i = 0; i < p.groups(); i++) {
     pm.push_back(p.group(i));
   }
