@@ -19,7 +19,6 @@
 #include <FL/fl_utf8.h>
 #include <FL/fl_string_functions.h>
 #include "flstring.h"
-#include <ctype.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/fl_ask.H>

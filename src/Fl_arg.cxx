@@ -1,7 +1,7 @@
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,8 +24,6 @@
 #include "Fl_System_Driver.H"
 #include "Fl_Screen_Driver.H"
 #include "flstring.h"
-
-#include <ctype.h>
 
 static int fl_match(const char *a, const char *s, int atleast = 1) {
   const char *b = s;

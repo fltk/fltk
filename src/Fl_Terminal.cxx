@@ -2,7 +2,7 @@
 // Fl_Terminal - A terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022 by Greg Ercolano.
-// Copyright 2024 by Bill Spitzak and others.
+// Copyright 2024-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,10 +24,9 @@
 #define NDEBUG          // comment out to enable assert()
 #endif
 
-#include <ctype.h>      // isdigit
 #include <stdlib.h>     // malloc
 #include <string.h>     // strlen
-#include <stdarg.h>     // vprintf, va_list
+#include <stdarg.h>     // va_list
 #include <assert.h>
 #include <string>
 

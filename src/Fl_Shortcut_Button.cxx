@@ -22,9 +22,6 @@
 #include "Fl_System_Driver.H"
 #include "flstring.h"
 
-#include <ctype.h>
-
-
 /** \class Fl_Shortcut_Button
  A button that allows the user to type a key combination to create shortcuts.
  After clicked once, the button catches the following keyboard events and

@@ -30,7 +30,6 @@
 #include "flstring.h"
 #include "fl_oxy.h"
 
-#include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
 

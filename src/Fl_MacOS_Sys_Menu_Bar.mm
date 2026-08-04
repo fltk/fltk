@@ -21,7 +21,6 @@
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include "flstring.h"
 #include <stdio.h>
-#include <ctype.h>
 #include <stdarg.h>
 #include "Fl_System_Driver.H"
 

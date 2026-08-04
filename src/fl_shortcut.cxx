@@ -38,7 +38,6 @@
 #include "Fl_Screen_Driver.H"
 #include <FL/fl_draw.H>
 #include <stdlib.h>
-#include <ctype.h>
 #include "flstring.h"
 
 /**

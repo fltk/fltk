@@ -28,7 +28,6 @@
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
 
-#include <ctype.h>
 #include <stdlib.h>
 #include "flstring.h"
 

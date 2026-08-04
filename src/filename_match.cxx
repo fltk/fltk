@@ -19,7 +19,6 @@
 
 
 #include <FL/filename.H>
-#include <ctype.h>
 
 /**
     Checks if a string \p s matches a pattern \p p.

@@ -22,13 +22,11 @@
 #include "../Xutf8.h"
 #include <X11/Xlib.h>
 #include <FL/fl_string_functions.h>  // fl_strdup()
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "../utf8_internal.h"
 #include "../flstring.h"
-
 
 /* External auto generated functions : */
 #include "ucs2fontmap.c"

@@ -30,7 +30,6 @@
 #include "flstring.h"
 
 #include <stdio.h>
-#include <ctype.h>
 
 void Fl_Pixmap::measure() {
   int W, H;

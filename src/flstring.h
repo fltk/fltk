@@ -34,7 +34,6 @@
 #  ifdef HAVE_STRINGS_H
 #    include <strings.h>
 #  endif /* HAVE_STRINGS_H */
-#  include <ctype.h>
 #  include <FL/fl_string_functions.h>
 
 /*

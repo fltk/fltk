@@ -24,7 +24,6 @@
 #include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <stdlib.h>
-#include <ctype.h>
 
 #define MAXBUF 1024
 static int l_secret;

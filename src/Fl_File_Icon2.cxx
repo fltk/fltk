@@ -36,7 +36,6 @@
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
-#include <ctype.h>
 #include <errno.h>
 #include <FL/math.h>
 #include <FL/Fl_File_Icon.H>
