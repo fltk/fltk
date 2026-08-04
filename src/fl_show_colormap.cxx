@@ -28,8 +28,8 @@
  Pretty much unchanged from Forms.
 */
 class ColorMenu : public Fl_Window {
-  Fl_Color initial;
-  Fl_Color which, previous;
+  Fl_Color initial{};
+  Fl_Color which{}, previous{};
   int done;
   void drawbox(Fl_Color);
   void draw() FL_OVERRIDE;

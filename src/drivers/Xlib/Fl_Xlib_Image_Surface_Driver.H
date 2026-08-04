@@ -25,7 +25,7 @@
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   void end_current() FL_OVERRIDE;
 public:
-  Window pre_window;
+  Window pre_window{};
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Xlib_Image_Surface_Driver();
   void set_current() FL_OVERRIDE;

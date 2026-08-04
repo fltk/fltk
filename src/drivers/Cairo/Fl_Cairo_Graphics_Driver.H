@@ -70,7 +70,7 @@ public:
   static const char *clean_utf8(const char* str, int &n);
 
   unsigned char cr_,cg_,cb_;
-  char  linedash_[256];//should be enough
+  char  linedash_[256]{};//should be enough
   void concat();  // transform ror scalable dradings...
   void reconcat(); //invert
   void recover(); //recovers the state after grestore (such as line styles...)

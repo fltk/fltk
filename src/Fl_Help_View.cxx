@@ -224,8 +224,8 @@ public:
   bool          selected_;              ///< True if there is text selected
   int           selection_first_;       ///< First character of selection, offset in value_
   int           selection_last_;        ///< Last character of selection, offset in value_
-  Fl_Color      tmp_selection_color_;   ///< Selection color during draw operation
-  Fl_Color      selection_text_color_;  ///< Selection text color during draw operation
+  Fl_Color      tmp_selection_color_{};   ///< Selection color during draw operation
+  Fl_Color      selection_text_color_{};  ///< Selection text color during draw operation
   // The following members are static because we need them only once during mouse events
   static int    selection_push_first_;  ///< First character of selection during mouse down
   static int    selection_push_last_;   ///< Last character of selection during mouse down
