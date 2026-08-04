@@ -100,7 +100,7 @@ public:
 class Fl_Image_Surface_Driver : public Fl_Widget_Surface {
   friend class Fl_Image_Surface;
 private:
-  Fl_Image_Surface *image_surface_;
+  Fl_Image_Surface *image_surface_{};
 protected:
   int width;
   int height;
