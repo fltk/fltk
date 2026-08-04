@@ -2220,7 +2220,7 @@ int fl_handle(const XEvent& thisevent)
     int num = d->screen_num_unscaled(X+ actual.width/2, Y +actual.height/2);
     if (num == -1) num = olds;
     float s = d->scale(num);
-    if (num != olds && !window->menu_window()) {
+    if (num != olds && !window->menu_window() && !window->tooltip_window()) {
       if (Fl::modal() && Fl::modal()->menu_window()) { // is a menu window active?
         Fl::e_x_root = 1000000;
         Fl::modal()->handle(FL_PUSH); // simulate a distant click to close menus
@@ -2248,7 +2248,7 @@ int fl_handle(const XEvent& thisevent)
 #if USE_XFT || FLTK_USE_CAIRO
     if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
       ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) &&
-      !window->menu_window()) {
+      !window->menu_window() && !window->tooltip_window()) {
         window->resize(rint(X/s), rint(Y/s), ceil(W/s), ceil(H/s));
     } else {
       window->position(rint(X/s), rint(Y/s));
@@ -2566,7 +2566,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   if (W <= 0) W = 1; // X don't like zero...
   int H = win->h();
   if (H <= 0) H = 1; // X don't like zero...
-  if (!win->parent() && !Fl::grab()) {
+  if (!win->parent() && !Fl::grab() && !win->tooltip_window()) {
     // center windows in case window manager does not do anything:
 #ifdef FL_CENTER_WINDOWS
     if (!win->force_position()) {
