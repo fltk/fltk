@@ -563,8 +563,9 @@ int Fl_Screen_Driver::scale_handler(int event)
     }
     if (f == old_f) return 1;
     if (screen_dr->rescalable() == SYSTEMWIDE_APP_SCALING) {
-      float old_f = screen_dr->scale(0);
-      for (int i = 0; i < Fl::screen_count(); i++) {
+      const float old_f = screen_dr->scale(0);
+      const int scount = Fl::screen_count();
+      for (int i = 0; i < scount; i++) {
         screen_dr->rescale_all_windows_from_screen(i, f * initial_scale, old_f);
       }
     } else {

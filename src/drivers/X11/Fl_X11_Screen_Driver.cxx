@@ -1200,7 +1200,8 @@ void Fl_X11_Screen_Driver::desktop_scale_factor()
       if (factor < 1.1) factor = 1;
       else if (factor > 1.8 && factor < 2.2) factor = 2;
       else if (factor > 10.0) factor = 10.0;
-      for (int i = 0; i < screen_count(); i++)  scale(i, factor);
+      const int scount = screen_count();
+      for (int i = 0; i < scount; i++)  scale(i, factor);
     }
   }
 }

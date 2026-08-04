@@ -1268,8 +1268,9 @@ static void after_display_rescale(float *p_current_xft_dpi) {
     //printf("%s previous=%g dpi=%g \n", s, *p_current_xft_dpi, dpi);
     if (fabs(dpi - *p_current_xft_dpi) > 0.1) {
       *p_current_xft_dpi = dpi;
-      float f = dpi / 96.;
-      for (int i = 0; i < Fl::screen_count(); i++)
+      const float f = dpi / 96.;
+      const int scount = Fl::screen_count();
+      for (int i = 0; i < scount; i++)
         Fl::screen_driver()->rescale_all_windows_from_screen(i, f, f);
     }
   }
