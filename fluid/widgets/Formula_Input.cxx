@@ -80,67 +80,69 @@ int Formula_Input::eval_var(uchar *&s) const {
 
 /**
  Evaluate a formula into an integer, recursive part.
+
+ Uses precedence climbing:
+    expr := ['+'|'-'] (number | variable | '(' expr ')') (op expr)*
+ Brackets are parsed inline (not in a separate stack frame with stale state),
+ so `s` always points at the next unread character whenever `eval` or the
+ operator loop below inspects it. This keeps nested brackets and trailing
+ operators (e.g. "2*(1+2)+4") in sync with the string position.
+
  \param s remaining text in this formula, must return a pointer to the next
     character that will be interpreted.
- \param prio priority of current operation
+ \param prio minimum operator precedence this call may consume: 0 accepts
+    both '+'/'-' and '*'/'/'; 2 stops at '+'/'-' (used for the right-hand
+    side of a '+'/'-'); 3 stops at '*'/'/' too (right-hand side of a '*'/'/').
  \return the value so far
+ \author Bug fixes by Claude Sonnet
  */
 int Formula_Input::eval(uchar *&s, int prio) const {
   int v = 0, sgn = 1;
-  uchar c = *s++;
-
-  // check for end of text
-  if (c==0) { s--; return sgn*v; }
+  uchar c = *s;
 
   // check for unary operator
-  if (c=='-') { sgn = -1; c = *s++; }
-  else if (c=='+') { sgn = 1; c = *s++; }
+  if (c=='-') { sgn = -1; s++; c = *s; }
+  else if (c=='+') { s++; c = *s; }
 
   // read value, variable, or bracketed term
-  if (c==0) {
-    s--; return sgn*v;
-  } else if (c>='0' && c<='9') {
+  if (c>='0' && c<='9') {
     // numeric value
-    while (c>='0' && c<='9') {
-      v = v*10 + (c-'0');
-      c = *s++;
+    while (*s>='0' && *s<='9') {
+      v = v*10 + (*s-'0');
+      s++;
     }
   } else if (fl_ascii_isalpha(c)) {
-    v = eval_var(--s);
-    c = *s++;
+    v = eval_var(s);
   } else if (c=='(') {
-    // opening bracket
-    v = eval(s, 5);
+    // opening bracket: evaluate the enclosed formula, then skip the ')'
+    s++;
+    v = eval(s, 0);
+    if (*s==')') s++;
   } else {
-    return sgn*v; // syntax error
+    return 0; // syntax error: no value found
   }
   if (sgn==-1) v = -v;
 
-  // Now evaluate all following binary operators
+  // Now evaluate all following binary operators that bind at least as
+  // tightly as `prio` requires, left to right.
   for (;;) {
-    if (c==0) {
-      s--;
-      return v;
-    } else if (c=='+' || c=='-') {
-      if (prio<=4) { s--; return v; }
-      if (c=='+') { v += eval(s, 4); }
-      else if (c=='-') { v -= eval(s, 4); }
+    c = *s;
+    if (c=='+' || c=='-') {
+      if (prio>1) return v;
+      s++;
+      int rhs = eval(s, 2);
+      if (c=='+') v += rhs;
+      else v -= rhs;
     } else if (c=='*' || c=='/') {
-      if (prio<=3) { s--; return v; }
-      if (c=='*') { v *= eval(s, 3); }
-      else if (c=='/') {
-        int x = eval(s, 3);
-        if (x!=0) // if x is zero, don't divide
-          v /= x;
-      }
-    } else if (c==')') {
-      return v;
+      if (prio>2) return v;
+      s++;
+      int rhs = eval(s, 3);
+      if (c=='*') v *= rhs;
+      else if (rhs!=0) v /= rhs; // if rhs is zero, don't divide
     } else {
-      return v; // syntax error
+      return v;
     }
-    c = *s++;
   }
-  return v;
 }
 
 /**
@@ -171,7 +173,7 @@ int Formula_Input::eval(const char *s) const
   }
   src = buf;
   // now jump into the recursion
-  int ret = eval(src, 5);
+  int ret = eval(src, 0);
   ::free(buf);
   return ret;
 }
