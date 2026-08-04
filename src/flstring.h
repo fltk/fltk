@@ -95,18 +95,20 @@ FL_EXPORT extern size_t fl_strlcat(char *, const char *, size_t);
 FL_EXPORT extern int fl_ascii_strcasecmp(const char *s, const char *t);
 
 
-// Special character class detection functions for FLTK:
+// Special character class detection and conversion functions for FLTK:
 //
 // The following functions replace system functions which are locale dependent
 // and/or work only with pure ASCII characters (range: 0x00 .. 0x7f).
 // Using input (bytes) outside this range results in undefined behavior and may
-// even crash (Visual Studio in Debug mode).
+// even crash (e.g. Visual Studio in Debug mode).
 // Note that UTF-8 sequences using 'char' variables would be sign-extended to
 // large negative values which are invalid.
 //
 // Note: These functions are not UTF-8 aware and are intended to fix bad behavior,
 //   but they don't fix wrong semantics. In the future we should check all text
 //   handling functions for UTF-8 awareness.
+//   These functions are locale independent and work as if locale 'C' or Posix
+//   was active.
 //
 // These functions are intentionally declared and defined in this header in the
 // `src` folder which is hidden from user code. They should not be used in demo
@@ -163,8 +165,8 @@ inline int fl_ascii_isalpha(int ch) {
   \param[in]  ch  input character
 */
 inline int fl_ascii_isprint(int ch) {
-  if (ch < 0 || ch > 0x7f) return 0;
-  return isprint(ch);
+  if (ch < 32 || ch > 0x7e) return 0;
+  return 1;
 }
 
 /*
@@ -199,8 +201,13 @@ inline int fl_ascii_ispunct(int ch) {
   \param[in]  ch  input character
 */
 inline int fl_ascii_isspace(int ch) {
-  if (ch < 0 || ch > 0x7f) return 0;
-  return isspace(ch);
+  if (ch < 0 || ch > 32) return 0;
+  return (ch == ' '  || // space
+          ch == '\f' || // formfeed
+          ch == '\n' || // newline
+          ch == '\r' || // carriage return
+          ch == '\t' || // horizontal tab
+          ch == '\v');  // vertical tab
 }
 
 /*
@@ -216,7 +223,8 @@ inline int fl_ascii_isspace(int ch) {
   \param[in]  ch  input character
 */
 inline int fl_ascii_toupper(int ch) {
-  if (ch >= 'a' && ch <= 'z') return ch - ('a' - 'A');
+  if (ch >= 'a' && ch <= 'z')
+    return ch - ('a' - 'A');
   return ch;
 }
 
@@ -233,7 +241,8 @@ inline int fl_ascii_toupper(int ch) {
   \param[in]  ch  input character
 */
 inline int fl_ascii_tolower(int ch) {
-  if (ch >= 'A' && ch <= 'Z') return ch + ('a' - 'A');
+  if (ch >= 'A' && ch <= 'Z')
+    return ch + ('a' - 'A');
   return ch;
 }
 
