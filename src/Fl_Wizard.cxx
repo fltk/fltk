@@ -84,7 +84,7 @@ void Fl_Wizard::draw() {
   This method shows the next child of the wizard. If the last child
   is already visible, this function does nothing.
 */
-void Fl_Wizard::next() {
+void Fl_Wizard::next() const {
   int                   num_kids;
   Fl_Widget     * const *kids;
 
@@ -101,7 +101,7 @@ void Fl_Wizard::next() {
 }
 
 /** Shows the previous child.*/
-void Fl_Wizard::prev()
+void Fl_Wizard::prev() const
 {
   int                   num_kids;
   Fl_Widget     * const *kids;
@@ -119,7 +119,7 @@ void Fl_Wizard::prev()
 }
 
 /**  Gets the current visible child widget. */
-Fl_Widget* Fl_Wizard::value()
+Fl_Widget* Fl_Wizard::value() const
 {
   int                   num_kids;
   Fl_Widget     * const *kids;
@@ -151,7 +151,7 @@ Fl_Widget* Fl_Wizard::value()
 }
 
 /**  Sets the child widget that is visible.*/
-void Fl_Wizard::value(Fl_Widget *kid)
+void Fl_Wizard::value(Fl_Widget *kid) const
 {
   int                   num_kids;
   Fl_Widget     * const *kids;
@@ -182,7 +182,7 @@ void Fl_Wizard::value(Fl_Widget *kid)
  \param[in] ix index of the child widget to show. If the index is out of range,
     this function does nothing.
 */
-void Fl_Wizard::value(int ix) {
+void Fl_Wizard::value(int ix) const {
   if (ix < 0 || ix >= children())
     return;
   value(child(ix));

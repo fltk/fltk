@@ -49,11 +49,11 @@ public:
 
   Fl_Wizard(int, int, int, int, const char * = 0);
 
-  void next();
-  void prev();
-  Fl_Widget *value();
-  void value(Fl_Widget *);
-  void value(int);
+  void next() const;
+  void prev() const;
+  Fl_Widget *value() const;
+  void value(Fl_Widget *) const;
+  void value(int) const;
 };
 
 #endif // !_Fl_Wizard_H_

@@ -91,7 +91,7 @@ private:
   Tick_Position ticks_ { TICKS_NONE };
   uchar num_ticks_ { 11 };
   void _Fl_Slider();
-  void draw_bg(int, int, int, int, int S=16);
+  void draw_bg(int, int, int, int, int S=16) const;
 
 protected:
 
@@ -99,7 +99,7 @@ protected:
   void draw(int, int, int, int);
   int handle(int, int, int, int, int);
   void draw() override;
-  void draw_ticks(const Fl_Rect& r, int S);
+  void draw_ticks(const Fl_Rect& r, int S) const;
   double value_to_position(double val) const;
   double position_to_value(double pos) const;
   double increment_lin_log(double v, int n, int range);

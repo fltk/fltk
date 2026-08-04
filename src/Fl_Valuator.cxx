@@ -86,7 +86,7 @@ int Fl_Valuator::value(double v) {
   return 1;
 }
 /** Clamps the value, but accepts v if the previous value is not already out of range */
-double Fl_Valuator::softclamp(double v) {
+double Fl_Valuator::softclamp(double v) const {
   int which = (min<=max);
   double p = previous_value_;
   if ((v<min)==which && p!=min && (p<min)!=which) return min;
@@ -122,13 +122,13 @@ void Fl_Valuator::handle_release() {
   Round the passed value to the nearest step increment.  Does
   nothing if step is zero.
 */
-double Fl_Valuator::round(double v) {
+double Fl_Valuator::round(double v) const {
   if (A) return rint(v*B/A)*A/B;
   else return v;
 }
 
 /**  Clamps the passed value to the valuator range.*/
-double Fl_Valuator::clamp(double v) {
+double Fl_Valuator::clamp(double v) const {
   if ((v<min)==(min<=max)) return min;
   else if ((v>max)==(min<=max)) return max;
   else return v;
@@ -139,7 +139,7 @@ double Fl_Valuator::clamp(double v) {
   step was set to zero it uses fabs(maximum() - minimum()) /
   100.
 */
-double Fl_Valuator::increment(double v, int n) {
+double Fl_Valuator::increment(double v, int n) const {
   if (!A) return v+n*(max-min)/100;
   if (min > max) n = -n;
   return (rint(v*B/A)+n)*A/B;

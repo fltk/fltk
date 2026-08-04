@@ -66,7 +66,7 @@ void Fl_Table::col_position(int col) {
 /**
   Returns the scroll position (in pixels) of the specified 'row'.
 */
-long Fl_Table::row_scroll_position(int row) {
+long Fl_Table::row_scroll_position(int row) const {
   int startrow = 0;
   long scroll = 0;
   // OPTIMIZATION:
@@ -85,7 +85,7 @@ long Fl_Table::row_scroll_position(int row) {
 /**
   Returns the scroll position (in pixels) of the specified column 'col'.
 */
-long Fl_Table::col_scroll_position(int col) {
+long Fl_Table::col_scroll_position(int col) const {
   int startcol = 0;
   long scroll = 0;
   // OPTIMIZATION:
@@ -267,7 +267,7 @@ void Fl_Table::col_width(int col, int width)
   current row/col limits.
   \returns 0 if no changes were made, or 1 if they were.
 */
-int Fl_Table::row_col_clamp(TableContext context, int &R, int &C) {
+int Fl_Table::row_col_clamp(TableContext context, int &R, int &C) const {
   int clamped = 0;
   if ( R < 0 ) { R = 0; clamped = 1; }
   if ( C < 0 ) { C = 0; clamped = 1; }
@@ -295,7 +295,7 @@ int Fl_Table::row_col_clamp(TableContext context, int &R, int &C) {
 /**
   Returns the (X,Y,W,H) bounding region for the specified 'context'.
 */
-void Fl_Table::get_bounds(TableContext context, int &X, int &Y, int &W, int &H) {
+void Fl_Table::get_bounds(TableContext context, int &X, int &Y, int &W, int &H) const {
   switch ( context ) {
     case CONTEXT_COL_HEADER:
       // Column header clipping.

@@ -62,7 +62,7 @@ protected:
   double previous_value() const {return previous_value_;}
   /** Stores the current value in the previous value */
   void handle_push() {previous_value_ = value_;}
-  double softclamp(double);
+  double softclamp(double) const;
   void handle_drag(double newvalue);
   void handle_release(); // use drag() value
   virtual void value_damage(); // cause damage() due to value() changing
@@ -129,9 +129,9 @@ public:
 
   virtual int format(char*);
   virtual std::string format_str();
-  double round(double); // round to nearest multiple of step
-  double clamp(double); // keep in range
-  double increment(double, int); // add n*step to value
+  double round(double) const; // round to nearest multiple of step
+  double clamp(double) const; // keep in range
+  double increment(double, int) const; // add n*step to value
 };
 
 #endif

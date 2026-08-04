@@ -379,7 +379,7 @@ void Fl_Window::icon(const Fl_RGB_Image *icon) {
   \see Fl_Window::icon(const Fl_RGB_Image *)
   \note See \ref osissues_wayland_window_icon for the Wayland platform.
  */
-void Fl_Window::icons(const Fl_RGB_Image *icons[], int count) {
+void Fl_Window::icons(const Fl_RGB_Image *icons[], int count) const {
   pWindowDriver->icons(icons, count);
 }
 
@@ -395,14 +395,14 @@ const void *Fl_Window::icon() const {
   \deprecated in 1.3.3 in favor of platform-independent methods Fl_Window::icon(const Fl_RGB_Image *icon)
  and Fl_Window::icons(const Fl_RGB_Image *icons[], int count).
  */
-void Fl_Window::icon(const void * ic) {
+void Fl_Window::icon(const void * ic) const {
   pWindowDriver->icon(ic);
 }
 
 /** Deletes all icons previously attached to the window.
  \see Fl_Window::icons(const Fl_RGB_Image *icons[], int count)
  */
-void Fl_Window::free_icons() {
+void Fl_Window::free_icons() const {
   pWindowDriver->free_icons();
 }
 
@@ -466,7 +466,7 @@ void Fl_Window::free_icons() {
   Note that the window will not be responsive until the event loop
   is started with Fl::run().
 */
-void Fl_Window::wait_for_expose() {
+void Fl_Window::wait_for_expose() const {
   pWindowDriver->wait_for_expose();
 }
 
@@ -930,7 +930,7 @@ int Fl_Window::screen_num() const {
 
   \since 1.4.0
 */
-void Fl_Window::screen_num(int screen_num) {
+void Fl_Window::screen_num(int screen_num) const {
   if (!shown() && screen_num >= 0 && screen_num < Fl::screen_count())
     pWindowDriver->screen_num(screen_num);
 }
@@ -971,12 +971,12 @@ void Fl_Window::screen_num(int screen_num) {
 
  \version 1.3.3
  */
-void Fl_Window::shape(const Fl_Image* img) {pWindowDriver->shape(img);}
+void Fl_Window::shape(const Fl_Image* img) const {pWindowDriver->shape(img);}
 
 /** Set the window's shape with an Fl_Image.
  \see void shape(const Fl_Image* img)
  */
-void Fl_Window::shape(const Fl_Image& img) {pWindowDriver->shape(&img);}
+void Fl_Window::shape(const Fl_Image& img) const {pWindowDriver->shape(&img);}
 
 /** Returns the image controlling the window shape or NULL.
 
@@ -1046,6 +1046,6 @@ void Fl_Window::is_maximized_(bool b) {
 
   \since 1.4.0
 */
-void Fl_Window::allow_expand_outside_parent() {
+void Fl_Window::allow_expand_outside_parent() const {
   if (parent()) pWindowDriver->allow_expand_outside_parent();
 }

@@ -69,15 +69,15 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
     /** Adds a \p key of state \p state with the function \p f. */
     void add_key_binding(int key, int state, Key_Func f)
       { add_key_binding(key, state, f, &key_bindings); }
-    void remove_key_binding(int key, int state, Key_Binding** list);
+      static void remove_key_binding(int key, int state, Key_Binding** list);
     /** Removes the key binding associated with the key "key" of state "state". */
     void remove_key_binding(int key, int state)
       { remove_key_binding(key, state, &key_bindings); }
-    void remove_all_key_bindings(Key_Binding** list);
+    static void remove_all_key_bindings(Key_Binding** list);
     /** Removes all of the key bindings associated with the text editor or list. */
     void remove_all_key_bindings() { remove_all_key_bindings(&key_bindings); }
     void add_default_key_bindings(Key_Binding** list);
-    Key_Func bound_key_function(int key, int state, Key_Binding* list) const;
+    static Key_Func bound_key_function(int key, int state, Key_Binding* list);
     /**  Returns the function associated with a key binding. */
     Key_Func bound_key_function(int key, int state) const
       { return bound_key_function(key, state, key_bindings); }

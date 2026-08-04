@@ -402,7 +402,7 @@ public:
 
    \see savefile(const char *file, int buflen)
    */
-  int outputfile(const char *file, int start, int end, int buflen = 128*1024);
+  int outputfile(const char *file, int start, int end, int buflen = 128*1024) const;
 
   /**
    Saves a text file from the current buffer.

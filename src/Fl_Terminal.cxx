@@ -87,7 +87,7 @@ static Fl_Color bold_color(Fl_Color val) {
 }
 
 // Return an FLTK color for given XTERM foreground color index (0..7)
-Fl_Color Fl_Terminal::CharStyle::fltk_fg_color(uchar ci) {
+Fl_Color Fl_Terminal::CharStyle::fltk_fg_color(uchar ci) const {
   static const Fl_Color xterm_fg_colors_[] = {
     0x00000000,       // 0
     0xd0000000,       // 1 - red
@@ -109,7 +109,7 @@ Fl_Color Fl_Terminal::CharStyle::fltk_fg_color(uchar ci) {
 //    the fg colors to prevent too much brightness clashing
 //    for 'normal' bg vs fg colors.
 //
-Fl_Color Fl_Terminal::CharStyle::fltk_bg_color(uchar ci) {
+Fl_Color Fl_Terminal::CharStyle::fltk_bg_color(uchar ci) const {
   static const Fl_Color xterm_bg_colors_[] = {
     0x00000000,       // 0
     0xc0000000,       // 1 - red
@@ -367,7 +367,7 @@ void Fl_Terminal::EscapeSeq::save_cursor(int row, int col) {
 }
 
 // Restore last saved cursor position into row,col
-void Fl_Terminal::EscapeSeq::restore_cursor(int &row, int &col) {
+void Fl_Terminal::EscapeSeq::restore_cursor(int &row, int &col) const {
   row = save_row_;
   col = save_col_;
 }
@@ -1221,20 +1221,20 @@ void Fl_Terminal::default_tabstops(void) {
 }
 
 // Clear all tabstops
-void Fl_Terminal::clear_all_tabstops(void) {
+void Fl_Terminal::clear_all_tabstops(void) const {
   memset(tabstops_, 0, tabstops_size_);
 }
 
 // Set/clear tabstop at current cursor x position
 //    val: 0 clears tabstop, 1 sets tabstop
 //
-void Fl_Terminal::set_tabstop(void) {
+void Fl_Terminal::set_tabstop(void) const {
   int index = clamp(cursor_col(), 0, tabstops_size_-1);    // clamp cursor pos
   tabstops_[index] = 1;                                    // set/clr tabstop
 }
 
 // Clear tabstop at current cursor x position
-void Fl_Terminal::clear_tabstop(void) {
+void Fl_Terminal::clear_tabstop(void) const {
   int index = clamp(cursor_col(), 0, tabstops_size_-1);    // clamp cursor pos
   tabstops_[index] = 0;                                    // clear tabstop
 }
@@ -1246,13 +1246,13 @@ void Fl_Terminal::clear_tabstop(void) {
 //
 void Fl_Terminal::set_scrollbar_params(Fl_Scrollbar* scroll, // scrollbar to set
                                        int min,              // min, e.g. display_rows()
-                                       int max) {            // max, e.g. display_rows()+history_use()
-  bool  is_hor  = (scroll->type() == FL_HORIZONTAL);
-  int   diff    = max - min;
-  int   length  = is_hor ? scroll->w() : scroll->h();        // long side of scrollbar in pixels
+                                       int max) const {      // max, e.g. display_rows()+history_use()
+  const bool  is_hor  = (scroll->type() == FL_HORIZONTAL);
+  const int   diff    = max - min;
+  const int   length  = is_hor ? scroll->w() : scroll->h();  // long side of scrollbar in pixels
   float tabsize = min / float(max);                          // fractional size of tab
-  float minpix  = float(MAX(10, scrollbar_actual_size()));   // scrollbar_size preferred, 10pix min (**)
-  float minfrac = minpix / length;                           // slide_size wants a fraction
+  const float minpix  = float(MAX(10, scrollbar_actual_size())); // scrollbar_size preferred, 10pix min (**)
+  const float minfrac = minpix / length;                     // slide_size wants a fraction
   tabsize       = MAX(minfrac, tabsize);                     // use best fractional size
   scroll->slider_size(tabsize);                              // size of slider's tab
   if (is_hor) scroll->range(0, diff);                        // range of values hscroll returns (0=left)
@@ -1561,7 +1561,7 @@ Fl_Terminal::CharStyle& Fl_Terminal::current_style(void) const {
 }
 
 /** Set current style for rendering text. */
-void Fl_Terminal::current_style(const CharStyle& sty) {
+void Fl_Terminal::current_style(const CharStyle& sty) const {
   *current_style_ = sty;
 }
 
@@ -1665,7 +1665,7 @@ void Fl_Terminal::textsize(Fl_Fontsize val) {
 
   \see textfgcolor_default(Fl_Color)
 */
-void Fl_Terminal::textfgcolor_xterm(uchar val) {
+void Fl_Terminal::textfgcolor_xterm(uchar val) const {
   current_style_->fgcolor_xterm(val);
 }
 
@@ -1697,7 +1697,7 @@ void Fl_Terminal::textfgcolor_xterm(uchar val) {
 
   \see textbgcolor_default(Fl_Color)
 */
-void Fl_Terminal::textbgcolor_xterm(uchar val) {
+void Fl_Terminal::textbgcolor_xterm(uchar val) const {
   current_style_->bgcolor_xterm(val);
 }
 
@@ -1712,7 +1712,7 @@ void Fl_Terminal::textbgcolor_xterm(uchar val) {
 
   \see textfgcolor(Fl_Color), textfgcolor_default(Fl_Color), textbgcolor_xterm(uchar)
 */
-void Fl_Terminal::textcolor(Fl_Color val) {
+void Fl_Terminal::textcolor(Fl_Color val) const {
   textfgcolor(val);
   textfgcolor_default(val);
 }
@@ -1754,7 +1754,7 @@ void Fl_Terminal::color(Fl_Color val) {
   \endcode
   \see textfgcolor_default(Fl_Color), textfgcolor_xterm(uchar)
 */
-void Fl_Terminal::textfgcolor(Fl_Color val) {
+void Fl_Terminal::textfgcolor(Fl_Color val) const {
   current_style_->fgcolor(val);         // also clears FG_XTERM charflag
 }
 
@@ -1781,7 +1781,7 @@ void Fl_Terminal::textfgcolor(Fl_Color val) {
 
   \see textbgcolor_default(Fl_Color), textbgcolor_xterm(uchar)
 */
-void Fl_Terminal::textbgcolor(Fl_Color val) {
+void Fl_Terminal::textbgcolor(Fl_Color val) const {
   current_style_->bgcolor(val);         // also clears BG_XTERM charflag
 }
 
@@ -1793,7 +1793,7 @@ void Fl_Terminal::textbgcolor(Fl_Color val) {
 
   \see textfgcolor(Fl_Color)
 */
-void Fl_Terminal::textfgcolor_default(Fl_Color val) {
+void Fl_Terminal::textfgcolor_default(Fl_Color val) const {
   current_style_->defaultfgcolor(val);
 }
 
@@ -1809,7 +1809,7 @@ void Fl_Terminal::textfgcolor_default(Fl_Color val) {
 
   \see textbgcolor(Fl_Color)
 */
-void Fl_Terminal::textbgcolor_default(Fl_Color val) {
+void Fl_Terminal::textbgcolor_default(Fl_Color val) const {
   current_style_->defaultbgcolor(val);
 }
 
@@ -1819,7 +1819,7 @@ void Fl_Terminal::textbgcolor_default(Fl_Color val) {
 
  \see Fl_Terminal::Attrib
 */
-void Fl_Terminal::textattrib(uchar val) {
+void Fl_Terminal::textattrib(uchar val) const {
   current_style_->attrib(val);
 }
 

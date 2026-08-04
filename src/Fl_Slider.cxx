@@ -96,7 +96,7 @@ int Fl_Slider::scrollvalue(int pos, int size, int first, int total) {
 // position on the widget itself covers a wider range than 0-1,
 // actually it ranges from 0 to 1/(1-size).
 // S is the size of the slider knob
-void Fl_Slider::draw_bg(int X, int Y, int W, int H, int S) {
+void Fl_Slider::draw_bg(int X, int Y, int W, int H, int S) const {
   fl_push_clip(X, Y, W, H);
   draw_box();
   fl_pop_clip();
@@ -219,7 +219,7 @@ void Fl_Slider::draw() {
  \param[in] r motion range of the slider
  \param[in] S size of the slider, horizontal or vertical
  */
-void Fl_Slider::draw_ticks(const Fl_Rect& r, int /*S*/ /*, int min_spacing*/)
+void Fl_Slider::draw_ticks(const Fl_Rect& r, int /*S*/ /*, int min_spacing*/) const
 {
   if ((ticks() == TICKS_NONE) || (num_ticks() == 0)) return;
 

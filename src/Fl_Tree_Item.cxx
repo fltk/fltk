@@ -413,7 +413,7 @@ Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_l
 /// Insert a new item named \p 'new_label' above this item.
 /// \returns the new item inserted, or 0 if an error occurred.
 ///
-Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char *new_label) {
+Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char *new_label) const {
   Fl_Tree_Item *p = _parent;
   if ( ! p ) return(0);
   // Walk our parent's children to find ourself
@@ -1356,7 +1356,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev() {
 ///
 /// \returns item's next sibling, or 0 if none.
 ///
-Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
+Fl_Tree_Item *Fl_Tree_Item::next_sibling() const {
   return(_next_sibling);
 }
 
@@ -1367,7 +1367,7 @@ Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
 ///
 /// \returns This item's previous sibling, or 0 if none.
 ///
-Fl_Tree_Item *Fl_Tree_Item::prev_sibling() {
+Fl_Tree_Item *Fl_Tree_Item::prev_sibling() const {
   return(_prev_sibling);
 }
 

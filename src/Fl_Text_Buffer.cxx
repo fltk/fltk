@@ -2063,7 +2063,7 @@ const char *Fl_Text_Buffer::file_encoding_warning_message =
  */
 int Fl_Text_Buffer::outputfile(const char *file,
                                int start, int end,
-                               int buflen) {
+                               int buflen) const {
   FILE *fp;
   if (!(fp = fl_fopen(file, "w")))
     return 1;

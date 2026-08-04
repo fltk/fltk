@@ -83,7 +83,7 @@ protected:
 
   // remove this timer from the active timer queue and
   // add it to the "current" timer stack
-  void make_current();
+  void make_current() const;
 
   // remove this timer from the current timer stack and
   // add it to the list of free timers

@@ -32,7 +32,7 @@ protected:
 public:
   Fl_Shortcut_Button(int X,int Y,int W,int H, const char* l = 0);
   void value(Fl_Shortcut shortcut);
-  Fl_Shortcut value();
+  Fl_Shortcut value() const;
 #if 0
   // Default shortcut settings are disabled until successful review of the UI
   void default_value(Fl_Shortcut shortcut);

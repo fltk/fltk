@@ -769,7 +769,7 @@ void Fl_Tree::draw() {
 /// \todo should be const
 /// \version 1.3.0
 ///
-void Fl_Tree::show_self() {
+void Fl_Tree::show_self() const {
   if ( ! _root ) return;
   _root->show_self();
 }
@@ -778,13 +778,13 @@ void Fl_Tree::show_self() {
 ///
 /// Makes an internally managed copy of 'new_label'.
 ///
-void Fl_Tree::root_label(const char *new_label) {
+void Fl_Tree::root_label(const char *new_label) const {
   if ( ! _root ) return;
   _root->label(new_label);
 }
 
 /// Returns the root item.
-Fl_Tree_Item* Fl_Tree::root() {
+Fl_Tree_Item* Fl_Tree::root() const {
   return(_root);
 }
 
@@ -848,7 +848,7 @@ Fl_Tree_Item* Fl_Tree::add(const char *path, Fl_Tree_Item *item) {
 /// \returns The new item added.
 /// \version 1.3.0 release
 ///
-Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
+Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) const {
   return(parent_item->add(_prefs, name));
 }
 
@@ -873,7 +873,7 @@ Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
  \returns The new item added, or 0 if 'above' could not be found.
  \see insert()
 */
-Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
+Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) const {
   return(above->insert_above(_prefs, name));
 }
 
@@ -906,7 +906,7 @@ Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
  \returns The new item added.
  \see insert_above()
 */
-Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
+Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) const {
   return(item->insert(_prefs, name, pos));
 }
 
@@ -1087,7 +1087,7 @@ void Fl_Tree::item_clicked(Fl_Tree_Item* item) {
 ///          0 may also be used to indicate several items were clicked/changed.
 /// \deprecated in 1.3.3 ABI -- use callback_item() instead.
 ///
-Fl_Tree_Item* Fl_Tree::item_clicked() {
+Fl_Tree_Item* Fl_Tree::item_clicked() const {
   return(_callback_item);
 }
 
@@ -1132,14 +1132,14 @@ Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
  \returns First item in tree, or 0 if none (tree empty).
  \see first(), next(), last(), prev()
 */
-Fl_Tree_Item* Fl_Tree::first() {
+Fl_Tree_Item* Fl_Tree::first() const {
   return(_root);                                // first item always root
 }
 
 /// Returns the first open(), visible item in the tree, or 0 if none.
 /// \deprecated in 1.3.3 ABI -- use first_visible_item() instead.
 ///
-Fl_Tree_Item* Fl_Tree::first_visible() {
+Fl_Tree_Item* Fl_Tree::first_visible() const {
   return(first_visible_item());
 }
 
@@ -1148,7 +1148,7 @@ Fl_Tree_Item* Fl_Tree::first_visible() {
 /// \see first_visible_item(), last_visible_item(), next_visible_item()
 /// \version 1.3.3
 ///
-Fl_Tree_Item* Fl_Tree::first_visible_item() {
+Fl_Tree_Item* Fl_Tree::first_visible_item() const {
   Fl_Tree_Item *i = showroot() ? first() : next(first());
   while ( i ) {
     if ( i->visible() ) return(i);
@@ -1206,7 +1206,7 @@ Fl_Tree_Item *Fl_Tree::prev(Fl_Tree_Item *item) {
  \returns Last item in the tree, or 0 if none (tree empty).
  \see first(), next(), last(), prev()
 */
-Fl_Tree_Item* Fl_Tree::last() {
+Fl_Tree_Item* Fl_Tree::last() const {
   if ( ! _root ) return(0);
   Fl_Tree_Item *item = _root;
   while ( item->has_children() ) {
@@ -1218,7 +1218,7 @@ Fl_Tree_Item* Fl_Tree::last() {
 /// Returns the last open(), visible item in the tree.
 /// \deprecated in 1.3.3 -- use last_visible_item() instead.
 ///
-Fl_Tree_Item* Fl_Tree::last_visible() {
+Fl_Tree_Item* Fl_Tree::last_visible() const {
   return(last_visible_item());
 }
 
@@ -1227,7 +1227,7 @@ Fl_Tree_Item* Fl_Tree::last_visible() {
 /// \see first_visible_item(), last_visible_item(), next_visible_item()
 /// \version 1.3.3
 ///
-Fl_Tree_Item* Fl_Tree::last_visible_item() {
+Fl_Tree_Item* Fl_Tree::last_visible_item() const {
   Fl_Tree_Item *item = last();
   while ( item ) {
     if ( item->visible_r() ) {
@@ -1258,7 +1258,7 @@ Fl_Tree_Item* Fl_Tree::last_visible_item() {
  \returns The first selected item, or 0 if none.
  \see first_selected_item(), last_selected_item(), next_selected_item()
 */
-Fl_Tree_Item *Fl_Tree::first_selected_item() {
+Fl_Tree_Item *Fl_Tree::first_selected_item() const {
   return(next_selected_item(0));
 }
 
@@ -1280,7 +1280,7 @@ Fl_Tree_Item *Fl_Tree::first_selected_item() {
  \see first_selected_item(), last_selected_item(), next_selected_item()
  \version 1.3.3
 */
-Fl_Tree_Item *Fl_Tree::last_selected_item() {
+Fl_Tree_Item *Fl_Tree::last_selected_item() const {
   return(next_selected_item(0, FL_Up));
 }
 
@@ -1386,7 +1386,7 @@ Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
  \see first_selected_item(), last_selected_item(), next_selected_item()
  \version 1.3.3
 */
-Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
+Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) const {
   switch (dir) {
     case FL_Down:
       if ( ! item ) {
@@ -1432,7 +1432,7 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
  \see first_selected_item(), next_selected_item()
  \version 1.3.3 ABI feature
 */
-int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
+int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) const {
   ret_items.clear();
   for ( Fl_Tree_Item *i=first_selected_item(); i; i=next_selected_item(i) ) {
     ret_items.add(i);
@@ -1594,7 +1594,8 @@ int Fl_Tree::close(const char *path, int docallback) {
 ///     -  1 : item is open
 ///     -  0 : item is closed
 ///
-int Fl_Tree::is_open(Fl_Tree_Item *item) const {
+int Fl_Tree::is_open(Fl_Tree_Item *item)
+{
   return(item->is_open()?1:0);
 }
 
@@ -1626,7 +1627,8 @@ int Fl_Tree::is_open(const char *path) const {
 ///     -   1 : item is closed
 ///     -   0 : item is open
 ///
-int Fl_Tree::is_close(Fl_Tree_Item *item) const {
+int Fl_Tree::is_close(Fl_Tree_Item *item)
+{
   return(item->is_close());
 }
 
@@ -1932,7 +1934,8 @@ void Fl_Tree::set_item_focus(Fl_Tree_Item *item) {
 ///     -   1 : item selected
 ///     -   0 : item deselected
 ///
-int Fl_Tree::is_selected(Fl_Tree_Item *item) const {
+int Fl_Tree::is_selected(Fl_Tree_Item *item)
+{
   return(item->is_selected()?1:0);
 }
 
@@ -2503,7 +2506,7 @@ void Fl_Tree::hposition(int pos) {
  \returns 1 if \p w is a scrollbar, 0 if not.
  \todo should be const
 */
-int Fl_Tree::is_scrollbar(Fl_Widget *w) {
+int Fl_Tree::is_scrollbar(Fl_Widget *w) const {
   return( (w==_vscroll || w==_hscroll) ? 1 : 0 );
 }
 
@@ -2586,7 +2589,7 @@ void Fl_Tree::callback_item(Fl_Tree_Item* item) {
 /// Gets the item that caused the callback.
 /// The callback() can use this value to see which item changed.
 ///
-Fl_Tree_Item* Fl_Tree::callback_item() {
+Fl_Tree_Item* Fl_Tree::callback_item() const {
   return(_callback_item);
 }
 
@@ -2673,7 +2676,7 @@ void Fl_Tree::load(Fl_Preferences &prefs) {
 }
 
 /// Ensure the scrollbars are the last children
-void Fl_Tree::fix_scrollbar_order() {
+void Fl_Tree::fix_scrollbar_order() const {
   Fl_Widget** a = (Fl_Widget**)array();
   if (a[children()-1] != _vscroll) {
     int i,j;

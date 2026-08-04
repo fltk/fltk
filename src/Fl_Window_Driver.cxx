@@ -52,15 +52,15 @@ Fl_Window_Driver::~Fl_Window_Driver() {
 }
 
 // accessors to Fl_Window private stuff
-int Fl_Window_Driver::force_position() {return pWindow->force_position(); }
-void Fl_Window_Driver::force_position(int c) { pWindow->force_position(c); }
-void Fl_Window_Driver::x(int X) {pWindow->x(X); }
-void Fl_Window_Driver::y(int Y) {pWindow->y(Y); }
-int Fl_Window_Driver::fullscreen_screen_top() {return pWindow->fullscreen_screen_top;}
-int Fl_Window_Driver::fullscreen_screen_bottom() {return pWindow->fullscreen_screen_bottom;}
-int Fl_Window_Driver::fullscreen_screen_left() {return pWindow->fullscreen_screen_left;}
-int Fl_Window_Driver::fullscreen_screen_right() {return pWindow->fullscreen_screen_right;}
-void Fl_Window_Driver::current(Fl_Window *c) {pWindow->current_ = c;}
+int Fl_Window_Driver::force_position() const { return pWindow->force_position(); }
+void Fl_Window_Driver::force_position(int c) const { pWindow->force_position(c); }
+void Fl_Window_Driver::x(int X) const { pWindow->x(X); }
+void Fl_Window_Driver::y(int Y) const { pWindow->y(Y); }
+int Fl_Window_Driver::fullscreen_screen_top() const { return pWindow->fullscreen_screen_top; }
+int Fl_Window_Driver::fullscreen_screen_bottom() const { return pWindow->fullscreen_screen_bottom; }
+int Fl_Window_Driver::fullscreen_screen_left() const { return pWindow->fullscreen_screen_left; }
+int Fl_Window_Driver::fullscreen_screen_right() const { return pWindow->fullscreen_screen_right; }
+void Fl_Window_Driver::current(Fl_Window *c) const { pWindow->current_ = c; }
 
 
 /**

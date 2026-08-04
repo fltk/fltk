@@ -2980,7 +2980,7 @@ void Fl_X11_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int count)
                       &default_net_wm_icons, &default_net_wm_icons_size);
 }
 
-void Fl_X11_Window_Driver::set_icons() {
+void Fl_X11_Window_Driver::set_icons() const {
   unsigned long *net_wm_icons;
   size_t net_wm_icons_size;
 

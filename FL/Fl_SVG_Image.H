@@ -147,7 +147,7 @@ private:
   bool to_desaturate_;
   Fl_Color average_color_;
   float average_weight_;
-  float svg_scaling_(int W, int H);
+  float svg_scaling_(int W, int H) const;
   void rasterize_(int W, int H);
   void cache_size_(int &width, int &height) override;
   void init_(const char *name, const unsigned char *filedata, size_t length);

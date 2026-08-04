@@ -117,9 +117,9 @@ Fl_SVG_Image::~Fl_SVG_Image() {
 }
 
 
-float Fl_SVG_Image::svg_scaling_(int W, int H) {
-  float f1 = float(W) / int(counted_svg_image_->svg_image->width+0.5);
-  float f2 = float(H) / int(counted_svg_image_->svg_image->height+0.5);
+float Fl_SVG_Image::svg_scaling_(int W, int H) const {
+  const float f1 = float(W) / int(counted_svg_image_->svg_image->width+0.5);
+  const float f2 = float(H) / int(counted_svg_image_->svg_image->height+0.5);
   return (f1 < f2) ? f1 : f2;
 }
 

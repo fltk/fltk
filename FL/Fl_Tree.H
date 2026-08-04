@@ -292,7 +292,7 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   char           _lastpushed;                   // FL_PUSH occurred on: 0=nothing, 1=open/close, 2=usericon, 3=label
   int            _auto_resize_children;         // if true: resize children when the Fl_Tree container is resized
 
-  void           fix_scrollbar_order();         // internal: rearrange scrollbars in list of children
+  void           fix_scrollbar_order() const;         // internal: rearrange scrollbars in list of children
 
 protected:
   Fl_Scrollbar *_vscroll;       ///< Vertical scrollbar
@@ -317,7 +317,7 @@ public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
   ~Fl_Tree();
   int handle(int e) override;
-  void show_self();
+  void show_self() const;
   void resize(int,int,int,int) override;
 
   /**
@@ -368,15 +368,15 @@ public:
 
     \see void auto_resize_children(int mode) for details
   */
-  int auto_resize_children() {
+  int auto_resize_children() const {
     return _auto_resize_children;
   }
 
   ///////////////////////
   // root methods
   ///////////////////////
-  void root_label(const char *new_label);
-  Fl_Tree_Item* root();
+  void root_label(const char *new_label) const;
+  Fl_Tree_Item* root() const;
   void root(Fl_Tree_Item *newitem);
   const Fl_Tree_Prefs& prefs() const { return _prefs; }
 
@@ -384,9 +384,9 @@ public:
   // Item creation/removal methods
   ////////////////////////////////
   Fl_Tree_Item *add(const char *path, Fl_Tree_Item *newitem=0);
-  Fl_Tree_Item* add(Fl_Tree_Item *parent_item, const char *name);
-  Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name);
-  Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
+  Fl_Tree_Item* add(Fl_Tree_Item *parent_item, const char *name) const;
+  Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name) const;
+  Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos) const;
   int remove(Fl_Tree_Item *item);
   void clear();
   void clear_children(Fl_Tree_Item *item);
@@ -399,21 +399,21 @@ public:
   int item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *item) const;
   const Fl_Tree_Item* find_clicked(int yonly=0) const;
   Fl_Tree_Item* find_clicked(int yonly=0);
-  Fl_Tree_Item *item_clicked();
-  Fl_Tree_Item *first();
-  Fl_Tree_Item *first_visible();                // deprecated in ABI 10303
-  Fl_Tree_Item *first_visible_item();
-  Fl_Tree_Item *next(Fl_Tree_Item *item=0);
-  Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
-  Fl_Tree_Item *last();
-  Fl_Tree_Item *last_visible();                 // deprecated in ABI 10303
-  Fl_Tree_Item *last_visible_item();
+  Fl_Tree_Item *item_clicked() const;
+  Fl_Tree_Item *first() const;
+  Fl_Tree_Item *first_visible() const;                // deprecated in ABI 10303
+  Fl_Tree_Item *first_visible_item() const;
+  static Fl_Tree_Item *next(Fl_Tree_Item *item=0);
+  static Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
+  Fl_Tree_Item *last() const;
+  Fl_Tree_Item *last_visible() const;                 // deprecated in ABI 10303
+  Fl_Tree_Item *last_visible_item() const;
   Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);        // made public in 1.3.3 ABI
-  Fl_Tree_Item *first_selected_item();
-  Fl_Tree_Item *last_selected_item();
+  Fl_Tree_Item *first_selected_item() const;
+  Fl_Tree_Item *last_selected_item() const;
   Fl_Tree_Item *next_item(Fl_Tree_Item *item, int dir=FL_Down, bool visible=false);
-  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0, int dir=FL_Down);
-  int get_selected_items(Fl_Tree_Item_Array &items);
+  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0, int dir=FL_Down) const;
+  int get_selected_items(Fl_Tree_Item_Array &items) const;
 
   //////////////////////////
   // Item open/close methods
@@ -423,9 +423,9 @@ public:
   void open_toggle(Fl_Tree_Item *item, int docallback=1);
   int close(Fl_Tree_Item *item, int docallback=1);
   int close(const char *path, int docallback=1);
-  int is_open(Fl_Tree_Item *item) const;
+  static int is_open(Fl_Tree_Item *item);
   int is_open(const char *path) const;
-  int is_close(Fl_Tree_Item *item) const;
+  static int is_close(Fl_Tree_Item *item);
   int is_close(const char *path) const;
 
   /////////////////////////
@@ -450,7 +450,7 @@ public:
                        bool visible=false);
   void set_item_focus(Fl_Tree_Item *item);
   Fl_Tree_Item *get_item_focus() const;
-  int is_selected(Fl_Tree_Item *item) const;
+  static int is_selected(Fl_Tree_Item *item);
   int is_selected(const char *path);
 
   /////////////////////////////////
@@ -522,7 +522,7 @@ public:
   int  hposition() const;
   void hposition(int pos);
 
-  int is_scrollbar(Fl_Widget *w);
+  int is_scrollbar(Fl_Widget *w) const;
   int scrollbar_size() const;
   void scrollbar_size(int size);
   int is_vscroll_visible() const;
@@ -532,7 +532,7 @@ public:
   // callback related
   ///////////////////////
   void callback_item(Fl_Tree_Item* item);
-  Fl_Tree_Item* callback_item();
+  Fl_Tree_Item* callback_item() const;
   void callback_reason(Fl_Tree_Reason reason);
   Fl_Tree_Reason callback_reason() const;
 

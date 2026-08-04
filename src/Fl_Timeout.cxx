@@ -364,7 +364,7 @@ std::vector<Fl::TimeoutData> Fl_Timeout::timeout_list() {
 
   \see Fl_Timeout::current()
 */
-void Fl_Timeout::make_current() {
+void Fl_Timeout::make_current() const {
   // printf("[%4d] Fl_Timeout::make_current(%p)\n", __LINE__, this);
   // remove the timer entry from the active timer queue
   for (Fl_Timeout** p = &first_timeout; *p;) {

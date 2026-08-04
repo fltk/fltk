@@ -165,7 +165,8 @@ void Fl_Text_Editor::add_default_key_bindings(Key_Binding** list) {
 }
 
 /**  Returns the function associated with a key binding.*/
-Fl_Text_Editor::Key_Func Fl_Text_Editor::bound_key_function(int key, int state, Key_Binding* list) const {
+Fl_Text_Editor::Key_Func Fl_Text_Editor::bound_key_function(int key, int state, Key_Binding* list)
+{
   Key_Binding* cur;
   for (cur = list; cur; cur = cur->next)
     if (cur->key == key)

@@ -287,12 +287,12 @@ private:
   int current; // the oldest texture to have entered the pile
   int last; // pile top
   int textures_generated; // true after glGenTextures has been called
-  void display_texture(int rank);
+  void display_texture(int rank) const;
   int compute_texture(const char* str, int n);
-  int already_known(const char *str, int n);
+  int already_known(const char *str, int n) const;
 public:
   gl_texture_fifo(int max = 100); // 100 = default height of texture pile
-  inline int size(void) {return size_; }
+  inline int size(void) const { return size_; }
   ~gl_texture_fifo(void);
 };
 
@@ -314,7 +314,7 @@ gl_texture_fifo::~gl_texture_fifo()
 }
 
 // returns rank of pre-computed texture for a string if it exists
-int gl_texture_fifo::already_known(const char *str, int n)
+int gl_texture_fifo::already_known(const char *str, int n) const
 {
   int rank;
   for ( rank = 0; rank <= last; rank++) {
@@ -335,7 +335,7 @@ static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class inst
 // using textures with the alpha channel only.
 
 // displays a pre-computed texture on the GL scene
-void gl_texture_fifo::display_texture(int rank)
+void gl_texture_fifo::display_texture(int rank) const
 {
   // GL_TRANSFORM_BIT for GL_PROJECTION and GL_MODELVIEW
   // GL_ENABLE_BIT for GL_DEPTH_TEST, GL_LIGHTING

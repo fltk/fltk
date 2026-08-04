@@ -91,37 +91,37 @@ public:
   Fl_Group *parent() const { return pWindow->parent(); }
 
   // --- accessors to private window data
-  int is_resizable() { return pWindow->is_resizable(); }
-  void is_a_rescale(bool b) { is_a_rescale_ = b;}
-  int fullscreen_screen_top();
-  int fullscreen_screen_bottom();
-  int fullscreen_screen_left();
-  int fullscreen_screen_right();
-  int* no_fullscreen_x() { return &pWindow->no_fullscreen_x; }
-  int* no_fullscreen_y() { return &pWindow->no_fullscreen_y; }
-  int* no_fullscreen_w() { return &pWindow->no_fullscreen_w; }
-  int* no_fullscreen_h() { return &pWindow->no_fullscreen_h; }
-  int force_position();
-  void force_position(int c);
-  void x(int X);
-  void y(int Y);
-  void current(Fl_Window *c);
-  char show_iconic() { return Fl_Window::show_next_window_iconic(); }
-  void show_iconic(char c) { Fl_Window::show_next_window_iconic(c); }
-  void flx(Fl_X *x) { pWindow->flx_ = x; }
-  Fl_Cursor cursor_default() { return pWindow->cursor_default; }
+  int is_resizable() const { return pWindow->is_resizable(); }
+  static void is_a_rescale(bool b) { is_a_rescale_ = b;}
+  int fullscreen_screen_top() const;
+  int fullscreen_screen_bottom() const;
+  int fullscreen_screen_left() const;
+  int fullscreen_screen_right() const;
+  int* no_fullscreen_x() const { return &pWindow->no_fullscreen_x; }
+  int* no_fullscreen_y() const { return &pWindow->no_fullscreen_y; }
+  int* no_fullscreen_w() const { return &pWindow->no_fullscreen_w; }
+  int* no_fullscreen_h() const { return &pWindow->no_fullscreen_h; }
+  int force_position() const;
+  void force_position(int c) const;
+  void x(int X) const;
+  void y(int Y) const;
+  void current(Fl_Window *c) const;
+  static char show_iconic() { return Fl_Window::show_next_window_iconic(); }
+  static void show_iconic(char c) { Fl_Window::show_next_window_iconic(c); }
+  void flx(Fl_X *x) const { pWindow->flx_ = x; }
+  Fl_Cursor cursor_default() const { return pWindow->cursor_default; }
   void destroy_double_buffer();
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
-  Fl_Window *overlay() {
+  Fl_Window *overlay() const {
     return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
   }
   /** for an Fl_Overlay_Window, sets the value of its overlay_ member variable */
-  void overlay(Fl_Window *o) {
+  void overlay(Fl_Window *o) const {
     if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
   }
 
   void resize_after_scale_change(int ns, float old_f, float new_f);
-  void set_popup_window() { pWindow->set_flag(Fl_Window::POPUP); }
+  void set_popup_window() const { pWindow->set_flag(Fl_Window::POPUP); }
   bool popup_window() const {return pWindow->flags() & Fl_Window::POPUP;}
 
   // --- window data
@@ -156,7 +156,7 @@ public:
   virtual void maximize();
   virtual void un_maximize();
   virtual bool maximize_needs_hide() { return false; }
-  void is_maximized(bool b) { pWindow->is_maximized_(b); }
+  void is_maximized(bool b) const { pWindow->is_maximized_(b); }
   virtual void use_border();
   virtual void size_range();
   virtual void iconize() {}

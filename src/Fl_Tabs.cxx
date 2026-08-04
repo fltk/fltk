@@ -725,7 +725,7 @@ int Fl_Tabs::push(Fl_Widget *o) {
 
   \return a pointer to the currently visible child
 */
-Fl_Widget* Fl_Tabs::value() {
+Fl_Widget* Fl_Tabs::value() const {
   Fl_Widget* v = 0;
   Fl_Widget*const* a = array();
   for (int i=children(); i--;) {
@@ -1152,7 +1152,7 @@ Fl_Tabs::~Fl_Tabs() {
 
   \since        FLTK 1.3.0
 */
-void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
+void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) const {
 
   if (children()) {                     // use existing values
 

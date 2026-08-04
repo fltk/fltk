@@ -1529,7 +1529,7 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
  \return new position as index
  */
 int Fl_Text_Display::skip_lines(int startPos, int nLines,
-                                bool startPosIsLineStart) {
+                                bool startPosIsLineStart) const {
   IS_UTF8_ALIGNED2(buffer(), startPos)
 
   int retLines, retPos, retLineStart, retLineEnd;
@@ -1634,7 +1634,7 @@ int Fl_Text_Display::line_start(int pos) const {
  \param nLines number of lines to skip back
  \return new position as index
  */
-int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
+int Fl_Text_Display::rewind_lines(int startPos, int nLines) const {
   IS_UTF8_ALIGNED2(buffer(), startPos)
 
   Fl_Text_Buffer *buf = buffer();
@@ -2292,7 +2292,7 @@ int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
  \param leftCharIndex, rightCharIndex index into line of segment that we want to draw
  */
 void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
-                                 int leftCharIndex, int rightCharIndex) {
+                                 int leftCharIndex, int rightCharIndex) const {
   int Y, lineStartPos, lineLen, fontHeight;
 
   //  printf("draw_vline(visLineNum=%d, leftClip=%d, rightClip=%d, leftCharIndex=%d, rightCharIndex=%d)\n",
@@ -2558,7 +2558,7 @@ void Fl_Text_Display::clear_rect(int style,
 
  \param X, Y cursor position in pixels
  */
-void Fl_Text_Display::draw_cursor( int X, int Y ) {
+void Fl_Text_Display::draw_cursor( int X, int Y ) const {
 
   typedef struct {
     int x1, y1, x2, y2;
@@ -2998,7 +2998,7 @@ void Fl_Text_Display::update_line_starts(int pos, int charsInserted,
 
  \param startLine, endLine range of lines to scan as line numbers
  */
-void Fl_Text_Display::calc_line_starts( int startLine, int endLine ) {
+void Fl_Text_Display::calc_line_starts( int startLine, int endLine ) const {
   int startPos, bufLen = mBuffer->length();
   int line, lineEnd, nextLineStart, nVis = mNVisibleLines;
   int *lineStarts = mLineStarts;
@@ -3120,7 +3120,7 @@ int Fl_Text_Display::scroll_(int topLineNum, int horizOffset) {
  Update the minimum, maximum, slider size, page increment, and value
  for the vertical scrollbar.
  */
-void Fl_Text_Display::update_v_scrollbar() {
+void Fl_Text_Display::update_v_scrollbar() const {
   /* The vertical scrollbar value and slider size directly represent the top
    line number, and the number of visible lines respectively.  The scroll
    bar maximum value is chosen to generally represent the size of the whole
@@ -3143,7 +3143,7 @@ void Fl_Text_Display::update_v_scrollbar() {
  Update the minimum, maximum, slider size, page increment, and value
  for the horizontal scrollbar.
  */
-void Fl_Text_Display::update_h_scrollbar() {
+void Fl_Text_Display::update_h_scrollbar() const {
   int sliderMax = max(longest_vline(), text_area.w + mHorizOffset);
   mHScrollBar->value( mHorizOffset, text_area.w, 0, sliderMax );
 }
@@ -3179,7 +3179,7 @@ void Fl_Text_Display::h_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
 // http://www.mail-archive.com/fltk-dev@easysw.com/msg06376.html
 // altered to support line numbers right alignment. -LZA / STR #2621
 //
-void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
+void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) const {
   int Y, line, visLine, lineStart;
   char lineNumString[16];
   int lineHeight = mMaxsize;
@@ -3865,7 +3865,7 @@ int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
 
  \todo Unicode?
  */
-void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
+void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) const {
   IS_UTF8_ALIGNED2(buffer(), (*startpos))
   IS_UTF8_ALIGNED2(buffer(), (*endpos))
 
@@ -4153,7 +4153,7 @@ void Fl_Text_Display::scroll_timer_cb(void *user_data) {
 /** Handle right mouse button down events.
  \return 0 for no op, 1 to cut, 2 to copy, 3 to paste
  */
-int Fl_Text_Display::handle_rmb(int readonly) {
+int Fl_Text_Display::handle_rmb(int readonly) const {
   Fl_Text_Buffer *txtbuf = buffer();
   int newpos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
   int oldpos = txtbuf->primary_selection()->start();

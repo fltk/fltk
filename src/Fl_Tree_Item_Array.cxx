@@ -144,7 +144,7 @@ void Fl_Tree_Item_Array::add(Fl_Tree_Item *val) {
 /// Old item at index position will be destroyed,
 /// and the new item will take it's place, and stitched into the linked list.
 ///
-void Fl_Tree_Item_Array::replace(int index, Fl_Tree_Item *newitem) {
+void Fl_Tree_Item_Array::replace(int index, Fl_Tree_Item *newitem) const {
   if ( _items[index] ) {                        // delete if non-zero
     if ( _flags & MANAGE_ITEM )
       // Destroy old item
@@ -198,7 +198,7 @@ int Fl_Tree_Item_Array::remove(Fl_Tree_Item *item) {
 }
 
 /// Swap the two items at index positions \p ax and \p bx.
-void Fl_Tree_Item_Array::swap(int ax, int bx) {
+void Fl_Tree_Item_Array::swap(int ax, int bx) const {
   Fl_Tree_Item *asave = _items[ax];
   _items[ax] = _items[bx];
   _items[bx] = asave;
@@ -218,7 +218,7 @@ void Fl_Tree_Item_Array::swap(int ax, int bx) {
 ///
 ///     \returns 0 on success, -1 on range error (e.g. if \p 'to' or \p 'from' out of range)
 ///
-int Fl_Tree_Item_Array::move(int to, int from) {
+int Fl_Tree_Item_Array::move(int to, int from) const {
   if ( from == to ) return 0;    // nop
   if ( to<0 || to>=_total || from<0 || from>=_total ) return -1;
   Fl_Tree_Item *item = _items[from];

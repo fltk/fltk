@@ -31,7 +31,7 @@ class ColorMenu : public Fl_Window {
   Fl_Color initial;
   Fl_Color which, previous;
   int done;
-  void drawbox(Fl_Color);
+  void drawbox(Fl_Color) const;
   void draw() FL_OVERRIDE;
   int handle(int) FL_OVERRIDE;
 public:
@@ -46,7 +46,7 @@ ColorMenu::ColorMenu(Fl_Color oldcol) :
   initial = which = oldcol;
 }
 
-void ColorMenu::drawbox(Fl_Color c) {
+void ColorMenu::drawbox(Fl_Color c) const {
   if (c > 255) return;
   int X = (c%8)*BOXSIZE+BORDER;
   int Y = (c/8)*BOXSIZE+BORDER;

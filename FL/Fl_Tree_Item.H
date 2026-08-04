@@ -238,7 +238,7 @@ public:
   Fl_Tree_Item *replace(Fl_Tree_Item *new_item);
   Fl_Tree_Item *replace_child(Fl_Tree_Item *olditem, Fl_Tree_Item *newitem);
   Fl_Tree_Item *insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos=0);
-  Fl_Tree_Item *insert_above(const Fl_Tree_Prefs &prefs, const char *new_label);
+  Fl_Tree_Item *insert_above(const Fl_Tree_Prefs &prefs, const char *new_label) const;
   Fl_Tree_Item* deparent(int index);
   int reparent(Fl_Tree_Item *newchild, int index);
   int move(int to, int from);
@@ -249,8 +249,8 @@ public:
   int depth() const;
   Fl_Tree_Item *prev();
   Fl_Tree_Item *next();
-  Fl_Tree_Item *next_sibling();
-  Fl_Tree_Item *prev_sibling();
+  Fl_Tree_Item *next_sibling() const;
+  Fl_Tree_Item *prev_sibling() const;
   void update_prev_next(int index);
   Fl_Tree_Item *next_displayed(Fl_Tree_Prefs &prefs);   // deprecated
   Fl_Tree_Item *prev_displayed(Fl_Tree_Prefs &prefs);   // deprecated

@@ -244,12 +244,12 @@ protected:
   void table_resized();                         // table resized; recalc
   void table_scrolled();                        // table scrolled; recalc
   void get_bounds(TableContext context,         // return x/y/w/h bounds for context
-                  int &X, int &Y, int &W, int &H);
+                  int &X, int &Y, int &W, int &H) const;
   void change_cursor(Fl_Cursor newcursor);      // change mouse cursor to some other shape
   TableContext cursor2rowcol(int &R, int &C, ResizeFlag &resizeflag);
   int find_cell(TableContext context,           // find cell's x/y/w/h given r/c
                 int R, int C, int &X, int &Y, int &W, int &H);
-  int row_col_clamp(TableContext context, int &R, int &C);
+  int row_col_clamp(TableContext context, int &R, int &C) const;
   // clamp r/c to known universe
 
   /**
@@ -366,8 +366,8 @@ protected:
                          int X=0, int Y=0, int W=0, int H=0)
   { (void)context; (void)R; (void)C; (void)X; (void)Y; (void)W; (void)H;}                                           // overridden by deriving class
 
-  long row_scroll_position(int row);            // find scroll position of row (in pixels)
-  long col_scroll_position(int col);            // find scroll position of col (in pixels)
+  long row_scroll_position(int row) const;            // find scroll position of row (in pixels)
+  long col_scroll_position(int col) const;            // find scroll position of col (in pixels)
 
   /**
    Does the table contain any child fltk widgets?

@@ -442,8 +442,8 @@ protected:
     // Colors - All access to colors are by Fl_Color only.
     //          There are three ways to SET colors: Fl_Color, rgb, xterm(uchar)
     //
-    Fl_Color fltk_fg_color(uchar ci);
-    Fl_Color fltk_bg_color(uchar ci);
+    Fl_Color fltk_fg_color(uchar ci) const;
+    Fl_Color fltk_bg_color(uchar ci) const;
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
     Fl_Color defaultfgcolor(void) const { return defaultfgcolor_; }
@@ -769,7 +769,7 @@ private:
     bool is_csi(void) const;
     int  parse(char c);
     void save_cursor(int row, int col);
-    void restore_cursor(int &row, int &col);
+    void restore_cursor(int &row, int &col) const;
   };
 
   // Partial UTF-8 Buffer Class ////////////////////////////////////////////
@@ -891,13 +891,13 @@ private:
   // Tabstops
   void init_tabstops(int newsize);
   void default_tabstops(void);
-  void clear_all_tabstops(void);
-  void set_tabstop(void);
-  void clear_tabstop(void);
+  void clear_all_tabstops(void) const;
+  void set_tabstop(void) const;
+  void clear_tabstop(void) const;
   // Updates
   void update_screen_xywh(void);
   void update_screen(bool font_changed);
-  void set_scrollbar_params(Fl_Scrollbar* scroll, int min, int max);
+  void set_scrollbar_params(Fl_Scrollbar* scroll, int min, int max) const;
   void update_scrollbar(void);
   // Resize
   void resize_display_rows(int drows);
@@ -913,7 +913,7 @@ private:
   // Screen management
 protected:
   CharStyle& current_style(void) const;
-  void current_style(const CharStyle& sty);
+  void current_style(const CharStyle& sty) const;
 private:
   int  x_to_glob_col(int X, int grow, int &gcol, bool &gcr) const;
   int  xy_to_glob_rowcol(int X, int Y, int &grow, int &gcol, bool &gcr) const;
@@ -992,10 +992,10 @@ private:
   void handle_esc(void);
   // Printing
   void handle_ctrl(char c);
-  bool is_printable(char c);
-  bool is_ctrl(char c);
+  static bool is_printable(char c);
+  static bool is_ctrl(char c);
   void handle_SGR(void);
-  void handle_DECRARA(void);
+  static void handle_DECRARA(void);
   void handle_escseq(char c);
   // --
   void display_modified(void);
@@ -1118,12 +1118,12 @@ public:
   // API: Text font/size/color
   void  textfont(Fl_Font val);
   void  textsize(Fl_Fontsize val);
-  void  textcolor(Fl_Color val);
+  void  textcolor(Fl_Color val) const;
   void  color(Fl_Color val);
-  void  textfgcolor(Fl_Color val);
-  void  textbgcolor(Fl_Color val);
-  void  textfgcolor_default(Fl_Color val);
-  void  textbgcolor_default(Fl_Color val);
+  void  textfgcolor(Fl_Color val) const;
+  void  textbgcolor(Fl_Color val) const;
+  void  textfgcolor_default(Fl_Color val) const;
+  void  textbgcolor_default(Fl_Color val) const;
   /// Return text font used to draw all text in the terminal.
   Fl_Font     textfont(void)      const { return current_style_->fontface(); }
   /// Return text font size used to draw all text in the terminal.
@@ -1140,8 +1140,8 @@ public:
   Fl_Color    textfgcolor_default(void)   const { return current_style_->defaultfgcolor(); }
   /// Return text's default background color. \see textbgcolor()
   Fl_Color    textbgcolor_default(void)   const { return current_style_->defaultbgcolor(); }
-  void        textfgcolor_xterm(uchar val);
-  void        textbgcolor_xterm(uchar val);
+  void        textfgcolor_xterm(uchar val) const;
+  void        textbgcolor_xterm(uchar val) const;
   /// Set mouse selection foreground color.
   void selectionfgcolor(Fl_Color val) { select_.selectionfgcolor(val); }
   /// Set mouse selection background color.
@@ -1151,7 +1151,7 @@ public:
   /// Get mouse selection background color.
   Fl_Color selectionbgcolor(void) const { return select_.selectionbgcolor(); }
   // API: Text attrib
-  void textattrib(uchar val);
+  void textattrib(uchar val) const;
   uchar textattrib() const;
   // API: Redraw style/rate
   RedrawStyle redraw_style(void) const;

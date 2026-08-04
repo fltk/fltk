@@ -130,7 +130,7 @@ public:
   const void *icon() const FL_OVERRIDE;
   void icon(const void * ic) FL_OVERRIDE;
   void free_icons() FL_OVERRIDE;
-  void set_icons(); // driver-internal support function
+  void set_icons() const; // driver-internal support function
   void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right) FL_OVERRIDE;
   int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data) FL_OVERRIDE;
   fl_uintptr_t os_id() FL_OVERRIDE;

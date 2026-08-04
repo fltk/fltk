@@ -290,7 +290,7 @@ public:
   void show() override;
 
   int handle(int) override;
-  Fl_Widget *value();
+  Fl_Widget *value() const;
   int value(Fl_Widget *);
   int value(int);
 
@@ -308,7 +308,7 @@ public:
   int push(Fl_Widget *);
 
   virtual Fl_Widget *which(int event_x, int event_y);
-  void client_area(int &rx, int &ry, int &rw, int &rh, int tabh=0);
+  void client_area(int &rx, int &ry, int &rw, int &rh, int tabh=0) const;
 
   /**
     Sets the tab label alignment.

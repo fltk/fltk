@@ -77,7 +77,7 @@ void Fl_Shortcut_Button::value(Fl_Shortcut shortcut) {
  Return the user selected shortcut.
  \return shortcut encoded as key and modifier
  */
-Fl_Shortcut Fl_Shortcut_Button::value() {
+Fl_Shortcut Fl_Shortcut_Button::value() const {
   return shortcut_value;
 }
 

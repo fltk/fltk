@@ -69,14 +69,14 @@ public:
     return(_total);
   }
   /// Swap the two items at index positions \p ax and \p bx.
-  void swap(int ax, int bx);
-  int move(int to, int from);
+  void swap(int ax, int bx) const;
+  int move(int to, int from) const;
   int deparent(int pos);
   int reparent(Fl_Tree_Item *item, Fl_Tree_Item *newparent, int pos);
   void clear();
   void add(Fl_Tree_Item *val);
   void insert(int pos, Fl_Tree_Item *new_item);
-  void replace(int pos, Fl_Tree_Item *new_item);
+  void replace(int pos, Fl_Tree_Item *new_item) const;
   void remove(int index);
   int  remove(Fl_Tree_Item *item);
   /// Option to control if Fl_Tree_Item_Array's destructor will also destroy the Fl_Tree_Item's.

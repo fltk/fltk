@@ -129,7 +129,7 @@ protected:
   */
   int force_position() const { return ((flags() & FORCE_POSITION)?1:0); }
 
-  void free_icons();
+  void free_icons() const;
 
   void default_size_range();  // calculate size_range() if not set explicitly
   int is_resizable();         // calculate size_range() and return whether this is resizable
@@ -383,7 +383,7 @@ public:
   static void default_icon(const Fl_RGB_Image*);
   static void default_icons(const Fl_RGB_Image*[], int);
   void icon(const Fl_RGB_Image*);
-  void icons(const Fl_RGB_Image*[], int);
+  void icons(const Fl_RGB_Image*[], int) const;
 
 #if defined(_WIN32) || defined(FL_DOXYGEN)
   typedef struct HICON__* HICON;
@@ -424,7 +424,7 @@ public:
 
   /* for legacy compatibility */
   const void* icon() const;
-  void icon(const void * ic);
+  void icon(const void * ic) const;
 
   /**
     Returns non-zero if show() has been called (but not hide()
@@ -488,7 +488,7 @@ public:
   void show(int argc, char **argv);
 
   // Enables synchronous show(), docs in Fl_Window.cxx
-  void wait_for_expose();
+  void wait_for_expose() const;
 
   /**
     Makes the window completely fill one or more screens, without any
@@ -596,12 +596,12 @@ public:
    */
   virtual class Fl_Double_Window *as_double_window() {return 0L;}
 
-  void shape(const Fl_Image* img);
-  void shape(const Fl_Image& b);
+  void shape(const Fl_Image* img) const;
+  void shape(const Fl_Image& b) const;
   const Fl_Image *shape() const;
   void draw_backdrop();
   int screen_num() const;
-  void screen_num(int screen_num);
+  void screen_num(int screen_num) const;
   static bool is_a_rescale();
   fl_uintptr_t os_id() const;
 
@@ -627,7 +627,7 @@ public:
     return show_next_window_iconic_;
   }
 
-  void allow_expand_outside_parent();
+  void allow_expand_outside_parent() const;
 
 };
 

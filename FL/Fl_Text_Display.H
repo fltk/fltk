@@ -225,8 +225,8 @@ public:
   int count_lines(int start, int end, bool start_pos_is_line_start) const;
   int line_start(int pos) const;
   int line_end(int startPos, bool startPosIsLineStart) const;
-  int skip_lines(int startPos, int nLines, bool startPosIsLineStart);
-  int rewind_lines(int startPos, int nLines);
+  int skip_lines(int startPos, int nLines, bool startPosIsLineStart) const;
+  int rewind_lines(int startPos, int nLines) const;
   void next_word(void);
   void previous_word(void);
 
@@ -477,13 +477,13 @@ protected:
   void draw() override;
   void draw_text(int X, int Y, int W, int H);
   void draw_range(int start, int end);
-  void draw_cursor(int, int);
+  void draw_cursor(int, int) const;
 
   void draw_string(int style, int x, int y, int toX, const char *string,
                    int nChars) const;
 
   void draw_vline(int visLineNum, int leftClip, int rightClip,
-                  int leftCharIndex, int rightCharIndex);
+                  int leftCharIndex, int rightCharIndex) const;
 
   int find_x(const char *s, int len, int style, int x) const;
 
@@ -500,16 +500,16 @@ protected:
                    int topClip, int bottomClip,
                    int leftClip, int rightClip) const;
 
-  int handle_rmb(int readonly);
+  int handle_rmb(int readonly) const;
 
-  void draw_line_numbers(bool clearAll);
+  void draw_line_numbers(bool clearAll) const;
 
   void clear_rect(int style, int x, int y, int width, int height) const;
   void display_insert();
 
   void offset_line_starts(int newTopLineNum);
 
-  void calc_line_starts(int startLine, int endLine);
+  void calc_line_starts(int startLine, int endLine) const;
 
   void update_line_starts(int pos, int charsInserted, int charsDeleted,
                           int linesInserted, int linesDeleted, int *scrolled);
@@ -528,8 +528,8 @@ protected:
 
   static void h_scrollbar_cb(Fl_Scrollbar* w, Fl_Text_Display* d);
   static void v_scrollbar_cb( Fl_Scrollbar* w, Fl_Text_Display* d);
-  void update_v_scrollbar();
-  void update_h_scrollbar();
+  void update_v_scrollbar() const;
+  void update_h_scrollbar() const;
   int measure_vline(int visLineNum) const;
   int longest_vline() const;
   int empty_vlines() const;
@@ -550,7 +550,7 @@ protected:
   int position_to_linecol(int pos, int* lineNum, int* column) const;
   int scroll_(int topLineNum, int horizOffset);
 
-  void extend_range_for_styles(int* start, int* end);
+  void extend_range_for_styles(int* start, int* end) const;
 
   void find_wrap_range(const char *deletedText, int pos, int nInserted,
                        int nDeleted, int *modRangeStart, int *modRangeEnd,
