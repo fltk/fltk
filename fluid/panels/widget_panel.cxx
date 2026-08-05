@@ -28,6 +28,7 @@
 #include "io/file_chooser.h"
 #include "nodes/Menu_Node.h"
 #include "nodes/Function_Node.h"
+#include "../src/flstring.h"
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Grid.H>
 #include <FL/Fl_Flex.H>
@@ -57,7 +58,7 @@ static Fl_Widget* w_cpp_code_act[6] = { };
  Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
-//ﬂ ▼ ------------------------ code --~---~~=~-~=------==~~~ ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ---~-~=--=--~--~~~-~=--- ▼ ﬂ//
   return 0;
 //ﬂ ▲ ----------~-=-=-~~=~-=-----------~~=~-=~-~~-=~-==--=~= ▲ ﬂ//
 }
@@ -3042,8 +3043,7 @@ static void cb_Class(Fl_Input* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~--=~---~~=~~~==-=~=- ▼ ﬂ//
   if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
-
-  if (v == LOAD) {
+   if (v == LOAD) {
     the_panel->label("Class Properties");
     o->value( nd->name() );
   } else {
@@ -3054,7 +3054,7 @@ static void cb_Class(Fl_Input* o, void* v) {
     char *s = (char*)nv;
     char *d = (char*)nv;
     while (*s) {
-      if (isalnum((unsigned char)*s) || *s == '_') {
+      if (fl_ascii_isalnum((unsigned char)*s) || *s == '_') {
         *d++ = *s;
       }
       s++;
@@ -3080,7 +3080,7 @@ static void cb_Class(Fl_Input* o, void* v) {
       free((void*)nv);
     }
   }
-//ﬂ ▲ ----------~=-~--~~-=~-----------~-=-~-~--==---~=~=~-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-~--~~-=~--------------=-=~~~--==~~=~==~~~ ▲ ﬂ//
 }
 
 static void cb_Base(Fl_Input* o, void* v) {
@@ -3711,7 +3711,9 @@ Fl_Double_Window* make_widget_panel() {
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)labeltype_cb);
+//ﬂ ▼ ---------------------- finalize -~~~~=~~=~-~~--=---~=- ▼ ﬂ//
               o->menu(labeltypemenu);
+//ﬂ ▲ ---------~~==~~=~~--=-----------~~~~-==-=----~=~--=~-- ▲ ﬂ//
             } // Fl_Choice* o
             o->end();
           } // Fl_Group* o
@@ -4232,7 +4234,9 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_4);
               Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize -~~---~~~=~==-~=-~--~= ▼ ﬂ//
               o->menu(fontmenu);
+//ﬂ ▲ ---------~=~~~---=~~~=-----------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
             } // Fl_Choice* o
             { Fl_Value_Input* o = new Fl_Value_Input(247, 40, 49, 20);
               o->tooltip("The size of the label text.");
@@ -4250,7 +4254,9 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* w_labelcolor
             { Fl_Menu_Button* o = new Fl_Menu_Button(386, 40, 18, 20);
               o->callback((Fl_Callback*)cb_6);
+//ﬂ ▼ ---------------------- finalize ---==~--~-=~=--~=-~=-- ▼ ﬂ//
               o->menu(colormenu);
+//ﬂ ▲ ---------~=~-~-~---~------------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_label->end();
           } // Fl_Group* wp_style_label
@@ -4268,7 +4274,9 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_7);
               Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize --~-~==~---==--~=--=~- ▼ ﬂ//
               o->menu(boxmenu);
+//ﬂ ▲ ---------~=~-=-~~-~-~=----------~--~--~---=~-~---==-~- ▲ ﬂ//
             } // Fl_Choice* o
             { w_color = new Fl_Button(296, 65, 90, 20, "Color");
               w_color->tooltip("The background color of the widget.");
@@ -4277,7 +4285,9 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* w_color
             { Fl_Menu_Button* o = new Fl_Menu_Button(386, 65, 18, 20);
               o->callback((Fl_Callback*)cb_8);
+//ﬂ ▼ ---------------------- finalize ---==~------=~--~~=-~= ▼ ﬂ//
               o->menu(colormenu);
+//ﬂ ▲ ---------~=~~-~-=-~=-=----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_box->end();
           } // Fl_Group* wp_style_box
@@ -4295,7 +4305,9 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_9);
               Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~-~-~=-=~~-~~-=~=~---~ ▼ ﬂ//
               o->menu(boxmenu);
+//ﬂ ▲ ---------~~=~=~-~==-=~----------~--~--~---=~-~---==-~- ▲ ﬂ//
             } // Fl_Choice* o
             { w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
               w_selectcolor->tooltip("The selection color of the widget.");
@@ -4304,7 +4316,9 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* w_selectcolor
             { Fl_Menu_Button* o = new Fl_Menu_Button(386, 90, 18, 20);
               o->callback((Fl_Callback*)cb_a);
+//ﬂ ▼ ---------------------- finalize ~~~--~-=~=-~~~=~~=-~~~ ▼ ﬂ//
               o->menu(colormenu);
+//ﬂ ▲ ---------~~==--=~=--=-----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_downbox->end();
           } // Fl_Group* wp_style_downbox
@@ -4322,7 +4336,9 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_b);
               Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize -~-~~=--~--~~=-=~=~~~- ▼ ﬂ//
               o->menu(fontmenu);
+//ﬂ ▲ ---------~~=~--~~=--~------------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
             } // Fl_Choice* o
             { Fl_Value_Input* o = new Fl_Value_Input(247, 115, 49, 20);
               o->tooltip("The value text size.");
@@ -4340,7 +4356,9 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* w_textcolor
             { Fl_Menu_Button* o = new Fl_Menu_Button(386, 115, 18, 20);
               o->callback((Fl_Callback*)cb_d);
+//ﬂ ▼ ---------------------- finalize -~--=~-~~~---~-~-~--=- ▼ ﬂ//
               o->menu(colormenu);
+//ﬂ ▲ ---------~=~~==-~=~~=-----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_text->end();
           } // Fl_Group* wp_style_text
@@ -4550,8 +4568,10 @@ Fl_Double_Window* make_widget_panel() {
                 wComment->align(Fl_Align(FL_ALIGN_LEFT));
                 wComment->when(FL_WHEN_CHANGED);
                 Fl_Group::current()->resizable(wComment);
+//ﬂ ▼ ---------------------- finalize ~--~=-----=-=-~=-~=~~= ▼ ﬂ//
                 w_cpp_code_act[0] = o;
                 wComment->buffer(new Fl_Text_Buffer());
+//ﬂ ▲ ---------~~=--=~--~~=~------------~--~~---~~=-~=----~= ▲ ﬂ//
               } // Fl_Text_Editor* wComment
               o->end();
             } // Fl_Group* o
@@ -4576,7 +4596,9 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[0]->callback((Fl_Callback*)cb_v_code_input, (void*)(0));
                 v_code_input[0]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[0]->when(FL_WHEN_RELEASE);
+//ﬂ ▼ ---------------------- finalize ~--~-=-=--=~~-~==--~-= ▼ ﬂ//
                 w_cpp_code_act[1] = o;
+//ﬂ ▲ ---------~~==-~=~==~=-----------~~-~=-~~-~-=~=~~=~=~~- ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[0]
               o->end();
             } // Fl_Group* o
@@ -4600,7 +4622,9 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[1]->callback((Fl_Callback*)cb_v_code_input1, (void*)(1));
                 v_code_input[1]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[1]->when(FL_WHEN_RELEASE);
+//ﬂ ▼ ---------------------- finalize -~=~-==~=~-=~=--~~=--= ▼ ﬂ//
                 w_cpp_code_act[2] = o;
+//ﬂ ▲ ---------~~=~~~=-=--=~-----------~--~~=~~-~-~=----~~-~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[1]
               o->end();
             } // Fl_Group* o
@@ -4625,7 +4649,9 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[2]->callback((Fl_Callback*)cb_v_code_input2, (void*)(2));
                 v_code_input[2]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[2]->when(FL_WHEN_RELEASE);
+//ﬂ ▼ ---------------------- finalize --=-~==~=-=--~~=~~---- ▼ ﬂ//
                 w_cpp_code_act[3] = o;
+//ﬂ ▲ ---------~~==-=---~=~~----------~--~=~~---~=~=--~---=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[2]
               o->end();
             } // Fl_Group* o
@@ -4649,7 +4675,9 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[3]->callback((Fl_Callback*)cb_v_code_input3, (void*)(3));
                 v_code_input[3]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[3]->when(FL_WHEN_RELEASE);
+//ﬂ ▼ ---------------------- finalize -~~---=~-=-=~=~--=---~ ▼ ﬂ//
                 w_cpp_code_act[4] = o;
+//ﬂ ▲ ---------~=~=--~~~--~~----------~---=--=-~-=~=-=~=~~~= ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[3]
               o->end();
             } // Fl_Group* o
@@ -4676,7 +4704,9 @@ Fl_Double_Window* make_widget_panel() {
                   wCallback->align(Fl_Align(FL_ALIGN_LEFT));
                   wCallback->when(FL_WHEN_RELEASE);
                   Fl_Group::current()->resizable(wCallback);
+//ﬂ ▼ ---------------------- finalize ~~=~~~~=~--~~~-=-=--~~ ▼ ﬂ//
                   w_cpp_code_act[5] = o;
+//ﬂ ▲ ---------~~=-==~~~=-~~-----------~-~-~-~~~--~=-=-=---- ▲ ﬂ//
                 } // fluid::widget::Code_Editor* wCallback
                 o->end();
                 Fl_Group::current()->resizable(o);
@@ -4707,7 +4737,9 @@ Fl_Double_Window* make_widget_panel() {
                     o->textsize(11);
                     o->callback((Fl_Callback*)cb_When);
                     o->when(FL_WHEN_CHANGED);
+//ﬂ ▼ ---------------------- finalize -~~-~~~~~~=~=-~--=~-~= ▼ ﬂ//
                     o->menu(whenmenu);
+//ﬂ ▲ ---------~=~=~-----~-~----------~--==-~~=-~~----~-~~~= ▲ ﬂ//
                   } // Fl_Menu_Button* o
                   wp_cpp_callback->end();
                   Fl_Group::current()->resizable(wp_cpp_callback);
@@ -4866,8 +4898,10 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize --~=~--~---~~==~-~---- ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~=~-~=--~~~=~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
           } // Fl_Text_Editor* o
           data_tabs_data->end();
           Fl_Group::current()->resizable(data_tabs_data);
@@ -4893,8 +4927,10 @@ Fl_Double_Window* make_widget_panel() {
             comment_tabs_name->callback((Fl_Callback*)cb_comment_tabs_name);
             comment_tabs_name->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(comment_tabs_name);
+//ﬂ ▼ ---------------------- finalize -~=--~=-=-----=~~=-=~= ▼ ﬂ//
             o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
             o->buffer(new Fl_Text_Buffer());
+//ﬂ ▲ ---------~=~-==~~-=-=-----------~~-=--~=~-----~~-~~~=- ▲ ﬂ//
           } // Fl_Text_Editor* comment_tabs_name
           { Fl_Group* o = new Fl_Group(95, 285, 310, 65);
             o->callback((Fl_Callback*)propagate_load);
@@ -4998,8 +5034,10 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment1);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~--==-=~~=~-~~=~=~~==- ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~==-=-~--~~=------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
           } // Fl_Text_Editor* o
           class_tabs_main->end();
           Fl_Group::current()->resizable(class_tabs_main);
@@ -5078,8 +5116,10 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment2);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~~~~=~---=--~=-~~~~~=- ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~=-=~~~~~---------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
           } // Fl_Text_Editor* o
           declblock_tabs_main->end();
           Fl_Group::current()->resizable(declblock_tabs_main);
@@ -5150,7 +5190,9 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ---=-==~~=-~~-~~~~~=~- ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~=~=-~-~=-------------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
               o->end();
             } // Fl_Group* o
@@ -5167,8 +5209,10 @@ Fl_Double_Window* make_widget_panel() {
                 o->callback((Fl_Callback*)cb_Comment3);
                 o->align(Fl_Align(FL_ALIGN_LEFT));
                 Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize --~~=~~=-=-~-~=~=~=--= ▼ ﬂ//
                 o->buffer(new Fl_Text_Buffer());
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~==~~=-==~~~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
               } // Fl_Text_Editor* o
               o->end();
             } // Fl_Group* o
@@ -5218,8 +5262,10 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment4);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~~~~-=~~~-~-~=~--~=~~~ ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~=-==----~~-------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
           } // Fl_Text_Editor* o
           codeblock_tabs_main->end();
           Fl_Group::current()->resizable(codeblock_tabs_main);
@@ -5249,8 +5295,10 @@ Fl_Double_Window* make_widget_panel() {
             o->align(Fl_Align(FL_ALIGN_TOP));
             o->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~--=-~=-~-~-=--~=--~~~ ▼ ﬂ//
             o->linenumber_width(60);
             o->linenumber_size(o->Fl_Text_Display::textsize());
+//ﬂ ▲ ---------~=~~---~~=~~=-----------~-=~-~-~=~~~==-=~---= ▲ ﬂ//
           } // fluid::widget::Code_Editor* o
           code_tabs_main->end();
           Fl_Group::current()->resizable(code_tabs_main);
@@ -5324,7 +5372,9 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~-----~==--=--~==~~-~= ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~=~--~~---~-=----------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
               o->end();
             } // Fl_Group* o
@@ -5349,7 +5399,9 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ------~==~~~=--==~-=~- ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~=~=-=~~=-~~~----------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
               o->end();
             } // Fl_Group* o
@@ -5366,8 +5418,10 @@ Fl_Double_Window* make_widget_panel() {
                 o->callback((Fl_Callback*)cb_Comment5);
                 o->align(Fl_Align(FL_ALIGN_LEFT));
                 Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~-~==----~~=-=-~-=~~~= ▼ ﬂ//
                 o->buffer(new Fl_Text_Buffer());
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~=~~--=~~--~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
               } // Fl_Text_Editor* o
               o->end();
             } // Fl_Group* o

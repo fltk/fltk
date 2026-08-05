@@ -18,6 +18,7 @@
 #include "Fluid.h"
 
 #include <FL/fl_ask.H>
+#include "../src/flstring.h"
 
 #undef min
 #undef max
@@ -193,7 +194,7 @@ int fluid::choice(const std::string &title, const std::string &message,
       if (key == 27) { printf("<esc>\n"); return msg::ESC; }
       if (key == '\r' || key == '\n') { printf("<return>\n"); return default_index; }
       for (size_t i = 0; i < option.size(); ++i) {
-        if (std::tolower(key) == std::tolower((unsigned char)option[i].key)) {
+        if (fl_ascii_tolower(key) == fl_ascii_tolower((unsigned char)option[i].key)) {
           printf("%s\n", option[i].label.c_str());
           return (int)i;
         }

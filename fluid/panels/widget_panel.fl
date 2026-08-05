@@ -72,6 +72,9 @@ decl {\#include "nodes/Menu_Node.h"} {uid 5e35 private global
 decl {\#include "nodes/Function_Node.h"} {uid 2815 private global
 }
 
+decl {\#include "../src/flstring.h"} {uid 9a40 selected private global
+}
+
 decl {\#include <FL/Fl_Spinner.H>} {uid b8e8 private global
 }
 
@@ -570,7 +573,7 @@ Function {make_widget_panel()} {uid 1743
       } {
         Fl_Group wp_gui_tab {uid 90e8
           label GUI
-          callback propagate_load open selected
+          callback propagate_load open
           xywh {10 30 400 330} labelsize 11 when 0 resizable
         } {
           Fl_Group {} {uid 783a
@@ -3291,8 +3294,7 @@ if (v == LOAD) {
             label {Class Name:}
             callback {if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
 Class_Node* nd = (Class_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Class Properties");
   o->value( nd->name() );
 } else {
@@ -3303,7 +3305,7 @@ if (v == LOAD) {
   char *s = (char*)nv;
   char *d = (char*)nv;
   while (*s) {
-    if (isalnum((unsigned char)*s) || *s == '_') {
+    if (fl_ascii_isalnum((unsigned char)*s) || *s == '_') {
       *d++ = *s;
     }
     s++;
