@@ -27,8 +27,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SAFE_STRCAT(s) { len += (int) strlen(s); if ( len >= namelen ) { *name='\0'; return(-2); } else strcat(name,(s)); }
-
 /** Get the menu 'pathname' for the specified menuitem.
 
     If finditem==NULL, mvalue() is used (the most recently picked menuitem).
@@ -70,51 +68,80 @@ int Fl_Menu_::item_pathname_(char *name,
                              int namelen,
                              const Fl_Menu_Item *finditem,
                              const Fl_Menu_Item *menu) const {
-  int len = 0;
+  int len = (int)strlen(name); // Initialize len with current length of name
   int level = 0;
   finditem = finditem ? finditem : mvalue();
   menu = menu ? menu : this->menu();
+
+  // Helper to append string and update length, checking buffer size
+  // Returns 0 on success, -2 on buffer overflow
+  auto append_and_check = [&](const char* s_to_append, size_t s_len_to_append) {
+      if (s_to_append == NULL || s_len_to_append == 0) return 0; // Nothing to append
+
+      if (len + (int)s_len_to_append >= namelen) { // Check if new length exceeds capacity (including null terminator)
+          *name = '\0';
+          return -2; // Indicate error
+      } else {
+          strcat(name, s_to_append);
+          len += (int)s_len_to_append; // Update current length
+      }
+      return 0; // Indicate success
+  };
+
   for ( int t=0; t<size(); t++ ) {
     const Fl_Menu_Item *m = menu + t;
+    const char* current_label = m->label();
+    size_t current_label_len = current_label ? strlen(current_label) : 0; // Calculate label length once per iteration
+
     if (m->submenu()) {                         // submenu? descend
       if (m->flags & FL_SUBMENU_POINTER) {
         // SUBMENU POINTER? Recurse to descend
-        int slen = (int)strlen(name);
+        int slen_before_recurse = len; // Store current length before recursion
         const Fl_Menu_Item *submenu = (const Fl_Menu_Item*)m->user_data();
-        if (m->label()) {
-          if (*name) SAFE_STRCAT("/");
-          SAFE_STRCAT(m->label());
+        if (current_label) {
+          if (*name) {
+              if (append_and_check("/", 1) == -2) return -2;
+          }
+          if (append_and_check(current_label, current_label_len) == -2) return -2;
         }
-        if (item_pathname_(name, len, finditem, submenu) == 0)
+        // BUG FIX: Pass original namelen, not current len, to recursive call
+        if (item_pathname_(name, namelen, finditem, submenu) == 0)
           return 0;
-        name[slen] = 0;                         // continue from where we were
+        name[slen_before_recurse] = 0;          // continue from where we were
+        len = slen_before_recurse;              // Restore len after recursion
       } else {
         // REGULAR SUBMENU? DESCEND
         ++level;
-        if (*name) SAFE_STRCAT("/");
-        if (m->label()) SAFE_STRCAT(m->label());
+        if (*name) {
+            if (append_and_check("/", 1) == -2) return -2;
+        }
+        if (current_label) {
+            if (append_and_check(current_label, current_label_len) == -2) return -2;
+        }
         if (m == finditem) return(0);           // found? done.
       }
     } else {
-      if (m->label()) {                         // menu item?
+      if (current_label) {                         // menu item?
         if ( m == finditem ) {                  // found? tack on itemname, done.
-          SAFE_STRCAT("/");
-          SAFE_STRCAT(m->label());
+          if (append_and_check("/", 1) == -2) return -2;
+          if (append_and_check(current_label, current_label_len) == -2) return -2;
           return(0);
         }
       } else {                                  // end of submenu? pop
         if ( --level < 0 ) {
           *name = '\0';
+          len = 0; // Update len
           return -1;
         }
         char *ss = strrchr(name, '/');
-        if ( ss ) { *ss = 0; len = (int) strlen(name); }        // "File/Edit" -> "File"
+        if ( ss ) { *ss = 0; len = (int)(ss - name); }        // "File/Edit" -> "File"
         else { name[0] = '\0'; len = 0; }       // "File" -> ""
         continue;
       }
     }
   }
   *name = '\0';
+  len = 0; // Update len
   return(-1);                                   // item not found
 }
 
