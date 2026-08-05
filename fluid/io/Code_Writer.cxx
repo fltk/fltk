@@ -230,27 +230,35 @@ bool Code_Writer::c_contains(void *pp) {
 
  \param[in] text write this string
  */
-void Code_Writer::write_cstring(fluid::string_view text) {
+void Code_Writer::write_cstring(fluid::string_view text)
+{
   const char *next_line = "\"\n\"";
   if (varused_test) {
     varused = 1;
     return;
   }
-  // if we are rendering to the source code preview window, and the text is
-  // longer than four lines, we only render a placeholder.
-  if (write_codeview && (text.empty() || (text.size()>300))) {
-    if (text.size()>=0)
-      crc_puts("\" ... " + std::to_string(text.size()) + " bytes of text... \"");
-    else
+
+  // Handle sourcecode preview
+  if (write_codeview) {
+    if (text.data() == nullptr) {
+      // In code-view mode, the text is not always available, so just print a placeholder.
       crc_puts("\" ... text... \"");
-    return;
+      return;
+    } else if (text.size() > 300) {
+      // If the text is too long, just print a placeholder with the size of the text.
+      crc_puts("\" ... " + std::to_string(text.size()) + " bytes of text... \"");
+      return;
+    } // else fall through and render the text
   }
+
+  // If there is no input data, write an error statement.
   if (text.data() == nullptr) {
     crc_puts("\n#error  string not found\n");
-    crc_puts("\" ... undefined size text... \"");
+    crc_puts("nullptr");
     return;
   }
 
+  // Write the escaped text at 78 characters per line.
   const char *p = text.data();
   const char *e = text.data()+text.size();
   int linelength = 1;

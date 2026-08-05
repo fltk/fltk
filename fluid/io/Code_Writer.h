@@ -48,7 +48,7 @@ struct string_view {
     size_t size_;
 
     string_view() : data_(nullptr), size_(0) {}
-    string_view(const char *s) : data_(s), size_(strlen(s)) {}
+    string_view(const char *s) : data_(s), size_(s ? strlen(s) : 0) {}
     string_view(const char *s, size_t n) : data_(s), size_(n) {}
     string_view(const std::string &s) : data_(s.data()), size_(s.size()) {}
 

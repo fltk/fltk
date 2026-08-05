@@ -885,11 +885,11 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     f.write_c(f.indent() + var + "->tooltip(");
     switch (Fluid.proj.i18n.type) {
     case fluid::I18n_Type::NONE : /* None */
-        f.write_cstring(tooltip().c_str());
+        f.write_cstring(tooltip());
         break;
     case fluid::I18n_Type::GNU : /* GNU gettext */
         f.write_c(Fluid.proj.i18n.gnu_function + "(");
-        f.write_cstring(tooltip().c_str());
+        f.write_cstring(tooltip());
         f.write_c(")");
         break;
     case fluid::I18n_Type::POSIX : /* POSIX catgets */
@@ -897,7 +897,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
                   + (Fluid.proj.i18n.posix_file.empty() ? std::string("_catalog") : Fluid.proj.i18n.posix_file)
                   + ", " + Fluid.proj.i18n.posix_set
                   + ", " + std::to_string(msgnum() + 1) + ", ");
-        f.write_cstring(tooltip().c_str());
+        f.write_cstring(tooltip());
         f.write_c(")");
         break;
     }

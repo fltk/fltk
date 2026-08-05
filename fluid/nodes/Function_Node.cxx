@@ -955,17 +955,17 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
   // path should be set correctly already
   if (!filename().empty() && !f.write_codeview) {
     Fluid.proj.enter_project_dir();
-    FILE *f = fl_fopen(filename().c_str(), "rb");
+    FILE *infile = fl_fopen(filename().c_str(), "rb");
     Fluid.proj.leave_project_dir();
-    if (!f) {
+    if (!infile) {
       message = "Can't include data from file. Can't open";
     } else {
-      fseek(f, 0, SEEK_END);
-      nData = (int)ftell(f);
-      fseek(f, 0, SEEK_SET);
+      fseek(infile, 0, SEEK_END);
+      nData = (int)ftell(infile);
+      fseek(infile, 0, SEEK_SET);
       if (nData) {
         data = (char*)calloc(nData, 1);
-        if (fread(data, nData, 1, f)==0) { /* use default */ }
+        if (fread(data, nData, 1, infile)==0) { /* use default */ }
         if ((output_format_ == 2) || (output_format_ == 5)) {
           uncompressedDataSize = nData;
           uLong nzData = compressBound(nData);
@@ -976,7 +976,7 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
           nData = (int)nzData;
         }
       }
-      fclose(f);
+      fclose(infile);
     }
   } else {
     if (filename().empty())
