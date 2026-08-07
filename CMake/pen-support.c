@@ -21,21 +21,11 @@
 
 /* We require Windows 8 or later features for Pen/Tablet support */
 
-# if !defined(WINVER) || (WINVER < 0x0602)
-#  ifdef WINVER
-#   undef WINVER
-#  endif
-#  define WINVER 0x0602
-# endif
-# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0602)
-#  ifdef _WIN32_WINNT
-#   undef _WIN32_WINNT
-#  endif
-#  define _WIN32_WINNT 0x0602
-# endif
+#define FL_WIN32_TARGET_VERSION 0x0602
+#include "../FL/win32_target.h"
 
 #include <windows.h>
 
 int main() {
-    return POINTER_CHANGE_FIRSTBUTTON_DOWN; /* required symbol */
+    return POINTER_FLAG_SECONDBUTTON; /* required symbol */
 }

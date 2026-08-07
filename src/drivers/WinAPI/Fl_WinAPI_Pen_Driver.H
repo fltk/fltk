@@ -22,20 +22,6 @@
 
 #include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 
-// The Pointer Input API (GetPointerType, GetPointerPenInfo, POINTER_PEN_INFO,
-// PEN_MASK_*, IS_POINTER_*_WPARAM, ...) requires Windows 8 (_WIN32_WINNT >=
-// 0x0602). Define this *before* <windows.h> is first included anywhere in the
-// translation unit. If FL/Fl.H or another FLTK header pulls in <windows.h>
-// first with a lower target, raise the project-wide _WIN32_WINNT instead
-// (e.g. in fl_config.h) and remove the guard below.
-#ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0602
-#endif
-#ifndef WINVER
-#  define WINVER _WIN32_WINNT
-#endif
-#include <windows.h>
-
 namespace Fl {
 
 namespace Pen {

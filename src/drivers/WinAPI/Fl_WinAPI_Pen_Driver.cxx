@@ -14,6 +14,16 @@
 //     https://www.fltk.org/bugs.php
 //
 
+// The Pointer Input API (GetPointerType, GetPointerPenInfo, POINTER_PEN_INFO,
+// PEN_MASK_*, IS_POINTER_*_WPARAM, ...) requires Windows 8 features
+// (_WIN32_WINNT >= 0x0602). Define this *before* <windows.h> is first included
+// anywhere in the translation unit. See FL/win32_target.h on how to do this.
+
+#define FL_WIN32_TARGET_VERSION 0x0602
+#include <FL/win32_target.h>
+
+#include <windows.h>
+
 /*
  Design notes — Windows Pointer Input vs. Wayland/Cocoa tablet architecture
  ───────────────────────────────────────────────────────────────────────────

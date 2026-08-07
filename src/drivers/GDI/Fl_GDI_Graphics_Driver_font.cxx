@@ -19,19 +19,11 @@
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif
+
 /* We require Windows 2000 features such as GetGlyphIndices */
-#if !defined(WINVER) || (WINVER < 0x0500)
-# ifdef WINVER
-#  undef WINVER
-# endif
-# define WINVER 0x0500
-#endif
-#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
-# ifdef _WIN32_WINNT
-#  undef _WIN32_WINNT
-# endif
-# define _WIN32_WINNT 0x0500
-#endif
+#define FL_WIN32_TARGET_VERSION 0x0500
+#include <FL/win32_target.h>
+#include <windows.h>
 
 // Select fonts from the FLTK font table.
 #include "Fl_GDI_Graphics_Driver.H"
