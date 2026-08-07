@@ -62,8 +62,7 @@ public:
   void move_child(Node*, Node*) override;
   void remove_child(Node*) override;
   int can_have_children() const override {return 1;}
-  Fl_Widget *enter_live_mode(int top=0) override;
-  void leave_live_mode() override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
 };
 
@@ -83,7 +82,7 @@ public:
   const char *type_name() override {return pack_type_name;}
   const char *alt_type_name() override {return "fltk::PackedGroup";}
   Widget_Node *_make() override {return new Pack_Node();}
-  Fl_Widget *enter_live_mode(int top=0) override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
 };
 
@@ -118,7 +117,7 @@ public:
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const char *) override;
-  Fl_Widget *enter_live_mode(int top=0) override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
   void copy_properties_for_children() override;
   void postprocess_read() override;
@@ -148,7 +147,7 @@ public:
   const char *alt_type_name() override { return "fltk::TableGroup"; }
   Widget_Node *_make() override { return new Table_Node(); }
   Fl_Widget *widget(int X, int Y, int W, int H) override;
-  Fl_Widget *enter_live_mode(int top=0) override;
+  Fl_Widget *enter_live_mode() override;
   void add_child(Node*, Node*) override;
   void move_child(Node*, Node*) override;
   void remove_child(Node*) override;
@@ -179,7 +178,7 @@ public:
   Node* click_test(int,int) override;
   void add_child(Node*, Node*) override;
   void remove_child(Node*) override;
-  Fl_Widget *enter_live_mode(int top=0) override;
+  Fl_Widget *enter_live_mode() override;
 };
 
 // ---- Scroll_Node ------------------------------------------------- MARK: -
@@ -198,7 +197,7 @@ public:
   const char *type_name() override {return scroll_type_name;}
   const char *alt_type_name() override {return "fltk::ScrollGroup";}
   Widget_Node *_make() override {return new Scroll_Node();}
-  Fl_Widget *enter_live_mode(int top=0) override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
 };
 
@@ -215,8 +214,7 @@ public:
   const char *type_name() override {return tile_type_name;}
   const char *alt_type_name() override {return "fltk::TileGroup";}
   Widget_Node *_make() override {return new Tile_Node();}
-  Fl_Widget *enter_live_mode(int top=0) override;
-  void leave_live_mode() override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
 };
 

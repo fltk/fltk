@@ -418,23 +418,29 @@ static void cb_image_panel_close(Fl_Button*, void* v) {
  Create a panel for editing widget image data
 */
 Fl_Double_Window* make_image_panel() {
-  { image_panel_window = new Fl_Double_Window(260, 332, "Image Options");
+  { auto* o = image_panel_window = new Fl_Double_Window(260, 332, "Image Options");
+    (void)o;
     image_panel_window->callback((Fl_Callback*)cb_image_panel_window);
-    { image_panel_imagegroup = new Fl_Group(10, 15, 235, 125);
+    { auto* o = image_panel_imagegroup = new Fl_Group(10, 15, 235, 125);
+      (void)o;
       image_panel_imagegroup->callback((Fl_Callback*)propagate_load);
-      { Fl_Box* o = new Fl_Box(75, 15, 170, 20, " ---- Active Image ----");
+      { auto* o = new Fl_Box(75, 15, 170, 20, " ---- Active Image ----");
+        (void)o;
         o->labelfont(1);
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { image_panel_data = new Fl_Box(75, 35, 170, 20, "... x ... pixels, ...");
+      { auto* o = image_panel_data = new Fl_Box(75, 35, 170, 20, "... x ... pixels, ...");
+        (void)o;
         image_panel_data->labelsize(11);
         image_panel_data->callback((Fl_Callback*)cb_image_panel_data);
         image_panel_data->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* image_panel_data
-      { Fl_Group* o = new Fl_Group(75, 75, 170, 20);
+      { auto* o = new Fl_Group(75, 75, 170, 20);
+        (void)o;
         o->callback((Fl_Callback*)propagate_load);
-        { image_panel_imagew = new fluid::widget::Formula_Input(75, 75, 55, 20, "Width:");
+        { auto* o = image_panel_imagew = new fluid::widget::Formula_Input(75, 75, 55, 20, "Width:");
+          (void)o;
           image_panel_imagew->tooltip("Scale image to this width in pixel units");
           image_panel_imagew->box(FL_DOWN_BOX);
           image_panel_imagew->color(FL_BACKGROUND2_COLOR);
@@ -448,7 +454,8 @@ Fl_Double_Window* make_image_panel() {
           image_panel_imagew->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_imagew->when(FL_WHEN_RELEASE);
         } // fluid::widget::Formula_Input* image_panel_imagew
-        { image_panel_imageh = new fluid::widget::Formula_Input(135, 75, 55, 20, "Height:");
+        { auto* o = image_panel_imageh = new fluid::widget::Formula_Input(135, 75, 55, 20, "Height:");
+          (void)o;
           image_panel_imageh->tooltip("Scale image to this height in pixel units");
           image_panel_imageh->box(FL_DOWN_BOX);
           image_panel_imageh->color(FL_BACKGROUND2_COLOR);
@@ -462,24 +469,28 @@ Fl_Double_Window* make_image_panel() {
           image_panel_imageh->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_imageh->when(FL_WHEN_RELEASE);
         } // fluid::widget::Formula_Input* image_panel_imageh
-        { Fl_Button* o = new Fl_Button(195, 75, 50, 20, "Reset");
+        { auto* o = new Fl_Button(195, 75, 50, 20, "Reset");
+          (void)o;
           o->tooltip("Reset scale to original size");
           o->labelsize(11);
           o->callback((Fl_Callback*)cb_Reset);
         } // Fl_Button* o
         o->end();
       } // Fl_Group* o
-      { Fl_Box* o = new Fl_Box(10, 75, 60, 20, "Scale:");
+      { auto* o = new Fl_Box(10, 75, 60, 20, "Scale:");
+        (void)o;
         o->labelfont(1);
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(10, 100, 60, 20, "Storage:");
+      { auto* o = new Fl_Box(10, 100, 60, 20, "Storage:");
+        (void)o;
         o->labelfont(1);
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { Fl_Check_Button* o = new Fl_Check_Button(75, 100, 170, 20, "convert to raw pixel data");
+      { auto* o = new Fl_Check_Button(75, 100, 170, 20, "convert to raw pixel data");
+        (void)o;
         o->tooltip("if unchecked, keep the image in its original format and store the data as is;"
 " if checked, convert the image and store it as uncompressed RGB or grayscale p"
 "ixel data");
@@ -487,7 +498,8 @@ Fl_Double_Window* make_image_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_convert);
       } // Fl_Check_Button* o
-      { Fl_Check_Button* o = new Fl_Check_Button(75, 120, 170, 20, "bind to widget");
+      { auto* o = new Fl_Check_Button(75, 120, 170, 20, "bind to widget");
+        (void)o;
         o->tooltip("bind the image to the widget, so it will be deleted with the widget");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
@@ -496,21 +508,26 @@ Fl_Double_Window* make_image_panel() {
       } // Fl_Check_Button* o
       image_panel_imagegroup->end();
     } // Fl_Group* image_panel_imagegroup
-    { image_panel_deimagegroup = new Fl_Group(10, 155, 235, 125);
+    { auto* o = image_panel_deimagegroup = new Fl_Group(10, 155, 235, 125);
+      (void)o;
       image_panel_deimagegroup->callback((Fl_Callback*)propagate_load);
-      { Fl_Box* o = new Fl_Box(75, 155, 170, 20, " ---- Inactive Image ----");
+      { auto* o = new Fl_Box(75, 155, 170, 20, " ---- Inactive Image ----");
+        (void)o;
         o->labelfont(1);
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { image_panel_dedata = new Fl_Box(75, 175, 170, 20, "... x ... pixels, ...");
+      { auto* o = image_panel_dedata = new Fl_Box(75, 175, 170, 20, "... x ... pixels, ...");
+        (void)o;
         image_panel_dedata->labelsize(11);
         image_panel_dedata->callback((Fl_Callback*)cb_image_panel_dedata);
         image_panel_dedata->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* image_panel_dedata
-      { Fl_Group* o = new Fl_Group(75, 215, 170, 20);
+      { auto* o = new Fl_Group(75, 215, 170, 20);
+        (void)o;
         o->callback((Fl_Callback*)propagate_load);
-        { image_panel_deimagew = new fluid::widget::Formula_Input(75, 215, 55, 20, "Width:");
+        { auto* o = image_panel_deimagew = new fluid::widget::Formula_Input(75, 215, 55, 20, "Width:");
+          (void)o;
           image_panel_deimagew->tooltip("Scale image to this width in pixel units");
           image_panel_deimagew->box(FL_DOWN_BOX);
           image_panel_deimagew->color(FL_BACKGROUND2_COLOR);
@@ -524,7 +541,8 @@ Fl_Double_Window* make_image_panel() {
           image_panel_deimagew->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_deimagew->when(FL_WHEN_RELEASE);
         } // fluid::widget::Formula_Input* image_panel_deimagew
-        { image_panel_deimageh = new fluid::widget::Formula_Input(135, 215, 55, 20, "Height:");
+        { auto* o = image_panel_deimageh = new fluid::widget::Formula_Input(135, 215, 55, 20, "Height:");
+          (void)o;
           image_panel_deimageh->tooltip("Scale image to this height in pixel units");
           image_panel_deimageh->box(FL_DOWN_BOX);
           image_panel_deimageh->color(FL_BACKGROUND2_COLOR);
@@ -538,24 +556,28 @@ Fl_Double_Window* make_image_panel() {
           image_panel_deimageh->align(Fl_Align(FL_ALIGN_TOP_LEFT));
           image_panel_deimageh->when(FL_WHEN_RELEASE);
         } // fluid::widget::Formula_Input* image_panel_deimageh
-        { Fl_Button* o = new Fl_Button(195, 215, 50, 20, "Reset");
+        { auto* o = new Fl_Button(195, 215, 50, 20, "Reset");
+          (void)o;
           o->tooltip("Reset scale to original size");
           o->labelsize(11);
           o->callback((Fl_Callback*)cb_Reset1);
         } // Fl_Button* o
         o->end();
       } // Fl_Group* o
-      { Fl_Box* o = new Fl_Box(10, 215, 60, 20, "Scale:");
+      { auto* o = new Fl_Box(10, 215, 60, 20, "Scale:");
+        (void)o;
         o->labelfont(1);
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(10, 240, 60, 20, "Storage:");
+      { auto* o = new Fl_Box(10, 240, 60, 20, "Storage:");
+        (void)o;
         o->labelfont(1);
         o->labelsize(11);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
-      { Fl_Check_Button* o = new Fl_Check_Button(75, 240, 170, 20, "convert to raw pixel data");
+      { auto* o = new Fl_Check_Button(75, 240, 170, 20, "convert to raw pixel data");
+        (void)o;
         o->tooltip("if unchecked, keep the image in its original format and store the data as is;"
 " if checked, convert the image and store it as uncompressed RGB or grayscale p"
 "ixel data");
@@ -563,7 +585,8 @@ Fl_Double_Window* make_image_panel() {
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_convert1);
       } // Fl_Check_Button* o
-      { Fl_Check_Button* o = new Fl_Check_Button(75, 260, 170, 20, "bind to widget");
+      { auto* o = new Fl_Check_Button(75, 260, 170, 20, "bind to widget");
+        (void)o;
         o->tooltip("bind the image to the widget, so it will be deleted with the widget");
         o->down_box(FL_DOWN_BOX);
         o->labelsize(11);
@@ -571,7 +594,8 @@ Fl_Double_Window* make_image_panel() {
       } // Fl_Check_Button* o
       image_panel_deimagegroup->end();
     } // Fl_Group* image_panel_deimagegroup
-    { image_panel_close = new Fl_Button(165, 295, 80, 20, "Close");
+    { auto* o = image_panel_close = new Fl_Button(165, 295, 80, 20, "Close");
+      (void)o;
       image_panel_close->labelsize(11);
       image_panel_close->callback((Fl_Callback*)cb_image_panel_close);
     } // Fl_Button* image_panel_close
@@ -582,7 +606,7 @@ Fl_Double_Window* make_image_panel() {
 }
 
 void run_image_panel() {
-//ﬂ ▼ ------------------------ code --~--~-~--~==--~=-=-=--~ ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ---~-==~-~~=-~-==~~-=-~= ▼ ﬂ//
   if (!image_panel_window)
     make_image_panel();
 
@@ -3670,31 +3694,36 @@ Fl_Button* overlay_button = (Fl_Button*)nullptr;
 Fl_Double_Window* make_widget_panel() {
   Fl_Double_Window* w;
   { // Use a Double Window to avoid flickering.
-    Fl_Double_Window* o = new Fl_Double_Window(420, 400);
+    auto* o = new Fl_Double_Window(420, 400);
     w = o; (void)w;
     o->labelsize(11);
     o->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     o->hotspot(o);
-    { tabs_wizard = new Fl_Wizard(10, 10, 400, 350);
+    { auto* o = tabs_wizard = new Fl_Wizard(10, 10, 400, 350);
+      (void)o;
       tabs_wizard->box(FL_NO_BOX);
       tabs_wizard->labelsize(11);
       tabs_wizard->callback((Fl_Callback*)cb_tabs_wizard);
-      { Fl_Tabs* o = widget_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = widget_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         widget_tabs->selection_color((Fl_Color)12);
         widget_tabs->labelsize(11);
         widget_tabs->labelcolor(FL_BACKGROUND2_COLOR);
         widget_tabs->callback((Fl_Callback*)cb_widget_tabs);
         widget_tabs->when(FL_WHEN_NEVER);
-        { wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
+        { auto* o = wp_gui_tab = new Fl_Group(10, 30, 400, 330, "GUI");
+          (void)o;
           wp_gui_tab->labelsize(11);
           wp_gui_tab->callback((Fl_Callback*)propagate_load);
           wp_gui_tab->when(FL_WHEN_NEVER);
-          { Fl_Group* o = new Fl_Group(95, 40, 309, 20, "Label:");
+          { auto* o = new Fl_Group(95, 40, 309, 20, "Label:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { wp_gui_label = new Fl_Input(95, 40, 190, 20);
+            { auto* o = wp_gui_label = new Fl_Input(95, 40, 190, 20);
+              (void)o;
               wp_gui_label->tooltip("The label text for the widget.\nUse Ctrl-J for newlines.");
               wp_gui_label->labelfont(1);
               wp_gui_label->labelsize(11);
@@ -3703,7 +3732,8 @@ Fl_Double_Window* make_widget_panel() {
               wp_gui_label->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
               Fl_Group::current()->resizable(wp_gui_label);
             } // Fl_Input* wp_gui_label
-            { Fl_Choice* o = new Fl_Choice(285, 40, 119, 20);
+            { auto* o = new Fl_Choice(285, 40, 119, 20);
+              (void)o;
               o->tooltip("The label style for the widget.");
               o->box(FL_THIN_UP_BOX);
               o->down_box(FL_BORDER_BOX);
@@ -3711,18 +3741,20 @@ Fl_Double_Window* make_widget_panel() {
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)labeltype_cb);
-//ﬂ ▼ ---------------------- finalize -~~~~=~~=~-~~--=---~=- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~=---~~-~~=-~--~~=~-= ▼ ﬂ//
               o->menu(labeltypemenu);
 //ﬂ ▲ ---------~~==~~=~~--=-----------~~~~-==-=----~=~--=~-- ▲ ﬂ//
             } // Fl_Choice* o
             o->end();
           } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(95, 65, 309, 20, "Image:");
+          { auto* o = new Fl_Group(95, 65, 309, 20, "Image:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { widget_image_input = new Fl_Input(95, 65, 200, 20);
+            { auto* o = widget_image_input = new Fl_Input(95, 65, 200, 20);
+              (void)o;
               widget_image_input->tooltip("The active image for the widget.");
               widget_image_input->labelfont(1);
               widget_image_input->labelsize(11);
@@ -3730,24 +3762,28 @@ Fl_Double_Window* make_widget_panel() {
               widget_image_input->callback((Fl_Callback*)cb_widget_image_input);
               Fl_Group::current()->resizable(widget_image_input);
             } // Fl_Input* widget_image_input
-            { Fl_Button* o = new Fl_Button(295, 65, 89, 20, "Browse...");
+            { auto* o = new Fl_Button(295, 65, 89, 20, "Browse...");
+              (void)o;
               o->tooltip("Click to choose the active image.");
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Browse);
               o->align(Fl_Align(256));
             } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(384, 65, 20, 20, "...");
+            { auto* o = new Fl_Button(384, 65, 20, 20, "...");
+              (void)o;
               o->tooltip("more image options");
               o->callback((Fl_Callback*)cb_);
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(95, 90, 309, 20, "Inactive:");
+          { auto* o = new Fl_Group(95, 90, 309, 20, "Inactive:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { widget_deimage_input = new Fl_Input(95, 90, 200, 20);
+            { auto* o = widget_deimage_input = new Fl_Input(95, 90, 200, 20);
+              (void)o;
               widget_deimage_input->tooltip("The inactive image for the widget.");
               widget_deimage_input->labelfont(1);
               widget_deimage_input->labelsize(11);
@@ -3755,19 +3791,22 @@ Fl_Double_Window* make_widget_panel() {
               widget_deimage_input->callback((Fl_Callback*)cb_widget_deimage_input);
               Fl_Group::current()->resizable(widget_deimage_input);
             } // Fl_Input* widget_deimage_input
-            { Fl_Button* o = new Fl_Button(295, 90, 89, 20, "Browse...");
+            { auto* o = new Fl_Button(295, 90, 89, 20, "Browse...");
+              (void)o;
               o->tooltip("Click to choose the inactive image.");
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Browse1);
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { wp_gui_alignment = new Fl_Group(95, 115, 312, 20, "Alignment:");
+          { auto* o = wp_gui_alignment = new Fl_Group(95, 115, 312, 20, "Alignment:");
+            (void)o;
             wp_gui_alignment->labelfont(1);
             wp_gui_alignment->labelsize(11);
             wp_gui_alignment->callback((Fl_Callback*)propagate_load);
             wp_gui_alignment->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Button* o = new Fl_Button(95, 115, 30, 20, "Clip");
+            { auto* o = new Fl_Button(95, 115, 30, 20, "Clip");
+              (void)o;
               o->tooltip("Clip the label to the inside of the widget.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
@@ -3775,14 +3814,16 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_CLIP));
               o->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
             } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(130, 115, 38, 20, "Wrap");
+            { auto* o = new Fl_Button(130, 115, 38, 20, "Wrap");
+              (void)o;
               o->tooltip("Wrap the label text.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
               o->labelsize(11);
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_WRAP));
             } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(278, 115, 20, 20, "@-1<-");
+            { auto* o = new Fl_Button(278, 115, 20, 20, "@-1<-");
+              (void)o;
               o->tooltip("Left-align the label.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
@@ -3791,7 +3832,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_LEFT));
               o->hide();
             } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(303, 115, 20, 20, "@-1->");
+            { auto* o = new Fl_Button(303, 115, 20, 20, "@-1->");
+              (void)o;
               o->tooltip("Right-align the label.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
@@ -3800,7 +3842,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_RIGHT));
               o->hide();
             } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(328, 115, 20, 20, "@-18");
+            { auto* o = new Fl_Button(328, 115, 20, 20, "@-18");
+              (void)o;
               o->tooltip("Top-align the label.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
@@ -3809,7 +3852,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_TOP));
               o->hide();
             } // Fl_Button* o
-            { Fl_Button* o = new Fl_Button(353, 115, 20, 20, "@-12");
+            { auto* o = new Fl_Button(353, 115, 20, 20, "@-12");
+              (void)o;
               o->tooltip("Bottom-align the label.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
@@ -3818,21 +3862,24 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM));
               o->hide();
             } // Fl_Button* o
-            { Fl_Choice* o = new Fl_Choice(172, 115, 116, 20);
+            { auto* o = new Fl_Choice(172, 115, 116, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)align_text_image_cb);
               o->menu(menu_);
             } // Fl_Choice* o
-            { Fl_Choice* o = new Fl_Choice(293, 115, 86, 20);
+            { auto* o = new Fl_Choice(293, 115, 86, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)align_position_cb);
               o->menu(menu_1);
             } // Fl_Choice* o
-            { Fl_Button* o = new Fl_Button(384, 115, 20, 20, "@-3square");
+            { auto* o = new Fl_Button(384, 115, 20, 20, "@-3square");
+              (void)o;
               o->tooltip("Show the label inside the widget.");
               o->type(1);
               o->selection_color(FL_INACTIVE_COLOR);
@@ -3840,18 +3887,21 @@ Fl_Double_Window* make_widget_panel() {
               o->labelcolor(FL_INACTIVE_COLOR);
               o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_INSIDE));
             } // Fl_Button* o
-            { Fl_Box* o = new Fl_Box(406, 115, 1, 20);
+            { auto* o = new Fl_Box(406, 115, 1, 20);
+              (void)o;
               o->labelsize(11);
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_alignment->end();
           } // Fl_Group* wp_gui_alignment
-          { Fl_Group* o = new Fl_Group(95, 150, 314, 20, "Position:");
+          { auto* o = new Fl_Group(95, 150, 314, 20, "Position:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)position_group_cb);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { widget_x_input = new fluid::widget::Formula_Input(95, 150, 55, 20, "X:");
+            { auto* o = widget_x_input = new fluid::widget::Formula_Input(95, 150, 55, 20, "X:");
+              (void)o;
               widget_x_input->tooltip("The X position of the widget as a number or formula.\nFormulas can be simple "
 "math, including the variables\nx, px, sx, cx, and i");
               widget_x_input->box(FL_DOWN_BOX);
@@ -3866,7 +3916,8 @@ Fl_Double_Window* make_widget_panel() {
               widget_x_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               widget_x_input->when(FL_WHEN_RELEASE);
             } // fluid::widget::Formula_Input* widget_x_input
-            { widget_y_input = new fluid::widget::Formula_Input(155, 150, 55, 20, "Y:");
+            { auto* o = widget_y_input = new fluid::widget::Formula_Input(155, 150, 55, 20, "Y:");
+              (void)o;
               widget_y_input->tooltip("The Y position of the widget as a number or formula.\nFormulas can be simple "
 "math, including the variables\ny, py, sy, cy, and i");
               widget_y_input->box(FL_DOWN_BOX);
@@ -3881,7 +3932,8 @@ Fl_Double_Window* make_widget_panel() {
               widget_y_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               widget_y_input->when(FL_WHEN_RELEASE);
             } // fluid::widget::Formula_Input* widget_y_input
-            { widget_w_input = new fluid::widget::Formula_Input(215, 150, 55, 20, "Width:");
+            { auto* o = widget_w_input = new fluid::widget::Formula_Input(215, 150, 55, 20, "Width:");
+              (void)o;
               widget_w_input->tooltip("The width of the widget as a number or formula.\nFormulas can be simple math,"
 " including the variables\nw, pw, sw, cw, and i");
               widget_w_input->box(FL_DOWN_BOX);
@@ -3896,7 +3948,8 @@ Fl_Double_Window* make_widget_panel() {
               widget_w_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               widget_w_input->when(FL_WHEN_RELEASE);
             } // fluid::widget::Formula_Input* widget_w_input
-            { widget_h_input = new fluid::widget::Formula_Input(275, 150, 55, 20, "Height:");
+            { auto* o = widget_h_input = new fluid::widget::Formula_Input(275, 150, 55, 20, "Height:");
+              (void)o;
               widget_h_input->tooltip("The height of the widget as a number or formula.\nFormulas can be simple math"
 ", including the variables\nh, ph, sh, ch, and i");
               widget_h_input->box(FL_DOWN_BOX);
@@ -3911,7 +3964,8 @@ Fl_Double_Window* make_widget_panel() {
               widget_h_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               widget_h_input->when(FL_WHEN_RELEASE);
             } // fluid::widget::Formula_Input* widget_h_input
-            { Fl_Choice* o = new Fl_Choice(335, 150, 64, 20, "Children:");
+            { auto* o = new Fl_Choice(335, 150, 64, 20, "Children:");
+              (void)o;
               o->tooltip("When instantiating a widget class, the children can either be fixed in their "
 "original position, automatically be repositioned, or both repsositioned and re"
 "sized to fit the container.");
@@ -3922,57 +3976,66 @@ Fl_Double_Window* make_widget_panel() {
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
               o->menu(menu_Children);
             } // Fl_Choice* o
-            { Fl_Box* o = new Fl_Box(399, 150, 1, 20);
+            { auto* o = new Fl_Box(399, 150, 1, 20);
+              (void)o;
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             o->end();
           } // Fl_Group* o
           { // This group is only visible if the parent is an Fl_Flex widget
-            wp_gui_flexp = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
+            auto* o = wp_gui_flexp = new Fl_Group(95, 150, 314, 20, "Flex Parent:");
+            (void)o;
             wp_gui_flexp->labelfont(1);
             wp_gui_flexp->labelsize(11);
             wp_gui_flexp->callback((Fl_Callback*)cb_wp_gui_flexp);
             wp_gui_flexp->align(Fl_Align(FL_ALIGN_LEFT));
             wp_gui_flexp->hide();
-            { widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
+            { auto* o = widget_flex_size = new Fl_Value_Input(95, 150, 55, 20, "Size:");
+              (void)o;
               widget_flex_size->tooltip("Fixed Width or Height for a horizontal or vertical Fl_Flex Parent.");
               widget_flex_size->labelsize(11);
               widget_flex_size->textsize(11);
               widget_flex_size->callback((Fl_Callback*)cb_widget_flex_size);
               widget_flex_size->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* widget_flex_size
-            { widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
+            { auto* o = widget_flex_fixed = new Fl_Check_Button(155, 150, 55, 20, "fixed");
+              (void)o;
               widget_flex_fixed->tooltip("If checked, the size of the widget stays fixed.");
               widget_flex_fixed->down_box(FL_DOWN_BOX);
               widget_flex_fixed->labelsize(11);
               widget_flex_fixed->callback((Fl_Callback*)cb_widget_flex_fixed);
             } // Fl_Check_Button* widget_flex_fixed
-            { Fl_Box* o = new Fl_Box(398, 150, 1, 20);
+            { auto* o = new Fl_Box(398, 150, 1, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_flexp->end();
           } // Fl_Group* wp_gui_flexp
-          { wp_gui_values = new Fl_Group(95, 185, 300, 20, "Values:");
+          { auto* o = wp_gui_values = new Fl_Group(95, 185, 300, 20, "Values:");
+            (void)o;
             wp_gui_values->labelfont(1);
             wp_gui_values->labelsize(11);
             wp_gui_values->callback((Fl_Callback*)cb_wp_gui_values);
             wp_gui_values->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
+            { auto* o = new Fl_Value_Input(95, 185, 55, 20, "Size:");
+              (void)o;
               o->tooltip("The size of the slider.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Size);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Minimum:");
+            { auto* o = new Fl_Value_Input(155, 185, 55, 20, "Minimum:");
+              (void)o;
               o->tooltip("The minimum value of the widget.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Minimum);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Maximum:");
+            { auto* o = new Fl_Value_Input(215, 185, 55, 20, "Maximum:");
+              (void)o;
               o->tooltip("The maximum value of the widget.");
               o->labelsize(11);
               o->value(1);
@@ -3980,79 +4043,91 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Maximum);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Step:");
+            { auto* o = new Fl_Value_Input(275, 185, 55, 20, "Step:");
+              (void)o;
               o->tooltip("The resolution of the widget value.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Step);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Value:");
+            { auto* o = new Fl_Value_Input(335, 185, 55, 20, "Value:");
+              (void)o;
               o->tooltip("The current widget value.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Value);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+            { auto* o = new Fl_Box(395, 185, 0, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_values->end();
           } // Fl_Group* wp_gui_values
           { // This group is only visible for Fl_Flex widgets
-            wp_gui_margins = new Fl_Group(95, 185, 300, 20, "Margins:");
+            auto* o = wp_gui_margins = new Fl_Group(95, 185, 300, 20, "Margins:");
+            (void)o;
             wp_gui_margins->labelfont(1);
             wp_gui_margins->labelsize(11);
             wp_gui_margins->callback((Fl_Callback*)cb_wp_gui_margins);
             wp_gui_margins->align(Fl_Align(FL_ALIGN_LEFT));
             wp_gui_margins->hide();
-            { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
+            { auto* o = new Fl_Value_Input(95, 185, 55, 20, "Left:");
+              (void)o;
               o->tooltip("Left margin in group.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Left);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
+            { auto* o = new Fl_Value_Input(155, 185, 55, 20, "Top:");
+              (void)o;
               o->tooltip("Top margin in group.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Top);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
+            { auto* o = new Fl_Value_Input(215, 185, 55, 20, "Right:");
+              (void)o;
               o->tooltip("Right margin in group.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Right);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
+            { auto* o = new Fl_Value_Input(275, 185, 55, 20, "Bottom:");
+              (void)o;
               o->tooltip("Bottom margin in group.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Bottom);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
+            { auto* o = new Fl_Value_Input(335, 185, 55, 20, "Gap:");
+              (void)o;
               o->tooltip("Gap between children.");
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_Gap);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+            { auto* o = new Fl_Box(395, 185, 0, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_margins->end();
           } // Fl_Group* wp_gui_margins
-          { wp_gui_sizerange = new Fl_Group(95, 185, 300, 20, "Size Range:");
+          { auto* o = wp_gui_sizerange = new Fl_Group(95, 185, 300, 20, "Size Range:");
+            (void)o;
             wp_gui_sizerange->labelfont(1);
             wp_gui_sizerange->labelsize(11);
             wp_gui_sizerange->callback((Fl_Callback*)cb_wp_gui_sizerange);
             wp_gui_sizerange->align(Fl_Align(FL_ALIGN_LEFT));
             wp_gui_sizerange->hide();
-            { Fl_Value_Input* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");
+            { auto* o = new Fl_Value_Input(95, 185, 55, 20, "Minimum Size:");
+              (void)o;
               o->tooltip("The size of the slider.");
               o->labelsize(11);
               o->maximum(2048);
@@ -4061,7 +4136,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Minimum1);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(155, 185, 55, 20);
+            { auto* o = new Fl_Value_Input(155, 185, 55, 20);
+              (void)o;
               o->tooltip("The minimum value of the widget.");
               o->labelsize(11);
               o->maximum(2048);
@@ -4070,11 +4146,13 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_1);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Button* o = new Fl_Button(215, 185, 25, 20, "set");
+            { auto* o = new Fl_Button(215, 185, 25, 20, "set");
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_set);
             } // Fl_Button* o
-            { Fl_Value_Input* o = new Fl_Value_Input(245, 185, 55, 20, "Maximum Size:");
+            { auto* o = new Fl_Value_Input(245, 185, 55, 20, "Maximum Size:");
+              (void)o;
               o->tooltip("The maximum value of the widget.");
               o->labelsize(11);
               o->maximum(2048);
@@ -4083,7 +4161,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Maximum1);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(305, 185, 55, 20);
+            { auto* o = new Fl_Value_Input(305, 185, 55, 20);
+              (void)o;
               o->tooltip("The resolution of the widget value.");
               o->labelsize(11);
               o->maximum(2048);
@@ -4092,22 +4171,26 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_2);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Button* o = new Fl_Button(365, 185, 25, 20, "set");
+            { auto* o = new Fl_Button(365, 185, 25, 20, "set");
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_set1);
             } // Fl_Button* o
-            { Fl_Box* o = new Fl_Box(395, 185, 0, 20);
+            { auto* o = new Fl_Box(395, 185, 0, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_sizerange->end();
           } // Fl_Group* wp_gui_sizerange
-          { Fl_Group* o = new Fl_Group(95, 210, 310, 20, "Shortcut:");
+          { auto* o = new Fl_Group(95, 210, 310, 20, "Shortcut:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             { // This is a special button that grabs keystrokes directly
-              wp_gui_shortcut = new Fl_Shortcut_Button(95, 210, 310, 20);
+              auto* o = wp_gui_shortcut = new Fl_Shortcut_Button(95, 210, 310, 20);
+              (void)o;
               wp_gui_shortcut->tooltip("The shortcut key for the widget.\nUse \'Backspace\' key to clear.");
               wp_gui_shortcut->box(FL_DOWN_BOX);
               wp_gui_shortcut->color(FL_BACKGROUND2_COLOR);
@@ -4122,12 +4205,14 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Shortcut_Button* wp_gui_shortcut
             o->end();
           } // Fl_Group* o
-          { wp_gui_xclass = new Fl_Group(95, 235, 300, 20, "X Class:");
+          { auto* o = wp_gui_xclass = new Fl_Group(95, 235, 300, 20, "X Class:");
+            (void)o;
             wp_gui_xclass->labelfont(1);
             wp_gui_xclass->labelsize(11);
             wp_gui_xclass->callback((Fl_Callback*)propagate_load);
             wp_gui_xclass->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Input* o = new Fl_Input(95, 235, 95, 20, ":");
+            { auto* o = new Fl_Input(95, 235, 95, 20, ":");
+              (void)o;
               o->tooltip("The X resource class.");
               o->labelfont(1);
               o->labelsize(11);
@@ -4135,19 +4220,22 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_3);
               Fl_Group::current()->resizable(o);
             } // Fl_Input* o
-            { Fl_Light_Button* o = new Fl_Light_Button(195, 235, 60, 20, "Border");
+            { auto* o = new Fl_Light_Button(195, 235, 60, 20, "Border");
+              (void)o;
               o->tooltip("Add a border around the window.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Border);
             } // Fl_Light_Button* o
-            { Fl_Light_Button* o = new Fl_Light_Button(260, 235, 55, 20, "Modal");
+            { auto* o = new Fl_Light_Button(260, 235, 55, 20, "Modal");
+              (void)o;
               o->tooltip("Make the window modal.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Modal);
             } // Fl_Light_Button* o
-            { Fl_Light_Button* o = new Fl_Light_Button(320, 235, 75, 20, "Nonmodal");
+            { auto* o = new Fl_Light_Button(320, 235, 75, 20, "Nonmodal");
+              (void)o;
               o->tooltip("Make the window non-modal.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
@@ -4156,31 +4244,36 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Light_Button* o
             wp_gui_xclass->end();
           } // Fl_Group* wp_gui_xclass
-          { wp_gui_attributes = new Fl_Group(95, 260, 305, 20, "Attributes:");
+          { auto* o = wp_gui_attributes = new Fl_Group(95, 260, 305, 20, "Attributes:");
+            (void)o;
             wp_gui_attributes->labelfont(1);
             wp_gui_attributes->labelsize(11);
             wp_gui_attributes->callback((Fl_Callback*)propagate_load);
             wp_gui_attributes->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Light_Button* o = new Fl_Light_Button(95, 260, 60, 20, "Visible");
+            { auto* o = new Fl_Light_Button(95, 260, 60, 20, "Visible");
+              (void)o;
               o->tooltip("Show the widget.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Visible);
             } // Fl_Light_Button* o
-            { Fl_Light_Button* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
+            { auto* o = new Fl_Light_Button(160, 260, 60, 20, "Active");
+              (void)o;
               o->tooltip("Activate the widget.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Active);
             } // Fl_Light_Button* o
-            { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Resizable");
+            { auto* o = new Fl_Light_Button(225, 260, 75, 20, "Resizable");
+              (void)o;
               o->tooltip("Make the widget resizable.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Resizable);
               o->when(FL_WHEN_CHANGED);
             } // Fl_Light_Button* o
-            { Fl_Light_Button* o = new Fl_Light_Button(225, 260, 75, 20, "Headline");
+            { auto* o = new Fl_Light_Button(225, 260, 75, 20, "Headline");
+              (void)o;
               o->tooltip("Make a menu item the headline of a menu\nunselectable, but not grayed out");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
@@ -4188,44 +4281,51 @@ Fl_Double_Window* make_widget_panel() {
               o->when(FL_WHEN_CHANGED);
               o->hide();
             } // Fl_Light_Button* o
-            { Fl_Light_Button* o = new Fl_Light_Button(305, 260, 70, 20, "Hotspot");
+            { auto* o = new Fl_Light_Button(305, 260, 70, 20, "Hotspot");
+              (void)o;
               o->tooltip("Center the window under this widget.");
               o->selection_color((Fl_Color)1);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_Hotspot);
               o->when(FL_WHEN_CHANGED);
             } // Fl_Light_Button* o
-            { Fl_Box* o = new Fl_Box(395, 260, 0, 20);
+            { auto* o = new Fl_Box(395, 260, 0, 20);
+              (void)o;
               o->labelsize(11);
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             wp_gui_attributes->end();
           } // Fl_Group* wp_gui_attributes
-          { wp_gui_tooltip = new Fl_Input(95, 285, 310, 20, "Tooltip:");
+          { auto* o = wp_gui_tooltip = new Fl_Input(95, 285, 310, 20, "Tooltip:");
+            (void)o;
             wp_gui_tooltip->tooltip("The tooltip text for the widget.\nUse Ctrl-J for newlines.");
             wp_gui_tooltip->labelfont(1);
             wp_gui_tooltip->labelsize(11);
             wp_gui_tooltip->textsize(11);
             wp_gui_tooltip->callback((Fl_Callback*)cb_wp_gui_tooltip);
           } // Fl_Input* wp_gui_tooltip
-          { Fl_Box* o = new Fl_Box(95, 305, 300, 5);
+          { auto* o = new Fl_Box(95, 305, 300, 5);
+            (void)o;
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           wp_gui_tab->end();
           Fl_Group::current()->resizable(wp_gui_tab);
         } // Fl_Group* wp_gui_tab
-        { wp_style_tab = new Fl_Group(10, 30, 400, 330, "Style");
+        { auto* o = wp_style_tab = new Fl_Group(10, 30, 400, 330, "Style");
+          (void)o;
           wp_style_tab->labelsize(11);
           wp_style_tab->callback((Fl_Callback*)propagate_load);
           wp_style_tab->when(FL_WHEN_NEVER);
           wp_style_tab->hide();
-          { wp_style_label = new Fl_Group(99, 40, 305, 20, "Label Font:");
+          { auto* o = wp_style_label = new Fl_Group(99, 40, 305, 20, "Label Font:");
+            (void)o;
             wp_style_label->labelfont(1);
             wp_style_label->labelsize(11);
             wp_style_label->callback((Fl_Callback*)propagate_load);
             wp_style_label->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Choice* o = new Fl_Choice(99, 40, 148, 20);
+            { auto* o = new Fl_Choice(99, 40, 148, 20);
+              (void)o;
               o->tooltip("The style of the label text.");
               o->box(FL_THIN_UP_BOX);
               o->down_box(FL_BORDER_BOX);
@@ -4234,11 +4334,12 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_4);
               Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize -~~---~~~=~==-~=-~--~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~~==---~~=~-~=--=~=-= ▼ ﬂ//
               o->menu(fontmenu);
 //ﬂ ▲ ---------~=~~~---=~~~=-----------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
             } // Fl_Choice* o
-            { Fl_Value_Input* o = new Fl_Value_Input(247, 40, 49, 20);
+            { auto* o = new Fl_Value_Input(247, 40, 49, 20);
+              (void)o;
               o->tooltip("The size of the label text.");
               o->labelsize(11);
               o->maximum(100);
@@ -4247,25 +4348,29 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_5);
             } // Fl_Value_Input* o
-            { w_labelcolor = new Fl_Button(296, 40, 90, 20, "Label Color");
+            { auto* o = w_labelcolor = new Fl_Button(296, 40, 90, 20, "Label Color");
+              (void)o;
               w_labelcolor->tooltip("The color of the label text.");
               w_labelcolor->labelsize(11);
               w_labelcolor->callback((Fl_Callback*)cb_w_labelcolor);
             } // Fl_Button* w_labelcolor
-            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 40, 18, 20);
+            { auto* o = new Fl_Menu_Button(386, 40, 18, 20);
+              (void)o;
               o->callback((Fl_Callback*)cb_6);
-//ﬂ ▼ ---------------------- finalize ---==~--~-=~=--~=-~=-- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~=-~~=--~~--~=~~~~~=- ▼ ﬂ//
               o->menu(colormenu);
 //ﬂ ▲ ---------~=~-~-~---~------------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_label->end();
           } // Fl_Group* wp_style_label
-          { wp_style_box = new Fl_Group(99, 65, 305, 20, "Box:");
+          { auto* o = wp_style_box = new Fl_Group(99, 65, 305, 20, "Box:");
+            (void)o;
             wp_style_box->labelfont(1);
             wp_style_box->labelsize(11);
             wp_style_box->callback((Fl_Callback*)propagate_load);
             wp_style_box->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Choice* o = new Fl_Choice(100, 65, 196, 20);
+            { auto* o = new Fl_Choice(100, 65, 196, 20);
+              (void)o;
               o->tooltip("The \"up\" box of the widget.");
               o->box(FL_THIN_UP_BOX);
               o->down_box(FL_BORDER_BOX);
@@ -4274,29 +4379,33 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_7);
               Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize --~-~==~---==--~=--=~- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-=~~=~=~~=-~--~~-~--= ▼ ﬂ//
               o->menu(boxmenu);
 //ﬂ ▲ ---------~=~-=-~~-~-~=----------~--~--~---=~-~---==-~- ▲ ﬂ//
             } // Fl_Choice* o
-            { w_color = new Fl_Button(296, 65, 90, 20, "Color");
+            { auto* o = w_color = new Fl_Button(296, 65, 90, 20, "Color");
+              (void)o;
               w_color->tooltip("The background color of the widget.");
               w_color->labelsize(11);
               w_color->callback((Fl_Callback*)cb_w_color);
             } // Fl_Button* w_color
-            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 65, 18, 20);
+            { auto* o = new Fl_Menu_Button(386, 65, 18, 20);
+              (void)o;
               o->callback((Fl_Callback*)cb_8);
-//ﬂ ▼ ---------------------- finalize ---==~------=~--~~=-~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~~-~~-~=~~-=--==-~==- ▼ ﬂ//
               o->menu(colormenu);
 //ﬂ ▲ ---------~=~~-~-=-~=-=----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_box->end();
           } // Fl_Group* wp_style_box
-          { wp_style_downbox = new Fl_Group(99, 90, 305, 20, "Down Box:");
+          { auto* o = wp_style_downbox = new Fl_Group(99, 90, 305, 20, "Down Box:");
+            (void)o;
             wp_style_downbox->labelfont(1);
             wp_style_downbox->labelsize(11);
             wp_style_downbox->callback((Fl_Callback*)propagate_load);
             wp_style_downbox->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Choice* o = new Fl_Choice(99, 90, 197, 20);
+            { auto* o = new Fl_Choice(99, 90, 197, 20);
+              (void)o;
               o->tooltip("The \"down\" box of the widget.");
               o->box(FL_THIN_UP_BOX);
               o->down_box(FL_BORDER_BOX);
@@ -4305,29 +4414,33 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_9);
               Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~-~-~=-=~~-~~-=~=~---~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~=-~=~=-~-~~~=-~~=-~= ▼ ﬂ//
               o->menu(boxmenu);
 //ﬂ ▲ ---------~~=~=~-~==-=~----------~--~--~---=~-~---==-~- ▲ ﬂ//
             } // Fl_Choice* o
-            { w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
+            { auto* o = w_selectcolor = new Fl_Button(296, 90, 90, 20, "Select Color");
+              (void)o;
               w_selectcolor->tooltip("The selection color of the widget.");
               w_selectcolor->labelsize(11);
               w_selectcolor->callback((Fl_Callback*)cb_w_selectcolor);
             } // Fl_Button* w_selectcolor
-            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 90, 18, 20);
+            { auto* o = new Fl_Menu_Button(386, 90, 18, 20);
+              (void)o;
               o->callback((Fl_Callback*)cb_a);
-//ﬂ ▼ ---------------------- finalize ~~~--~-=~=-~~~=~~=-~~~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize --~--~-~-~~~-==---=~=- ▼ ﬂ//
               o->menu(colormenu);
 //ﬂ ▲ ---------~~==--=~=--=-----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_downbox->end();
           } // Fl_Group* wp_style_downbox
-          { wp_style_text = new Fl_Group(99, 115, 305, 20, "Text Font:");
+          { auto* o = wp_style_text = new Fl_Group(99, 115, 305, 20, "Text Font:");
+            (void)o;
             wp_style_text->labelfont(1);
             wp_style_text->labelsize(11);
             wp_style_text->callback((Fl_Callback*)propagate_load);
             wp_style_text->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Choice* o = new Fl_Choice(99, 115, 148, 20);
+            { auto* o = new Fl_Choice(99, 115, 148, 20);
+              (void)o;
               o->tooltip("The value text style.");
               o->box(FL_DOWN_BOX);
               o->down_box(FL_BORDER_BOX);
@@ -4336,11 +4449,12 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_b);
               Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize -~-~~=--~--~~=-=~=~~~- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~~==-=~-~~=~=~=~=-==~ ▼ ﬂ//
               o->menu(fontmenu);
 //ﬂ ▲ ---------~~=~--~~=--~------------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
             } // Fl_Choice* o
-            { Fl_Value_Input* o = new Fl_Value_Input(247, 115, 49, 20);
+            { auto* o = new Fl_Value_Input(247, 115, 49, 20);
+              (void)o;
               o->tooltip("The value text size.");
               o->labelsize(11);
               o->maximum(100);
@@ -4349,25 +4463,29 @@ Fl_Double_Window* make_widget_panel() {
               o->textsize(11);
               o->callback((Fl_Callback*)cb_c);
             } // Fl_Value_Input* o
-            { w_textcolor = new Fl_Button(296, 115, 90, 20, "Text Color");
+            { auto* o = w_textcolor = new Fl_Button(296, 115, 90, 20, "Text Color");
+              (void)o;
               w_textcolor->tooltip("The value text color.");
               w_textcolor->labelsize(11);
               w_textcolor->callback((Fl_Callback*)cb_w_textcolor);
             } // Fl_Button* w_textcolor
-            { Fl_Menu_Button* o = new Fl_Menu_Button(386, 115, 18, 20);
+            { auto* o = new Fl_Menu_Button(386, 115, 18, 20);
+              (void)o;
               o->callback((Fl_Callback*)cb_d);
-//ﬂ ▼ ---------------------- finalize -~--=~-~~~---~-~-~--=- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~~-~~~-=-=--=~~-==-~= ▼ ﬂ//
               o->menu(colormenu);
 //ﬂ ▲ ---------~=~~==-~=~~=-----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
             } // Fl_Menu_Button* o
             wp_style_text->end();
           } // Fl_Group* wp_style_text
-          { Fl_Group* o = new Fl_Group(99, 150, 242, 20, "Label Margin:");
+          { auto* o = new Fl_Group(99, 150, 242, 20, "Label Margin:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Value_Input* o = new Fl_Value_Input(99, 150, 55, 20, "Horizontal:");
+            { auto* o = new Fl_Value_Input(99, 150, 55, 20, "Horizontal:");
+              (void)o;
               o->tooltip("Spacing between label and the horizontally aligned side of the widget.");
               o->labelsize(11);
               o->minimum(-127);
@@ -4377,7 +4495,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Horizontal);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(159, 150, 55, 20, "Vertical:");
+            { auto* o = new Fl_Value_Input(159, 150, 55, 20, "Vertical:");
+              (void)o;
               o->tooltip("Spacing between label and the vertically aligned side of the widget.");
               o->labelsize(11);
               o->minimum(-127);
@@ -4387,7 +4506,8 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Vertical);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Value_Input* o = new Fl_Value_Input(219, 150, 55, 20, "Image Gap:");
+            { auto* o = new Fl_Value_Input(219, 150, 55, 20, "Image Gap:");
+              (void)o;
               o->tooltip("Gap between label image and text in pixels");
               o->labelsize(11);
               o->maximum(255);
@@ -4396,39 +4516,46 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_Image);
               o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
             } // Fl_Value_Input* o
-            { Fl_Box* o = new Fl_Box(281, 150, 60, 20);
+            { auto* o = new Fl_Box(281, 150, 60, 20);
+              (void)o;
               o->labelsize(11);
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             o->end();
           } // Fl_Group* o
-          { Fl_Light_Button* o = new Fl_Light_Button(99, 175, 90, 20, "Compact");
+          { auto* o = new Fl_Light_Button(99, 175, 90, 20, "Compact");
+            (void)o;
             o->tooltip("use compact box types for closely set buttons");
             o->selection_color((Fl_Color)1);
             o->labelsize(11);
             o->callback((Fl_Callback*)cb_Compact);
           } // Fl_Light_Button* o
-          { Fl_Box* o = new Fl_Box(195, 205, 40, 40);
+          { auto* o = new Fl_Box(195, 205, 40, 40);
+            (void)o;
             o->labelsize(11);
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           wp_style_tab->end();
         } // Fl_Group* wp_style_tab
-        { wp_cpp_tab = new Fl_Group(10, 30, 400, 330, "C++");
+        { auto* o = wp_cpp_tab = new Fl_Group(10, 30, 400, 330, "C++");
+          (void)o;
           wp_cpp_tab->labelsize(11);
           wp_cpp_tab->callback((Fl_Callback*)propagate_load);
           wp_cpp_tab->when(FL_WHEN_NEVER);
           wp_cpp_tab->hide();
-          { Fl_Group* o = new Fl_Group(10, 35, 400, 55);
+          { auto* o = new Fl_Group(10, 35, 400, 55);
+            (void)o;
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
-            { wp_cpp_class = new Fl_Group(95, 40, 310, 20, "Class:");
+            { auto* o = wp_cpp_class = new Fl_Group(95, 40, 310, 20, "Class:");
+              (void)o;
               wp_cpp_class->labelfont(1);
               wp_cpp_class->labelsize(11);
               wp_cpp_class->callback((Fl_Callback*)propagate_load);
               wp_cpp_class->align(Fl_Align(FL_ALIGN_LEFT));
-              { Fl_Input* o = new Fl_Input(95, 40, 172, 20);
+              { auto* o = new Fl_Input(95, 40, 172, 20);
+                (void)o;
                 o->tooltip("The widget subclass.");
                 o->labelfont(1);
                 o->labelsize(11);
@@ -4437,7 +4564,8 @@ Fl_Double_Window* make_widget_panel() {
                 o->callback((Fl_Callback*)cb_e, (void*)(4));
                 Fl_Group::current()->resizable(o);
               } // Fl_Input* o
-              { Fl_Choice* o = new Fl_Choice(267, 40, 138, 20);
+              { auto* o = new Fl_Choice(267, 40, 138, 20);
+                (void)o;
                 o->tooltip("The widget subtype.");
                 o->box(FL_THIN_UP_BOX);
                 o->down_box(FL_BORDER_BOX);
@@ -4448,12 +4576,14 @@ Fl_Double_Window* make_widget_panel() {
               wp_cpp_class->end();
               Fl_Group::current()->resizable(wp_cpp_class);
             } // Fl_Group* wp_cpp_class
-            { wp_cpp_name = new Fl_Group(95, 65, 310, 20, "Name:");
+            { auto* o = wp_cpp_name = new Fl_Group(95, 65, 310, 20, "Name:");
+              (void)o;
               wp_cpp_name->labelfont(1);
               wp_cpp_name->labelsize(11);
               wp_cpp_name->callback((Fl_Callback*)propagate_load);
               wp_cpp_name->align(Fl_Align(FL_ALIGN_LEFT));
-              { Fl_Input* o = new Fl_Input(95, 65, 235, 20);
+              { auto* o = new Fl_Input(95, 65, 235, 20);
+                (void)o;
                 o->tooltip("The name of the widget.");
                 o->labelfont(1);
                 o->labelsize(11);
@@ -4462,7 +4592,8 @@ Fl_Double_Window* make_widget_panel() {
                 o->callback((Fl_Callback*)cb_10);
                 Fl_Group::current()->resizable(o);
               } // Fl_Input* o
-              { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+              { auto* o = new Fl_Choice(330, 65, 75, 20);
+                (void)o;
                 o->tooltip("Change member access attribute.");
                 o->down_box(FL_BORDER_BOX);
                 o->labelsize(11);
@@ -4471,7 +4602,8 @@ Fl_Double_Window* make_widget_panel() {
                 o->when(FL_WHEN_CHANGED);
                 o->menu(menu_2);
               } // Fl_Choice* o
-              { Fl_Choice* o = new Fl_Choice(330, 65, 75, 20);
+              { auto* o = new Fl_Choice(330, 65, 75, 20);
+                (void)o;
                 o->tooltip("Change widget accessibility.");
                 o->down_box(FL_BORDER_BOX);
                 o->labelsize(11);
@@ -4485,9 +4617,11 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Group* wp_cpp_name
             o->end();
           } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(20, 95, 380, 20);
+          { auto* o = new Fl_Group(20, 95, 380, 20);
+            (void)o;
             o->labelsize(11);
-            { code_choice[0] = new Fl_Button(20, 95, 85, 20, "// comment");
+            { auto* o = code_choice[0] = new Fl_Button(20, 95, 85, 20, "// comment");
+              (void)o;
               code_choice[0]->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
 "erview.");
               code_choice[0]->type(102);
@@ -4497,7 +4631,8 @@ Fl_Double_Window* make_widget_panel() {
               code_choice[0]->labelsize(11);
               code_choice[0]->callback((Fl_Callback*)cb_code_choice, (void*)(0));
             } // Fl_Button* code_choice[0]
-            { code_choice[1] = new Fl_Button(105, 95, 70, 20, "#include");
+            { auto* o = code_choice[1] = new Fl_Button(105, 95, 70, 20, "#include");
+              (void)o;
               code_choice[1]->tooltip("One or more #include lines or single-line declarations, written to the header"
 " file once each. Duplicate lines are dropped, even if several widgets add the "
 "same line.");
@@ -4507,7 +4642,8 @@ Fl_Double_Window* make_widget_panel() {
               code_choice[1]->labelsize(11);
               code_choice[1]->callback((Fl_Callback*)cb_code_choice1, (void*)(1));
             } // Fl_Button* code_choice[1]
-            { code_choice[2] = new Fl_Button(175, 95, 58, 20, "declare");
+            { auto* o = code_choice[2] = new Fl_Button(175, 95, 58, 20, "declare");
+              (void)o;
               code_choice[2]->tooltip("C++ declarations for this widget (member variables, external functions, typed"
 "efs, or using declarations), copied verbatim to the header file.");
               code_choice[2]->type(102);
@@ -4516,7 +4652,8 @@ Fl_Double_Window* make_widget_panel() {
               code_choice[2]->labelsize(11);
               code_choice[2]->callback((Fl_Callback*)cb_code_choice2, (void*)(2));
             } // Fl_Button* code_choice[2]
-            { code_choice[3] = new Fl_Button(233, 95, 52, 20, "setup");
+            { auto* o = code_choice[3] = new Fl_Button(233, 95, 52, 20, "setup");
+              (void)o;
               code_choice[3]->tooltip("C++ code inserted right after this widget is created and its attributes are s"
 "et, but before its children are instantiated. Use \'o\' to refer to the widget"
 ".");
@@ -4526,7 +4663,8 @@ Fl_Double_Window* make_widget_panel() {
               code_choice[3]->labelsize(11);
               code_choice[3]->callback((Fl_Callback*)cb_code_choice3, (void*)(3));
             } // Fl_Button* code_choice[3]
-            { code_choice[4] = new Fl_Button(285, 95, 50, 20, "final");
+            { auto* o = code_choice[4] = new Fl_Button(285, 95, 50, 20, "final");
+              (void)o;
               code_choice[4]->tooltip("C++ code inserted after this widget and all its children have been instantiat"
 "ed. Use \'o\' to refer to the widget.");
               code_choice[4]->type(102);
@@ -4535,7 +4673,8 @@ Fl_Double_Window* make_widget_panel() {
               code_choice[4]->labelsize(11);
               code_choice[4]->callback((Fl_Callback*)cb_code_choice4, (void*)(4));
             } // Fl_Button* code_choice[4]
-            { code_choice[5] = new Fl_Button(335, 95, 65, 20, "callback");
+            { auto* o = code_choice[5] = new Fl_Button(335, 95, 65, 20, "callback");
+              (void)o;
               code_choice[5]->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
 "access the Widget pointer and \'v\' to access the user value.");
               code_choice[5]->type(102);
@@ -4546,16 +4685,19 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Button* code_choice[5]
             o->end();
           } // Fl_Group* o
-          { Fl_Wizard* o = w_cpp_code_wiz = new Fl_Wizard(15, 120, 390, 235);
+          { auto* o = w_cpp_code_wiz = new Fl_Wizard(15, 120, 390, 235);
+            (void)o;
             w_cpp_code_wiz->box(FL_FLAT_BOX);
             w_cpp_code_wiz->labelsize(11);
             w_cpp_code_wiz->callback((Fl_Callback*)cb_w_cpp_code_wiz);
             { // Comment
-              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              auto* o = new Fl_Group(15, 120, 390, 235);
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->hide();
-              { Fl_Text_Editor* o = wComment = new Fl_Text_Editor(15, 120, 390, 235, "Comment:");
+              { auto* o = wComment = new Fl_Text_Editor(15, 120, 390, 235, "Comment:");
+                (void)o;
                 wComment->tooltip("Write a comment that will appear in the source code and in the widget tree ov"
 "erview.");
                 wComment->box(FL_DOWN_BOX);
@@ -4568,7 +4710,7 @@ Fl_Double_Window* make_widget_panel() {
                 wComment->align(Fl_Align(FL_ALIGN_LEFT));
                 wComment->when(FL_WHEN_CHANGED);
                 Fl_Group::current()->resizable(wComment);
-//ﬂ ▼ ---------------------- finalize ~--~=-----=-=-~=-~=~~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~~~=-~=-=-~~=-==-=~-= ▼ ﬂ//
                 w_cpp_code_act[0] = o;
                 wComment->buffer(new Fl_Text_Buffer());
 //ﬂ ▲ ---------~~=--=~--~~=~------------~--~~---~~=-~=----~= ▲ ﬂ//
@@ -4576,11 +4718,13 @@ Fl_Double_Window* make_widget_panel() {
               o->end();
             } // Fl_Group* o
             { // Include
-              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              auto* o = new Fl_Group(15, 120, 390, 235);
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->hide();
-              { fluid::widget::Code_Editor* o = v_code_input[0] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+              { auto* o = v_code_input[0] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                (void)o;
                 v_code_input[0]->tooltip("One or more #include lines or single-line declarations, written to the header"
 " file once each. Duplicate lines are dropped, even if several widgets add the "
 "same line.");
@@ -4596,18 +4740,20 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[0]->callback((Fl_Callback*)cb_v_code_input, (void*)(0));
                 v_code_input[0]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[0]->when(FL_WHEN_RELEASE);
-//ﬂ ▼ ---------------------- finalize ~--~-=-=--=~~-~==--~-= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~-=-=~--~-=-~~==~=~~- ▼ ﬂ//
                 w_cpp_code_act[1] = o;
 //ﬂ ▲ ---------~~==-~=~==~=-----------~~-~=-~~-~-=~=~~=~=~~- ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[0]
               o->end();
             } // Fl_Group* o
             { // Declare
-              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              auto* o = new Fl_Group(15, 120, 390, 235);
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->hide();
-              { fluid::widget::Code_Editor* o = v_code_input[1] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+              { auto* o = v_code_input[1] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                (void)o;
                 v_code_input[1]->tooltip("C++ declarations for this widget (member variables, external functions, typed"
 "efs, or using declarations), copied verbatim to the header file.");
                 v_code_input[1]->box(FL_DOWN_BOX);
@@ -4622,18 +4768,20 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[1]->callback((Fl_Callback*)cb_v_code_input1, (void*)(1));
                 v_code_input[1]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[1]->when(FL_WHEN_RELEASE);
-//ﬂ ▼ ---------------------- finalize -~=~-==~=~-=~=--~~=--= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~-=-~=-~=~~~~~-~~--=- ▼ ﬂ//
                 w_cpp_code_act[2] = o;
 //ﬂ ▲ ---------~~=~~~=-=--=~-----------~--~~=~~-~-~=----~~-~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[1]
               o->end();
             } // Fl_Group* o
             { // Setup
-              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              auto* o = new Fl_Group(15, 120, 390, 235);
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->hide();
-              { fluid::widget::Code_Editor* o = v_code_input[2] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+              { auto* o = v_code_input[2] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                (void)o;
                 v_code_input[2]->tooltip("C++ code inserted right after this widget is created and its attributes are s"
 "et, but before its children are instantiated. Use \'o\' to refer to the widget"
 ".");
@@ -4649,18 +4797,20 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[2]->callback((Fl_Callback*)cb_v_code_input2, (void*)(2));
                 v_code_input[2]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[2]->when(FL_WHEN_RELEASE);
-//ﬂ ▼ ---------------------- finalize --=-~==~=-=--~~=~~---- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~=~-=~=-=-==~~-=~-=~- ▼ ﬂ//
                 w_cpp_code_act[3] = o;
 //ﬂ ▲ ---------~~==-=---~=~~----------~--~=~~---~=~=--~---=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[2]
               o->end();
             } // Fl_Group* o
             { // Finalize
-              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              auto* o = new Fl_Group(15, 120, 390, 235);
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->hide();
-              { fluid::widget::Code_Editor* o = v_code_input[3] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+              { auto* o = v_code_input[3] = new fluid::widget::Code_Editor(15, 120, 390, 235);
+                (void)o;
                 v_code_input[3]->tooltip("C++ code inserted after this widget and all its children have been instantiat"
 "ed. Use \'o\' to refer to the widget.");
                 v_code_input[3]->box(FL_DOWN_BOX);
@@ -4675,20 +4825,23 @@ Fl_Double_Window* make_widget_panel() {
                 v_code_input[3]->callback((Fl_Callback*)cb_v_code_input3, (void*)(3));
                 v_code_input[3]->align(Fl_Align(FL_ALIGN_LEFT));
                 v_code_input[3]->when(FL_WHEN_RELEASE);
-//ﬂ ▼ ---------------------- finalize -~~---=~-=-=~=~--=---~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-~-=-=--=~=~--=~~-=~= ▼ ﬂ//
                 w_cpp_code_act[4] = o;
 //ﬂ ▲ ---------~=~=--~~~--~~----------~---=--=-~-=~=-=~=~~~= ▲ ﬂ//
               } // fluid::widget::Code_Editor* v_code_input[3]
               o->end();
             } // Fl_Group* o
             { // Callback
-              Fl_Group* o = new Fl_Group(15, 120, 390, 235);
+              auto* o = new Fl_Group(15, 120, 390, 235);
+              (void)o;
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
-              { Fl_Group* o = new Fl_Group(15, 120, 390, 180);
+              { auto* o = new Fl_Group(15, 120, 390, 180);
+                (void)o;
                 o->box(FL_FLAT_BOX);
                 o->callback((Fl_Callback*)propagate_load);
-                { fluid::widget::Code_Editor* o = wCallback = new fluid::widget::Code_Editor(15, 120, 390, 180);
+                { auto* o = wCallback = new fluid::widget::Code_Editor(15, 120, 390, 180);
+                  (void)o;
                   wCallback->tooltip("The callback function or code for the widget. Use the variable name \'o\' to "
 "access the Widget pointer and \'v\' to access the user value.");
                   wCallback->box(FL_DOWN_BOX);
@@ -4704,22 +4857,25 @@ Fl_Double_Window* make_widget_panel() {
                   wCallback->align(Fl_Align(FL_ALIGN_LEFT));
                   wCallback->when(FL_WHEN_RELEASE);
                   Fl_Group::current()->resizable(wCallback);
-//ﬂ ▼ ---------------------- finalize ~~=~~~~=~--~~~-=-=--~~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~=~=-=----~~==~~-=~~- ▼ ﬂ//
                   w_cpp_code_act[5] = o;
 //ﬂ ▲ ---------~~=-==~~~=-~~-----------~-~-~-~~~--~=-=-=---- ▲ ﬂ//
                 } // fluid::widget::Code_Editor* wCallback
                 o->end();
                 Fl_Group::current()->resizable(o);
               } // Fl_Group* o
-              { Fl_Group* o = new Fl_Group(15, 300, 390, 55);
+              { auto* o = new Fl_Group(15, 300, 390, 55);
+                (void)o;
                 o->labelsize(11);
                 o->callback((Fl_Callback*)propagate_load);
-                { wp_cpp_callback = new Fl_Group(95, 307, 310, 20, "User Data:");
+                { auto* o = wp_cpp_callback = new Fl_Group(95, 307, 310, 20, "User Data:");
+                  (void)o;
                   wp_cpp_callback->labelfont(1);
                   wp_cpp_callback->labelsize(11);
                   wp_cpp_callback->callback((Fl_Callback*)propagate_load);
                   wp_cpp_callback->align(Fl_Align(FL_ALIGN_LEFT));
-                  { Fl_Input* o = new Fl_Input(95, 307, 158, 20);
+                  { auto* o = new Fl_Input(95, 307, 158, 20);
+                    (void)o;
                     o->tooltip("The user data to pass into the callback code.");
                     o->labelfont(1);
                     o->labelsize(11);
@@ -4728,7 +4884,8 @@ Fl_Double_Window* make_widget_panel() {
                     o->callback((Fl_Callback*)cb_12);
                     Fl_Group::current()->resizable(o);
                   } // Fl_Input* o
-                  { Fl_Menu_Button* o = new Fl_Menu_Button(260, 307, 145, 20, "When");
+                  { auto* o = new Fl_Menu_Button(260, 307, 145, 20, "When");
+                    (void)o;
                     o->tooltip("When to call the callback function.");
                     o->box(FL_THIN_UP_BOX);
                     o->down_box(FL_BORDER_BOX);
@@ -4737,19 +4894,21 @@ Fl_Double_Window* make_widget_panel() {
                     o->textsize(11);
                     o->callback((Fl_Callback*)cb_When);
                     o->when(FL_WHEN_CHANGED);
-//ﬂ ▼ ---------------------- finalize -~~-~~~~~~=~=-~--=~-~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-=~=~~=--=~-=~~=-~-=- ▼ ﬂ//
                     o->menu(whenmenu);
 //ﬂ ▲ ---------~=~=~-----~-~----------~--==-~~=-~~----~-~~~= ▲ ﬂ//
                   } // Fl_Menu_Button* o
                   wp_cpp_callback->end();
                   Fl_Group::current()->resizable(wp_cpp_callback);
                 } // Fl_Group* wp_cpp_callback
-                { Fl_Group* o = new Fl_Group(95, 329, 310, 26, "Type:");
+                { auto* o = new Fl_Group(95, 329, 310, 26, "Type:");
+                  (void)o;
                   o->labelfont(1);
                   o->labelsize(11);
                   o->callback((Fl_Callback*)propagate_load);
                   o->align(Fl_Align(FL_ALIGN_LEFT));
-                  { Fl_Input_Choice* o = new Fl_Input_Choice(95, 332, 158, 20);
+                  { auto* o = new Fl_Input_Choice(95, 332, 158, 20);
+                    (void)o;
                     o->tooltip("The type of the user data.");
                     o->labelfont(1);
                     o->labelsize(11);
@@ -4759,7 +4918,8 @@ Fl_Double_Window* make_widget_panel() {
                     Fl_Group::current()->resizable(o);
                     o->menu(menu_4);
                   } // Fl_Input_Choice* o
-                  { w_when_box = new Fl_Box(260, 329, 145, 26, "FL_WHEN_NEVER");
+                  { auto* o = w_when_box = new Fl_Box(260, 329, 145, 26, "FL_WHEN_NEVER");
+                    (void)o;
                     w_when_box->box(FL_FLAT_BOX);
                     w_when_box->selection_color((Fl_Color)1);
                     w_when_box->labelsize(8);
@@ -4777,7 +4937,8 @@ Fl_Double_Window* make_widget_panel() {
           } // Fl_Wizard* w_cpp_code_wiz
           wp_cpp_tab->end();
         } // Fl_Group* wp_cpp_tab
-        { widget_tab_grid = new Grid_Tab(10, 30, 400, 330, "Grid");
+        { auto* o = widget_tab_grid = new Grid_Tab(10, 30, 400, 330, "Grid");
+          (void)o;
           widget_tab_grid->box(FL_NO_BOX);
           widget_tab_grid->color(FL_BACKGROUND_COLOR);
           widget_tab_grid->selection_color(FL_BACKGROUND_COLOR);
@@ -4791,7 +4952,8 @@ Fl_Double_Window* make_widget_panel() {
           widget_tab_grid->hide();
           widget_tab_grid->end();
         } // Grid_Tab* widget_tab_grid
-        { widget_tab_grid_child = new Grid_Child_Tab(10, 30, 400, 330, "Grid Child");
+        { auto* o = widget_tab_grid_child = new Grid_Child_Tab(10, 30, 400, 330, "Grid Child");
+          (void)o;
           widget_tab_grid_child->box(FL_NO_BOX);
           widget_tab_grid_child->color(FL_BACKGROUND_COLOR);
           widget_tab_grid_child->selection_color(FL_BACKGROUND_COLOR);
@@ -4808,45 +4970,53 @@ Fl_Double_Window* make_widget_panel() {
         o->show();
         widget_tabs->end();
       } // Fl_Tabs* widget_tabs
-      { data_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = data_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         data_tabs->selection_color((Fl_Color)12);
         data_tabs->labelsize(11);
         data_tabs->labelcolor(FL_WHITE);
         data_tabs->callback((Fl_Callback*)cb_data_tabs);
         data_tabs->hide();
-        { data_tabs_data = new Fl_Group(10, 30, 400, 330, "Inline Data");
+        { auto* o = data_tabs_data = new Fl_Group(10, 30, 400, 330, "Inline Data");
+          (void)o;
           data_tabs_data->labelsize(11);
           data_tabs_data->callback((Fl_Callback*)propagate_load);
-          { Fl_Group* o = new Fl_Group(95, 49, 310, 21, "Visibility:");
+          { auto* o = new Fl_Group(95, 49, 310, 21, "Visibility:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Choice* o = new Fl_Choice(95, 50, 210, 20);
+            { auto* o = new Fl_Choice(95, 50, 210, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_14);
               o->menu(menu_5);
             } // Fl_Choice* o
-            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+            { auto* o = new Fl_Choice(95, 50, 75, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_15);
               o->menu(menu_6);
             } // Fl_Choice* o
-            { Fl_Box* o = new Fl_Box(363, 49, 42, 20);
+            { auto* o = new Fl_Box(363, 49, 42, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             o->end();
           } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(95, 75, 310, 20, "Output: ");
+          { auto* o = new Fl_Group(95, 75, 310, 20, "Output: ");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Choice* o = new Fl_Choice(95, 75, 210, 20);
+            { auto* o = new Fl_Choice(95, 75, 210, 20);
+              (void)o;
               o->tooltip("text mode generates a \"const char*\" and a trailing NUL, compressed mode use"
 "s zlib to generate a binary block");
               o->down_box(FL_BORDER_BOX);
@@ -4855,12 +5025,14 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_16);
               o->menu(menu_7);
             } // Fl_Choice* o
-            { Fl_Box* o = new Fl_Box(363, 75, 42, 20);
+            { auto* o = new Fl_Box(363, 75, 42, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             o->end();
           } // Fl_Group* o
-          { Fl_Input* o = new Fl_Input(95, 100, 310, 20, "Name:");
+          { auto* o = new Fl_Input(95, 100, 310, 20, "Name:");
+            (void)o;
             o->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode "
 "and \"const char*\" in text mode.");
             o->labelfont(1);
@@ -4870,9 +5042,11 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Name);
             o->align(Fl_Align(132));
           } // Fl_Input* o
-          { Fl_Group* o = new Fl_Group(95, 125, 310, 20);
+          { auto* o = new Fl_Group(95, 125, 310, 20);
+            (void)o;
             o->callback((Fl_Callback*)propagate_load);
-            { wp_data_filename = new Fl_Input(95, 125, 270, 20, "Filename:");
+            { auto* o = wp_data_filename = new Fl_Input(95, 125, 270, 20, "Filename:");
+              (void)o;
               wp_data_filename->tooltip("name and path of file that will be inlined");
               wp_data_filename->labelfont(1);
               wp_data_filename->labelsize(11);
@@ -4882,13 +5056,15 @@ Fl_Double_Window* make_widget_panel() {
               wp_data_filename->align(Fl_Align(132));
               Fl_Group::current()->resizable(wp_data_filename);
             } // Fl_Input* wp_data_filename
-            { Fl_Button* o = new Fl_Button(365, 125, 40, 20, "@fileopen");
+            { auto* o = new Fl_Button(365, 125, 40, 20, "@fileopen");
+              (void)o;
               o->labelcolor((Fl_Color)134);
               o->callback((Fl_Callback*)cb_fileopen);
             } // Fl_Button* o
             o->end();
           } // Fl_Group* o
-          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 150, 310, 105, "Comment:");
+          { auto* o = new Fl_Text_Editor(95, 150, 310, 105, "Comment:");
+            (void)o;
             o->box(FL_DOWN_BOX);
             o->labelfont(1);
             o->labelsize(11);
@@ -4898,7 +5074,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize --~=~--~---~~==~-~---- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~~-~~~---~-=-~=~=-=~= ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~=~-~=--~~~=~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -4908,16 +5084,19 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* data_tabs_data
         data_tabs->end();
       } // Fl_Tabs* data_tabs
-      { comment_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = comment_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         comment_tabs->selection_color((Fl_Color)12);
         comment_tabs->labelsize(11);
         comment_tabs->labelcolor(FL_WHITE);
         comment_tabs->callback((Fl_Callback*)cb_comment_tabs);
         comment_tabs->hide();
-        { comment_tabs_comment = new Fl_Group(10, 30, 400, 330, "Comment");
+        { auto* o = comment_tabs_comment = new Fl_Group(10, 30, 400, 330, "Comment");
+          (void)o;
           comment_tabs_comment->labelsize(11);
           comment_tabs_comment->callback((Fl_Callback*)propagate_load);
-          { Fl_Text_Editor* o = comment_tabs_name = new Fl_Text_Editor(95, 45, 310, 235, "Comment:");
+          { auto* o = comment_tabs_name = new Fl_Text_Editor(95, 45, 310, 235, "Comment:");
+            (void)o;
             comment_tabs_name->box(FL_DOWN_BOX);
             comment_tabs_name->labelfont(1);
             comment_tabs_name->labelsize(11);
@@ -4927,37 +5106,43 @@ Fl_Double_Window* make_widget_panel() {
             comment_tabs_name->callback((Fl_Callback*)cb_comment_tabs_name);
             comment_tabs_name->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(comment_tabs_name);
-//ﬂ ▼ ---------------------- finalize -~=--~=-=-----=~~=-=~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-~=-=~--~~~~=--~=---- ▼ ﬂ//
             o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
             o->buffer(new Fl_Text_Buffer());
 //ﬂ ▲ ---------~=~-==~~-=-=-----------~~-=--~=~-----~~-~~~=- ▲ ﬂ//
           } // Fl_Text_Editor* comment_tabs_name
-          { Fl_Group* o = new Fl_Group(95, 285, 310, 65);
+          { auto* o = new Fl_Group(95, 285, 310, 65);
+            (void)o;
             o->callback((Fl_Callback*)propagate_load);
-            { comment_predefined_2 = new Fl_Menu_Button(95, 285, 90, 20, "Predefined");
+            { auto* o = comment_predefined_2 = new Fl_Menu_Button(95, 285, 90, 20, "Predefined");
+              (void)o;
               comment_predefined_2->labelsize(11);
               comment_predefined_2->textsize(11);
               comment_predefined_2->callback((Fl_Callback*)cb_comment_predefined_2);
             } // Fl_Menu_Button* comment_predefined_2
-            { comment_load_2 = new Fl_Button(190, 285, 90, 20, "Import...");
+            { auto* o = comment_load_2 = new Fl_Button(190, 285, 90, 20, "Import...");
+              (void)o;
               comment_load_2->labelsize(11);
               comment_load_2->callback((Fl_Callback*)cb_comment_load_2);
             } // Fl_Button* comment_load_2
-            { Fl_Check_Button* o = new Fl_Check_Button(95, 310, 120, 20, "output to header file");
+            { auto* o = new Fl_Check_Button(95, 310, 120, 20, "output to header file");
+              (void)o;
               o->tooltip("write the comment into the header (.h) file");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_output);
               o->when(FL_WHEN_CHANGED);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(95, 330, 120, 20, "output to source file");
+            { auto* o = new Fl_Check_Button(95, 330, 120, 20, "output to source file");
+              (void)o;
               o->tooltip("write the comment into the source (.cxx) file");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_output1);
               o->when(FL_WHEN_CHANGED);
             } // Fl_Check_Button* o
-            { Fl_Box* o = new Fl_Box(404, 285, 1, 65);
+            { auto* o = new Fl_Box(404, 285, 1, 65);
+              (void)o;
               o->labelsize(11);
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
@@ -4968,26 +5153,30 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* comment_tabs_comment
         comment_tabs->end();
       } // Fl_Tabs* comment_tabs
-      { class_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = class_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         class_tabs->selection_color((Fl_Color)12);
         class_tabs->labelsize(11);
         class_tabs->labelcolor(FL_WHITE);
         class_tabs->callback((Fl_Callback*)cb_class_tabs);
         class_tabs->hide();
-        { class_tabs_main = new Fl_Group(10, 30, 400, 330, "Class");
+        { auto* o = class_tabs_main = new Fl_Group(10, 30, 400, 330, "Class");
+          (void)o;
           class_tabs_main->labelsize(11);
           class_tabs_main->callback((Fl_Callback*)propagate_load);
           { /*
              This elemnt is hidden because we don't
              support a class inside a class at this point
              */
-            Fl_Group* o = new Fl_Group(95, 50, 310, 21, "Visibility:");
+            auto* o = new Fl_Group(95, 50, 310, 21, "Visibility:");
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             o->hide();
-            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+            { auto* o = new Fl_Choice(95, 50, 75, 20);
+              (void)o;
               o->tooltip("visibility for a class inside a class");
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
@@ -4995,12 +5184,14 @@ Fl_Double_Window* make_widget_panel() {
               o->callback((Fl_Callback*)cb_17);
               o->menu(menu_8);
             } // Fl_Choice* o
-            { Fl_Box* o = new Fl_Box(363, 50, 42, 20);
+            { auto* o = new Fl_Box(363, 50, 42, 20);
+              (void)o;
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             o->end();
           } // Fl_Group* o
-          { Fl_Input* o = new Fl_Input(95, 50, 305, 20, "Attribute:");
+          { auto* o = new Fl_Input(95, 50, 305, 20, "Attribute:");
+            (void)o;
             o->tooltip("class attribute or `alignas()`");
             o->labelfont(1);
             o->labelsize(11);
@@ -5008,7 +5199,8 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Attribute);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(95, 75, 305, 20, "Class Name:");
+          { auto* o = new Fl_Input(95, 75, 305, 20, "Class Name:");
+            (void)o;
             o->tooltip("class name, must be a single C++ keyword");
             o->labelfont(1);
             o->labelsize(11);
@@ -5016,7 +5208,8 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Class);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(95, 100, 305, 20, "Base Class:");
+          { auto* o = new Fl_Input(95, 100, 305, 20, "Base Class:");
+            (void)o;
             o->tooltip("visibility and name of base class or classes\ne.g. `public Fl_Widget`");
             o->labelfont(1);
             o->labelsize(11);
@@ -5024,7 +5217,8 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Base);
           } // Fl_Input* o
-          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 125, 305, 110, "Comment:");
+          { auto* o = new Fl_Text_Editor(95, 125, 305, 110, "Comment:");
+            (void)o;
             o->box(FL_DOWN_BOX);
             o->labelfont(1);
             o->labelsize(11);
@@ -5034,7 +5228,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment1);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~--==-=~~=~-~~=~=~~==- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~-=-~=~~~~~~-=~~=---= ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~==-=-~--~~=------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5044,16 +5238,19 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* class_tabs_main
         class_tabs->end();
       } // Fl_Tabs* class_tabs
-      { declblock_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = declblock_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         declblock_tabs->selection_color((Fl_Color)12);
         declblock_tabs->labelsize(11);
         declblock_tabs->labelcolor(FL_WHITE);
         declblock_tabs->callback((Fl_Callback*)cb_declblock_tabs);
         declblock_tabs->hide();
-        { declblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration Block");
+        { auto* o = declblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration Block");
+          (void)o;
           declblock_tabs_main->labelsize(11);
           declblock_tabs_main->callback((Fl_Callback*)propagate_load);
-          { Fl_Input* o = new Fl_Input(95, 50, 305, 20, "Start Code:");
+          { auto* o = new Fl_Input(95, 50, 305, 20, "Start Code:");
+            (void)o;
             o->tooltip("`#ifdef` or similar conditional declaration block");
             o->labelfont(1);
             o->labelsize(11);
@@ -5061,7 +5258,8 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Start);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(95, 75, 305, 20, "End Code:");
+          { auto* o = new Fl_Input(95, 75, 305, 20, "End Code:");
+            (void)o;
             o->tooltip("`#endif` or similar declaration code block");
             o->labelfont(1);
             o->labelsize(11);
@@ -5069,44 +5267,53 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_End);
           } // Fl_Input* o
-          { Fl_Group* o = new Fl_Group(95, 100, 305, 120);
+          { auto* o = new Fl_Group(95, 100, 305, 120);
+            (void)o;
             o->callback((Fl_Callback*)propagate_load);
-            { Fl_Box* o = new Fl_Box(95, 100, 270, 20, "Enclose code generated by children in source file:");
+            { auto* o = new Fl_Box(95, 100, 270, 20, "Enclose code generated by children in source file:");
+              (void)o;
               o->labelsize(11);
               o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
             } // Fl_Box* o
-            { Fl_Check_Button* o = new Fl_Check_Button(105, 120, 260, 20, "implementations");
+            { auto* o = new Fl_Check_Button(105, 120, 260, 20, "implementations");
+              (void)o;
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_implementations);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(105, 140, 260, 20, "static initializations and callbacks");
+            { auto* o = new Fl_Check_Button(105, 140, 260, 20, "static initializations and callbacks");
+              (void)o;
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_static);
             } // Fl_Check_Button* o
-            { Fl_Box* o = new Fl_Box(95, 160, 270, 20, "Enclose code in header file:");
+            { auto* o = new Fl_Box(95, 160, 270, 20, "Enclose code in header file:");
+              (void)o;
               o->labelsize(11);
               o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
             } // Fl_Box* o
-            { Fl_Check_Button* o = new Fl_Check_Button(105, 180, 260, 20, "forward declarations");
+            { auto* o = new Fl_Check_Button(105, 180, 260, 20, "forward declarations");
+              (void)o;
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_forward);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(105, 200, 260, 20, "preprecessor and callback declarations");
+            { auto* o = new Fl_Check_Button(105, 200, 260, 20, "preprecessor and callback declarations");
+              (void)o;
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_preprecessor);
             } // Fl_Check_Button* o
-            { Fl_Box* o = new Fl_Box(365, 100, 35, 120);
+            { auto* o = new Fl_Box(365, 100, 35, 120);
+              (void)o;
               o->labelsize(11);
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
             o->end();
           } // Fl_Group* o
-          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 225, 305, 117, "Comment:");
+          { auto* o = new Fl_Text_Editor(95, 225, 305, 117, "Comment:");
+            (void)o;
             o->box(FL_DOWN_BOX);
             o->labelfont(1);
             o->labelsize(11);
@@ -5116,7 +5323,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment2);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~~~~=~---=--~=-~~~~~=- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~---~-~=~-=-~~=-=~-==~ ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=-=~~~~~---------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5126,37 +5333,44 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* declblock_tabs_main
         declblock_tabs->end();
       } // Fl_Tabs* declblock_tabs
-      { decl_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = decl_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         decl_tabs->selection_color((Fl_Color)12);
         decl_tabs->labelsize(11);
         decl_tabs->labelcolor(FL_WHITE);
         decl_tabs->callback((Fl_Callback*)cb_decl_tabs);
         decl_tabs->hide();
-        { decl_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration");
+        { auto* o = decl_tabs_main = new Fl_Group(10, 30, 400, 330, "Declaration");
+          (void)o;
           decl_tabs_main->labelsize(11);
           decl_tabs_main->callback((Fl_Callback*)propagate_load);
-          { Fl_Group* o = new Fl_Group(15, 50, 390, 20);
+          { auto* o = new Fl_Group(15, 50, 390, 20);
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Box* o = new Fl_Box(404, 50, 1, 20);
+            { auto* o = new Fl_Box(404, 50, 1, 20);
+              (void)o;
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
-            { Fl_Box* o = new Fl_Box(95, 50, 1, 20, "Visibility:");
+            { auto* o = new Fl_Box(95, 50, 1, 20, "Visibility:");
+              (void)o;
               o->labelfont(1);
               o->labelsize(11);
               o->align(Fl_Align(FL_ALIGN_LEFT));
             } // Fl_Box* o
-            { Fl_Choice* o = new Fl_Choice(95, 50, 185, 20);
+            { auto* o = new Fl_Choice(95, 50, 185, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_18);
               o->menu(menu_9);
             } // Fl_Choice* o
-            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+            { auto* o = new Fl_Choice(95, 50, 75, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
@@ -5165,15 +5379,18 @@ Fl_Double_Window* make_widget_panel() {
             } // Fl_Choice* o
             o->end();
           } // Fl_Group* o
-          { Fl_Tile* o = new Fl_Tile(15, 75, 390, 210);
+          { auto* o = new Fl_Tile(15, 75, 390, 210);
+            (void)o;
             o->callback((Fl_Callback*)cb_1a);
-            { Fl_Group* o = new Fl_Group(15, 75, 390, 105);
+            { auto* o = new Fl_Group(15, 75, 390, 105);
+              (void)o;
               o->box(FL_FLAT_BOX);
               o->labelfont(1);
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->align(Fl_Align(FL_ALIGN_LEFT));
-              { fluid::widget::Code_Editor* o = new fluid::widget::Code_Editor(95, 75, 310, 100, "Declaration:");
+              { auto* o = new fluid::widget::Code_Editor(95, 75, 310, 100, "Declaration:");
+                (void)o;
                 o->tooltip("a declaration: `int x;`, an external symbol: `extern int foo();`,\na `#` dire"
 "ctive: `#include <foo.h>`, a typedef `typedef char byte;`,\n or a `using` stat"
 "ement, etc.");
@@ -5190,16 +5407,18 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ---=-==~~=-~~-~~~~~=~- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-~~=~=~~=-~-=~=~-=~=~ ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=~=-~-~=-------------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
               o->end();
             } // Fl_Group* o
-            { Fl_Group* o = new Fl_Group(15, 180, 390, 105);
+            { auto* o = new Fl_Group(15, 180, 390, 105);
+              (void)o;
               o->box(FL_FLAT_BOX);
               o->callback((Fl_Callback*)propagate_load);
-              { Fl_Text_Editor* o = new Fl_Text_Editor(95, 185, 310, 100, "Comment:");
+              { auto* o = new Fl_Text_Editor(95, 185, 310, 100, "Comment:");
+                (void)o;
                 o->box(FL_DOWN_BOX);
                 o->labelfont(1);
                 o->labelsize(11);
@@ -5209,7 +5428,7 @@ Fl_Double_Window* make_widget_panel() {
                 o->callback((Fl_Callback*)cb_Comment3);
                 o->align(Fl_Align(FL_ALIGN_LEFT));
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize --~~=~~=-=-~-~=~=~=--= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~~~~--~=~-~~--~~---~~ ▼ ﬂ//
                 o->buffer(new Fl_Text_Buffer());
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~==~~=-==~~~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5226,16 +5445,19 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* decl_tabs_main
         decl_tabs->end();
       } // Fl_Tabs* decl_tabs
-      { codeblock_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = codeblock_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         codeblock_tabs->selection_color((Fl_Color)12);
         codeblock_tabs->labelsize(11);
         codeblock_tabs->labelcolor(FL_WHITE);
         codeblock_tabs->callback((Fl_Callback*)cb_codeblock_tabs);
         codeblock_tabs->hide();
-        { codeblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Code Block");
+        { auto* o = codeblock_tabs_main = new Fl_Group(10, 30, 400, 330, "Code Block");
+          (void)o;
           codeblock_tabs_main->labelsize(11);
           codeblock_tabs_main->callback((Fl_Callback*)propagate_load);
-          { Fl_Input* o = new Fl_Input(95, 50, 305, 20, "Start Code:");
+          { auto* o = new Fl_Input(95, 50, 305, 20, "Start Code:");
+            (void)o;
             o->tooltip("condition statement: `if (x==1)`, or empty");
             o->labelfont(1);
             o->labelsize(11);
@@ -5243,7 +5465,8 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Start1);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(95, 75, 305, 20, "End Code:");
+          { auto* o = new Fl_Input(95, 75, 305, 20, "End Code:");
+            (void)o;
             o->tooltip("condition end: `while (x==1);`, or empty");
             o->labelfont(1);
             o->labelsize(11);
@@ -5251,7 +5474,8 @@ Fl_Double_Window* make_widget_panel() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_End1);
           } // Fl_Input* o
-          { Fl_Text_Editor* o = new Fl_Text_Editor(95, 100, 305, 117, "Comment:");
+          { auto* o = new Fl_Text_Editor(95, 100, 305, 117, "Comment:");
+            (void)o;
             o->tooltip("code block comment");
             o->box(FL_DOWN_BOX);
             o->labelfont(1);
@@ -5262,7 +5486,7 @@ Fl_Double_Window* make_widget_panel() {
             o->callback((Fl_Callback*)cb_Comment4);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~~~~-=~~~-~-~=~--~=~~~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~~--=---~=~~-=~=~-=-= ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=-==----~~-------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5272,16 +5496,19 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* codeblock_tabs_main
         codeblock_tabs->end();
       } // Fl_Tabs* codeblock_tabs
-      { code_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = code_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         code_tabs->selection_color((Fl_Color)12);
         code_tabs->labelsize(11);
         code_tabs->labelcolor(FL_WHITE);
         code_tabs->callback((Fl_Callback*)cb_code_tabs);
         code_tabs->hide();
-        { code_tabs_main = new Fl_Group(10, 30, 400, 330, "Code");
+        { auto* o = code_tabs_main = new Fl_Group(10, 30, 400, 330, "Code");
+          (void)o;
           code_tabs_main->labelsize(11);
           code_tabs_main->callback((Fl_Callback*)propagate_load);
-          { fluid::widget::Code_Editor* o = new fluid::widget::Code_Editor(15, 40, 390, 315);
+          { auto* o = new fluid::widget::Code_Editor(15, 40, 390, 315);
+            (void)o;
             o->box(FL_DOWN_BOX);
             o->color(FL_BACKGROUND2_COLOR);
             o->selection_color(FL_SELECTION_COLOR);
@@ -5295,7 +5522,7 @@ Fl_Double_Window* make_widget_panel() {
             o->align(Fl_Align(FL_ALIGN_TOP));
             o->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~--=-~=-~-~-=--~=--~~~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-=--=~--~--~~~--~=~~~ ▼ ﬂ//
             o->linenumber_width(60);
             o->linenumber_size(o->Fl_Text_Display::textsize());
 //ﬂ ▲ ---------~=~~---~~=~~=-----------~-=~-~-~=~~~==-=~---= ▲ ﬂ//
@@ -5305,59 +5532,70 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* code_tabs_main
         code_tabs->end();
       } // Fl_Tabs* code_tabs
-      { func_tabs = new Fl_Tabs(10, 10, 400, 350);
+      { auto* o = func_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
         func_tabs->selection_color((Fl_Color)12);
         func_tabs->labelsize(11);
         func_tabs->labelcolor(FL_WHITE);
         func_tabs->callback((Fl_Callback*)cb_func_tabs);
         func_tabs->hide();
-        { func_tabs_main = new Fl_Group(10, 30, 400, 330, "Function");
+        { auto* o = func_tabs_main = new Fl_Group(10, 30, 400, 330, "Function");
+          (void)o;
           func_tabs_main->labelsize(11);
           func_tabs_main->callback((Fl_Callback*)propagate_load);
-          { Fl_Group* o = new Fl_Group(15, 50, 390, 45);
+          { auto* o = new Fl_Group(15, 50, 390, 45);
+            (void)o;
             o->labelfont(1);
             o->labelsize(11);
             o->callback((Fl_Callback*)propagate_load);
             o->align(Fl_Align(FL_ALIGN_LEFT));
-            { Fl_Box* o = new Fl_Box(404, 50, 1, 20);
+            { auto* o = new Fl_Box(404, 50, 1, 20);
+              (void)o;
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
-            { Fl_Box* o = new Fl_Box(95, 50, 1, 20, "Visibility:");
+            { auto* o = new Fl_Box(95, 50, 1, 20, "Visibility:");
+              (void)o;
               o->labelfont(1);
               o->labelsize(11);
               o->align(Fl_Align(FL_ALIGN_LEFT));
             } // Fl_Box* o
-            { Fl_Choice* o = new Fl_Choice(95, 50, 80, 20);
+            { auto* o = new Fl_Choice(95, 50, 80, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_1c);
               o->menu(menu_b);
             } // Fl_Choice* o
-            { Fl_Choice* o = new Fl_Choice(95, 50, 75, 20);
+            { auto* o = new Fl_Choice(95, 50, 75, 20);
+              (void)o;
               o->down_box(FL_BORDER_BOX);
               o->labelsize(11);
               o->textsize(11);
               o->callback((Fl_Callback*)cb_1d);
               o->menu(menu_c);
             } // Fl_Choice* o
-            { Fl_Check_Button* o = new Fl_Check_Button(95, 75, 90, 20, "declare \"C\"");
+            { auto* o = new Fl_Check_Button(95, 75, 90, 20, "declare \"C\"");
+              (void)o;
               o->down_box(FL_DOWN_BOX);
               o->labelsize(11);
               o->callback((Fl_Callback*)cb_declare);
             } // Fl_Check_Button* o
             o->end();
           } // Fl_Group* o
-          { Fl_Tile* o = new Fl_Tile(15, 100, 390, 220);
+          { auto* o = new Fl_Tile(15, 100, 390, 220);
+            (void)o;
             o->callback((Fl_Callback*)cb_1e);
-            { Fl_Group* o = new Fl_Group(15, 100, 390, 55);
+            { auto* o = new Fl_Group(15, 100, 390, 55);
+              (void)o;
               o->box(FL_FLAT_BOX);
               o->labelfont(1);
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->align(Fl_Align(FL_ALIGN_LEFT));
-              { fluid::widget::Code_Editor* o = new fluid::widget::Code_Editor(95, 100, 310, 50, "Function\nName and\nArgs:");
+              { auto* o = new fluid::widget::Code_Editor(95, 100, 310, 50, "Function\nName and\nArgs:");
+                (void)o;
                 o->tooltip("function name and args, or blank for `main(..)`");
                 o->box(FL_DOWN_FRAME);
                 o->color(FL_BACKGROUND2_COLOR);
@@ -5372,19 +5610,21 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~-----~==--=--~==~~-~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize --~---~~-=~=~---~~=~=- ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~=~--~~---~-=----------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
               o->end();
             } // Fl_Group* o
-            { Fl_Group* o = new Fl_Group(15, 155, 390, 60);
+            { auto* o = new Fl_Group(15, 155, 390, 60);
+              (void)o;
               o->box(FL_FLAT_BOX);
               o->labelfont(1);
               o->labelsize(11);
               o->callback((Fl_Callback*)propagate_load);
               o->align(Fl_Align(FL_ALIGN_LEFT));
-              { fluid::widget::Code_Editor* o = new fluid::widget::Code_Editor(95, 160, 310, 50, "Return Type:");
+              { auto* o = new fluid::widget::Code_Editor(95, 160, 310, 50, "Return Type:");
+                (void)o;
                 o->tooltip("return type, or blank to return outermost widget");
                 o->box(FL_DOWN_FRAME);
                 o->color(FL_BACKGROUND2_COLOR);
@@ -5399,16 +5639,18 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ------~==~~~=--==~-=~- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize -~-=-=~==-~==~~~=~--=- ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~=~=-=~~=-~~~----------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
               o->end();
             } // Fl_Group* o
-            { Fl_Group* o = new Fl_Group(15, 215, 390, 105);
+            { auto* o = new Fl_Group(15, 215, 390, 105);
+              (void)o;
               o->box(FL_FLAT_BOX);
               o->callback((Fl_Callback*)propagate_load);
-              { Fl_Text_Editor* o = new Fl_Text_Editor(95, 220, 310, 100, "Comment:");
+              { auto* o = new Fl_Text_Editor(95, 220, 310, 100, "Comment:");
+                (void)o;
                 o->box(FL_DOWN_BOX);
                 o->labelfont(1);
                 o->labelsize(11);
@@ -5418,7 +5660,7 @@ Fl_Double_Window* make_widget_panel() {
                 o->callback((Fl_Callback*)cb_Comment5);
                 o->align(Fl_Align(FL_ALIGN_LEFT));
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~-~==----~~=-=-~-=~~~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ---~=~~-~==-=-=~~-~=~- ▼ ﬂ//
                 o->buffer(new Fl_Text_Buffer());
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=~~--=~~--~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5440,36 +5682,43 @@ Fl_Double_Window* make_widget_panel() {
       tabs_wizard->end();
       Fl_Group::current()->resizable(tabs_wizard);
     } // Fl_Wizard* tabs_wizard
-    { Fl_Tabs* o = widget_tabs_repo = new Fl_Tabs(10, 10, 400, 350);
+    { auto* o = widget_tabs_repo = new Fl_Tabs(10, 10, 400, 350);
+      (void)o;
       widget_tabs_repo->hide();
-      { Fl_Group* o = new Fl_Group(10, 30, 400, 330);
+      { auto* o = new Fl_Group(10, 30, 400, 330);
+        (void)o;
         o->end();
         Fl_Group::current()->resizable(o);
       } // Fl_Group* o
       o->hide();
       widget_tabs_repo->end();
     } // Fl_Tabs* widget_tabs_repo
-    { Fl_Group* o = new Fl_Group(10, 370, 400, 20);
+    { auto* o = new Fl_Group(10, 370, 400, 20);
+      (void)o;
       o->labelsize(11);
-      { wLiveMode = new Fl_Button(10, 370, 80, 20, "Live &Resize");
+      { auto* o = wLiveMode = new Fl_Button(10, 370, 80, 20, "Live &Resize");
+        (void)o;
         wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh"
 "avior.");
         wLiveMode->type(1);
         wLiveMode->labelsize(10);
         wLiveMode->callback((Fl_Callback*)live_mode_cb);
       } // Fl_Button* wLiveMode
-      { overlay_button = new Fl_Button(94, 370, 80, 20, "Hide &Overlays");
+      { auto* o = overlay_button = new Fl_Button(94, 370, 80, 20, "Hide &Overlays");
+        (void)o;
         overlay_button->tooltip("Hide the widget overlay box.");
         overlay_button->labelsize(10);
         overlay_button->callback((Fl_Callback*)overlay_cb);
       } // Fl_Button* overlay_button
       { // Hidden resizable box
-        Fl_Box* o = new Fl_Box(258, 370, 72, 20);
+        auto* o = new Fl_Box(258, 370, 72, 20);
+        (void)o;
         o->labelsize(11);
         o->hide();
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { Fl_Return_Button* o = new Fl_Return_Button(330, 370, 80, 20, "Close");
+      { auto* o = new Fl_Return_Button(330, 370, 80, 20, "Close");
+        (void)o;
         o->labelsize(11);
         o->callback((Fl_Callback*)ok_cb);
       } // Fl_Return_Button* o

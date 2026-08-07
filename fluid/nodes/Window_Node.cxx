@@ -1493,12 +1493,9 @@ void Widget_Class_Node::write_code2(fluid::io::Code_Writer& f) {
 ////////////////////////////////////////////////////////////////
 // live mode support
 
-Fl_Widget *Window_Node::enter_live_mode(int) {
+Fl_Widget *Window_Node::enter_live_mode() {
   Fl_Window *win = new Fl_Window(10, 10, o->w(), o->h());
   return propagate_live_mode(win);
-}
-
-void Window_Node::leave_live_mode() {
 }
 
 /**

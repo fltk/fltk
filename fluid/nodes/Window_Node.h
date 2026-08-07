@@ -116,8 +116,7 @@ public:
 
   int can_have_children() const override {return 1;}
 
-  Fl_Widget *enter_live_mode(int top=0) override;
-  void leave_live_mode() override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
 
   int sr_min_w, sr_min_h, sr_max_w, sr_max_h;

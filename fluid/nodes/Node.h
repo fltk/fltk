@@ -260,8 +260,7 @@ public:
   void write_comment_inline_c(fluid::io::Code_Writer& f, const char *ind=nullptr); // write the commentary text
 
   // live mode
-  virtual Fl_Widget *enter_live_mode(int top=0); // build widgets needed for live mode
-  virtual void leave_live_mode(); // free allocated resources
+  virtual Fl_Widget *enter_live_mode(); // build widgets needed for live mode
   virtual void copy_properties(); // copy properties from this type into a potential live object
   virtual void copy_properties_for_children() { } // copy remaining properties after children were added
 

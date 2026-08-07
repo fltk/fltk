@@ -685,7 +685,7 @@ void live_mode_cb(Fl_Button* o, void *) {
   if (o->value()) {
     if (numselected == 1) {
       Fl_Group::current(nullptr);
-      live_widget = current_widget->enter_live_mode(1);
+      live_widget = current_widget->enter_live_mode();
       if (live_widget) {
         live_type = current_widget;
         Fl_Group::current(nullptr);
@@ -722,8 +722,6 @@ void live_mode_cb(Fl_Button* o, void *) {
       } else o->value(0);
     } else o->value(0);
   } else {
-    if (live_type)
-      live_type->leave_live_mode();
     if (live_window) {
       live_window->hide();
       Fl::delete_widget(live_window);

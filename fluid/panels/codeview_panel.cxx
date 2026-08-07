@@ -383,16 +383,20 @@ Fl_Menu_Item menu_cv_code_choice_w[] = {
 };
 
 Fl_Double_Window* make_codeview() {
-  { codeview_panel = new Fl_Double_Window(520, 515, "Code View");
+  { auto* o = codeview_panel = new Fl_Double_Window(520, 515, "Code View");
+    (void)o;
     codeview_panel->callback((Fl_Callback*)toggle_codeview_cb);
     codeview_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
-    { cv_tab = new Fl_Tabs(10, 10, 500, 440);
+    { auto* o = cv_tab = new Fl_Tabs(10, 10, 500, 440);
+      (void)o;
       cv_tab->selection_color((Fl_Color)4);
       cv_tab->labelcolor(FL_BACKGROUND2_COLOR);
       cv_tab->callback((Fl_Callback*)update_codeview_position_cb);
-      { cv_source_tab = new Fl_Group(10, 35, 500, 415, "Source");
+      { auto* o = cv_source_tab = new Fl_Group(10, 35, 500, 415, "Source");
+        (void)o;
         cv_source_tab->labelsize(13);
-        { fluid::widget::Code_Viewer* o = cv_source = new fluid::widget::Code_Viewer(10, 40, 500, 410);
+        { auto* o = cv_source = new fluid::widget::Code_Viewer(10, 40, 500, 410);
+          (void)o;
           cv_source->box(FL_DOWN_FRAME);
           cv_source->color(FL_BACKGROUND2_COLOR);
           cv_source->selection_color(FL_SELECTION_COLOR);
@@ -411,10 +415,12 @@ Fl_Double_Window* make_codeview() {
         cv_source_tab->end();
         Fl_Group::current()->resizable(cv_source_tab);
       } // Fl_Group* cv_source_tab
-      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Header");
+      { auto* o = new Fl_Group(10, 35, 500, 415, "Header");
+        (void)o;
         o->labelsize(13);
         o->hide();
-        { fluid::widget::Code_Viewer* o = cv_header = new fluid::widget::Code_Viewer(10, 40, 500, 410);
+        { auto* o = cv_header = new fluid::widget::Code_Viewer(10, 40, 500, 410);
+          (void)o;
           cv_header->box(FL_DOWN_FRAME);
           cv_header->color(FL_BACKGROUND2_COLOR);
           cv_header->selection_color(FL_SELECTION_COLOR);
@@ -432,10 +438,12 @@ Fl_Double_Window* make_codeview() {
         } // fluid::widget::Code_Viewer* cv_header
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Strings");
+      { auto* o = new Fl_Group(10, 35, 500, 415, "Strings");
+        (void)o;
         o->labelsize(13);
         o->hide();
-        { fluid::widget::Text_Viewer* o = cv_strings = new fluid::widget::Text_Viewer(10, 40, 500, 410);
+        { auto* o = cv_strings = new fluid::widget::Text_Viewer(10, 40, 500, 410);
+          (void)o;
           cv_strings->box(FL_DOWN_FRAME);
           cv_strings->color(FL_BACKGROUND2_COLOR);
           cv_strings->selection_color(FL_SELECTION_COLOR);
@@ -453,10 +461,12 @@ Fl_Double_Window* make_codeview() {
         } // fluid::widget::Text_Viewer* cv_strings
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Project");
+      { auto* o = new Fl_Group(10, 35, 500, 415, "Project");
+        (void)o;
         o->labelsize(13);
         o->hide();
-        { fluid::widget::Text_Viewer* o = cv_project = new fluid::widget::Text_Viewer(10, 40, 500, 410);
+        { auto* o = cv_project = new fluid::widget::Text_Viewer(10, 40, 500, 410);
+          (void)o;
           cv_project->box(FL_DOWN_FRAME);
           cv_project->color(FL_BACKGROUND2_COLOR);
           cv_project->selection_color(FL_SELECTION_COLOR);
@@ -477,57 +487,71 @@ Fl_Double_Window* make_codeview() {
       cv_tab->end();
       Fl_Group::current()->resizable(cv_tab);
     } // Fl_Tabs* cv_tab
-    { cv_find_row = new Fl_Group(10, 460, 500, 20);
-      { cv_find_text_case = new Fl_Button(244, 460, 25, 20, "aA");
+    { auto* o = cv_find_row = new Fl_Group(10, 460, 500, 20);
+      (void)o;
+      { auto* o = cv_find_text_case = new Fl_Button(244, 460, 25, 20, "aA");
+        (void)o;
         cv_find_text_case->type(1);
         cv_find_text_case->labelsize(11);
       } // Fl_Button* cv_find_text_case
-      { cv_find_text = new Fl_Input(40, 460, 200, 20, "Find:");
+      { auto* o = cv_find_text = new Fl_Input(40, 460, 200, 20, "Find:");
+        (void)o;
         cv_find_text->labelsize(11);
         cv_find_text->textsize(11);
         cv_find_text->callback((Fl_Callback*)cb_cv_find_text);
         cv_find_text->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY_CHANGED);
       } // Fl_Input* cv_find_text
-      { Fl_Button* o = new Fl_Button(273, 460, 25, 20, "<<");
+      { auto* o = new Fl_Button(273, 460, 25, 20, "<<");
+        (void)o;
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(298, 460, 25, 20, ">>");
+      { auto* o = new Fl_Button(298, 460, 25, 20, ">>");
+        (void)o;
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_1);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(327, 460, 61, 20, "Reveal");
+      { auto* o = new Fl_Button(327, 460, 61, 20, "Reveal");
+        (void)o;
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_Reveal);
       } // Fl_Button* o
-      { Fl_Box* o = new Fl_Box(490, 460, 20, 20);
+      { auto* o = new Fl_Box(490, 460, 20, 20);
+        (void)o;
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       cv_find_row->end();
     } // Fl_Group* cv_find_row
-    { cv_settings_row = new Fl_Group(10, 485, 500, 20);
-      { Fl_Button* o = new Fl_Button(10, 485, 61, 20, "Refresh");
+    { auto* o = cv_settings_row = new Fl_Group(10, 485, 500, 20);
+      (void)o;
+      { auto* o = new Fl_Button(10, 485, 61, 20, "Refresh");
+        (void)o;
         o->labelsize(11);
         o->callback((Fl_Callback*)update_codeview_cb);
       } // Fl_Button* o
-      { Fl_Light_Button* o = cv_autorefresh = new Fl_Light_Button(77, 485, 91, 20, "Auto-Refresh");
+      { auto* o = cv_autorefresh = new Fl_Light_Button(77, 485, 91, 20, "Auto-Refresh");
+        (void)o;
         cv_autorefresh->labelsize(11);
         o->callback((Fl_Callback*)update_codeview_cb);
       } // Fl_Light_Button* cv_autorefresh
-      { cv_autoposition = new Fl_Light_Button(172, 485, 89, 20, "Auto-Position");
+      { auto* o = cv_autoposition = new Fl_Light_Button(172, 485, 89, 20, "Auto-Position");
+        (void)o;
         cv_autoposition->labelsize(11);
       } // Fl_Light_Button* cv_autoposition
-      { cv_code_choice_w = new Fl_Choice(265, 485, 90, 20);
+      { auto* o = cv_code_choice_w = new Fl_Choice(265, 485, 90, 20);
+        (void)o;
         cv_code_choice_w->down_box(FL_BORDER_BOX);
         cv_code_choice_w->labelsize(11);
         cv_code_choice_w->textsize(11);
         cv_code_choice_w->callback((Fl_Callback*)cb_cv_code_choice_w);
         cv_code_choice_w->menu(menu_cv_code_choice_w);
       } // Fl_Choice* cv_code_choice_w
-      { Fl_Box* o = new Fl_Box(375, 485, 80, 20);
+      { auto* o = new Fl_Box(375, 485, 80, 20);
+        (void)o;
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { Fl_Button* o = new Fl_Button(460, 485, 50, 20, "Close");
+      { auto* o = new Fl_Button(460, 485, 50, 20, "Close");
+        (void)o;
         o->labelsize(11);
         o->callback((Fl_Callback*)toggle_codeview_b_cb);
       } // Fl_Button* o

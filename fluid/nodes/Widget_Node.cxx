@@ -43,16 +43,20 @@
 #include <FL/Fl_Flex.H>
 #include "../../src/flstring.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #undef min
 #undef max
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <algorithm>
 
 using namespace fluid;
 using namespace fluid::proj;
 
 extern void redraw_browser();
+extern void open_panel(); // in panels/widget_panel_callbacks.cxx
+
+// ---- Helper Functions
 
 // Make an Widget_Node subclass instance.
 // It figures out the automatic size and parent of the new widget,
@@ -60,15 +64,6 @@ extern void redraw_browser();
 // adds it to the Fl_Widget hierarchy, creates a new Node
 // instance, sets the widget pointers, and makes all the display
 // update correctly...
-
-int Widget_Node::is_widget() const {
-  return 1;
-}
-
-int Widget_Node::is_public() const {
-  return public_;
-}
-
 std::string subclassname(Node* l) {
   if (dynamic_cast<Menu_Bar_Node*>(l)) {
     Menu_Bar_Node* mb = static_cast<Menu_Bar_Node*>(l);
@@ -94,154 +89,7 @@ std::string subclassname(Node* l) {
   return l->type_name();
 }
 
-// Return the ideal widget size...
-void Widget_Node::ideal_size(int &w, int &h) {
-  w = 120;
-  h = 100;
-  fluid::app::Snap_Action::better_size(w, h);
-}
-
-/**
- Make a new Widget node.
- \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
- \return new node
- */
-Node* Widget_Node::make(Strategy strategy) {
-  Node* anchor = Fluid.proj.tree.current, *pp = anchor;
-  if (pp && (strategy.placement() == Strategy::AFTER_CURRENT))
-    pp = pp->parent;
-  while (pp && !dynamic_cast<Group_Node*>(pp)) {
-    anchor = pp;
-    strategy.placement(Strategy::AFTER_CURRENT);
-    pp = pp->parent;
-  }
-  if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
-    fluid_message("Please select a group widget or window");
-    return nullptr;
-  }
-
-  Widget_Node* p = (Widget_Node*)pp;
-  Widget_Node* q = (Widget_Node*)anchor;
-
-  // Figure out a border between widget and window:
-  int B = p->o->w()/2;
-  if (p->o->h()/2 < B)
-    B = p->o->h()/2;
-  if (B>25)
-    B = 25;
-
-  int ULX,ULY; // parent's origin in window
-  if (!dynamic_cast<Window_Node*>(p)) { // if it is a group, add corner
-    ULX = p->o->x(); ULY = p->o->y();
-  } else {
-    ULX = ULY = 0;
-  }
-
-  // Figure out a position and size for the widget
-  int X,Y,W,H;
-  if (dynamic_cast<Group_Node*>(this)) {     // fill the parent with the widget
-    X = ULX+B;
-    W = p->o->w()-B;
-    Y = ULY+B;
-    H = p->o->h()-B;
-  } else if (q != p) {  // copy position and size of current widget
-    W = q->o->w();
-    H = q->o->h();
-    X = q->o->x()+W;
-    Y = q->o->y();
-    if (X+W > ULX+p->o->w()) {
-      X = q->o->x();
-      Y = q->o->y()+H;
-      if (Y+H > ULY+p->o->h()) Y = ULY+B;
-    }
-  } else {      // just make it small and square...
-    X = ULX+B;
-    Y = ULY+B;
-    W = H = B;
-  }
-
-  // Construct the Node:
-  Widget_Node* t = _make();
-  if (!o)
-    o = widget(0,0,100,100); // create template widget
-  t->factory = this;
-
-  // Construct the Fl_Widget:
-  t->o = widget(X,Y,W,H);
-  if (strategy.source() == Strategy::FROM_FILE)
-    t->o->label(nullptr);
-  else if (t->o->label())
-    t->label(t->o->label()); // allow editing
-  t->o->user_data((void*)t);
-
-  // Put it in the parent:
-  //  ((Fl_Group *)(p->o))->add(t->o); (done by Node::add())
-  // add to browser:
-  t->add(anchor, strategy);
-  t->redraw();
-  return t;
-}
-
-void Widget_Node::setlabel(const char* n) {
-  o->label(n);
-  redraw();
-}
-
-Widget_Node::~Widget_Node() {
-  if (o) {
-    Fl_Window* win = o->window();
-    delete o;
-    if (win)
-      win->redraw();
-  }
-}
-
-void Widget_Node::extra_code(int m, const std::string& n) {
-  storestring(n, extra_code_[m]);
-}
-
-void Widget_Node::extra_code_append(int m, const std::string& n) {
-  std::string code;
-  if (extra_code_[m].empty()) {
-    code = n;
-  } else {
-    code = extra_code_[m] + "\n" + n;
-  }
-  storestring(code, extra_code_[m]);
-}
-
-void Widget_Node::subclass(const std::string& n) {
-  if (storestring(n, subclass_) && visible)
-    redraw_browser();
-}
-
-void Widget_Node::tooltip(const std::string& text) {
-  storestring(text, tooltip_);
-  if (text.empty()) {
-    o->tooltip(nullptr);
-  } else {
-    o->copy_tooltip(text.c_str());
-  }
-}
-
-void Widget_Node::redraw() {
-  Node* t = this;
-  if (dynamic_cast<Menu_Item_Node*>(this)) {
-    // find the menu button that parents this menu:
-    do {
-      t = t->parent;
-    } while (t && dynamic_cast<Menu_Item_Node*>(t));
-    // kludge to cause build_menu to be called again:
-    if (t)
-      t->add_child(nullptr, nullptr);
-  } else {
-    while (t->parent && t->parent->is_widget())
-      t = t->parent;
-    ((Widget_Node*)t)->o->redraw();
-  }
-}
-
-// the recursive part sorts all children, returns pointer to next:
+// the recursive part sorts all children by y, then x, returns pointer to next:
 Node* sort(Node* parent) {
   Node* f;
   Node* n = nullptr;
@@ -270,12 +118,9 @@ Node* sort(Node* parent) {
   return f;
 }
 
-
-////////////////////////////////////////////////////////////////
-
 // turn number to string or string to number for saving to file:
 // does not work for hierarchical menus!
-
+// TODO: used with various pulldowns. explain more detailed
 const char* item_name(Fl_Menu_Item* m, int i) {
   if (m) {
     while (m->label()) {
@@ -289,6 +134,7 @@ const char* item_name(Fl_Menu_Item* m, int i) {
   return buffer;
 }
 
+// TODO: used with various pulldowns. explain more detailed
 int item_number(Fl_Menu_Item* m, const char* i) {
   if (!i)
     return 0;
@@ -302,6 +148,62 @@ int item_number(Fl_Menu_Item* m, const char* i) {
     }
   }
   return atoi(i);
+}
+
+/**
+ Check if the string is a valid function name.
+ \return true if no punctuation characters (except '_' and ':') are present
+    in the string, false otherwise.
+ */
+bool is_function_name(const std::string& name) {
+  if (name.empty()) return false;
+  for (char c : name) {
+    if ((fl_ascii_ispunct(c) || c == '\n') && c != '_' && c != ':') return false;
+  }
+  return true;
+}
+
+/**
+ Check if the string is the start of a lambda function.
+ \return true if the string starts with '[' (minimal test)
+    or starts with "std::bind(" (alternative lambda syntax).
+ \note FLTK 1.5 does not support std::bind() or lambdas with capture yet
+ */
+bool is_lambda(const std::string& name) {
+  if (name.empty()) return false;
+  return (name[0] == '[' || name.substr(0, 10) == "std::bind(");
+}
+
+// Test to see if name() is an array entry.  If so, and this is the
+// highest number, return name[num+1].  Return null if not the highest
+// number or a field or function.  Return name() if not an array entry.
+const char* array_name(Widget_Node* o) {
+  const char* c = o->name();
+  if (!c) return nullptr;
+  const char* d;
+  for (d = c; *d != '['; d++) {
+    if (!*d) return c;
+    if (fl_ascii_ispunct(*d) && *d!='_') return nullptr;
+  }
+  int num = atoi(d+1);
+  int sawthis = 0;
+  Node* t = o->prev;
+  Node* tp = o;
+  const char* cn = o->class_name(1);
+  for (; t && t->class_name(1) == cn; tp = t, t = t->prev) {/*empty*/}
+  for (t = tp; t && t->class_name(1) == cn; t = t->next) {
+    if (t == o) {sawthis=1; continue;}
+    const char* e = t->name();
+    if (!e) continue;
+    if (strncmp(c,e,d-c)) continue;
+    int n1 = atoi(e+(d-c)+1);
+    if (n1 > num || (n1==num && sawthis)) return nullptr;
+  }
+  static char buffer[128];
+  // MRS: we want strncpy() here...
+  strncpy(buffer,c,d-c+1);
+  snprintf(buffer+(d-c+1),sizeof(buffer) - (d-c+1), "%d]",num+1);
+  return buffer;
 }
 
 #define ZERO_ENTRY 1000
@@ -399,11 +301,6 @@ int boxnumber(const char* i) {
   return 0;
 }
 
-
-
-
-////////////////////////////////////////////////////////////////
-
 Fl_Menu_Item whenmenu[] = {
   // set individual bits
   {"FL_WHEN_CHANGED",0,nullptr,(void*)FL_WHEN_CHANGED, FL_MENU_TOGGLE},
@@ -452,40 +349,6 @@ const char* when_symbol_name(int n) {
   return sym;
 }
 
-uchar Widget_Node::resizable() const {
-  if (dynamic_cast<const Window_Node*>(this))
-    return ((Fl_Window*)o)->resizable() != nullptr;
-  Fl_Group* p = (Fl_Group*)o->parent();
-  if (p)
-    return p->resizable() == o;
-  else
-    return 0;
-}
-
-void Widget_Node::resizable(uchar v) {
-  if (v) {
-    if (resizable())
-      return;
-    if (dynamic_cast<Window_Node*>(this)) {
-      ((Fl_Window*)o)->resizable(o);
-    } else {
-      Fl_Group* p = (Fl_Group*)o->parent();
-      if (p) p->resizable(o);
-    }
-  } else {
-    if (!resizable())
-      return;
-    if (dynamic_cast<Window_Node*>(this)) {
-      ((Fl_Window*)o)->resizable(nullptr);
-    } else {
-      Fl_Group* p = (Fl_Group*)o->parent();
-      if (p) p->resizable(nullptr);
-    }
-  }
-}
-
-
-
 Fl_Menu_Item labeltypemenu[] = {
   {"NORMAL_LABEL",0,nullptr,(void*)nullptr},
   {"SHADOW_LABEL",0,nullptr,(void*)FL_SHADOW_LABEL},
@@ -493,8 +356,6 @@ Fl_Menu_Item labeltypemenu[] = {
   {"EMBOSSED_LABEL",0,nullptr,(void*)FL_EMBOSSED_LABEL},
   {"NO_LABEL",0,nullptr,(void*)(FL_NO_LABEL)},
   {nullptr}};
-
-
 
 // Not static: also used by align_cb/align_position_cb/align_text_image_cb
 // in panels/widget_panel_callbacks.cxx.
@@ -520,105 +381,272 @@ Fl_Menu_Item alignmenu[] = {
 };
 
 
-////////////////////////////////////////////////////////////////
+// ---- Class Methods
 
+/**
+ Find a good size for this widget at creation time.
+ \param[out] w, h Suggested size for the widget.
+ */
+void Widget_Node::ideal_size(int &w, int &h) {
+  w = 120;
+  h = 100;
+  fluid::app::Snap_Action::better_size(w, h);
+}
 
+/**
+ Make a new Widget node and add it to the tree.
+ \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
+ \return new node
+ */
+Node* Widget_Node::make(Strategy strategy) {
+  Node* anchor = Fluid.proj.tree.current, *pp = anchor;
+  if (pp && (strategy.placement() == Strategy::AFTER_CURRENT))
+    pp = pp->parent;
+  while (pp && !dynamic_cast<Group_Node*>(pp)) {
+    anchor = pp;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    pp = pp->parent;
+  }
+  if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
+    fluid_message("Please select a group widget or window");
+    return nullptr;
+  }
 
+  Widget_Node* p = (Widget_Node*)pp;
+  Widget_Node* q = (Widget_Node*)anchor;
 
+  // Figure out a border between widget and window:
+  int B = p->o->w()/2;
+  if (p->o->h()/2 < B)
+    B = p->o->h()/2;
+  if (B>25)
+    B = 25;
 
-////////////////////////////////////////////////////////////////
+  int ULX,ULY; // parent's origin in window
+  if (!dynamic_cast<Window_Node*>(p)) { // if it is a group, add corner
+    ULX = p->o->x(); ULY = p->o->y();
+  } else {
+    ULX = ULY = 0;
+  }
 
-// textstuff: set textfont, textsize, textcolor attributes:
+  // Figure out a position and size for the widget
+  int X,Y,W,H;
+  if (dynamic_cast<Group_Node*>(this)) {     // fill the parent with the widget
+    X = ULX+B;
+    W = p->o->w()-B;
+    Y = ULY+B;
+    H = p->o->h()-B;
+  } else if (q != p) {  // copy position and size of current widget
+    W = q->o->w();
+    H = q->o->h();
+    X = q->o->x()+W;
+    Y = q->o->y();
+    if (X+W > ULX+p->o->w()) {
+      X = q->o->x();
+      Y = q->o->y()+H;
+      if (Y+H > ULY+p->o->h()) Y = ULY+B;
+    }
+  } else {      // just make it small and square...
+    X = ULX+B;
+    Y = ULY+B;
+    W = H = B;
+  }
 
-// default widget returns 0 to indicate not-implemented:
-// The first parameter specifies the operation:
-// 0: get all values
-// 1: set the text font
-// 2: set the text size
-// 3: set the text color
-// 4: get all default values for this type
-int Widget_Node::textstuff(int, Fl_Font&, int&, Fl_Color&) {
+  // Construct the Node:
+  Widget_Node* t = _make();
+  if (!o)
+    o = widget(0,0,100,100); // create template widget
+  t->factory = this;
+
+  // Construct the Fl_Widget:
+  t->o = widget(X,Y,W,H);
+  if (strategy.source() == Strategy::FROM_FILE)
+    t->o->label(nullptr);
+  else if (t->o->label())
+    t->label(t->o->label()); // allow editing
+  t->o->user_data((void*)t);
+
+  // Put it in the parent:
+  //  ((Fl_Group *)(p->o))->add(t->o); (done by Node::add())
+  // add to browser:
+  t->add(anchor, strategy);
+  t->redraw();
+  return t;
+}
+
+/**
+ Call the required function to set the label of the widget.
+ \param[in] n New label text.
+ */
+void Widget_Node::setlabel(const char* n) {
+  o->label(n);
+  redraw();
+}
+
+/**
+ Destructor for the Widget_Node class.
+ Also deletes the widget and redraws the window container.
+ */
+Widget_Node::~Widget_Node() {
+  if (o) {
+    Fl_Window* win = o->window();
+    delete o;
+    if (win)
+      win->redraw();
+  }
+}
+
+/**
+ Store extra user code.
+ The code is cropped of leading and trailing whitespace, and stored in the
+ extra_code_ array. If the text changed, the project is marked dirty.
+ \param[in] m Index of the extra code block to store.
+ \param[in] n New code text.
+ */
+void Widget_Node::extra_code(int m, const std::string& n) {
+  storestring(n, extra_code_[m]);
+}
+
+/**
+ Append more lines of text to an extra code block.
+ A newline and the new code is appended. The result is cropped of leading and
+ trailing whitespace, and stored in the extra_code_ array. If the text changed,
+ the project is marked dirty.
+ \param[in] m Index of the extra code block to store.
+ \param[in] n New code text to append.
+ */
+void Widget_Node::extra_code_append(int m, const std::string& n) {
+  std::string code;
+  if (extra_code_[m].empty()) {
+    code = n;
+  } else {
+    code = extra_code_[m] + "\n" + n;
+  }
+  storestring(code, extra_code_[m]);
+}
+
+/**
+ Store the C++ subclass name for this widget.
+ The name is cropped of leading and trailing whitespace, and stored in the
+ subclass_ string. If the text changed, the project is marked dirty.
+ The node browser is updated if needed.
+ \param[in] n New subclass name.
+ */
+void Widget_Node::subclass(const std::string& n) {
+  if (storestring(n, subclass_) && visible)
+    redraw_browser();
+}
+
+/**
+ Store the tooltip text for this widget.
+ The text can contain newline characters. It is cropped of leading and trailing
+ whitespace. If the text changed, the project is marked dirty.
+ The widget and node browser are updated if needed.
+ \param[in] text New tooltip text.
+ */
+void Widget_Node::tooltip(const std::string& text) {
+  storestring(text, tooltip_);
+  if (text.empty()) {
+    o->tooltip(nullptr);
+  } else {
+    o->copy_tooltip(text.c_str());
+  }
+}
+
+/**
+ Either mark the widget's parent for redraw, or if this is a menu item, mark the
+ menubar to rebuild.
+ */
+void Widget_Node::redraw() {
+  Node* t = this;
+  if (dynamic_cast<Menu_Item_Node*>(this)) {
+    // find the menu button that parents this menu:
+    do {
+      t = t->parent;
+    } while (t && dynamic_cast<Menu_Item_Node*>(t));
+    // kludge to cause build_menu to be called again:
+    if (t)
+      t->add_child(nullptr, nullptr);
+  } else {
+    while (t->parent && t->parent->is_widget())
+      t = t->parent;
+    ((Widget_Node*)t)->o->redraw();
+  }
+}
+
+/**
+ Return true if this widget is the resizable one in its group.
+ If this is a window, it checks if the window has a resizable widget.
+ Otherwise, it checks if the parent group has this widget as its
+ resizable widget.
+ \return 1 if resizable, 0 otherwise.
+ */
+uchar Widget_Node::resizable() const {
+  if (dynamic_cast<const Window_Node*>(this))
+    return ((Fl_Window*)o)->resizable() != nullptr;
+  Fl_Group* p = (Fl_Group*)o->parent();
+  if (p)
+    return p->resizable() == o;
+  else
+    return 0;
+}
+
+/**
+ Update the resizable status of the underlying Fl widget.
+ \param[in] v If true, make this widget resizable. If false, make it not resizable.
+ */
+void Widget_Node::resizable(uchar v) {
+  if (v) {
+    if (resizable())
+      return;
+    if (dynamic_cast<Window_Node*>(this)) {
+      ((Fl_Window*)o)->resizable(o);
+    } else {
+      Fl_Group* p = (Fl_Group*)o->parent();
+      if (p) p->resizable(o);
+    }
+  } else {
+    if (!resizable())
+      return;
+    if (dynamic_cast<Window_Node*>(this)) {
+      ((Fl_Window*)o)->resizable(nullptr);
+    } else {
+      Fl_Group* p = (Fl_Group*)o->parent();
+      if (p) p->resizable(nullptr);
+    }
+  }
+}
+
+/**
+ Read or write textfont(), textsize(), and textcolor() attributes for this widget.
+ This is a virtual function and implemented for those widget types that support
+ text attributes.
+ \param[in] op Operation to perform (0=get all, 1=set font, 2=set size, 3=set color, 4=get all defaults)
+ \param[inout] font, size, color References to the font, size, and color values to read or write.
+ \return 1 if the widget supports text attributes, 0 otherwise.
+ */
+int Widget_Node::textstuff(int op, Fl_Font& font, int& size, Fl_Color& color) {
+  ((void)op);
+  ((void)font);
+  ((void)size);
+  ((void)color);
   return 0;
 }
 
-
-
-
-
-
-////////////////////////////////////////////////////////////////
-
-// subtypes:
-
-Fl_Menu_Item* Widget_Node::subtypes() { return nullptr; }
-
-
-////////////////////////////////////////////////////////////////
-
-
-extern void open_panel(); // in panels/widget_panel_callbacks.cxx
-
-// This is called when user double-clicks an item, open or update the panel:
+/**
+ Open and refresh the widget panel for this widget.
+ */
 void Widget_Node::open() {
   open_panel();
 }
 
 /**
- Check if the string is a valid function name.
- \return true if no punctuation characters (except '_' and ':') are present
-    in the string, false otherwise.
+ Write the static initializer code for the widget.
+ This write the #include statements, any extra code, and the callback function
+ declaration if needed. It initializes active and inactive images. It writes
+ menu arrays is needed.
+ \param[in] f Code_Writer object to write the code to.
  */
-bool is_function_name(const std::string& name) {
-  if (name.empty()) return false;
-  for (char c : name) {
-    if ((fl_ascii_ispunct(c) || c == '\n') && c != '_' && c != ':') return false;
-  }
-  return true;
-}
-
-/**
- Check if the string is the start of a lambda function.
- \return true if the string starts with '[' (minimal test)
-    or starts with "std::bind(" (alternative lambda syntax).
- \note FLTK 1.5 does not support std::bind() or lambdas with capture yet
- */
-bool is_lambda(const std::string& name) {
-  if (name.empty()) return false;
-  return (name[0] == '[' || name.substr(0, 10) == "std::bind(");
-}
-
-// Test to see if name() is an array entry.  If so, and this is the
-// highest number, return name[num+1].  Return null if not the highest
-// number or a field or function.  Return name() if not an array entry.
-const char* array_name(Widget_Node* o) {
-  const char* c = o->name();
-  if (!c) return nullptr;
-  const char* d;
-  for (d = c; *d != '['; d++) {
-    if (!*d) return c;
-    if (fl_ascii_ispunct(*d) && *d!='_') return nullptr;
-  }
-  int num = atoi(d+1);
-  int sawthis = 0;
-  Node* t = o->prev;
-  Node* tp = o;
-  const char* cn = o->class_name(1);
-  for (; t && t->class_name(1) == cn; tp = t, t = t->prev) {/*empty*/}
-  for (t = tp; t && t->class_name(1) == cn; t = t->next) {
-    if (t == o) {sawthis=1; continue;}
-    const char* e = t->name();
-    if (!e) continue;
-    if (strncmp(c,e,d-c)) continue;
-    int n1 = atoi(e+(d-c)+1);
-    if (n1 > num || (n1==num && sawthis)) return nullptr;
-  }
-  static char buffer[128];
-  // MRS: we want strncpy() here...
-  strncpy(buffer,c,d-c+1);
-  snprintf(buffer+(d-c+1),sizeof(buffer) - (d-c+1), "%d]",num+1);
-  return buffer;
-}
-
 void Widget_Node::write_static(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   if (subclass().empty() || (is_class() && (t.compare(0, 3, "Fl_")==0))) {
@@ -704,6 +732,10 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
   inactive_image.write_static(f);
 }
 
+/**
+ Write the code that creates the widget before the children are created.
+ \param[in] f Code_Writer object to write the code to.
+ */
 void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   const char* c = array_name(this);
@@ -724,64 +756,9 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   int wused = !name() && dynamic_cast<Window_Node*>(this);
   const char* ptr;
 
-  f.varused = wused;
-
-  if (!name() && !f.varused) {
-    f.varused |= can_have_children();
-
-    if (!f.varused) {
-      f.varused_test = 1;
-      write_widget_code(f);
-      f.varused_test = 0;
-    }
-  }
-
-  if (!f.varused) {
-    for (int n=2; n < NUM_EXTRA_CODE; n++)
-      if (!extra_code(n).empty())
-      {
-        int instring = 0;
-        int inname = 0;
-        int incomment = 0;
-        int incppcomment = 0;
-        std::string code = extra_code(n);
-        for (ptr = code.c_str(); *ptr; ptr ++) {
-          if (instring) {
-            if (*ptr == '\\') ptr++;
-            else if (*ptr == '\"') instring = 0;
-          } else if (inname && !fl_ascii_isalnum(*ptr)) {
-            inname = 0;
-          } else if (*ptr == '/' && ptr[1]=='*') {
-            incomment = 1; ptr++;
-          } else if (incomment) {
-            if (*ptr == '*' && ptr[1]=='/') {
-              incomment = 0; ptr++;
-            }
-          } else if (*ptr == '/' && ptr[1]=='/') {
-            incppcomment = 1; ptr++;
-          } else if (incppcomment) {
-            if (*ptr == '\n')
-              incppcomment = 0;
-          } else if (*ptr == '\"') {
-            instring = 1;
-          } else if (fl_ascii_isalnum(*ptr) || *ptr == '_') {
-            size_t len = strspn(ptr, "0123456789_"
-                                     "abcdefghijklmnopqrstuvwxyz"
-                                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-            if (!strncmp(ptr, "o", len)) {
-              f.varused = 1;
-              break;
-            } else {
-              ptr += len - 1;
-            }
-          }
-        }
-      }
-  }
-
   f.write_c(f.indent() + "{ ");
   write_comment_inline_c(f);
-  if (f.varused) f.write_c(t + "* o = ");
+  f.write_c("auto* o = ");
   if (name()) f.write_c(std::string(name()) + " = ");
   if (dynamic_cast<Window_Node*>(this)) {
     // Handle special case where user is faking a Fl_Group type as a window,
@@ -827,7 +804,11 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
 
   // Avoid compiler warning for unused variable.
   // Also avoid quality control warnings about incorrect allocation error handling.
-  if (wused) f.write_c(f.indent() + "w = o; (void)w;\n");
+  if (wused)
+    f.write_c(f.indent() + "w = o; (void)w;\n"); // w is the return value of the function
+  else
+    f.write_c(f.indent() + "(void)o;\n"); // avoid warning if o is not used
+
 
   write_widget_code(f);
 
@@ -838,6 +819,12 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   }
 }
 
+/**
+ Helper to write code for a color property using symbolic names.
+ \param[in] f Code_Writer object to write the code to.
+ \param[in] field Name of the color property to write.
+ \param[in] color Color value to write.
+ */
 void Widget_Node::write_color(fluid::io::Code_Writer& f, const char* field, Fl_Color color) {
   const char* color_name = nullptr;
   switch (color) {
@@ -876,7 +863,10 @@ void Widget_Node::write_color(fluid::io::Code_Writer& f, const char* field, Fl_C
   }
 }
 
-// this is split from write_code1(fluid::io::Code_Writer& f) for Window_Node:
+/**
+ Write the code to set properties, called from write_code1.
+ \param[in] f Code_Writer object to write the code to.
+ */
 void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   Fl_Widget* tplate = ((Widget_Node*)factory)->o;
   const char* var = is_class() ? "this" : name() ? name() : "o";
@@ -1060,12 +1050,20 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   }
 }
 
+/**
+ Write the code to end instantiation of this widget, called by write_code2.
+ \param[in] f Code_Writer object to write the code to.
+ */
 void Widget_Node::write_block_close(fluid::io::Code_Writer& f) {
   f.indent_less();
   f.write_c(f.indent() + "} // " + subclassname(this) + "* "
           + (name() ? name() : "o") + "\n");
 }
 
+/**
+ Write the code after the children of the widget are created.
+ \param[in] f Code_Writer object to write the code to.
+ */
 void Widget_Node::write_code2(fluid::io::Code_Writer& f) {
   if (!extra_code(3).empty()) {
     f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::FINALIZE, 0);
@@ -1075,8 +1073,10 @@ void Widget_Node::write_code2(fluid::io::Code_Writer& f) {
   write_block_close(f);
 }
 
-////////////////////////////////////////////////////////////////
-
+/**
+ Write all properties of this node, calls super class to write more properties.
+ \param[in] f Project_Writer object to write the properties to.
+ */
 void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   Node::write_properties(f);
   f.write_indent(level+1);
@@ -1200,6 +1200,11 @@ void Widget_Node::write_properties(fluid::io::Project_Writer &f) {
   }
 }
 
+/**
+ Read a property of this node, calls super class if property is not recognized.
+ \param[in] f Project_Reader object to read the property from.
+ \param[in] c Name of the property to read.
+ */
 void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c)
 {
   // Assign code according to the first non-whitespace character to stay
@@ -1427,6 +1432,8 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c)
   }
 }
 
+// ---- Back compatibility to Forms' FDesign project files
+
 Fl_Menu_Item boxmenu1[] = {
   // these extra ones are for looking up fdesign saved strings:
   {"NO_FRAME",          0,nullptr,(void *)FL_NO_BOX},
@@ -1450,6 +1457,9 @@ Fl_Menu_Item boxmenu1[] = {
 
 int lookup_symbol(const char *, int &, int numberok = 0);
 
+/**
+ Back compatibility to Forms FDesign project files.
+ */
 int Widget_Node::read_fdesign(const char* propname, const char* value) {
   int v;
   if (!strcmp(propname,"box")) {
@@ -1541,13 +1551,24 @@ int Widget_Node::read_fdesign(const char* propname, const char* value) {
   return 1;
 }
 
-Fl_Widget* Widget_Node::enter_live_mode(int) {
+// ---- Live mode support
+
+/**
+ Create a live widget for this node.
+ \return the live widget
+ */
+Fl_Widget* Widget_Node::enter_live_mode() {
   live_widget = widget(o->x(), o->y(), o->w(), o->h());
   if (live_widget)
     copy_properties();
   return live_widget;
 }
 
+/**
+ Create a live mode widget and all its children.
+ \param grp the group to add widgets to
+ \return the live mode widget
+ */
 Fl_Widget* Widget_Node::propagate_live_mode(Fl_Group* grp) {
   live_widget = grp;
   copy_properties();
@@ -1566,12 +1587,8 @@ Fl_Widget* Widget_Node::propagate_live_mode(Fl_Group* grp) {
   return live_widget;
 }
 
-
-void Widget_Node::leave_live_mode() {
-}
-
 /**
- copy all properties from the edit widget to the live widget
+ Copy the properties from the edit widget to the live widget.
  */
 void Widget_Node::copy_properties() {
   if (!live_widget)

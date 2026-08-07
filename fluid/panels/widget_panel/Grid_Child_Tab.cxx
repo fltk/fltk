@@ -249,13 +249,15 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
 {
   this->labelsize(11);
   this->callback((Fl_Callback*)propagate_load);
-  { Fl_Group* o = new Fl_Group(85, 30, 315, 20, "Location:");
+  { auto* o = new Fl_Group(85, 30, 315, 20, "Location:");
+    (void)o;
     o->box(FL_FLAT_BOX);
     o->labelfont(1);
     o->labelsize(11);
     o->callback((Fl_Callback*)propagate_load);
     o->align(Fl_Align(FL_ALIGN_LEFT));
-    { widget_grid_row_input = new fluid::widget::Formula_Input(85, 30, 40, 20, "Row:");
+    { auto* o = widget_grid_row_input = new fluid::widget::Formula_Input(85, 30, 40, 20, "Row:");
+      (void)o;
       widget_grid_row_input->box(FL_DOWN_BOX);
       widget_grid_row_input->color(FL_BACKGROUND2_COLOR);
       widget_grid_row_input->selection_color(FL_SELECTION_COLOR);
@@ -268,14 +270,17 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       widget_grid_row_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       widget_grid_row_input->when(FL_WHEN_RELEASE);
     } // fluid::widget::Formula_Input* widget_grid_row_input
-    { Fl_Group* o = new Fl_Group(125, 30, 30, 20);
-      { Fl_Button* o = new Fl_Button(125, 30, 15, 20, "-");
+    { auto* o = new Fl_Group(125, 30, 30, 20);
+      (void)o;
+      { auto* o = new Fl_Button(125, 30, 15, 20, "-");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_);
         o->clear_visible_focus();
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(140, 30, 15, 20, "+");
+      { auto* o = new Fl_Button(140, 30, 15, 20, "+");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_1);
@@ -283,7 +288,8 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
-    { widget_grid_col_input = new fluid::widget::Formula_Input(165, 30, 40, 20, "Column:");
+    { auto* o = widget_grid_col_input = new fluid::widget::Formula_Input(165, 30, 40, 20, "Column:");
+      (void)o;
       widget_grid_col_input->box(FL_DOWN_BOX);
       widget_grid_col_input->color(FL_BACKGROUND2_COLOR);
       widget_grid_col_input->selection_color(FL_SELECTION_COLOR);
@@ -296,14 +302,17 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       widget_grid_col_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       widget_grid_col_input->when(FL_WHEN_RELEASE);
     } // fluid::widget::Formula_Input* widget_grid_col_input
-    { Fl_Group* o = new Fl_Group(205, 30, 30, 20);
-      { Fl_Button* o = new Fl_Button(205, 30, 15, 20, "-");
+    { auto* o = new Fl_Group(205, 30, 30, 20);
+      (void)o;
+      { auto* o = new Fl_Button(205, 30, 15, 20, "-");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_2);
         o->clear_visible_focus();
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(220, 30, 15, 20, "+");
+      { auto* o = new Fl_Button(220, 30, 15, 20, "+");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_3);
@@ -311,28 +320,33 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
-    { Fl_Box* o = new Fl_Box(385, 30, 1, 20);
+    { auto* o = new Fl_Box(385, 30, 1, 20);
+      (void)o;
       o->hide();
       Fl_Group::current()->resizable(o);
     } // Fl_Box* o
-    { widget_grid_transient = new Fl_Box(240, 30, 80, 20, "TRANSIENT");
+    { auto* o = widget_grid_transient = new Fl_Box(240, 30, 80, 20, "TRANSIENT");
+      (void)o;
       widget_grid_transient->labelsize(11);
       widget_grid_transient->labelcolor((Fl_Color)1);
       widget_grid_transient->callback((Fl_Callback*)cb_widget_grid_transient);
     } // Fl_Box* widget_grid_transient
-    { widget_grid_unlinked = new Fl_Box(240, 30, 80, 20, "UNLINKED");
+    { auto* o = widget_grid_unlinked = new Fl_Box(240, 30, 80, 20, "UNLINKED");
+      (void)o;
       widget_grid_unlinked->labelsize(11);
       widget_grid_unlinked->labelcolor((Fl_Color)1);
       widget_grid_unlinked->hide();
     } // Fl_Box* widget_grid_unlinked
     o->end();
   } // Fl_Group* o
-  { wp_gridc_align = new Fl_Group(85, 70, 315, 20, "Align:");
+  { auto* o = wp_gridc_align = new Fl_Group(85, 70, 315, 20, "Align:");
+    (void)o;
     wp_gridc_align->labelfont(1);
     wp_gridc_align->labelsize(11);
     wp_gridc_align->callback((Fl_Callback*)propagate_load);
     wp_gridc_align->align(Fl_Align(FL_ALIGN_LEFT));
-    { Fl_Choice* o = new Fl_Choice(85, 70, 115, 20, "Horizontal");
+    { auto* o = new Fl_Choice(85, 70, 115, 20, "Horizontal");
+      (void)o;
       o->down_box(FL_BORDER_BOX);
       o->labelsize(11);
       o->textsize(11);
@@ -340,7 +354,8 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       o->menu(menu_Horizontal);
     } // Fl_Choice* o
-    { Fl_Choice* o = new Fl_Choice(205, 70, 115, 20, "Vertical");
+    { auto* o = new Fl_Choice(205, 70, 115, 20, "Vertical");
+      (void)o;
       o->down_box(FL_BORDER_BOX);
       o->labelsize(11);
       o->textsize(11);
@@ -348,18 +363,21 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       o->menu(menu_Vertical);
     } // Fl_Choice* o
-    { Fl_Box* o = new Fl_Box(385, 70, 1, 20);
+    { auto* o = new Fl_Box(385, 70, 1, 20);
+      (void)o;
       o->hide();
       Fl_Group::current()->resizable(o);
     } // Fl_Box* o
     wp_gridc_align->end();
   } // Fl_Group* wp_gridc_align
-  { wp_gridc_size = new Fl_Group(85, 105, 315, 20, "Min. Size:");
+  { auto* o = wp_gridc_size = new Fl_Group(85, 105, 315, 20, "Min. Size:");
+    (void)o;
     wp_gridc_size->labelfont(1);
     wp_gridc_size->labelsize(11);
     wp_gridc_size->callback((Fl_Callback*)propagate_load);
     wp_gridc_size->align(Fl_Align(FL_ALIGN_LEFT));
-    { fluid::widget::Formula_Input* o = new fluid::widget::Formula_Input(85, 105, 55, 20, "Width:");
+    { auto* o = new fluid::widget::Formula_Input(85, 105, 55, 20, "Width:");
+      (void)o;
       o->box(FL_DOWN_BOX);
       o->color(FL_BACKGROUND2_COLOR);
       o->selection_color(FL_SELECTION_COLOR);
@@ -372,7 +390,8 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       o->when(FL_WHEN_RELEASE);
     } // fluid::widget::Formula_Input* o
-    { fluid::widget::Formula_Input* o = new fluid::widget::Formula_Input(145, 105, 55, 20, "Height:");
+    { auto* o = new fluid::widget::Formula_Input(145, 105, 55, 20, "Height:");
+      (void)o;
       o->box(FL_DOWN_BOX);
       o->color(FL_BACKGROUND2_COLOR);
       o->selection_color(FL_SELECTION_COLOR);
@@ -385,18 +404,21 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       o->when(FL_WHEN_RELEASE);
     } // fluid::widget::Formula_Input* o
-    { Fl_Box* o = new Fl_Box(385, 105, 1, 20);
+    { auto* o = new Fl_Box(385, 105, 1, 20);
+      (void)o;
       o->hide();
       Fl_Group::current()->resizable(o);
     } // Fl_Box* o
     wp_gridc_size->end();
   } // Fl_Group* wp_gridc_size
-  { Fl_Group* o = new Fl_Group(85, 140, 315, 20, "Span:");
+  { auto* o = new Fl_Group(85, 140, 315, 20, "Span:");
+    (void)o;
     o->labelfont(1);
     o->labelsize(11);
     o->callback((Fl_Callback*)propagate_load);
     o->align(Fl_Align(FL_ALIGN_LEFT));
-    { widget_grid_rowspan_input = new fluid::widget::Formula_Input(85, 140, 40, 20, "Row Span:");
+    { auto* o = widget_grid_rowspan_input = new fluid::widget::Formula_Input(85, 140, 40, 20, "Row Span:");
+      (void)o;
       widget_grid_rowspan_input->box(FL_DOWN_BOX);
       widget_grid_rowspan_input->color(FL_BACKGROUND2_COLOR);
       widget_grid_rowspan_input->selection_color(FL_SELECTION_COLOR);
@@ -409,14 +431,17 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       widget_grid_rowspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       widget_grid_rowspan_input->when(FL_WHEN_RELEASE);
     } // fluid::widget::Formula_Input* widget_grid_rowspan_input
-    { Fl_Group* o = new Fl_Group(125, 140, 30, 20);
-      { Fl_Button* o = new Fl_Button(125, 140, 15, 20, "-");
+    { auto* o = new Fl_Group(125, 140, 30, 20);
+      (void)o;
+      { auto* o = new Fl_Button(125, 140, 15, 20, "-");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_4);
         o->clear_visible_focus();
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(140, 140, 15, 20, "+");
+      { auto* o = new Fl_Button(140, 140, 15, 20, "+");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_5);
@@ -424,7 +449,8 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
-    { widget_grid_colspan_input = new fluid::widget::Formula_Input(165, 140, 40, 20, "Col. Span:");
+    { auto* o = widget_grid_colspan_input = new fluid::widget::Formula_Input(165, 140, 40, 20, "Col. Span:");
+      (void)o;
       widget_grid_colspan_input->box(FL_DOWN_BOX);
       widget_grid_colspan_input->color(FL_BACKGROUND2_COLOR);
       widget_grid_colspan_input->selection_color(FL_SELECTION_COLOR);
@@ -437,14 +463,17 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       widget_grid_colspan_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       widget_grid_colspan_input->when(FL_WHEN_RELEASE);
     } // fluid::widget::Formula_Input* widget_grid_colspan_input
-    { Fl_Group* o = new Fl_Group(205, 140, 30, 20);
-      { Fl_Button* o = new Fl_Button(205, 140, 15, 20, "-");
+    { auto* o = new Fl_Group(205, 140, 30, 20);
+      (void)o;
+      { auto* o = new Fl_Button(205, 140, 15, 20, "-");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_6);
         o->clear_visible_focus();
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(220, 140, 15, 20, "+");
+      { auto* o = new Fl_Button(220, 140, 15, 20, "+");
+        (void)o;
         o->compact(1);
         o->labelsize(11);
         o->callback((Fl_Callback*)cb_7);
@@ -452,13 +481,15 @@ Grid_Child_Tab::Grid_Child_Tab(int X, int Y, int W, int H, const char* L) :
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
-    { Fl_Box* o = new Fl_Box(385, 140, 1, 20);
+    { auto* o = new Fl_Box(385, 140, 1, 20);
+      (void)o;
       o->hide();
       Fl_Group::current()->resizable(o);
     } // Fl_Box* o
     o->end();
   } // Fl_Group* o
-  { Fl_Box* o = new Fl_Box(85, 320, 300, 5);
+  { auto* o = new Fl_Box(85, 320, 300, 5);
+    (void)o;
     o->labelsize(11);
     o->hide();
     Fl_Group::current()->resizable(o);

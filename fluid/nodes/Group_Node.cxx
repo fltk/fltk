@@ -247,12 +247,9 @@ void Group_Node::move_child(Node* cc, Node* before) {
 }
 
 // live mode support
-Fl_Widget* Group_Node::enter_live_mode(int) {
+Fl_Widget* Group_Node::enter_live_mode() {
   Fl_Group *grp = new Fl_Group(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grp);
-}
-
-void Group_Node::leave_live_mode() {
 }
 
 /**
@@ -274,7 +271,7 @@ Fl_Menu_Item pack_type_menu[] = {
   {nullptr}
 };
 
-Fl_Widget *Pack_Node::enter_live_mode(int) {
+Fl_Widget *Pack_Node::enter_live_mode() {
   Fl_Group *grp = new Fl_Pack(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grp);
 }
@@ -321,7 +318,7 @@ void Fl_Flex_Proxy::draw() {
   Fl_Flex::draw();
 }
 
-Fl_Widget *Flex_Node::enter_live_mode(int) {
+Fl_Widget *Flex_Node::enter_live_mode() {
   Fl_Flex *grp = new Fl_Flex(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(grp);
   Fl_Flex *d = grp, *s =(Fl_Flex*)o;
@@ -710,7 +707,7 @@ void Table_Node::move_child(Node* cc, Node* before) {
   o->redraw();
 }
 
-Fl_Widget *Table_Node::enter_live_mode(int) {
+Fl_Widget *Table_Node::enter_live_mode() {
   Fl_Group *grp = new Fl_Table_Proxy(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
   copy_properties();
@@ -782,7 +779,7 @@ void Tabs_Node::remove_child(Node* cc) {
   Group_Node::remove_child(cc);
 }
 
-Fl_Widget *Tabs_Node::enter_live_mode(int) {
+Fl_Widget *Tabs_Node::enter_live_mode() {
   Fl_Tabs *original = static_cast<Fl_Tabs*>(o);
   Fl_Tabs *clone = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
   propagate_live_mode(clone);
@@ -807,7 +804,7 @@ Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH_ALWAYS", 0, nullptr, (void*)Fl_Scroll::BOTH_ALWAYS},
   {nullptr}};
 
-Fl_Widget *Scroll_Node::enter_live_mode(int) {
+Fl_Widget *Scroll_Node::enter_live_mode() {
   Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
   grp->show();
   return propagate_live_mode(grp);
@@ -829,12 +826,9 @@ Tile_Node Tile_Node::prototype;      // the "factory"
 const char tile_type_name[] = "Fl_Tile";
 
 // live mode support
-Fl_Widget* Tile_Node::enter_live_mode(int) {
+Fl_Widget* Tile_Node::enter_live_mode() {
   Fl_Group *grp = new Fl_Tile(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grp);
-}
-
-void Tile_Node::leave_live_mode() {
 }
 
 void Tile_Node::copy_properties() {

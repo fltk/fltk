@@ -132,42 +132,52 @@ static void cb_template_submit(Fl_Return_Button*, void*) {
 }
 
 Fl_Double_Window* make_template_panel() {
-  { template_panel = new Fl_Double_Window(460, 355, "New/Save Template");
+  { auto* o = template_panel = new Fl_Double_Window(460, 355, "New/Save Template");
+    (void)o;
     template_panel->callback((Fl_Callback*)cb_template_panel);
-    { template_browser = new Fl_Browser(10, 28, 180, 250, "Available Templates:");
+    { auto* o = template_browser = new Fl_Browser(10, 28, 180, 250, "Available Templates:");
+      (void)o;
       template_browser->type(2);
       template_browser->labelfont(1);
       template_browser->callback((Fl_Callback*)cb_template_browser);
       template_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       template_browser->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
     } // Fl_Browser* template_browser
-    { template_preview = new Fl_Box(200, 28, 250, 250);
+    { auto* o = template_preview = new Fl_Box(200, 28, 250, 250);
+      (void)o;
       template_preview->box(FL_THIN_DOWN_BOX);
       template_preview->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
       Fl_Group::current()->resizable(template_preview);
     } // Fl_Box* template_preview
-    { template_name = new Fl_Input(198, 288, 252, 25, "Template Name:");
+    { auto* o = template_name = new Fl_Input(198, 288, 252, 25, "Template Name:");
+      (void)o;
       template_name->labelfont(1);
       template_name->textfont(4);
       template_name->callback((Fl_Callback*)cb_template_name);
       template_name->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
     } // Fl_Input* template_name
-    { template_instance = new Fl_Input(198, 288, 252, 25, "Instance Name:");
+    { auto* o = template_instance = new Fl_Input(198, 288, 252, 25, "Instance Name:");
+      (void)o;
       template_instance->labelfont(1);
       template_instance->textfont(4);
       template_instance->hide();
     } // Fl_Input* template_instance
-    { Fl_Group* o = new Fl_Group(10, 323, 440, 25);
-      { template_delete = new Fl_Button(10, 323, 143, 25, "Delete Template");
+    { auto* o = new Fl_Group(10, 323, 440, 25);
+      (void)o;
+      { auto* o = template_delete = new Fl_Button(10, 323, 143, 25, "Delete Template");
+        (void)o;
         template_delete->callback((Fl_Callback*)template_delete_cb);
       } // Fl_Button* template_delete
-      { Fl_Box* o = new Fl_Box(153, 323, 126, 25);
+      { auto* o = new Fl_Box(153, 323, 126, 25);
+        (void)o;
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { Fl_Button* o = new Fl_Button(289, 323, 72, 25, "Cancel");
+      { auto* o = new Fl_Button(289, 323, 72, 25, "Cancel");
+        (void)o;
         o->callback((Fl_Callback*)cb_Cancel);
       } // Fl_Button* o
-      { template_submit = new Fl_Return_Button(371, 323, 79, 25, "Save");
+      { auto* o = template_submit = new Fl_Return_Button(371, 323, 79, 25, "Save");
+        (void)o;
         template_submit->callback((Fl_Callback*)cb_template_submit);
       } // Fl_Return_Button* template_submit
       o->end();

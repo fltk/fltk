@@ -296,12 +296,9 @@ Fl_Widget *Grid_Node::widget(int X,int Y,int W,int H) {
   return g;
 }
 
-Fl_Widget *Grid_Node::enter_live_mode(int top) {
+Fl_Widget *Grid_Node::enter_live_mode() {
   Fl_Grid *grid = new Fl_Grid(o->x(), o->y(), o->w(), o->h());
   return propagate_live_mode(grid);
-}
-
-void Grid_Node::leave_live_mode() {
 }
 
 void Grid_Node::copy_properties()

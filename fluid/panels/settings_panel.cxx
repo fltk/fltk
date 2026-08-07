@@ -90,27 +90,35 @@ Fl_Button* script_panel_cancel = (Fl_Button*)nullptr;
 Fl_Return_Button* script_panel_ok = (Fl_Return_Button*)nullptr;
 
 Fl_Double_Window* make_script_panel() {
-  { Fl_Double_Window* o = script_panel = new Fl_Double_Window(540, 184, "Shell Script Editor");
+  { auto* o = script_panel = new Fl_Double_Window(540, 184, "Shell Script Editor");
+    (void)o;
     script_panel->labelsize(11);
     script_panel->callback((Fl_Callback*)cb_script_panel);
-    { script_input = new Fl_Text_Editor(10, 10, 520, 130);
+    { auto* o = script_input = new Fl_Text_Editor(10, 10, 520, 130);
+      (void)o;
       script_input->box(FL_DOWN_BOX);
       script_input->labelsize(12);
       script_input->textfont(4);
       script_input->textsize(12);
       script_input->when(FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
       Fl_Group::current()->resizable(script_input);
+//ﬂ ▼ ---------------------- finalize --~~-=----~~=~-=--~-~- ▼ ﬂ//
       script_input->buffer(new Fl_Text_Buffer);
+//ﬂ ▲ ---------~~=--=~=--~------------~~~--=-----=~~=-~~=-~- ▲ ﬂ//
     } // Fl_Text_Editor* script_input
-    { Fl_Group* o = new Fl_Group(10, 150, 520, 24);
+    { auto* o = new Fl_Group(10, 150, 520, 24);
+      (void)o;
       o->labelsize(11);
       o->callback((Fl_Callback*)propagate_load);
-      { script_panel_cancel = new Fl_Button(348, 150, 88, 24, "Cancel");
+      { auto* o = script_panel_cancel = new Fl_Button(348, 150, 88, 24, "Cancel");
+        (void)o;
       } // Fl_Button* script_panel_cancel
-      { script_panel_ok = new Fl_Return_Button(442, 150, 88, 24, "OK");
+      { auto* o = script_panel_ok = new Fl_Return_Button(442, 150, 88, 24, "OK");
+        (void)o;
         script_panel_ok->window()->hotspot(script_panel_ok);
       } // Fl_Return_Button* script_panel_ok
-      { Fl_Box* o = new Fl_Box(10, 150, 338, 24);
+      { auto* o = new Fl_Box(10, 150, 338, 24);
+        (void)o;
         o->labelsize(11);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
@@ -120,7 +128,7 @@ Fl_Double_Window* make_script_panel() {
     o->size_range(200, 150);
     script_panel->end();
   } // Fl_Double_Window* script_panel
-//ﬂ ▼ ------------------------ code ---~=~-~~=-=~-~=~=~~=~=- ▼ ﬂ//
+//ﬂ ▼ ------------------------ code --~~-~~-~-~-~~-==~~=-=-= ▼ ﬂ//
   // Enable line numbers
   script_input->linenumber_width(60);
   script_input->linenumber_size(script_input->Fl_Text_Display::textsize());
@@ -2713,20 +2721,25 @@ static void cb_Close(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_settings_window() {
-  { settings_window = new Fl_Double_Window(360, 585, "FLUID Settings");
+  { auto* o = settings_window = new Fl_Double_Window(360, 585, "FLUID Settings");
+    (void)o;
     settings_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
-    { w_settings_tabs = new Fl_Tabs(10, 10, 340, 530);
+    { auto* o = w_settings_tabs = new Fl_Tabs(10, 10, 340, 530);
+      (void)o;
       w_settings_tabs->selection_color((Fl_Color)12);
       w_settings_tabs->labelsize(12);
       w_settings_tabs->labelcolor(FL_WHITE);
       w_settings_tabs->callback((Fl_Callback*)cb_w_settings_tabs);
-      { w_settings_general_tab = new Fl_Group(10, 60, 340, 480, "General");
+      { auto* o = w_settings_general_tab = new Fl_Group(10, 60, 340, 480, "General");
+        (void)o;
         w_settings_general_tab->image( image_general_64() );
         w_settings_general_tab->image()->scale(36, 24, 0, 1);
         w_settings_general_tab->labelsize(12);
-        { Fl_Group* o = new Fl_Group(130, 78, 210, 25);
+        { auto* o = new Fl_Group(130, 78, 210, 25);
+          (void)o;
           o->callback((Fl_Callback*)cb_);
-          { scheme_choice = new Fl_Scheme_Choice(130, 78, 120, 25, "Scheme: ");
+          { auto* o = scheme_choice = new Fl_Scheme_Choice(130, 78, 120, 25, "Scheme: ");
+            (void)o;
             scheme_choice->box(FL_UP_BOX);
             scheme_choice->down_box(FL_BORDER_BOX);
             scheme_choice->color(FL_BACKGROUND_COLOR);
@@ -2739,80 +2752,105 @@ Fl_Double_Window* make_settings_window() {
             scheme_choice->callback((Fl_Callback*)cb_scheme_choice);
             scheme_choice->align(Fl_Align(FL_ALIGN_LEFT));
             scheme_choice->when(FL_WHEN_RELEASE);
+//ﬂ ▼ ---------------------- finalize ---~-=~~=-~==~=~-~~-~- ▼ ﬂ//
             Fluid.init_scheme();
+//ﬂ ▲ ---------~=~=~~~~~-~------------~~~==--~=~-=----~~~-=~ ▲ ﬂ//
           } // Fl_Scheme_Choice* scheme_choice
-          { Fl_Box* o = new Fl_Box(250, 78, 10, 25);
+          { auto* o = new Fl_Box(250, 78, 10, 25);
+            (void)o;
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(130, 115, 0, 20, "Options: ");
+        { auto* o = new Fl_Box(130, 115, 0, 20, "Options: ");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { tooltips_button = new Fl_Check_Button(130, 115, 210, 20, "Show Tooltips");
+        { auto* o = tooltips_button = new Fl_Check_Button(130, 115, 210, 20, "Show Tooltips");
+          (void)o;
           tooltips_button->down_box(FL_DOWN_BOX);
           tooltips_button->labelsize(12);
           tooltips_button->callback((Fl_Callback*)cb_tooltips_button);
+//ﬂ ▼ ---------------------- finalize ----=-~~-=~=~=~==~~=-= ▼ ﬂ//
           int b;
           Fluid.preferences.get("show_tooltips", b, 1);
           tooltips_button->value(b);
           Fl_Tooltip::enable(b);
+//ﬂ ▲ ---------~~=~=-=---~-=-----------~-~--=-~=-=~~-~=~~-~= ▲ ﬂ//
         } // Fl_Check_Button* tooltips_button
-        { completion_button = new Fl_Check_Button(130, 135, 210, 20, "Show Completion Dialogs");
+        { auto* o = completion_button = new Fl_Check_Button(130, 135, 210, 20, "Show Completion Dialogs");
+          (void)o;
           completion_button->down_box(FL_DOWN_BOX);
           completion_button->labelsize(12);
           completion_button->callback((Fl_Callback*)cb_completion_button);
+//ﬂ ▼ ---------------------- finalize -~~==~~=~~=~-~=-~==-~~ ▼ ﬂ//
           int b;
           Fluid.preferences.get("show_completion_dialogs", b, 1);
           completion_button->value(b);
+//ﬂ ▲ ---------~~=-~~-=--~~~----------~-=--==-=-~-~-=--=~=~- ▲ ﬂ//
         } // Fl_Check_Button* completion_button
-        { openlast_button = new Fl_Check_Button(130, 155, 210, 20, "Open Previous File on Startup");
+        { auto* o = openlast_button = new Fl_Check_Button(130, 155, 210, 20, "Open Previous File on Startup");
+          (void)o;
           openlast_button->down_box(FL_DOWN_BOX);
           openlast_button->labelsize(12);
           openlast_button->callback((Fl_Callback*)cb_openlast_button);
+//ﬂ ▼ ---------------------- finalize ~----==~~--=~~=~---=~= ▼ ﬂ//
           int b;
           Fluid.preferences.get("open_previous_file", b, 0);
           openlast_button->value(b);
+//ﬂ ▲ ---------~~=~--=-=--~-----------~~~~~~~=~=~==~=~=~=-~= ▲ ﬂ//
         } // Fl_Check_Button* openlast_button
-        { prevpos_button = new Fl_Check_Button(130, 175, 210, 20, "Remember Window Positions");
+        { auto* o = prevpos_button = new Fl_Check_Button(130, 175, 210, 20, "Remember Window Positions");
+          (void)o;
           prevpos_button->down_box(FL_DOWN_BOX);
           prevpos_button->labelsize(12);
           prevpos_button->callback((Fl_Callback*)cb_prevpos_button);
+//ﬂ ▼ ---------------------- finalize --=-~-=~~=~~=~~-=-~=-- ▼ ﬂ//
           int b;
           Fluid.preferences.get("prev_window_pos", b, 1);
           prevpos_button->value(b);
+//ﬂ ▲ ---------~~==-~---~==-----------~~~=-~=~-~-==--=-=~~-= ▲ ﬂ//
         } // Fl_Check_Button* prevpos_button
-        { show_comments_button = new Fl_Check_Button(130, 195, 210, 20, "Show Comments in Browser");
+        { auto* o = show_comments_button = new Fl_Check_Button(130, 195, 210, 20, "Show Comments in Browser");
+          (void)o;
           show_comments_button->down_box(FL_DOWN_BOX);
           show_comments_button->labelsize(12);
           show_comments_button->callback((Fl_Callback*)cb_show_comments_button);
+//ﬂ ▼ ---------------------- finalize ~--~-=-=~-~----~-~~-~= ▼ ﬂ//
           Fluid.preferences.get("Fluid.show_comments", Fluid.show_comments, 1);
           show_comments_button->value(Fluid.show_comments);
+//ﬂ ▲ ---------~=~------=~-~----------~~=~=~-~~=~=~==~=-=~-= ▲ ﬂ//
         } // Fl_Check_Button* show_comments_button
-        { Fl_Group* o = new Fl_Group(130, 225, 210, 20);
+        { auto* o = new Fl_Group(130, 225, 210, 20);
+          (void)o;
           o->callback((Fl_Callback*)cb_1);
-          { recent_spinner = new Fl_Spinner(130, 225, 40, 20, "# Recent Files:");
+          { auto* o = recent_spinner = new Fl_Spinner(130, 225, 40, 20, "# Recent Files:");
+            (void)o;
             recent_spinner->labelfont(1);
             recent_spinner->labelsize(12);
             recent_spinner->maximum(10);
             recent_spinner->textsize(12);
             recent_spinner->callback((Fl_Callback*)cb_recent_spinner);
             recent_spinner->when(FL_WHEN_CHANGED);
+//ﬂ ▼ ---------------------- finalize ---==~=~~=~-~-----=-=- ▼ ﬂ//
             int c;
             Fluid.preferences.get("recent_files", c, 5);
             recent_spinner->maximum(10);
             recent_spinner->value(c);
+//ﬂ ▲ ---------~~=~=~-~----=----------~~=~-=~--==--=-=---=-~ ▲ ﬂ//
           } // Fl_Spinner* recent_spinner
-          { Fl_Box* o = new Fl_Box(170, 225, 10, 20);
+          { auto* o = new Fl_Box(170, 225, 10, 20);
+            (void)o;
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { editor_command_input = new Fl_Input(130, 255, 210, 20, "External Editor:");
+        { auto* o = editor_command_input = new Fl_Input(130, 255, 210, 20, "External Editor:");
+          (void)o;
           editor_command_input->tooltip("The editor command to open your external text editor.\nInclude any necessary "
 "flags to ensure your editor does not background itself.\nExamples:\n    gvim -"
 "f\n    gedit\n emacs");
@@ -2822,69 +2860,90 @@ Fl_Double_Window* make_settings_window() {
           editor_command_input->textsize(12);
           editor_command_input->callback((Fl_Callback*)cb_editor_command_input);
           editor_command_input->when(FL_WHEN_CHANGED);
+//ﬂ ▼ ---------------------- finalize --=---=--=~=---~=~-~~- ▼ ﬂ//
           Fluid.preferences.get("external_editor_command", Fluid.external_editor_command, "");
           editor_command_input->value(Fluid.external_editor_command.c_str());
+//ﬂ ▲ ---------~~=~=~--=~--=-----------~~--~-~=~=~--~-~-=-~- ▲ ﬂ//
         } // Fl_Input* editor_command_input
-        { use_external_editor_button = new Fl_Check_Button(130, 278, 210, 20, "Use for Code Nodes");
+        { auto* o = use_external_editor_button = new Fl_Check_Button(130, 278, 210, 20, "Use for Code Nodes");
+          (void)o;
           use_external_editor_button->down_box(FL_DOWN_BOX);
           use_external_editor_button->labelsize(12);
           use_external_editor_button->callback((Fl_Callback*)cb_use_external_editor_button);
+//ﬂ ▼ ---------------------- finalize ~--------=~-------=-=- ▼ ﬂ//
           Fluid.preferences.get("use_external_editor", Fluid.use_external_editor, 0);
           use_external_editor_button->value(Fluid.use_external_editor);
+//ﬂ ▲ ---------~~=-~=-~=-=~-----------~~--=-~=-=-=~=-==~~~=- ▲ ﬂ//
         } // Fl_Check_Button* use_external_editor_button
-        { Fl_Box* o = new Fl_Box(130, 306, 0, 20, "Overlays: ");
+        { auto* o = new Fl_Box(130, 306, 0, 20, "Overlays: ");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { Fl_Check_Button* o = guides_button = new Fl_Check_Button(130, 306, 210, 20, "Show Positioning Guides");
+        { auto* o = guides_button = new Fl_Check_Button(130, 306, 210, 20, "Show Positioning Guides");
+          (void)o;
           guides_button->tooltip("show guides that help to position and resize widgets and enable snapping");
           guides_button->down_box(FL_DOWN_BOX);
           guides_button->labelsize(12);
           guides_button->callback((Fl_Callback*)toggle_guides_cb);
+//ﬂ ▼ ---------------------- finalize -~-==~~~~==---~=~--=-= ▼ ﬂ//
           o->value(Fluid.show_guides);
+//ﬂ ▲ ---------~~=~=~~~-~=-=----------~--=-~~==-=~~=~==~=~-= ▲ ﬂ//
         } // Fl_Check_Button* guides_button
-        { Fl_Check_Button* o = restricted_button = new Fl_Check_Button(130, 326, 210, 20, "Show Restricted Areas");
+        { auto* o = restricted_button = new Fl_Check_Button(130, 326, 210, 20, "Show Restricted Areas");
+          (void)o;
           restricted_button->tooltip("show overlapping and out of bounds areas, show unfilled areas in Fl_Pack grou"
 "ps");
           restricted_button->down_box(FL_DOWN_BOX);
           restricted_button->labelsize(12);
           restricted_button->callback((Fl_Callback*)toggle_restricted_cb);
+//ﬂ ▼ ---------------------- finalize ~~--~=--~-=~~=-==~-=~- ▼ ﬂ//
           o->value(Fluid.show_restricted);
+//ﬂ ▲ ---------~=~~==~-~~~~-----------~~--~---~=~~--~-=~-=~~ ▲ ﬂ//
         } // Fl_Check_Button* restricted_button
-        { Fl_Check_Button* o = ghosted_outline_button = new Fl_Check_Button(130, 346, 210, 20, "Show Ghosted Group Outlines");
+        { auto* o = ghosted_outline_button = new Fl_Check_Button(130, 346, 210, 20, "Show Ghosted Group Outlines");
+          (void)o;
           ghosted_outline_button->tooltip("groups with no box type or flat boxtypes without contrast will be rendered wi"
 "th a dim outline in the editing window only");
           ghosted_outline_button->down_box(FL_DOWN_BOX);
           ghosted_outline_button->labelsize(12);
           ghosted_outline_button->callback((Fl_Callback*)toggle_ghosted_outline_cb);
+//ﬂ ▼ ---------------------- finalize ---~~-~~=~=-~~-~~-~=-- ▼ ﬂ//
           o->value(Fluid.show_ghosted_outline);
+//ﬂ ▲ ---------~=~-~-~-~-==~----------~-~~~=~~-=~~-~=~--=-~~ ▲ ﬂ//
         } // Fl_Check_Button* ghosted_outline_button
-        { Fl_Box* o = new Fl_Box(130, 530, 210, 10);
+        { auto* o = new Fl_Box(130, 530, 210, 10);
+          (void)o;
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         w_settings_general_tab->end();
         Fl_Group::current()->resizable(w_settings_general_tab);
       } // Fl_Group* w_settings_general_tab
-      { w_settings_project_tab = new Fl_Group(10, 60, 340, 480, "Project");
+      { auto* o = w_settings_project_tab = new Fl_Group(10, 60, 340, 480, "Project");
+        (void)o;
         w_settings_project_tab->image( image_document_64() );
         w_settings_project_tab->image()->scale(36, 24, 0, 1);
         w_settings_project_tab->labelsize(12);
         w_settings_project_tab->callback((Fl_Callback*)cb_w_settings_project_tab);
         w_settings_project_tab->hide();
-        { Fl_Group* o = new Fl_Group(110, 78, 230, 30);
-          { Fl_Box* o = new Fl_Box(110, 78, 210, 30, "Use \"name.ext\" to set a file name\nor just \".ext\" to set extension.");
+        { auto* o = new Fl_Group(110, 78, 230, 30);
+          (void)o;
+          { auto* o = new Fl_Box(110, 78, 210, 30, "Use \"name.ext\" to set a file name\nor just \".ext\" to set extension.");
+            (void)o;
             o->labelsize(11);
             o->align(Fl_Align(132|FL_ALIGN_INSIDE));
           } // Fl_Box* o
-          { Fl_Box* o = new Fl_Box(320, 78, 20, 30);
+          { auto* o = new Fl_Box(320, 78, 20, 30);
+            (void)o;
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { header_file_input = new Fl_Input(110, 112, 230, 20, "Header File:");
+        { auto* o = header_file_input = new Fl_Input(110, 112, 230, 20, "Header File:");
+          (void)o;
           header_file_input->tooltip("The name of the generated header file.");
           header_file_input->box(FL_THIN_DOWN_BOX);
           header_file_input->labelfont(1);
@@ -2894,7 +2953,8 @@ Fl_Double_Window* make_settings_window() {
           header_file_input->callback((Fl_Callback*)cb_header_file_input, (void*)(1));
           header_file_input->when(FL_WHEN_CHANGED);
         } // Fl_Input* header_file_input
-        { code_file_input = new Fl_Input(110, 137, 230, 20, "Code File:");
+        { auto* o = code_file_input = new Fl_Input(110, 137, 230, 20, "Code File:");
+          (void)o;
           code_file_input->tooltip("The name of the generated code file.");
           code_file_input->box(FL_THIN_DOWN_BOX);
           code_file_input->labelfont(1);
@@ -2904,13 +2964,15 @@ Fl_Double_Window* make_settings_window() {
           code_file_input->callback((Fl_Callback*)cb_code_file_input, (void*)(1));
           code_file_input->when(FL_WHEN_CHANGED);
         } // Fl_Input* code_file_input
-        { include_H_from_C_button = new Fl_Check_Button(110, 160, 230, 20, "Include Header from Code");
+        { auto* o = include_H_from_C_button = new Fl_Check_Button(110, 160, 230, 20, "Include Header from Code");
+          (void)o;
           include_H_from_C_button->tooltip("Include the header file from the code file.");
           include_H_from_C_button->down_box(FL_DOWN_BOX);
           include_H_from_C_button->labelsize(12);
           include_H_from_C_button->callback((Fl_Callback*)cb_include_H_from_C_button);
         } // Fl_Check_Button* include_H_from_C_button
-        { include_guard_input = new Fl_Input(110, 188, 230, 20, "Include Guard:");
+        { auto* o = include_guard_input = new Fl_Input(110, 188, 230, 20, "Include Guard:");
+          (void)o;
           include_guard_input->tooltip("Name of macro used as\nan include guard in header file:\n\n#ifdef GUARD\n#def"
 "ine GUARD\n...\n#endif");
           include_guard_input->box(FL_THIN_DOWN_BOX);
@@ -2921,18 +2983,21 @@ Fl_Double_Window* make_settings_window() {
           include_guard_input->callback((Fl_Callback*)cb_include_guard_input, (void*)(1));
           include_guard_input->when(FL_WHEN_CHANGED);
         } // Fl_Input* include_guard_input
-        { Fl_Box* o = new Fl_Box(110, 214, 0, 20, "Options: ");
+        { auto* o = new Fl_Box(110, 214, 0, 20, "Options: ");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { use_FL_COMMAND_button = new Fl_Check_Button(110, 214, 230, 20, "Menu shortcuts use FL_COMMAND");
+        { auto* o = use_FL_COMMAND_button = new Fl_Check_Button(110, 214, 230, 20, "Menu shortcuts use FL_COMMAND");
+          (void)o;
           use_FL_COMMAND_button->tooltip("Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts");
           use_FL_COMMAND_button->down_box(FL_DOWN_BOX);
           use_FL_COMMAND_button->labelsize(12);
           use_FL_COMMAND_button->callback((Fl_Callback*)cb_use_FL_COMMAND_button);
         } // Fl_Check_Button* use_FL_COMMAND_button
-        { utf8_in_src_button = new Fl_Check_Button(110, 234, 230, 20, "Allow Unicode UTF-8 in source code");
+        { auto* o = utf8_in_src_button = new Fl_Check_Button(110, 234, 230, 20, "Allow Unicode UTF-8 in source code");
+          (void)o;
           utf8_in_src_button->tooltip("For older compilers, characters outside of the printable ASCII range are esca"
 "ped using octal notation `\\0123`. If this option is checked, Fluid will write"
 " UTF-8 characters unchanged.");
@@ -2940,18 +3005,21 @@ Fl_Double_Window* make_settings_window() {
           utf8_in_src_button->labelsize(12);
           utf8_in_src_button->callback((Fl_Callback*)cb_utf8_in_src_button);
         } // Fl_Check_Button* utf8_in_src_button
-        { avoid_early_includes_button = new Fl_Check_Button(110, 254, 230, 20, "Avoid early include of Fl.H");
+        { auto* o = avoid_early_includes_button = new Fl_Check_Button(110, 254, 230, 20, "Avoid early include of Fl.H");
+          (void)o;
           avoid_early_includes_button->tooltip("Do not emit #include <FL//Fl.H> until it is needed by another include file.");
           avoid_early_includes_button->down_box(FL_DOWN_BOX);
           avoid_early_includes_button->labelsize(12);
           avoid_early_includes_button->callback((Fl_Callback*)cb_avoid_early_includes_button);
         } // Fl_Check_Button* avoid_early_includes_button
-        { Fl_Box* o = new Fl_Box(110, 280, 0, 20, "Experimental: ");
+        { auto* o = new Fl_Box(110, 280, 0, 20, "Experimental: ");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { w_proj_mergeback = new Fl_Check_Button(110, 280, 230, 20, "Generate MergeBack data");
+        { auto* o = w_proj_mergeback = new Fl_Check_Button(110, 280, 230, 20, "Generate MergeBack data");
+          (void)o;
           w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
 "o be merged back into the project file. Checking this option will generate add"
 "itional data in code and project files.");
@@ -2959,32 +3027,38 @@ Fl_Double_Window* make_settings_window() {
           w_proj_mergeback->labelsize(12);
           w_proj_mergeback->callback((Fl_Callback*)cb_w_proj_mergeback);
         } // Fl_Check_Button* w_proj_mergeback
-        { Fl_Box* o = new Fl_Box(110, 530, 230, 10);
+        { auto* o = new Fl_Box(110, 530, 230, 10);
+          (void)o;
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         w_settings_project_tab->end();
       } // Fl_Group* w_settings_project_tab
-      { w_settings_layout_tab = new Fl_Group(10, 60, 340, 480, "Layout");
+      { auto* o = w_settings_layout_tab = new Fl_Group(10, 60, 340, 480, "Layout");
+        (void)o;
         w_settings_layout_tab->image( image_layout_64() );
         w_settings_layout_tab->image()->scale(36, 24, 0, 1);
         w_settings_layout_tab->labelsize(12);
         w_settings_layout_tab->callback((Fl_Callback*)cb_w_settings_layout_tab);
         w_settings_layout_tab->hide();
-        { Fl_Box* o = new Fl_Box(20, 78, 75, 24, "Layout:");
+        { auto* o = new Fl_Box(20, 78, 75, 24, "Layout:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { layout_choice = new Fl_Choice(95, 78, 197, 24);
+        { auto* o = layout_choice = new Fl_Choice(95, 78, 197, 24);
+          (void)o;
           layout_choice->down_box(FL_BORDER_BOX);
           layout_choice->callback((Fl_Callback*)cb_layout_choice);
           layout_choice->menu(menu_layout_choice);
         } // Fl_Choice* layout_choice
-        { Fl_Button* o = new Fl_Button(292, 78, 24, 24, "+");
+        { auto* o = new Fl_Button(292, 78, 24, 24, "+");
+          (void)o;
           o->callback((Fl_Callback*)cb_2);
         } // Fl_Button* o
-        { w_layout_menu = new Fl_Menu_Button(316, 78, 24, 24);
+        { auto* o = w_layout_menu = new Fl_Menu_Button(316, 78, 24, 24);
+          (void)o;
           w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);
             w_layout_menu_storage[0] = &menu_w_layout_menu[1];
             w_layout_menu_storage[1] = &menu_w_layout_menu[2];
@@ -2992,15 +3066,18 @@ Fl_Double_Window* make_settings_window() {
             w_layout_menu_storage[3] = &menu_w_layout_menu[4];
           w_layout_menu->menu(menu_w_layout_menu);
         } // Fl_Menu_Button* w_layout_menu
-        { Fl_Box* o = new Fl_Box(20, 107, 75, 20, "Preset:");
+        { auto* o = new Fl_Box(20, 107, 75, 20, "Preset:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Group* o = new Fl_Group(95, 107, 245, 20);
+        { auto* o = new Fl_Group(95, 107, 245, 20);
+          (void)o;
           o->labelsize(11);
           o->callback((Fl_Callback*)propagate_load);
-          { preset_choice[0] = new Fl_Button(95, 107, 81, 20, "Application");
+          { auto* o = preset_choice[0] = new Fl_Button(95, 107, 81, 20, "Application");
+            (void)o;
             preset_choice[0]->type(102);
             preset_choice[0]->value(1);
             preset_choice[0]->compact(1);
@@ -3008,14 +3085,16 @@ Fl_Double_Window* make_settings_window() {
             preset_choice[0]->labelsize(12);
             preset_choice[0]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(0));
           } // Fl_Button* preset_choice[0]
-          { preset_choice[1] = new Fl_Button(176, 107, 82, 20, "Dialog");
+          { auto* o = preset_choice[1] = new Fl_Button(176, 107, 82, 20, "Dialog");
+            (void)o;
             preset_choice[1]->type(102);
             preset_choice[1]->compact(1);
             preset_choice[1]->selection_color(FL_DARK2);
             preset_choice[1]->labelsize(12);
             preset_choice[1]->callback((Fl_Callback*)edit_layout_preset_cb, (void*)(1));
           } // Fl_Button* preset_choice[1]
-          { preset_choice[2] = new Fl_Button(258, 107, 82, 20, "Toolbox");
+          { auto* o = preset_choice[2] = new Fl_Button(258, 107, 82, 20, "Toolbox");
+            (void)o;
             preset_choice[2]->type(102);
             preset_choice[2]->compact(1);
             preset_choice[2]->selection_color(FL_DARK2);
@@ -3024,17 +3103,20 @@ Fl_Double_Window* make_settings_window() {
           } // Fl_Button* preset_choice[2]
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(95, 132, 235, 20, "---- Window ----");
+        { auto* o = new Fl_Box(95, 132, 235, 20, "---- Window ----");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(20, 167, 75, 20, "Margins:");
+        { auto* o = new Fl_Box(20, 167, 75, 20, "Margins:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 167, 55, 20, "Left:");
+        { auto* o = new Fl_Value_Input(95, 167, 55, 20, "Left:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3042,7 +3124,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Left);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 167, 55, 20, "Top:");
+        { auto* o = new Fl_Value_Input(155, 167, 55, 20, "Top:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3050,7 +3133,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Top);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(215, 167, 55, 20, "Right:");
+        { auto* o = new Fl_Value_Input(215, 167, 55, 20, "Right:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3058,7 +3142,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Right);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(275, 167, 55, 20, "Bottom:");
+        { auto* o = new Fl_Value_Input(275, 167, 55, 20, "Bottom:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3066,12 +3151,14 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Bottom);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Box* o = new Fl_Box(20, 201, 75, 20, "Grid:");
+        { auto* o = new Fl_Box(20, 201, 75, 20, "Grid:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 201, 55, 20, "Horizontal:");
+        { auto* o = new Fl_Value_Input(95, 201, 55, 20, "Horizontal:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3079,7 +3166,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Horizontal);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 201, 55, 20, "Vertical:");
+        { auto* o = new Fl_Value_Input(155, 201, 55, 20, "Vertical:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3087,17 +3175,20 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Vertical);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Box* o = new Fl_Box(95, 226, 235, 20, "---- Group ----");
+        { auto* o = new Fl_Box(95, 226, 235, 20, "---- Group ----");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(20, 261, 75, 20, "Margins:");
+        { auto* o = new Fl_Box(20, 261, 75, 20, "Margins:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 261, 55, 20, "Left:");
+        { auto* o = new Fl_Value_Input(95, 261, 55, 20, "Left:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3105,7 +3196,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Left1);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 261, 55, 20, "Top:");
+        { auto* o = new Fl_Value_Input(155, 261, 55, 20, "Top:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3113,7 +3205,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Top1);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(215, 261, 55, 20, "Right:");
+        { auto* o = new Fl_Value_Input(215, 261, 55, 20, "Right:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3121,7 +3214,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Right1);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(275, 261, 55, 20, "Bottom:");
+        { auto* o = new Fl_Value_Input(275, 261, 55, 20, "Bottom:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3129,12 +3223,14 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Bottom1);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Box* o = new Fl_Box(20, 295, 75, 20, "Grid:");
+        { auto* o = new Fl_Box(20, 295, 75, 20, "Grid:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 295, 55, 20, "Horizontal:");
+        { auto* o = new Fl_Value_Input(95, 295, 55, 20, "Horizontal:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3142,7 +3238,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Horizontal1);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 295, 55, 20, "Vertical:");
+        { auto* o = new Fl_Value_Input(155, 295, 55, 20, "Vertical:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3150,17 +3247,20 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Vertical1);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Box* o = new Fl_Box(95, 320, 235, 20, "---- Tabs ----");
+        { auto* o = new Fl_Box(95, 320, 235, 20, "---- Tabs ----");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(20, 355, 75, 20, "Margins:");
+        { auto* o = new Fl_Box(20, 355, 75, 20, "Margins:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 355, 55, 20, "Top:");
+        { auto* o = new Fl_Value_Input(95, 355, 55, 20, "Top:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3168,7 +3268,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Top2);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 355, 55, 20, "Bottom:");
+        { auto* o = new Fl_Value_Input(155, 355, 55, 20, "Bottom:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3176,17 +3277,20 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Bottom2);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Box* o = new Fl_Box(95, 380, 235, 20, "---- Widget ----");
+        { auto* o = new Fl_Box(95, 380, 235, 20, "---- Widget ----");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Box* o = new Fl_Box(20, 415, 75, 20, "Horizontal:");
+        { auto* o = new Fl_Box(20, 415, 75, 20, "Horizontal:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 414, 55, 20, "Minimum:");
+        { auto* o = new Fl_Value_Input(95, 414, 55, 20, "Minimum:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3194,7 +3298,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Minimum);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 414, 55, 20, "Increment:");
+        { auto* o = new Fl_Value_Input(155, 414, 55, 20, "Increment:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3202,7 +3307,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Increment);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(215, 414, 55, 20, "Gap:");
+        { auto* o = new Fl_Value_Input(215, 414, 55, 20, "Gap:");
+          (void)o;
           o->labelsize(11);
           o->maximum(32767);
           o->step(1);
@@ -3210,19 +3316,22 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_Gap);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Box* o = new Fl_Box(20, 440, 75, 20, "Vertical:");
+        { auto* o = new Fl_Box(20, 440, 75, 20, "Vertical:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Value_Input* o = new Fl_Value_Input(95, 440, 55, 20);
+        { auto* o = new Fl_Value_Input(95, 440, 55, 20);
+          (void)o;
           o->labelsize(12);
           o->maximum(32767);
           o->step(1);
           o->textsize(12);
           o->callback((Fl_Callback*)cb_3);
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(155, 440, 55, 20);
+        { auto* o = new Fl_Value_Input(155, 440, 55, 20);
+          (void)o;
           o->labelsize(12);
           o->maximum(32767);
           o->step(1);
@@ -3230,7 +3339,8 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_4);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Value_Input* o = new Fl_Value_Input(215, 440, 55, 20);
+        { auto* o = new Fl_Value_Input(215, 440, 55, 20);
+          (void)o;
           o->labelsize(12);
           o->maximum(32767);
           o->step(1);
@@ -3238,12 +3348,14 @@ Fl_Double_Window* make_settings_window() {
           o->callback((Fl_Callback*)cb_5);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
         } // Fl_Value_Input* o
-        { Fl_Group* o = new Fl_Group(95, 465, 201, 20, "Label Font:");
+        { auto* o = new Fl_Group(95, 465, 201, 20, "Label Font:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 465, 150, 20);
+          { auto* o = new Fl_Choice(95, 465, 150, 20);
+            (void)o;
             o->tooltip("The style of the label text.");
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -3252,9 +3364,12 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(12);
             o->callback((Fl_Callback*)cb_6);
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~~=-~=---=---=--~=-==~ ▼ ﬂ//
             o->menu(fontmenu_w_default);
+//ﬂ ▲ ---------~=~-~-=~~~~~=-----------~=--=--~=-==~~-~~=~=~ ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(245, 465, 50, 20);
+          { auto* o = new Fl_Value_Input(245, 465, 50, 20);
+            (void)o;
             o->tooltip("The size of the label text.");
             o->labelsize(12);
             o->minimum(1);
@@ -3266,12 +3381,14 @@ Fl_Double_Window* make_settings_window() {
           } // Fl_Value_Input* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(95, 490, 200, 20, "Text Font:");
+        { auto* o = new Fl_Group(95, 490, 200, 20, "Text Font:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(95, 490, 150, 20);
+          { auto* o = new Fl_Choice(95, 490, 150, 20);
+            (void)o;
             o->tooltip("The value text style.");
             o->box(FL_DOWN_BOX);
             o->down_box(FL_BORDER_BOX);
@@ -3280,9 +3397,12 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(12);
             o->callback((Fl_Callback*)cb_8);
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize -~~~~~~~=~-~=~-=-==--~ ▼ ﬂ//
             o->menu(fontmenu_w_default);
+//ﬂ ▲ ---------~=~~--=~-~==------------~=--=--~=-==~~-~~=~=~ ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Value_Input* o = new Fl_Value_Input(245, 490, 50, 20);
+          { auto* o = new Fl_Value_Input(245, 490, 50, 20);
+            (void)o;
             o->tooltip("The value text size.");
             o->labelsize(12);
             o->maximum(1000);
@@ -3293,21 +3413,25 @@ Fl_Double_Window* make_settings_window() {
           } // Fl_Value_Input* o
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(95, 535, 245, 5);
+        { auto* o = new Fl_Box(95, 535, 245, 5);
+          (void)o;
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         w_settings_layout_tab->end();
       } // Fl_Group* w_settings_layout_tab
-      { w_settings_shell_tab = new Fl_Group(10, 60, 340, 480, "Shell");
+      { auto* o = w_settings_shell_tab = new Fl_Group(10, 60, 340, 480, "Shell");
+        (void)o;
         w_settings_shell_tab->image( image_shell_64() );
         w_settings_shell_tab->image()->scale(36, 24, 0, 1);
         w_settings_shell_tab->labelsize(12);
         w_settings_shell_tab->callback((Fl_Callback*)propagate_load);
         w_settings_shell_tab->hide();
-        { Fl_Group* o = new Fl_Group(20, 90, 320, 132);
+        { auto* o = new Fl_Group(20, 90, 320, 132);
+          (void)o;
           o->callback((Fl_Callback*)propagate_load);
-          { w_settings_shell_list = new Fl_Browser(110, 90, 230, 110, "Shell\ncommand\nlist:");
+          { auto* o = w_settings_shell_list = new Fl_Browser(110, 90, 230, 110, "Shell\ncommand\nlist:");
+            (void)o;
             w_settings_shell_list->type(3);
             w_settings_shell_list->labelfont(1);
             w_settings_shell_list->labelsize(12);
@@ -3316,43 +3440,51 @@ Fl_Double_Window* make_settings_window() {
             w_settings_shell_list->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(w_settings_shell_list);
           } // Fl_Browser* w_settings_shell_list
-          { w_settings_shell_toolbox = new Fl_Group(110, 200, 230, 22);
+          { auto* o = w_settings_shell_toolbox = new Fl_Group(110, 200, 230, 22);
+            (void)o;
             w_settings_shell_toolbox->callback((Fl_Callback*)cb_w_settings_shell_toolbox);
-            { Fl_Button* o = new Fl_Button(110, 200, 24, 22, "+");
+            { auto* o = new Fl_Button(110, 200, 24, 22, "+");
+              (void)o;
               o->tooltip("insert a new shell command into the list after the selected command");
               o->labelfont(1);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_a);
             } // Fl_Button* o
-            { w_settings_shell_dup = new Fl_Button(134, 200, 24, 22, "++");
+            { auto* o = w_settings_shell_dup = new Fl_Button(134, 200, 24, 22, "++");
+              (void)o;
               w_settings_shell_dup->tooltip("duplicate the selected shell command and insert it into the list");
               w_settings_shell_dup->labelfont(1);
               w_settings_shell_dup->labelsize(12);
               w_settings_shell_dup->callback((Fl_Callback*)cb_w_settings_shell_dup);
               w_settings_shell_dup->deactivate();
             } // Fl_Button* w_settings_shell_dup
-            { w_settings_shell_remove = new Fl_Button(158, 200, 24, 22, "DEL");
+            { auto* o = w_settings_shell_remove = new Fl_Button(158, 200, 24, 22, "DEL");
+              (void)o;
               w_settings_shell_remove->tooltip("remove the selected shell command - this can not be undone");
               w_settings_shell_remove->labelsize(12);
               w_settings_shell_remove->callback((Fl_Callback*)cb_w_settings_shell_remove);
               w_settings_shell_remove->deactivate();
             } // Fl_Button* w_settings_shell_remove
-            { w_settings_shell_menu = new Fl_Menu_Button(182, 200, 24, 22);
+            { auto* o = w_settings_shell_menu = new Fl_Menu_Button(182, 200, 24, 22);
+              (void)o;
               w_settings_shell_menu->labelsize(12);
               w_settings_shell_menu->textsize(12);
               w_settings_shell_menu->menu(menu_w_settings_shell_menu);
             } // Fl_Menu_Button* w_settings_shell_menu
-            { Fl_Box* o = new Fl_Box(243, 200, 13, 22);
+            { auto* o = new Fl_Box(243, 200, 13, 22);
+              (void)o;
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
-            { Fl_Button* o = new Fl_Button(256, 200, 24, 22, "T");
+            { auto* o = new Fl_Button(256, 200, 24, 22, "T");
+              (void)o;
               o->tooltip("show terminal window");
               o->labelfont(5);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_T);
             } // Fl_Button* o
-            { w_settings_shell_play = new Fl_Button(280, 200, 60, 22, "Run");
+            { auto* o = w_settings_shell_play = new Fl_Button(280, 200, 60, 22, "Run");
+              (void)o;
               w_settings_shell_play->tooltip("run the selected shell command");
               w_settings_shell_play->labelsize(12);
               w_settings_shell_play->callback((Fl_Callback*)cb_w_settings_shell_play);
@@ -3362,9 +3494,11 @@ Fl_Double_Window* make_settings_window() {
           } // Fl_Group* w_settings_shell_toolbox
           o->end();
         } // Fl_Group* o
-        { w_settings_shell_cmd = new Fl_Group(20, 235, 320, 291);
+        { auto* o = w_settings_shell_cmd = new Fl_Group(20, 235, 320, 291);
+          (void)o;
           w_settings_shell_cmd->callback((Fl_Callback*)cb_w_settings_shell_cmd);
-          { Fl_Input* o = new Fl_Input(110, 246, 230, 20, "Name:");
+          { auto* o = new Fl_Input(110, 246, 230, 20, "Name:");
+            (void)o;
             o->tooltip("file the shell command under this name in the shell command list");
             o->labelfont(1);
             o->labelsize(12);
@@ -3373,7 +3507,8 @@ Fl_Double_Window* make_settings_window() {
             o->callback((Fl_Callback*)cb_Name);
             o->when(FL_WHEN_RELEASE | FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
           } // Fl_Input* o
-          { Fl_Input* o = new Fl_Input(110, 272, 230, 20, "Menu Label:");
+          { auto* o = new Fl_Input(110, 272, 230, 20, "Menu Label:");
+            (void)o;
             o->tooltip("label text for the Shell menu in the main menu bar");
             o->labelfont(1);
             o->labelsize(12);
@@ -3381,9 +3516,11 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(12);
             o->callback((Fl_Callback*)cb_Menu);
           } // Fl_Input* o
-          { Fl_Group* o = new Fl_Group(110, 297, 230, 71);
+          { auto* o = new Fl_Group(110, 297, 230, 71);
+            (void)o;
             o->callback((Fl_Callback*)cb_b);
-            { Fl_Shortcut_Button* o = new Fl_Shortcut_Button(110, 297, 130, 20, "Shortcut");
+            { auto* o = new Fl_Shortcut_Button(110, 297, 130, 20, "Shortcut");
+              (void)o;
               o->tooltip("an optional keyboard shortcut to run this shell command");
               o->box(FL_UP_BOX);
               o->color(FL_BACKGROUND_COLOR);
@@ -3396,7 +3533,8 @@ Fl_Double_Window* make_settings_window() {
               o->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
               o->when(FL_WHEN_RELEASE);
             } // Fl_Shortcut_Button* o
-            { Fl_Choice* o = new Fl_Choice(110, 322, 130, 20, "Store:");
+            { auto* o = new Fl_Choice(110, 322, 130, 20, "Store:");
+              (void)o;
               o->tooltip("store this shell command as a user setting or save it with the .fl project fi"
 "le");
               o->down_box(FL_BORDER_BOX);
@@ -3406,7 +3544,8 @@ Fl_Double_Window* make_settings_window() {
               o->callback((Fl_Callback*)cb_Store);
               o->menu(menu_Store);
             } // Fl_Choice* o
-            { Fl_Choice* o = new Fl_Choice(110, 348, 130, 20, "Condition:");
+            { auto* o = new Fl_Choice(110, 348, 130, 20, "Condition:");
+              (void)o;
               o->tooltip("add this command to the main menu bar only if this condition is true");
               o->down_box(FL_BORDER_BOX);
               o->labelfont(1);
@@ -3415,7 +3554,8 @@ Fl_Double_Window* make_settings_window() {
               o->callback((Fl_Callback*)cb_Condition);
               o->menu(menu_Condition);
             } // Fl_Choice* o
-            { w_shell_cond_text = new Fl_Input(240, 348, 99, 20);
+            { auto* o = w_shell_cond_text = new Fl_Input(240, 348, 99, 20);
+              (void)o;
               w_shell_cond_text->labelfont(1);
               w_shell_cond_text->labelsize(12);
               w_shell_cond_text->textfont(4);
@@ -3425,9 +3565,11 @@ Fl_Double_Window* make_settings_window() {
             } // Fl_Input* w_shell_cond_text
             o->end();
           } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(110, 373, 230, 80);
+          { auto* o = new Fl_Group(110, 373, 230, 80);
+            (void)o;
             o->callback((Fl_Callback*)propagate_load);
-            { Fl_Text_Editor* o = w_settings_shell_command = new Fl_Text_Editor(110, 373, 208, 80, "Shell script:");
+            { auto* o = w_settings_shell_command = new Fl_Text_Editor(110, 373, 208, 80, "Shell script:");
+              (void)o;
               w_settings_shell_command->labelfont(1);
               w_settings_shell_command->labelsize(12);
               w_settings_shell_command->textfont(4);
@@ -3435,22 +3577,28 @@ Fl_Double_Window* make_settings_window() {
               w_settings_shell_command->callback((Fl_Callback*)cb_w_settings_shell_command);
               w_settings_shell_command->align(Fl_Align(FL_ALIGN_LEFT));
               Fl_Group::current()->resizable(w_settings_shell_command);
+//ﬂ ▼ ---------------------- finalize --~~~~~--~~=~~-~~=-==~ ▼ ﬂ//
               o->buffer(new Fl_Text_Buffer);
+//ﬂ ▲ ---------~=~-=-=-==-~------------~--~---=~-=----=~=~~= ▲ ﬂ//
             } // Fl_Text_Editor* w_settings_shell_command
-            { Fl_Group* o = new Fl_Group(318, 373, 22, 80);
-              { w_settings_shell_text_macros = new Fl_Menu_Button(318, 373, 22, 22);
+            { auto* o = new Fl_Group(318, 373, 22, 80);
+              (void)o;
+              { auto* o = w_settings_shell_text_macros = new Fl_Menu_Button(318, 373, 22, 22);
+                (void)o;
                 w_settings_shell_text_macros->tooltip("a list of text replacements available for the shell script");
                 w_settings_shell_text_macros->labelsize(12);
                 w_settings_shell_text_macros->textsize(12);
                 w_settings_shell_text_macros->callback((Fl_Callback*)cb_w_settings_shell_text_macros);
                 w_settings_shell_text_macros->menu(menu_w_settings_shell_text_macros);
               } // Fl_Menu_Button* w_settings_shell_text_macros
-              { Fl_Button* o = new Fl_Button(318, 395, 22, 22, "@+1fd_zoom");
+              { auto* o = new Fl_Button(318, 395, 22, 22, "@+1fd_zoom");
+                (void)o;
                 o->tooltip("open the big code editor");
                 o->labelsize(12);
                 o->callback((Fl_Callback*)cb_1fd_zoom);
               } // Fl_Button* o
-              { Fl_Box* o = new Fl_Box(318, 417, 12, 10);
+              { auto* o = new Fl_Box(318, 417, 12, 10);
+                (void)o;
                 o->hide();
                 Fl_Group::current()->resizable(o);
               } // Fl_Box* o
@@ -3459,44 +3607,52 @@ Fl_Double_Window* make_settings_window() {
             o->end();
             Fl_Group::current()->resizable(o);
           } // Fl_Group* o
-          { Fl_Group* o = new Fl_Group(110, 458, 230, 60);
-            { Fl_Check_Button* o = new Fl_Check_Button(110, 458, 110, 20, "save .fl project file");
+          { auto* o = new Fl_Group(110, 458, 230, 60);
+            (void)o;
+            { auto* o = new Fl_Check_Button(110, 458, 110, 20, "save .fl project file");
+              (void)o;
               o->tooltip("save the project to the .fl file before running the command");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_save);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(110, 478, 110, 19, "save source code");
+            { auto* o = new Fl_Check_Button(110, 478, 110, 19, "save source code");
+              (void)o;
               o->tooltip("generate the source code and header file before running the command");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_save1);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(110, 498, 110, 20, "save i18n strings");
+            { auto* o = new Fl_Check_Button(110, 498, 110, 20, "save i18n strings");
+              (void)o;
               o->tooltip("save the internationalisation strings before running the command");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_save2);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(229, 458, 106, 20, "show terminal");
+            { auto* o = new Fl_Check_Button(229, 458, 106, 20, "show terminal");
+              (void)o;
               o->tooltip("show the terminal window when launching this script");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_show);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(229, 478, 106, 19, "clear terminal");
+            { auto* o = new Fl_Check_Button(229, 478, 106, 19, "clear terminal");
+              (void)o;
               o->tooltip("clear the teminal window before running this script");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_clear);
             } // Fl_Check_Button* o
-            { Fl_Check_Button* o = new Fl_Check_Button(229, 498, 106, 19, "clear term history");
+            { auto* o = new Fl_Check_Button(229, 498, 106, 19, "clear term history");
+              (void)o;
               o->tooltip("clear the teminal history in the terminal window");
               o->down_box(FL_DOWN_BOX);
               o->labelsize(12);
               o->callback((Fl_Callback*)cb_clear1);
             } // Fl_Check_Button* o
-            { Fl_Box* o = new Fl_Box(335, 458, 5, 60);
+            { auto* o = new Fl_Box(335, 458, 5, 60);
+              (void)o;
               o->labelsize(12);
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
@@ -3505,31 +3661,40 @@ Fl_Double_Window* make_settings_window() {
           w_settings_shell_cmd->end();
           Fl_Group::current()->resizable(w_settings_shell_cmd);
         } // Fl_Group* w_settings_shell_cmd
-        { Fl_Box* o = w_settings_shell_fd_project = new Fl_Box(20, 70, 16, 15);
+        { auto* o = w_settings_shell_fd_project = new Fl_Box(20, 70, 16, 15);
+          (void)o;
           w_settings_shell_fd_project->bind_image( image_fd_project() );
           w_settings_shell_fd_project->labelsize(11);
           w_settings_shell_fd_project->hide();
           w_settings_shell_fd_project->deactivate();
+//ﬂ ▼ ---------------------- finalize --~~-~---=~=~~--=~=-~~ ▼ ﬂ//
           o->image()->scale(16, 16);
+//ﬂ ▲ ---------~~==~=--=~~-~----------~~=-=~-=~~=~~-=-=-=--~ ▲ ﬂ//
         } // Fl_Box* w_settings_shell_fd_project
-        { Fl_Box* o = w_settings_shell_fd_user = new Fl_Box(20, 70, 16, 15);
+        { auto* o = w_settings_shell_fd_user = new Fl_Box(20, 70, 16, 15);
+          (void)o;
           w_settings_shell_fd_user->bind_image( image_fd_user() );
           w_settings_shell_fd_user->labelsize(11);
           w_settings_shell_fd_user->hide();
           w_settings_shell_fd_user->deactivate();
+//ﬂ ▼ ---------------------- finalize -~~=-=-==~=-~~--~~~=-~ ▼ ﬂ//
           o->image()->scale(16, 16);
+//ﬂ ▲ ---------~=~=-~~=~=-~=----------~~=-=~-=~~=~~-=-=-=--~ ▲ ﬂ//
         } // Fl_Box* w_settings_shell_fd_user
         w_settings_shell_tab->end();
       } // Fl_Group* w_settings_shell_tab
-      { w_settings_i18n_tab = new Fl_Group(10, 60, 340, 480, "Locale");
+      { auto* o = w_settings_i18n_tab = new Fl_Group(10, 60, 340, 480, "Locale");
+        (void)o;
         w_settings_i18n_tab->image( image_language_64() );
         w_settings_i18n_tab->image()->scale(36, 24, 0, 1);
         w_settings_i18n_tab->labelsize(12);
         w_settings_i18n_tab->callback((Fl_Callback*)cb_w_settings_i18n_tab);
         w_settings_i18n_tab->hide();
-        { Fl_Group* o = new Fl_Group(110, 78, 170, 20);
+        { auto* o = new Fl_Group(110, 78, 170, 20);
+          (void)o;
           o->callback((Fl_Callback*)propagate_load);
-          { i18n_type_chooser = new Fl_Choice(110, 78, 160, 20, "i18n Library:");
+          { auto* o = i18n_type_chooser = new Fl_Choice(110, 78, 160, 20, "i18n Library:");
+            (void)o;
             i18n_type_chooser->tooltip("Type of internationalization to use.");
             i18n_type_chooser->box(FL_THIN_UP_BOX);
             i18n_type_chooser->down_box(FL_BORDER_BOX);
@@ -3538,16 +3703,19 @@ Fl_Double_Window* make_settings_window() {
             i18n_type_chooser->callback((Fl_Callback*)i18n_type_cb);
             i18n_type_chooser->menu(menu_i18n_type_chooser);
           } // Fl_Choice* i18n_type_chooser
-          { Fl_Box* o = new Fl_Box(270, 78, 10, 20);
+          { auto* o = new Fl_Box(270, 78, 10, 20);
+            (void)o;
             o->hide();
             Fl_Group::current()->resizable(o);
           } // Fl_Box* o
           o->end();
         } // Fl_Group* o
-        { i18n_gnu_group = new Fl_Group(110, 103, 230, 95);
+        { auto* o = i18n_gnu_group = new Fl_Group(110, 103, 230, 95);
+          (void)o;
           i18n_gnu_group->labelsize(12);
           i18n_gnu_group->callback((Fl_Callback*)cb_i18n_gnu_group);
-          { i18n_gnu_include_input = new Fl_Input(110, 103, 230, 20, "#include:");
+          { auto* o = i18n_gnu_include_input = new Fl_Input(110, 103, 230, 20, "#include:");
+            (void)o;
             i18n_gnu_include_input->tooltip("The include file for internationalization.");
             i18n_gnu_include_input->box(FL_THIN_DOWN_BOX);
             i18n_gnu_include_input->labelsize(12);
@@ -3555,7 +3723,8 @@ Fl_Double_Window* make_settings_window() {
             i18n_gnu_include_input->textsize(12);
             i18n_gnu_include_input->callback((Fl_Callback*)cb_i18n_gnu_include_input);
           } // Fl_Input* i18n_gnu_include_input
-          { i18n_gnu_conditional_input = new Fl_Input(110, 128, 230, 20, "Conditional:");
+          { auto* o = i18n_gnu_conditional_input = new Fl_Input(110, 128, 230, 20, "Conditional:");
+            (void)o;
             i18n_gnu_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp"
 "le FLTK_GETTEXT_FOUND");
             i18n_gnu_conditional_input->box(FL_THIN_DOWN_BOX);
@@ -3564,7 +3733,8 @@ Fl_Double_Window* make_settings_window() {
             i18n_gnu_conditional_input->textsize(12);
             i18n_gnu_conditional_input->callback((Fl_Callback*)cb_i18n_gnu_conditional_input);
           } // Fl_Input* i18n_gnu_conditional_input
-          { i18n_gnu_function_input = new Fl_Input(110, 153, 230, 20, "Function:");
+          { auto* o = i18n_gnu_function_input = new Fl_Input(110, 153, 230, 20, "Function:");
+            (void)o;
             i18n_gnu_function_input->tooltip("The function to call to translate labels and tooltips, usually \"gettext\" or"
 " \"_\"");
             i18n_gnu_function_input->box(FL_THIN_DOWN_BOX);
@@ -3573,7 +3743,8 @@ Fl_Double_Window* make_settings_window() {
             i18n_gnu_function_input->textsize(12);
             i18n_gnu_function_input->callback((Fl_Callback*)cb_i18n_gnu_function_input);
           } // Fl_Input* i18n_gnu_function_input
-          { i18n_gnu_static_function_input = new Fl_Input(110, 178, 230, 20, "Static Function:");
+          { auto* o = i18n_gnu_static_function_input = new Fl_Input(110, 178, 230, 20, "Static Function:");
+            (void)o;
             i18n_gnu_static_function_input->tooltip("function to call to translate static text, The function to call to internatio"
 "nalize labels and tooltips, usually \"gettext_noop\" or \"N_\"");
             i18n_gnu_static_function_input->box(FL_THIN_DOWN_BOX);
@@ -3584,11 +3755,13 @@ Fl_Double_Window* make_settings_window() {
           } // Fl_Input* i18n_gnu_static_function_input
           i18n_gnu_group->end();
         } // Fl_Group* i18n_gnu_group
-        { i18n_posix_group = new Fl_Group(110, 103, 230, 95);
+        { auto* o = i18n_posix_group = new Fl_Group(110, 103, 230, 95);
+          (void)o;
           i18n_posix_group->labelsize(12);
           i18n_posix_group->callback((Fl_Callback*)cb_i18n_posix_group);
           i18n_posix_group->hide();
-          { i18n_pos_include_input = new Fl_Input(110, 103, 230, 20, "#include:");
+          { auto* o = i18n_pos_include_input = new Fl_Input(110, 103, 230, 20, "#include:");
+            (void)o;
             i18n_pos_include_input->tooltip("The include file for internationalization.");
             i18n_pos_include_input->box(FL_THIN_DOWN_BOX);
             i18n_pos_include_input->labelsize(12);
@@ -3596,7 +3769,8 @@ Fl_Double_Window* make_settings_window() {
             i18n_pos_include_input->textsize(12);
             i18n_pos_include_input->callback((Fl_Callback*)cb_i18n_pos_include_input);
           } // Fl_Input* i18n_pos_include_input
-          { i18n_pos_conditional_input = new Fl_Input(110, 128, 230, 20, "Conditional:");
+          { auto* o = i18n_pos_conditional_input = new Fl_Input(110, 128, 230, 20, "Conditional:");
+            (void)o;
             i18n_pos_conditional_input->tooltip("only include the header file if this preprocessor macro is defined, for examp"
 "le FLTK_GETTEXT_FOUND");
             i18n_pos_conditional_input->box(FL_THIN_DOWN_BOX);
@@ -3605,7 +3779,8 @@ Fl_Double_Window* make_settings_window() {
             i18n_pos_conditional_input->textsize(12);
             i18n_pos_conditional_input->callback((Fl_Callback*)cb_i18n_pos_conditional_input);
           } // Fl_Input* i18n_pos_conditional_input
-          { i18n_pos_file_input = new Fl_Input(110, 153, 230, 20, "Catalog:");
+          { auto* o = i18n_pos_file_input = new Fl_Input(110, 153, 230, 20, "Catalog:");
+            (void)o;
             i18n_pos_file_input->tooltip("The name of the message catalog.");
             i18n_pos_file_input->box(FL_THIN_DOWN_BOX);
             i18n_pos_file_input->labelsize(12);
@@ -3613,9 +3788,11 @@ Fl_Double_Window* make_settings_window() {
             i18n_pos_file_input->textsize(12);
             i18n_pos_file_input->callback((Fl_Callback*)cb_i18n_pos_file_input);
           } // Fl_Input* i18n_pos_file_input
-          { Fl_Group* o = new Fl_Group(110, 178, 90, 20);
+          { auto* o = new Fl_Group(110, 178, 90, 20);
+            (void)o;
             o->callback((Fl_Callback*)cb_c);
-            { i18n_pos_set_input = new Fl_Int_Input(110, 178, 80, 20, "Set:");
+            { auto* o = i18n_pos_set_input = new Fl_Int_Input(110, 178, 80, 20, "Set:");
+              (void)o;
               i18n_pos_set_input->tooltip("The message set number.");
               i18n_pos_set_input->type(2);
               i18n_pos_set_input->box(FL_THIN_DOWN_BOX);
@@ -3624,7 +3801,8 @@ Fl_Double_Window* make_settings_window() {
               i18n_pos_set_input->textsize(12);
               i18n_pos_set_input->callback((Fl_Callback*)cb_i18n_pos_set_input);
             } // Fl_Int_Input* i18n_pos_set_input
-            { Fl_Box* o = new Fl_Box(190, 178, 10, 20);
+            { auto* o = new Fl_Box(190, 178, 10, 20);
+              (void)o;
               o->hide();
               Fl_Group::current()->resizable(o);
             } // Fl_Box* o
@@ -3632,29 +3810,34 @@ Fl_Double_Window* make_settings_window() {
           } // Fl_Group* o
           i18n_posix_group->end();
         } // Fl_Group* i18n_posix_group
-        { Fl_Box* o = new Fl_Box(110, 530, 220, 10);
+        { auto* o = new Fl_Box(110, 530, 220, 10);
+          (void)o;
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         w_settings_i18n_tab->end();
       } // Fl_Group* w_settings_i18n_tab
-      { w_settings_user_tab = new Fl_Group(10, 60, 340, 480, "User");
+      { auto* o = w_settings_user_tab = new Fl_Group(10, 60, 340, 480, "User");
+        (void)o;
         w_settings_user_tab->image( image_user_circle_64() );
         w_settings_user_tab->image()->scale(36, 24, 0, 1);
         w_settings_user_tab->labelsize(12);
         w_settings_user_tab->callback((Fl_Callback*)cb_w_settings_user_tab);
         w_settings_user_tab->hide();
-        { Fl_Box* o = new Fl_Box(110, 84, 220, 20, "---- Widget Browser ----");
+        { auto* o = new Fl_Box(110, 84, 220, 20, "---- Widget Browser ----");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         } // Fl_Box* o
-        { Fl_Group* o = new Fl_Group(110, 112, 230, 20, "Label:");
+        { auto* o = new Fl_Group(110, 112, 230, 20, "Label:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(110, 112, 161, 20);
+          { auto* o = new Fl_Choice(110, 112, 161, 20);
+            (void)o;
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
@@ -3662,25 +3845,33 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::label_font));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize -~~-~~~~~~~~=~~~~--~=~ ▼ ﬂ//
             o->menu(fontmenu);
+//ﬂ ▲ ---------~=~-~=~~-~=-~-----------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(271, 112, 51, 20);
+          { auto* o = new Fl_Button(271, 112, 51, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::label_color));
           } // Fl_Button* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(322, 112, 18, 20);
+          { auto* o = new Fl_Menu_Button(322, 112, 18, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::label_color));
+//ﬂ ▼ ---------------------- finalize ~--~-==-----~~=~~=-=-~ ▼ ﬂ//
             o->menu(colormenu);
+//ﬂ ▲ ---------~=~-=-=~=-~-=----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(110, 137, 230, 20, "Class:");
+        { auto* o = new Fl_Group(110, 137, 230, 20, "Class:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(110, 137, 161, 20);
+          { auto* o = new Fl_Choice(110, 137, 161, 20);
+            (void)o;
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
@@ -3688,25 +3879,33 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::class_font));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~~=~-~~~--=~~----=~--~ ▼ ﬂ//
             o->menu(fontmenu);
+//ﬂ ▲ ---------~~=-=~-=~~~-------------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(271, 137, 51, 20);
+          { auto* o = new Fl_Button(271, 137, 51, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::class_color));
           } // Fl_Button* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(322, 137, 18, 20);
+          { auto* o = new Fl_Menu_Button(322, 137, 18, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::class_color));
+//ﬂ ▼ ---------------------- finalize ~--=-=~-=~~-=-~~=---~- ▼ ﬂ//
             o->menu(colormenu);
+//ﬂ ▲ ---------~=~~~---~=~=~----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(110, 162, 230, 20, "Function:");
+        { auto* o = new Fl_Group(110, 162, 230, 20, "Function:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(110, 162, 161, 20);
+          { auto* o = new Fl_Choice(110, 162, 161, 20);
+            (void)o;
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
@@ -3714,25 +3913,33 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::func_font));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~-~-~==~-=~-~~=~-~=~-~ ▼ ﬂ//
             o->menu(fontmenu);
+//ﬂ ▲ ---------~~=~=-~~-~=~~-----------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(271, 162, 51, 20);
+          { auto* o = new Fl_Button(271, 162, 51, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::func_color));
           } // Fl_Button* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(322, 162, 18, 20);
+          { auto* o = new Fl_Menu_Button(322, 162, 18, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::func_color));
+//ﬂ ▼ ---------------------- finalize -~~~-~=~---=-==-~~~-=- ▼ ﬂ//
             o->menu(colormenu);
+//ﬂ ▲ ---------~~=-=-~-~=-=-----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(110, 187, 230, 20, "Name:");
+        { auto* o = new Fl_Group(110, 187, 230, 20, "Name:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(110, 187, 161, 20);
+          { auto* o = new Fl_Choice(110, 187, 161, 20);
+            (void)o;
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
@@ -3740,25 +3947,33 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::name_font));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~--=-~=--==~~--~-~-=-~ ▼ ﬂ//
             o->menu(fontmenu);
+//ﬂ ▲ ---------~~=~---=~~--------------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(271, 187, 51, 20);
+          { auto* o = new Fl_Button(271, 187, 51, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::name_color));
           } // Fl_Button* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(322, 187, 18, 20);
+          { auto* o = new Fl_Menu_Button(322, 187, 18, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::name_color));
+//ﬂ ▼ ---------------------- finalize ~~~=~~---~-==~~~=~-==- ▼ ﬂ//
             o->menu(colormenu);
+//ﬂ ▲ ---------~~=~-~--~-~------------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(110, 212, 230, 20, "Code:");
+        { auto* o = new Fl_Group(110, 212, 230, 20, "Code:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = new Fl_Choice(110, 212, 161, 20);
+          { auto* o = new Fl_Choice(110, 212, 161, 20);
+            (void)o;
             o->box(FL_THIN_UP_BOX);
             o->down_box(FL_BORDER_BOX);
             o->labelfont(1);
@@ -3766,25 +3981,33 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(11);
             o->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::code_font));
             Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize --~-~~---~=-~---~-~=-= ▼ ﬂ//
             o->menu(fontmenu);
+//ﬂ ▲ ---------~~=~==~--=-=------------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
           } // Fl_Choice* o
-          { Fl_Button* o = new Fl_Button(271, 212, 51, 20);
+          { auto* o = new Fl_Button(271, 212, 51, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::code_color));
           } // Fl_Button* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(322, 212, 18, 20);
+          { auto* o = new Fl_Menu_Button(322, 212, 18, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::code_color));
+//ﬂ ▼ ---------------------- finalize ~~~==-~=~=~---~==~-~=- ▼ ﬂ//
             o->menu(colormenu);
+//ﬂ ▲ ---------~~=-==-~==-=~----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(110, 237, 230, 20, "Comments:");
+        { auto* o = new Fl_Group(110, 237, 230, 20, "Comments:");
+          (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->callback((Fl_Callback*)propagate_load);
           o->align(Fl_Align(FL_ALIGN_LEFT));
-          { Fl_Choice* o = w_settings_user_commenttext = new Fl_Choice(110, 237, 161, 20);
+          { auto* o = w_settings_user_commenttext = new Fl_Choice(110, 237, 161, 20);
+            (void)o;
             w_settings_user_commenttext->box(FL_THIN_UP_BOX);
             w_settings_user_commenttext->down_box(FL_BORDER_BOX);
             w_settings_user_commenttext->labelfont(1);
@@ -3792,24 +4015,32 @@ Fl_Double_Window* make_settings_window() {
             w_settings_user_commenttext->textsize(11);
             w_settings_user_commenttext->callback((Fl_Callback*)cb_Comments, (void*)(&Node_Browser::comment_font));
             Fl_Group::current()->resizable(w_settings_user_commenttext);
+//ﬂ ▼ ---------------------- finalize ~--==~---=-=~=~-=~-~-~ ▼ ﬂ//
             o->menu(fontmenu);
+//ﬂ ▲ ---------~~==-~=-~~=-~-----------~--=~=~=~~=~~-~=~~-~- ▲ ﬂ//
           } // Fl_Choice* w_settings_user_commenttext
-          { Fl_Button* o = new Fl_Button(271, 237, 51, 20);
+          { auto* o = new Fl_Button(271, 237, 51, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Chip, (void*)(&Node_Browser::comment_color));
           } // Fl_Button* o
-          { Fl_Menu_Button* o = new Fl_Menu_Button(322, 237, 18, 20);
+          { auto* o = new Fl_Menu_Button(322, 237, 18, 20);
+            (void)o;
             o->labelsize(12);
             o->callback((Fl_Callback*)cb_Color_Choice, (void*)(&Node_Browser::comment_color));
+//ﬂ ▼ ---------------------- finalize ~~~=~-~==-=~~---~~~==- ▼ ﬂ//
             o->menu(colormenu);
+//ﬂ ▲ ---------~=~~=~==-~~=~----------~~=-=~=~~=~~-==~-=-=-~ ▲ ﬂ//
           } // Fl_Menu_Button* o
           o->end();
         } // Fl_Group* o
-        { Fl_Box* o = new Fl_Box(110, 530, 230, 10);
+        { auto* o = new Fl_Box(110, 530, 230, 10);
+          (void)o;
           o->hide();
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
-        { Fl_Button* o = new Fl_Button(251, 269, 77, 22, "Reset");
+        { auto* o = new Fl_Button(251, 269, 77, 22, "Reset");
+          (void)o;
           o->labelsize(12);
           o->callback((Fl_Callback*)cb_Reset);
         } // Fl_Button* o
@@ -3818,12 +4049,15 @@ Fl_Double_Window* make_settings_window() {
       w_settings_tabs->end();
       Fl_Group::current()->resizable(w_settings_tabs);
     } // Fl_Tabs* w_settings_tabs
-    { Fl_Group* o = new Fl_Group(10, 550, 340, 25);
-      { Fl_Button* o = new Fl_Button(230, 550, 120, 25, "Close");
+    { auto* o = new Fl_Group(10, 550, 340, 25);
+      (void)o;
+      { auto* o = new Fl_Button(230, 550, 120, 25, "Close");
+        (void)o;
         o->tooltip("Close this dialog.");
         o->callback((Fl_Callback*)cb_Close);
       } // Fl_Button* o
-      { Fl_Box* o = new Fl_Box(220, 550, 10, 25);
+      { auto* o = new Fl_Box(220, 550, 10, 25);
+        (void)o;
         o->hide();
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
@@ -3832,7 +4066,7 @@ Fl_Double_Window* make_settings_window() {
     settings_window->size_range(340, 580);
     settings_window->end();
   } // Fl_Double_Window* settings_window
-//ﬂ ▼ ------------------------ code ---~~-~-=-=~-=~=~-~--~-~ ▼ ﬂ//
+//ﬂ ▼ ------------------------ code ----=~~~-~~=-~-==---~=-- ▼ ﬂ//
   w_settings_tabs->do_callback(w_settings_tabs, LOAD);
 //ﬂ ▲ ----------~--==~=~---=----------~~-~~~-==~~~=-~=-=-~~= ▲ ﬂ//
   return settings_window;
@@ -3863,22 +4097,30 @@ static void cb_shell_run_button(Fl_Return_Button*, void*) {
 }
 
 Fl_Double_Window* make_shell_window() {
-  { shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
+  { auto* o = shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
+    (void)o;
     shell_run_window->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
-    { shell_run_terminal = new Fl_Terminal(10, 10, 535, 375);
+    { auto* o = shell_run_terminal = new Fl_Terminal(10, 10, 535, 375);
+      (void)o;
       Fl_Group::current()->resizable(shell_run_terminal);
+//ﬂ ▼ ---------------------- finalize --=--=-==--=~=~~=~=--~ ▼ ﬂ//
       shell_run_terminal->ansi(1);
       shell_run_terminal->history_lines(1000);
+//ﬂ ▲ ---------~~==~=~~=~--=-----------~--=-~=~==-~--=-=~==- ▲ ﬂ//
     } // Fl_Terminal* shell_run_terminal
-    { Fl_Group* o = new Fl_Group(10, 395, 535, 25);
-      { Fl_Button* o = new Fl_Button(10, 395, 94, 25, "Clear");
+    { auto* o = new Fl_Group(10, 395, 535, 25);
+      (void)o;
+      { auto* o = new Fl_Button(10, 395, 94, 25, "Clear");
+        (void)o;
         o->callback((Fl_Callback*)cb_Clear);
       } // Fl_Button* o
-      { Fl_Box* o = new Fl_Box(104, 395, 341, 25);
+      { auto* o = new Fl_Box(104, 395, 341, 25);
+        (void)o;
         o->hide();
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { shell_run_button = new Fl_Return_Button(445, 395, 100, 25, "Close");
+      { auto* o = shell_run_button = new Fl_Return_Button(445, 395, 100, 25, "Close");
+        (void)o;
         shell_run_button->callback((Fl_Callback*)cb_shell_run_button);
       } // Fl_Return_Button* shell_run_button
       o->end();

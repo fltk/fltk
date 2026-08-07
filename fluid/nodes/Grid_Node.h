@@ -59,8 +59,7 @@ public:
   void read_property(fluid::io::Project_Reader &f, const char *) override;
   void write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate) override;
   void read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property) override;
-  Fl_Widget *enter_live_mode(int top=0) override;
-  void leave_live_mode() override;
+  Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
   void copy_properties_for_children() override;
   void write_code1(fluid::io::Code_Writer& f) override;

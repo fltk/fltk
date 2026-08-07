@@ -233,10 +233,6 @@ bool Code_Writer::c_contains(void *pp) {
 void Code_Writer::write_cstring(fluid::string_view text)
 {
   const char *next_line = "\"\n\"";
-  if (varused_test) {
-    varused = 1;
-    return;
-  }
 
   // Handle sourcecode preview
   if (write_codeview) {
@@ -329,11 +325,8 @@ void Code_Writer::write_cstring(fluid::string_view text)
 
  \param[in] block pointer to a block of binary data, interpreted as unsigned bytes
  */
-void Code_Writer::write_cdata(fluid::string_view block) {
-  if (varused_test) {
-    varused = 1;
-    return;
-  }
+void Code_Writer::write_cdata(fluid::string_view block)
+{
   if (write_codeview) {
     if (!block.empty())
       crc_puts("{ /* ... " + std::to_string(block.size()) + "  bytes of binary data... */ }");
@@ -370,10 +363,6 @@ void Code_Writer::write_cdata(fluid::string_view block) {
  \param[in] code string containing the code to write
  */
 void Code_Writer::write_c(const std::string& code) {
-  if (varused_test) {
-    varused = 1;
-    return;
-  }
   crc_puts(code);
 }
 
@@ -399,7 +388,6 @@ void Code_Writer::write_cc(const std::string& indent, const std::string& code, c
  \param[in] code string containing the code to write
  */
 void Code_Writer::write_h(const std::string& code) {
-  if (varused_test) return;
   header_buffer << code;
 }
 

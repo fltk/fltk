@@ -160,16 +160,19 @@ Fl_Double_Window* make_about_panel() {
     struct tm *lt = localtime(&t);
     sprintf(cbuf, "Copyright © 1998 - %d\nby Bill Spitzak and others", lt->tm_year+1900);
   }
-  { about_panel = new Fl_Double_Window(345, 180, "About FLUID");
+  { auto* o = about_panel = new Fl_Double_Window(345, 180, "About FLUID");
+    (void)o;
     about_panel->color(FL_LIGHT1);
     about_panel->selection_color(FL_DARK1);
     about_panel->hotspot(about_panel);
-    { Fl_Box* o = new Fl_Box(10, 10, 115, 120);
+    { auto* o = new Fl_Box(10, 10, 115, 120);
+      (void)o;
       o->image( image_fluid() );
       ((Fl_Anim_GIF_Image*)(image_fluid()))->canvas(o, Fl_Anim_GIF_Image::DONT_RESIZE_CANVAS);
       ((Fl_Anim_GIF_Image*)(o->image()))->speed(0.5f);
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(135, 10, 205, 75, "FLTK User\nInterface Designer\nVersion x.x.x");
+    { auto* o = new Fl_Box(135, 10, 205, 75, "FLTK User\nInterface Designer\nVersion x.x.x");
+      (void)o;
       o->color((Fl_Color)12);
       o->selection_color(FL_DARK1);
       o->labelfont(1);
@@ -180,15 +183,18 @@ Fl_Double_Window* make_about_panel() {
       o->copy_label(about);
     } // Fl_Box* o
     { // Label edited dynamically:
-      Fl_Box* o = new Fl_Box(135, 90, 200, 45, "(Copyright)");
+      auto* o = new Fl_Box(135, 90, 200, 45, "(Copyright)");
+      (void)o;
       o->align(Fl_Align(132|FL_ALIGN_INSIDE));
       o->label(cbuf);
     } // Fl_Box* o
-    { Fl_Button* o = new Fl_Button(115, 145, 123, 25, "View License...");
+    { auto* o = new Fl_Button(115, 145, 123, 25, "View License...");
+      (void)o;
       o->labelcolor(FL_DARK_BLUE);
       o->callback((Fl_Callback*)cb_View);
     } // Fl_Button* o
-    { Fl_Return_Button* o = new Fl_Return_Button(250, 145, 83, 25, "Close");
+    { auto* o = new Fl_Return_Button(250, 145, 83, 25, "Close");
+      (void)o;
       o->callback((Fl_Callback*)cb_Close);
     } // Fl_Return_Button* o
     about_panel->set_non_modal();

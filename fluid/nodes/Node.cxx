@@ -1094,17 +1094,9 @@ void Node::write_comment_inline_c(fluid::io::Code_Writer& f, const char *pre)
 /**
   Build widgets and dataset needed in live mode.
   \return a widget pointer that the live mode initiator can 'show()'
-  \see leave_live_mode()
 */
-Fl_Widget *Node::enter_live_mode(int) {
+Fl_Widget *Node::enter_live_mode() {
   return nullptr;
-}
-
-/**
-  Release all resources created when entering live mode.
-  \see enter_live_mode()
-*/
-void Node::leave_live_mode() {
 }
 
 /**

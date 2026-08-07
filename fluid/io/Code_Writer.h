@@ -1,7 +1,7 @@
 //
 // Fluid C++ Code Writer header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -129,12 +129,6 @@ public:
   /// set if we write abbreviated file for the source code previewer
   /// (disables binary data blocks, for example)
   bool write_codeview { false };
-  /// silly thing to prevent declaring unused variables:
-  /// When this symbol is on, all attempts to write code don't write
-  /// anything, but set a variable if it looks like the variable "o" is used:
-  int varused_test { 0 };
-  /// set to 1 if varused_test found that a variable is actually used
-  int varused { 0 };
 
 public:
   Code_Writer(Project &proj);
