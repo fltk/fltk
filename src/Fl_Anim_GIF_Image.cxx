@@ -22,7 +22,6 @@
 #include <FL/fl_string_functions.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <math.h> // round()
 
 #include <FL/Fl_Anim_GIF_Image.H>
@@ -496,11 +495,7 @@ bool Fl_Anim_GIF_Image::loop = true;
 
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Group.H>
-#include <FL/Fl.H>
 
 //
 // class Fl_Anim_GIF_Image implementation
