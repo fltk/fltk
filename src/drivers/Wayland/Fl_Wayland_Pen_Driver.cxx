@@ -60,7 +60,6 @@
  Fl_Base_Pen_Driver to avoid touching the shared API in this patch.
  TODO: move them to Fl_Base_Pen_Driver.cxx and expose via the header.
  */
-
 #include "Fl_Wayland_Pen_Driver.H"
 #include "src/drivers/Base/Fl_Base_Pen_Driver.H"
 #include "Fl_Wayland_Screen_Driver.H"
@@ -69,6 +68,7 @@
 #include "../../../libdecor/build/fl_libdecor.h"
 
 #include <FL/Fl.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Window.H>
 #include <FL/platform.H>
 
@@ -95,6 +95,7 @@ extern "C" {
   bool fl_is_surface_from_GTK_titlebar (struct wl_surface *surface, struct libdecor_frame *frame,
                                         bool *using_GTK);
 }
+
 static struct wl_surface *gtk_shell_surface;
 static libdecor_frame *gtk_shell_frame = nullptr;
 static Fl_Window *gtk_shell_window = nullptr;
@@ -116,6 +117,7 @@ static const State kButtonBits[] = {
 struct TabletTool {
   struct zwp_tablet_tool_v2      *wl_tool;
   enum zwp_tablet_tool_v2_type    type;
+
   uint64_t                        hardware_serial;
   int                             pen_id;       // int-sized pen identity
   Trait                           capabilities; // reported by capability events
@@ -272,16 +274,48 @@ static bool event_inside(Fl_Widget *w, double x, double y) {
 }
 
 /*
- Search the subscriber list for the topmost subscribed widget inside (x, y)
- that belongs to top-window win.
+  Find the topmost subscribed widget under (x, y) in top-window coordinates.
+  Handles:
+  - Normal widgets
+  - Widgets inside groups
+  - Subwindows (Fl_Window as child with can_expand_outside_parent_)
+  - Separate top-level windows that are themselves subscribers
  */
-static Fl_Widget *find_below_pen(Fl_Window *win, double x, double y) {
-  for (auto &sub : subscriber_list_) {
-    Fl_Widget *w = sub.second->widget();
-    if (w && w->top_window() == win && w->visible() && event_inside(w, x, y))
-      return w;
-  }
-  return nullptr;
+static Fl_Widget *find_below_pen(Fl_Window *topwin, double x, double y)
+{
+  if (!topwin) return nullptr;
+
+  struct Finder {
+    static Fl_Widget* find_in_group(Fl_Group* g, double gx, double gy)
+      {
+        if (!g) return nullptr;
+
+        // 1. Check children back-to-front (topmost first)
+        for (int i = g->children() - 1; i >= 0; --i) {
+          Fl_Widget* w = g->child(i);
+          if (!w || !w->visible()) continue;
+
+          if (!event_inside(w, gx, gy))
+            continue;
+
+          if (subscriber_list_.count(w))
+            return w;
+
+          if (Fl_Group* sg = w->as_group()) {
+            if (Fl_Widget* found = find_in_group(sg, gx, gy))
+              return found;
+          }
+        }
+
+        // 2. Check if THIS window/group is a pen subscriber
+        if (subscriber_list_.count(g))
+          return g;
+
+        return nullptr;
+      }
+  };
+
+  return Finder::find_in_group(topwin, x, y);
 }
 
 /*
@@ -463,8 +497,7 @@ static void tool_cb_proximity_in(void *data, struct zwp_tablet_tool_v2 *,
                                   struct wl_surface *surface) {
   TabletTool *tool = static_cast<TabletTool *>(data);
   tool->focus_surface      = surface;
-  tool->focus_win          =
-    Fl_Wayland_Window_Driver::surface_to_window(surface);
+  tool->focus_win          = Fl_Wayland_Window_Driver::surface_to_window(surface);
   tool->in_proximity       = true;
   tool->frame_proximity_in = true;
   // Set hover state immediately so ev.state is valid even without a tip-down.
@@ -670,6 +703,10 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
                Fl::Pen::LEAVE, (State)0, copied);
     }
     below_pen_ = nullptr;
+
+    Fl::belowmouse(nullptr);
+    Fl_Tooltip::enter(nullptr);
+
     if (pushed_) {
       Fl::pushed(nullptr);
       pushed_ = nullptr;
@@ -696,6 +733,7 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   }
 
   // No subscribers or no focus window → nothing more to do.
+  // Check if over decoration and if so, do an action if needed.
   if (!tool->focus_win || subscriber_list_.empty()) {
     tablet_tool_reset_frame(tool);
     tool->prev_state = tool->ev.state;
@@ -710,6 +748,10 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
   } else {
     eventWindow = tool->focus_win;
   }
+
+  // Safe-guard
+  if (!eventWindow)
+    return;
 
   bool is_menu_window = eventWindow->menu_window();
 
@@ -763,10 +805,20 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
     auto bpen_old    = (Fl::belowmouse() == bpen_widget) ? bpen_widget : nullptr;
     auto bpen_now    = find_below_pen(eventWindow, tool->ev.x, tool->ev.y);
 
+    // Prevent flickering by ignoring the tooltip window entirely ──
+    if (bpen_now) {
+      Fl_Window *win = bpen_now->as_window() ? bpen_now->as_window() : bpen_now->window();
+      if (win && win->tooltip_window()) {
+        bpen_now = bpen_old; // Pretend the pen never left the underlying widget
+      }
+    }
+
+    // ── Widget Transition Logic ────────────────────────────────────────────
     if (bpen_now != bpen_old) {
-      if (bpen_old)
+      if (bpen_old) {
         pen_send(tool, bpen_old, Fl::Pen::LEAVE, (State)0,
                  event_data_copied);
+      }
       below_pen_ = nullptr;
       if (bpen_now) {
         State hover_state = (tool->type == ZWP_TABLET_TOOL_V2_TYPE_ERASER)
@@ -774,8 +826,16 @@ static void tool_cb_frame(void *data, struct zwp_tablet_tool_v2 *,
         if (pen_send(tool, bpen_now, Fl::Pen::ENTER, hover_state,
                      event_data_copied)) {
           below_pen_ = subscriber_list_[bpen_now];
-          Fl::belowmouse(bpen_now);
         }
+
+        // Update standard FLTK hover state regardless of pen_send success.
+        // This ensures passive widgets (like Fl_Box) still show their standard tooltips!
+        Fl::belowmouse(bpen_now);
+        Fl_Tooltip::enter(bpen_now);
+      } else {
+        // Moving into empty space
+        Fl::belowmouse(nullptr);
+        Fl_Tooltip::enter(nullptr);
       }
     }
     receiver = below_pen_ ? below_pen_->widget() : nullptr;
