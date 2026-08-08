@@ -67,6 +67,7 @@ public:
   void cache(Fl_Pixmap *img) FL_OVERRIDE;
   void cache(Fl_Bitmap *img) FL_OVERRIDE;
   void cache(Fl_RGB_Image *img) FL_OVERRIDE;
+  static CGImageRef* cached_image(Fl_RGB_Image *img) {return (CGImageRef*)id(img);}
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) FL_OVERRIDE;
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) FL_OVERRIDE;
   void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
