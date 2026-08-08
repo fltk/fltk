@@ -754,7 +754,6 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   }
   // figure out if local variable will be used (prevent compiler warnings):
   int wused = !name() && dynamic_cast<Window_Node*>(this);
-  const char* ptr;
 
   f.write_c(f.indent() + "{ ");
   write_comment_inline_c(f);

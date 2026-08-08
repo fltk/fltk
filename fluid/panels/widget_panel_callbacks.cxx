@@ -668,7 +668,6 @@ void leave_live_mode_cb(Fl_Widget*, void*);
 void live_mode_cb(Fl_Button* o, void *) {
   /// \todo live mode should end gracefully when the application quits
   ///       or when the user closes the live widget
-  static Node* live_type = nullptr;
   static Fl_Widget* live_widget = nullptr;
   static Fl_Window* live_window = nullptr;
 
@@ -687,7 +686,6 @@ void live_mode_cb(Fl_Button* o, void *) {
       Fl_Group::current(nullptr);
       live_widget = current_widget->enter_live_mode();
       if (live_widget) {
-        live_type = current_widget;
         Fl_Group::current(nullptr);
         int w = live_widget->w();
         int h = live_widget->h();
@@ -726,7 +724,6 @@ void live_mode_cb(Fl_Button* o, void *) {
       live_window->hide();
       Fl::delete_widget(live_window);
     }
-    live_type = nullptr;
     live_widget = nullptr;
     live_window = nullptr;
   }
