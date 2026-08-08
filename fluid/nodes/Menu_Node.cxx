@@ -354,9 +354,9 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
       while (*d && !is_id(*d)) d++;
     }
     std::string cn = callback_name(f);
-    const char* k = class_name(1);
-    if (k) {
-      f.write_c("\nvoid " + std::string(k) + "::" + cn + "_i(Fl_Menu_*");
+    std::string k = full_class_name();
+    if (!k.empty()) {
+      f.write_c("\nvoid " + k + "::" + cn + "_i(Fl_Menu_*");
     } else {
       f.write_c("\nstatic void " + cn + "(Fl_Menu_*");
     }
@@ -383,9 +383,9 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     // a dummy static callback which retrieves a pointer to the class and then
     // calls the original callback from within the class context.
     // k is the name of the enclosing class (or classes)
-    if (k) {
+    if (!k.empty()) {
       // Implement the callback as a static member function
-      f.write_c("void " + std::string(k) + "::" + std::string(cn) + "(Fl_Menu_* o, " + ut + " v) {\n");
+      f.write_c("void " + k + "::" + std::string(cn) + "(Fl_Menu_* o, " + ut + " v) {\n");
       // Find the Fl_Menu_ container for this menu item
       Node* t = parent; while (dynamic_cast<Menu_Item_Node*>(t)) t = t->parent;
       if (t) {
@@ -424,10 +424,10 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
   if (next && dynamic_cast<Menu_Item_Node*>(next)) return;
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
-  const char* k = class_name(1);
-  if (k) {
+  std::string k = full_class_name();
+  if (!k.empty()) {
     int i;
-    f.write_c("\nFl_Menu_Item " + std::string(k) + "::" + menu_name(f, i) + "[] = {\n");
+    f.write_c("\nFl_Menu_Item " + k + "::" + menu_name(f, i) + "[] = {\n");
   } else {
     int i;
     f.write_c("\nFl_Menu_Item " + menu_name(f, i) + "[] = {\n");
@@ -446,7 +446,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
   }
   f.write_c(" { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }\n};\n");
 
-  if (k) {
+  if (!k.empty()) {
     // Write menu item variables...
     t = prev; while (t && dynamic_cast<Menu_Item_Node*>(t)) t = t->prev;
     for (Node* q = t->next; q && dynamic_cast<Menu_Item_Node*>(q); q = q->next) {
@@ -457,11 +457,11 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
           // assign a menu item address directly to a variable
           int i;
           std::string n = ((Menu_Item_Node *)q)->menu_name(f, i);
-          f.write_c("Fl_Menu_Item* " + std::string(k) + "::" + std::string(c) + " = " + std::string(k) + "::" + n + " + " + std::to_string(i) + ";\n");
+          f.write_c("Fl_Menu_Item* " + k + "::" + std::string(c) + " = " + k + "::" + n + " + " + std::to_string(i) + ";\n");
         } else {
           // if the name is an array, only define the array.
           // The actual assignment is in write_code1(fluid::io::Code_Writer& f)
-          f.write_c("Fl_Menu_Item* " + std::string(k) + "::" + std::string(c) + ";\n");
+          f.write_c("Fl_Menu_Item* " + k + "::" + std::string(c) + ";\n");
         }
       }
     }
@@ -550,9 +550,11 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
       f.write_c(f.indent_plus(1) + ", ");
     } else {
       // Write named callback, try to qualify it with the class name if possible
-      const char* k = is_function_name(callback()) ? nullptr : class_name(1);
-      if (k) {
-        f.write_c(" (Fl_Callback*)" + std::string(k) + "::" + std::string(callback_name(f)) + ",");
+      std::string k;
+      if (!is_function_name(callback()))
+        k = full_class_name();
+      if (!k.empty()) {
+        f.write_c(" (Fl_Callback*)" + k + "::" + std::string(callback_name(f)) + ",");
       } else {
         f.write_c(" (Fl_Callback*)" + std::string(callback_name(f)) + ",");
       }
@@ -586,7 +588,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
 
   if (!dynamic_cast<Menu_Item_Node*>(prev)) {
     // for first menu item, declare the array
-    if (class_name(1)) {
+    if (is_in_class()) {
       f.write_h(f.indent(1) + "static Fl_Menu_Item " + mname + "[];\n");
     } else {
       f.write_h("extern Fl_Menu_Item " + mname + "[];\n");
@@ -595,7 +597,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
 
   const char *c = array_name(this);
   if (c) {
-    if (class_name(1)) {
+    if (is_in_class()) {
       f.write_public(public_);
       f.write_h(f.indent(1) + "static Fl_Menu_Item* " + std::string(c) + ";\n");
     } else {
@@ -607,7 +609,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
   }
 
   if (callback()) {
-    if (!is_function_name(callback()) && !is_lambda(callback()) && class_name(1)) {
+    if (!is_function_name(callback()) && !is_lambda(callback()) && is_in_class()) {
       std::string cn = callback_name(f);
       std::string ut = user_data_type_or_voidp();
       f.write_public(0);

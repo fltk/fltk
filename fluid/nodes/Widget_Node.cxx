@@ -189,20 +189,22 @@ const char* array_name(Widget_Node* o) {
   int sawthis = 0;
   Node* t = o->prev;
   Node* tp = o;
-  const char* cn = o->class_name(1);
-  for (; t && t->class_name(1) == cn; tp = t, t = t->prev) {/*empty*/}
-  for (t = tp; t && t->class_name(1) == cn; t = t->next) {
-    if (t == o) {sawthis=1; continue;}
+  // find the enclosing class, or nullptr if not in a class
+  Node* cn = o->find_parent_class_node();
+  // set tp to the first member of the class, or the first node of the tree
+  for (; t && t->find_parent_class_node() == cn; tp = t, t = t->prev) {/*empty*/}
+  for (t = tp; t && t->find_parent_class_node() == cn; t = t->next) {
+    if (t == o) { sawthis=1; continue; }
     const char* e = t->name();
     if (!e) continue;
-    if (strncmp(c,e,d-c)) continue;
+    if (strncmp(c, e, d-c)) continue;
     int n1 = atoi(e+(d-c)+1);
     if (n1 > num || (n1==num && sawthis)) return nullptr;
   }
   static char buffer[128];
   // MRS: we want strncpy() here...
-  strncpy(buffer,c,d-c+1);
-  snprintf(buffer+(d-c+1),sizeof(buffer) - (d-c+1), "%d]",num+1);
+  strncpy(buffer, c, d-c+1);
+  snprintf(buffer+(d-c+1), sizeof(buffer) - (d-c+1), "%d]",num+1);
   return buffer;
 }
 
@@ -671,9 +673,9 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
       f.write_h_once("extern void " + std::string(callback()) + "(" + t + "*, " + user_data_type_or_voidp() + ");");
     }
   }
-  const char* k = class_name(1);
+  std::string k = full_class_name();
   const char* c = array_name(this);
-  if (c && !k && !is_class()) {
+  if (c && k.empty() && !is_class()) {
     f.write_c("\n");
     if (!public_) f.write_c("static ");
     else f.write_h("extern " + t + "* " + c + ";\n");
@@ -694,8 +696,8 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
       while (*d && !is_id(*d)) d++;
     }
     std::string cn = callback_name(f);
-    if (k) {
-      f.write_c("\nvoid " + std::string(k) + "::" + cn + "_i(" + t + "*");
+    if (!k.empty()) {
+      f.write_c("\nvoid " + k + "::" + cn + "_i(" + t + "*");
     } else {
       f.write_c("\nstatic void " + cn + "(" + t + "*");
     }
@@ -717,9 +719,9 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     f.write_c("\n");
     f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
     f.write_c("}\n");
-    if (k) {
-      f.write_c("void " + std::string(k) + "::" + std::string(cn) + "(" + t + "* o, " + ut + " v) {\n");
-      f.write_c(f.indent(1) + "((" + std::string(k)+ "*)(o");
+    if (!k.empty()) {
+      f.write_c("void " + k + "::" + std::string(cn) + "(" + t + "* o, " + ut + " v) {\n");
+      f.write_c(f.indent(1) + "((" + k + "*)(o");
       Node* q = nullptr;
       for (Node* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
@@ -740,12 +742,12 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
   std::string t = subclassname(this);
   const char* c = array_name(this);
   if (c) {
-    if (class_name(1)) {
+    if (is_in_class()) {
       f.write_public(public_);
       f.write_h(f.indent(1) + t + "* " + c + ";\n");
     }
   }
-  if (class_name(1) && callback() && !is_function_name(callback())) {
+  if (is_in_class() && callback() && !is_function_name(callback())) {
     std::string cn = callback_name(f);
     std::string ut = user_data_type_or_voidp();
     f.write_public(0);
@@ -1004,7 +1006,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
     if (c != fc) write_color(f, "textcolor", c);
   }}
   std::string ud = user_data();
-  if (class_name(1) && !parent->is_widget()) ud = "this";
+  if (is_in_class() && !parent->is_widget()) ud = "this";
   if (callback()) {
     if (is_lambda(callback())) { // lambda callback function
       f.write_c(f.indent() + var + "->callback(\n");

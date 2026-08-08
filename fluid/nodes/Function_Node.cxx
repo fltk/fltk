@@ -360,16 +360,16 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
       }
     }
 
-    const char* k = class_name(0);
-    if (k) {
+    std::string k = class_name();
+    if (!k.empty()) {
       f.write_public(public_);
       if (havechildren)
         write_comment_c(f);
       if (name()[0] == '~')
         constructor = 1;
       else {
-        size_t n = strlen(k);
-        if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
+        auto n = k.size();
+        if (!strncmp(name(), k.c_str(), n) && name()[n] == '(') constructor = 1;
       }
       f.write_h(f.indent(1));
       if (is_static) f.write_h("static ");
@@ -401,7 +401,7 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
       }
       if (havechildren) {
         clean_function_for_implementation(s, name());
-        f.write_c(std::string(k) + "::" + std::string(s) + " {\n");
+        f.write_c(k + "::" + std::string(s) + " {\n");
       }
     } else {
       if (havechildren)
@@ -831,7 +831,7 @@ void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
   if (csc!=e) e = csc; // comment found
   // lose spaces between text and comment, if any
   while (e>c && e[-1]==' ') e--;
-  if (class_name(1)) {
+  if (is_in_class()) {
     f.write_public(public_);
     write_comment_h(f, f.indent(1).c_str());
     f.write_hc(f.indent(1), std::string(c, e-c), std::string(csc));
@@ -989,11 +989,11 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
       write_comment_c(f);
       if (output_format_ == 1) {
         f.write_h(f.indent(1) + "static const char* " + c + ";\n");
-        f.write_c("const char* " + std::string(class_name(1)) + "::" + c + " = /* text inlined from " + fn + " */\n");
+        f.write_c("const char* " + full_class_name() + "::" + c + " = /* text inlined from " + fn + " */\n");
       } else {
         f.write_h_once("#include <string>");
         f.write_h(f.indent(1) + "static const std::string " + c + ";\n");
-        f.write_c("const std::string " + std::string(class_name(1)) + "::" + c + " = /* text inlined from " + fn + " */\n");
+        f.write_c("const std::string " + full_class_name() + "::" + c + " = /* text inlined from " + fn + " */\n");
       }
       if (message) f.write_c("#error " + std::string(message) + " " + fn + "\n");
       f.write_cstring(fluid::string_view(data, nData));
@@ -1001,15 +1001,15 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_h(f.indent(1) + "static int " + c + "_size;\n");
       f.write_c("\n");
       write_comment_c(f);
-      f.write_c("int " + std::string(class_name(1)) + "::" + c + "_size = " + std::to_string(uncompressedDataSize) + ";\n");
+      f.write_c("int " + full_class_name() + "::" + c + "_size = " + std::to_string(uncompressedDataSize) + ";\n");
       if (output_format_ == 2) {
         f.write_h(f.indent(1) + "static unsigned char " + c + "[" + std::to_string(nData) + "];\n");
-        f.write_c("unsigned char " + std::string(class_name(1)) + "::" + c + "[" + std::to_string(nData) + "] = /* data compressed and inlined from " + fn + " */\n");
+        f.write_c("unsigned char " + full_class_name() + "::" + c + "[" + std::to_string(nData) + "] = /* data compressed and inlined from " + fn + " */\n");
       } else {
         f.write_h_once("#include <stdint.h>");
         f.write_h_once("#include <vector>");
         f.write_h(f.indent(1) + "static std::vector<uint8_t> " + c + ";\n");
-        f.write_c("std::vector<uint8_t> " + std::string(class_name(1)) + "::" + c + " = /* data compressed and inlined from " + fn + " */\n");
+        f.write_c("std::vector<uint8_t> " + full_class_name() + "::" + c + " = /* data compressed and inlined from " + fn + " */\n");
       }
       if (message) f.write_c("#error " + std::string(message) + " " + fn + "\n");
       f.write_cdata(fluid::string_view(data, nData));
@@ -1018,12 +1018,12 @@ void Data_Node::write_code1(fluid::io::Code_Writer& f) {
       write_comment_c(f);
       if (output_format_ == 0) {
         f.write_h(f.indent(1) + "static unsigned char " + c + "[" + std::to_string(nData) + "];\n");
-        f.write_c("unsigned char " + std::string(class_name(1)) + "::" + c + "[" + std::to_string(nData) + "] = /* data inlined from " + fn + " */\n");
+        f.write_c("unsigned char " + full_class_name() + "::" + c + "[" + std::to_string(nData) + "] = /* data inlined from " + fn + " */\n");
       } else {
         f.write_h_once("#include <stdint.h>");
         f.write_h_once("#include <vector>");
         f.write_h(f.indent(1) + "static std::vector<uint8_t> " + c + ";\n");
-        f.write_c("std::vector<uint8_t> " + std::string(class_name(1)) + "::" + c + " = /* data inlined from " + fn + " */\n");
+        f.write_c("std::vector<uint8_t> " + full_class_name() + "::" + c + " = /* data inlined from " + fn + " */\n");
       }
       if (message) f.write_c("#error " + std::string(message) + " " + fn + "\n");
       f.write_cdata(fluid::string_view(data, nData));

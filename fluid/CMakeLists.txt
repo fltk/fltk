@@ -133,6 +133,7 @@ set(CPPFILES
   nodes/iterators.cxx
   nodes/Menu_Node.cxx
   nodes/Node.cxx
+  nodes/Node_debug.cxx
   nodes/Widget_Image.cxx
   nodes/Widget_Node.cxx
   nodes/Window_Node.cxx
@@ -194,6 +195,7 @@ set(HEADERFILES
   nodes/iterators.h
   nodes/Menu_Node.h
   nodes/Node.h
+  nodes/Node_debug.h
   nodes/Widget_Image.h
   nodes/Widget_Node.h
   nodes/Window_Node.h

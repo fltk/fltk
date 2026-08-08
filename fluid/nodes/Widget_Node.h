@@ -17,10 +17,16 @@
 #ifndef FLUID_NODES_WIDGET_NODE_H
 #define FLUID_NODES_WIDGET_NODE_H
 
+// ---- Fluid includes
+
 #include "nodes/Node.h"
 #include "nodes/Widget_Image.h"
 
+// ---- C++ includes
+
 #include <string>
+
+// ---- Forward Declarations
 
 class Widget_Node;
 
@@ -77,6 +83,7 @@ public:
   /// Widget access mode, 0=private, 1=public, 2=protected
   int public_ = 1;
 
+
   // ---- Image stuff
 
   /// Active (normal state) image data and display options.
@@ -98,6 +105,7 @@ private: // Methods
 
 protected:
 
+
   // ---- Code Writer functions for generating source code for this widget
 
   // Write the static initializer code for the widget
@@ -118,6 +126,7 @@ protected:
   // Helper to write code for a color property using symbolic names
   void write_color(fluid::io::Code_Writer& f, const char*, Fl_Color);
 
+
   // ---- Construction and Destruction
 
   // Never called directly, called by constructor of derived class
@@ -133,6 +142,7 @@ public:
   Widget_Node& operator=(const Widget_Node&) = delete;
   Widget_Node(Widget_Node&&) = delete;
   Widget_Node& operator=(Widget_Node&&) = delete;
+
 
   // ---- Node Lifetime Management
 
@@ -160,6 +170,7 @@ public:
   // Return true for Widget_Node and derived classes that are buttons
   int is_public() const override { return public_; }
 
+
   // ---- Handle user created code blocks
 
   /// Return one of the extra code blocks
@@ -170,6 +181,7 @@ public:
 
   // Add one or more lines of code to one of the extra code blocks
   void extra_code_append(int n, const std::string& code);
+
 
   // ---- Getter and setter for various properties
 
@@ -194,6 +206,7 @@ public:
   // Read or write text attributes in widgets that support text, like Fl_Input, Fl_Text_Display, etc.
   virtual int textstuff(int what, Fl_Font&, int&, Fl_Color&);
 
+
   // ---- Read and write project files
 
   // Write all properties of this node, calls super class to write more properties
@@ -204,6 +217,7 @@ public:
 
   // Back compatibility to Forms FDesign project files
   int read_fdesign(const char*, const char*) override;
+
 
   // ---- Live mode support
 

@@ -639,22 +639,13 @@ void propagate_load(Fl_Group* g, void* v) {
   }
 }
 
-void set_cb(Fl_Button*, void*) {
-  haderror = 0;
-  Fl_Widget*const* a = the_panel->array();
-  for (int i=the_panel->children(); i--;) {
-    Fl_Widget* o = *a++;
-    if (o->changed()) {
-      o->do_callback();
-      if (haderror) return;
-      o->clear_changed();
-    }
-  }
-}
-
 void ok_cb(Fl_Return_Button* o, void* v) {
-  set_cb(o,v);
-  if (!haderror) the_panel->hide();
+  haderror = 0;
+  Fluid.flush_text_widgets();
+  if (haderror)
+    {} // Keep the panel open
+  else
+    the_panel->hide();
 }
 
 void toggle_overlays(Fl_Widget*, void*); // in Window_Node.cxx
@@ -845,12 +836,13 @@ extern void update_codeview_position();
 void selection_changed(Node* p) {
   // store all changes to the current selected objects:
   if (p && the_panel && the_panel->visible()) {
-    set_cb(nullptr,nullptr);
+    haderror = 0;
+    Fluid.flush_text_widgets();
     // if there was an error, we try to leave the selected set unchanged:
     if (haderror) {
       Node* q = nullptr;
       for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
-        o->new_selected = o->selected;
+        o->selected = o->backup_selected;
         if (!q && o->selected) q = o;
       }
       if (!p || !p->selected) p = q;
@@ -862,7 +854,7 @@ void selection_changed(Node* p) {
   // update the selected flags to new set:
   Node* q = nullptr;
   for (Node* o = Fluid.proj.tree.first; o; o = o->next) {
-    o->selected = o->new_selected;
+    o->backup_selected = o->selected;
     if (!q && o->selected) q = o;
   }
   if (!p || !p->selected) p = q;

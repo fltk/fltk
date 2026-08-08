@@ -17,19 +17,7 @@
 /// \defgroup fl_type Basic Node for all Widgets and Functions
 /// \{
 
-/** \class Node
- Each object described by Fluid is one of these objects.  They
- are all stored in a double-linked list.
-
- The "type" of the object is covered by the virtual functions.
- There will probably be a lot of these virtual functions.
-
- The type browser is also a list of these objects, but they
- are "factory" instances, not "real" ones.  These objects exist
- only so the "make" method can be called on them.  They are
- not in the linked list and are not written to files or
- copied or otherwise examined.
-
+/*
  The Node inheritance is currently:
       --+-- Node
         +-- Function_Node
@@ -95,6 +83,7 @@
 */
 
 #include "nodes/Node.h"
+#include "nodes/Node_debug.h"
 
 #include "Fluid.h"
 #include "Project.h"
@@ -124,146 +113,11 @@
 
 Node *in_this_only; // set if menu popped-up in window
 
-
 // ---- various functions
 
-#if 0
-#ifndef NDEBUG
 /**
- Print the current project tree to stderr.
+ Callback from main menu.
  */
-void print_project_tree() {
-  fprintf(stderr, "---- %s --->\n", Fluid.proj.projectfile_name().c_str());
-  for (Node *t = Fluid.proj.tree.first; t; t = t->next) {
-    for (int i = t->level; i > 0; i--)
-      fprintf(stderr, ". ");
-    fprintf(stderr, "%s\n", subclassname(t).c_str());
-  }
-}
-#endif
-
-#ifndef NDEBUG
-/**
- Check the validity of the project tree.
-
- Write problems with the project tree to stderr.
-
- \return true if the project tree is valid
- */
-bool validate_project_tree() {
-  // Validate `first` and `last`
-  if (Fluid.proj.tree.first == nullptr) {
-    if (Fluid.proj.tree.last == nullptr) {
-      return true;
-    } else {
-      fprintf(stderr, "ERROR: `first` is nullptr, but `last` is not!\n");
-      return false;
-    }
-  }
-  if (Fluid.proj.tree.last == nullptr) {
-    fprintf(stderr, "ERROR: `last` is nullptr, but `first` is not!\n");
-    return false;
-  }
-  // Validate the branch linkage, parent links, etc.
-  return validate_branch(Fluid.proj.tree.first);
-}
-#endif
-
-#ifndef NDEBUG
-/**
- Check the validity of a Type branch that is not connected to the project.
-
- Write problems with the branch to stderr.
-
- \param[in] root the first node in a branch
- \return true if the branch is correctly separated and valid
- */
-bool validate_independent_branch(class Node *root) {
-  // Make sure that `first` and `last` do not point at any node in this branch
-  if (Fluid.proj.tree.first) {
-    for (Node *t = root; t; t = t->next) {
-      if (Fluid.proj.tree.first == t) {
-        fprintf(stderr, "ERROR: Branch is not independent, `first` is pointing to branch member!\n");
-        return false;
-      }
-    }
-  }
-  if (Fluid.proj.tree.last) {
-    for (Node *t = root; t; t = t->next) {
-      if (Fluid.proj.tree.last == t) {
-        fprintf(stderr, "ERROR: Branch is not independent, `last` is pointing to branch member!\n");
-        return false;
-      }
-    }
-  }
-  // Validate the branch linkage, parent links, etc.
-  return validate_branch(root);
-}
-#endif
-
-#ifndef NDEBUG
-/**
- Check the validity of a Type branch.
-
- Write problems with the branch to stderr.
-
- \param[in] root the first node in a branch
- \return true if the branch is valid
- */
-bool validate_branch(class Node *root) {
-  // Only check real branches
-  if (!root) {
-    fprintf(stderr, "WARNING: Branch is empty!\n");
-    return false;
-  }
-  // Check relation between this and next node
-  for (Node *t = root; t; t = t->next) {
-    if (t->level < root->level) {
-      fprintf(stderr, "ERROR: Node in tree is above root level!\n");
-      return false;
-    }
-    if (t->next) {
-      // Make sure that all `next` types have the `prev` member link back
-      if (t->next->prev != t) {
-        fprintf(stderr, "ERROR: Doubly linked list broken!\n");
-        return false;
-      }
-      if (t->next->level > t->level) {
-        // Validate `level` changes
-        if (t->next->level - t->level > 1) {
-          fprintf(stderr, "ERROR: Child level increment greater than one!\n");
-          return false;
-        }
-        // Ensure that this node can actually have children
-        if (!t->can_have_children()) {
-          fprintf(stderr, "ERROR: This parent must not have children!\n");
-          return false;
-        }
-      }
-    }
-    // Validate the `parent` entry
-    for (Node *p = t->prev; ; p = p->prev) {
-      if (p == nullptr) {
-        if (t->parent != nullptr) {
-          fprintf(stderr, "ERROR: `parent` pointer should be nullptr!\n");
-          return false;
-        }
-        break;
-      }
-      if (p->level < t->level) {
-        if (t->parent != p) {
-          fprintf(stderr, "ERROR: `parent` points to wrong parent!\n");
-          return false;
-        }
-        break;
-      }
-    }
-  }
-  return true;
-}
-#endif
-#endif
-
 void select_all_cb(Fl_Widget *,void *) {
   Node *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
   if (in_this_only) {
@@ -275,7 +129,7 @@ void select_all_cb(Fl_Widget *,void *) {
     if (p) {
       int foundany = 0;
       for (auto *t : p->descendants()) {
-        if (!t->new_selected) {widget_browser->select(t,1,0); foundany = 1;}
+        if (!t->selected) {widget_browser->select(t,1,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
@@ -288,6 +142,9 @@ void select_all_cb(Fl_Widget *,void *) {
   selection_changed(p);
 }
 
+/**
+ Callback from main menu.
+ */
 void select_none_cb(Fl_Widget *,void *) {
   Node *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
   if (in_this_only) {
@@ -299,7 +156,7 @@ void select_none_cb(Fl_Widget *,void *) {
     if (p) {
       int foundany = 0;
       for (auto *t : p->descendants()) {
-        if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
+        if (t->selected) {widget_browser->select(t,0,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
@@ -361,7 +218,7 @@ void later_cb(Fl_Widget*,void*) {
 }
 
 /**
- Delete all children of this  Node.
+ Delete all children of this Node.
  This is a low level function that does not update the browser or the undo stack.
  */
 void Node::delete_children() {
@@ -377,7 +234,8 @@ void Node::delete_children() {
   }
 }
 
-/** Update a string.
+/**
+ Update a string.
  Replace a string pointer with new value, strips leading/trailing blanks.
  As a side effect, this call also sets the mod flags.
  \param[in] n new string, can be nullptr
@@ -752,6 +610,9 @@ Node *Node::remove() {
   return r;
 }
 
+/**
+ Update the name of the node.
+ */
 void Node::name(const char *n) {
   int nostrip = dynamic_cast<Comment_Node*>(this) != nullptr;
   if (storestring(n,name_,nostrip)) {
@@ -759,6 +620,9 @@ void Node::name(const char *n) {
   }
 }
 
+/**
+ Update the label of the node.
+ */
 void Node::label(const char *n) {
   if (storestring(n,label_,1)) {
     setlabel(label_);
@@ -766,29 +630,42 @@ void Node::label(const char *n) {
   }
 }
 
+/**
+ Update the callback text of the node.
+ */
 void Node::callback(const char *n) {
   storestring(n,callback_);
 }
 
+/**
+ Update the user data of the node.
+ */
 void Node::user_data(const std::string& n) {
   storestring(n, user_data_);
 }
 
+/**
+ Update the user data type of the node.
+ */
 void Node::user_data_type(const std::string& n) {
   storestring(n, user_data_type_);
 }
 
+/**
+ Update the comment of the node.
+ */
 void Node::comment(const char *n) {
   if (storestring(n,comment_,1)) {
     if (visible) widget_browser->redraw();
   }
 }
 
+/**
+ Open the dialog box that allows editing of the node.
+ */
 void Node::open() {
   fluid_alert("Opening node type '%s' is not yet implemented\n",type_name());
 }
-
-// returns pointer to whatever is after f & children
 
 /**
  Move this node (and its children) into list before g.
@@ -815,8 +692,9 @@ void Node::move_before(Node* g) {
   if (parent && is_widget()) parent->move_child(this,g);
 }
 
-
-// write a widget and all its children:
+/**
+ Write a widget and all its children.
+*/
 void Node::write(fluid::io::Project_Writer &f) {
   if (f.write_codeview()) proj1.start = (int)ftell(f.file()) + 1;
   if (f.write_codeview()) proj2.start = (int)ftell(f.file()) + 1;
@@ -848,6 +726,9 @@ void Node::write(fluid::io::Project_Writer &f) {
   if (f.write_codeview()) proj2.end = (int)ftell(f.file());
 }
 
+/**
+  Write the properties of this node into the project file.
+ */
 void Node::write_properties(fluid::io::Project_Writer &f) {
   // repeat this for each attribute:
   if (Fluid.proj.write_mergeback_data && uid_) {
@@ -882,6 +763,9 @@ void Node::write_properties(fluid::io::Project_Writer &f) {
   if (selected) f.write_word("selected");
 }
 
+/**
+ Read one property of the node from the project file.
+ */
 void Node::read_property(fluid::io::Project_Reader &f, const char *c) {
   if (!strcmp(c,"uid")) {
     const char *hex = f.read_word();
@@ -992,8 +876,12 @@ void Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const
   f.read_error("Unknown parent property \"%s\" in line %d", property, f.current_line_number());
 }
 
-
-int Node::read_fdesign(const char*, const char*) {return 0;}
+/**
+ Read part of the Forms FDesign file.
+ */
+int Node::read_fdesign(const char*, const char*) {
+  return 0;
+}
 
 /**
  Write a comment into the header file.
@@ -1105,44 +993,58 @@ Fl_Widget *Node::enter_live_mode() {
 void Node::copy_properties() {
 }
 
+/**
+ Create a unique name for the callback function.
+ */
 std::string Node::callback_name(fluid::io::Code_Writer& f) {
   if (is_function_name(callback())) return callback();
   return f.unique_id(this, "cb", (name()?name():""), (label()?label():""));
 }
 
 /**
- \brief Return the class name if this type is inside a Class or Widget Class.
+ Get the name of the class or widget class that contains this node.
 
- This methods traverses up the hirarchy to find out if this Type is located
- inside a Class or Widget Class. It then return the name of that class. If
- need_nest is set, class_name searches all the way up the tree and concatenates
- the names of classes within classes, separated by a "::".
+ This method traverses up the hierarchy to find out if this Type is located
+ inside a Class or Widget Class.
 
- \param need_nest if clear, search up one level to the first enclosing class.
- If set, recurse all the way up to the top node.
- \return the name of the enclosing class, or names of the enclosing classes
- in a static buffe (don't call free), or nullptr if this Type is not inside a class
- */
-const char* Node::class_name(int need_nest) const {
+ \return the name of the class that contains this type, or an empty string if it
+ is not inside a class.
+*/
+std::string Node::class_name() const {
   Node* p = parent;
   while (p) {
     if (p->is_class()) {
-      // see if we are nested in another class, we must fully-qualify name:
-      // this is lame but works...
-      const char* q = nullptr;
-      if(need_nest) q=p->class_name(need_nest);
-      if (q) {
-        static char s[256];
-        if (q != s) strlcpy(s, q, sizeof(s));
-        strlcat(s, "::", sizeof(s));
-        strlcat(s, p->name(), sizeof(s));
-        return s;
-      }
-      return p->name();
+      return p->name() ? p->name() : "";
     }
     p = p->parent;
   }
-  return nullptr;
+  return "";
+}
+
+/**
+ Get the fully qualified name of the class or widget class that contains this node.
+
+ This method traverses up the hierarchy to find out if this Type is located
+ inside a Class or Widget Class. It then returns the fully qualified name of
+ that class, separating classes within classes with "::".
+
+ \return the fully qualified name of the class that contains this type, or an
+ empty string if it is not inside a class.
+ */
+std::string Node::full_class_name() const {
+  Node* p = parent;
+  std::string qualified_name;
+  while (p) {
+    if (p->is_class() && p->name()) {
+      if (!qualified_name.empty()) {
+        qualified_name = std::string(p->name()) + "::" + qualified_name;
+      } else {
+        qualified_name = p->name();
+      }
+    }
+    p = p->parent;
+  }
+  return qualified_name;
 }
 
 /**
@@ -1165,23 +1067,36 @@ bool Node::is_in_class() const {
 Node* Node::find_parent_class_node() const {
   Node* p = parent;
   while (p) {
-    if (p->is_class()) return static_cast<Class_Node*>(p);
+    if (p->is_class())
+      return p;
     p = p->parent;
   }
   return nullptr;
 }
 
+/**
+  Write static data for this node.
+ */
 void Node::write_static(fluid::io::Code_Writer&) {
 }
 
+/**
+  Write static data for this node after children are written.
+ */
 void Node::write_static_after(fluid::io::Code_Writer&) {
 }
 
+/**
+  Write instantiation code for this node.
+ */
 void Node::write_code1(fluid::io::Code_Writer& f) {
   f.write_h("// Header for " + std::string(title()) + "\n");
   f.write_c("// Code for " + std::string(title()) + "\n");
 }
 
+/**
+ Write instantiation code after all children are instantiated.
+ */
 void Node::write_code2(fluid::io::Code_Writer&) {
 }
 
@@ -1244,7 +1159,6 @@ bool Node::has_function(const std::string& return_type_regex, const std::string&
   }
   return false;
 }
-
 
 /// \}
 
