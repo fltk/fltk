@@ -67,6 +67,8 @@ public: // Member Variables
   int header_file_set = 0;
   ///  If set, command line overrides source code file name in .fl file.
   int code_file_set = 0;
+  ///  If set, command line overrides strings file name in .fl file.
+  int strings_file_set = 0;
   /// later
   int write_mergeback_data = 0;
   /// Filename of the current .fl project file
@@ -75,6 +77,8 @@ public: // Member Variables
   std::string header_file_name = ".h";
   /// Hold the default extension for source code  files, or the entire filename if set via command line.
   std::string code_file_name = ".cxx";
+  /// Hold the default extension for the i18n stringd file
+  std::string strings_file_name = "";
   /// Macro used in header file for #ifdef MACRO \n #defined MACRO \n ... \n #endif
   std::string include_guard = "";
 

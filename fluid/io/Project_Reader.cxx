@@ -282,6 +282,12 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
         goto CONTINUE;
       }
 
+      if (!strcmp(c,"strings_name")) {
+        if (!proj_.strings_file_set) proj_.strings_file_name = read_word();
+        else read_word();
+        goto CONTINUE;
+      }
+
       if (!strcmp(c,"include_guard")) {
         proj_.include_guard = read_word();
         goto CONTINUE;

@@ -134,6 +134,10 @@ int Project_Writer::write_project(const char *filename, int selected_only, bool 
   if (!selected_only) {
     write_string("\nheader_name"); write_word(proj_.header_file_name);
     write_string("\ncode_name"); write_word(proj_.code_file_name);
+    if (!proj_.strings_file_name.empty()) {
+      write_string("\nstrings_name");
+      write_word(proj_.strings_file_name);
+    }
     write_string("\ninclude_guard"); write_word(proj_.include_guard);
     Fluid.layout_list.write(this);
     if (g_shell_config)

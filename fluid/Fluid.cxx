@@ -203,6 +203,10 @@ int Application::run(int argc,char **argv) {
       proj.header_file_set = 1;
       proj.header_file_name = args.header_filename;
     }
+    if (!args.strings_filename.empty()) {
+      proj.strings_file_set = 1;
+      proj.strings_file_name = args.strings_filename;
+    }
   }
 
   if (args.update_file) {            // fluid -u
@@ -716,6 +720,9 @@ int Application::write_code_files(bool dont_show_completion_dialog)
   fluid::io::Code_Writer f(proj);
   std::string code_filename = proj.codefile_path() + proj.codefile_name();
   std::string header_filename = proj.headerfile_path() + proj.headerfile_name();
+
+  printf("LaunchDir: %s\n", Fluid.launch_path().c_str());
+  printf("Writing code to\n`%s`\nand\n`%s`\n", code_filename.c_str(), header_filename.c_str());
 
   // -- write the code and header files
   if (!batch_mode) proj.enter_project_dir();

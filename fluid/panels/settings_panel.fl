@@ -206,7 +206,7 @@ Function {make_settings_window()} {uid 5023 open
 } {
   Fl_Window settings_window {uid 6ae5
     label {FLUID Settings} open
-    xywh {499 208 360 585} type Double align 80 resizable size_range {340 580 0 0} visible
+    xywh {593 275 360 585} type Double align 80 resizable size_range {340 580 0 0} visible
   } {
     Fl_Tabs w_settings_tabs {uid f85f
       callback {propagate_load(o, v);} open
@@ -400,6 +400,20 @@ or just ".ext" to set extension.}
 }}
           tooltip {Include the header file from the code file.} xywh {110 160 230 20} down_box DOWN_BOX labelsize 12
         }
+        Fl_Input strings_file_input {uid 9319
+          label {Strings File:}
+          user_data 1
+          callback {if (v == LOAD) {
+  o->value(Fluid.proj.strings_file_name.c_str());
+} else {
+  if (strcmp(Fluid.proj.strings_file_name.c_str(), o->value())) {
+    Fluid.proj.strings_file_name = o->value();
+    Fluid.proj.set_modflag(1);
+  }
+}}
+          tooltip {Filename for internationalisation strings lookup file} xywh {110 182 230 20} box THIN_DOWN_BOX labelfont 1 labelsize 12 when 1 textfont 4 textsize 12
+          code2 {o->placeholder("automatic (.txt/.po/.msg)");}
+        }
         Fl_Input include_guard_input {uid 56c4
           label {Include Guard:}
           user_data 1 user_data_type {void*}
@@ -417,11 +431,11 @@ an include guard in header file:
 \#ifdef GUARD
 \#define GUARD
 ...
-\#endif} xywh {110 188 230 20} box THIN_DOWN_BOX labelfont 1 labelsize 12 when 1 textfont 4 textsize 12
+\#endif} xywh {110 213 230 20} box THIN_DOWN_BOX labelfont 1 labelsize 12 when 1 textfont 4 textsize 12
         }
         Fl_Box {} {uid 9c15
           label {Options: }
-          xywh {110 214 0 20} labelfont 1 labelsize 12 align 4
+          xywh {110 239 0 20} labelfont 1 labelsize 12 align 4
         }
         Fl_Check_Button use_FL_COMMAND_button {uid 2b8a
           label {Menu shortcuts use FL_COMMAND}
@@ -433,7 +447,7 @@ an include guard in header file:
     Fluid.proj.use_FL_COMMAND = o->value();
   }
 }}
-          tooltip {Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts} xywh {110 214 230 20} down_box DOWN_BOX labelsize 12
+          tooltip {Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts} xywh {110 239 230 20} down_box DOWN_BOX labelsize 12
         }
         Fl_Check_Button utf8_in_src_button {uid 91e5
           label {Allow Unicode UTF-8 in source code}
@@ -445,7 +459,7 @@ an include guard in header file:
     Fluid.proj.utf8_in_src = o->value();
   }
 }}
-          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {110 234 230 20} down_box DOWN_BOX labelsize 12
+          tooltip {For older compilers, characters outside of the printable ASCII range are escaped using octal notation `\\0123`. If this option is checked, Fluid will write UTF-8 characters unchanged.} xywh {110 259 230 20} down_box DOWN_BOX labelsize 12
         }
         Fl_Check_Button avoid_early_includes_button {uid 6a9b
           label {Avoid early include of Fl.H}
@@ -457,11 +471,11 @@ an include guard in header file:
     Fluid.proj.avoid_early_includes = o->value();
   }
 }}
-          tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {110 254 230 20} down_box DOWN_BOX labelsize 12
+          tooltip {Do not emit \#include <FL//Fl.H> until it is needed by another include file.} xywh {110 279 230 20} down_box DOWN_BOX labelsize 12
         }
         Fl_Box {} {uid f84d
           label {Experimental: }
-          xywh {110 280 0 20} labelfont 1 labelsize 12 align 4
+          xywh {110 305 0 20} labelfont 1 labelsize 12 align 4
         }
         Fl_Check_Button w_proj_mergeback {uid c339
           label {Generate MergeBack data}
@@ -473,7 +487,7 @@ an include guard in header file:
     Fluid.proj.write_mergeback_data = o->value();
   }
 }}
-          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {110 280 230 20} down_box DOWN_BOX labelsize 12
+          tooltip {MergeBack is a feature under construction that allows changes in code files to be merged back into the project file. Checking this option will generate additional data in code and project files.} xywh {110 305 230 20} down_box DOWN_BOX labelsize 12
         }
         Fl_Box {} {uid f5f6
           xywh {110 530 230 10} hide resizable

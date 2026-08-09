@@ -30,6 +30,56 @@
 
 using namespace fluid;
 
+/*
+ How filennames and paths are determined.
+
+ Variables involved:
+
+ Fluid.launch_path() -> cwd at launch
+ Fluid.batch_mode -> true if command line argument were given to write any kind of file
+
+ Batch Mode:
+
+ Project::proj_filename -> path and name of ".fl" project file, relative to launch_path
+ Project::code_file_name
+    -> read from ".fl" file, defaults to ".cxx", can be overridden by "-o" command line argument
+    -> empty
+       -> filename = launch_path + project_basename + ".cxx"
+    -> if extension only (no '/', starts with '.')
+       -> filename = launch_path + project_basename + extension
+    -> if name only (no '/')
+       -> filename = launch_path + name (extension is part of name)
+    -> if path only (ends in '/')
+       -> filename = launch_path + path + project_basename + ".cxx"
+    -> if path + name (contains '/')
+       -> filename = launch_path + path + name
+ Project::code_file_set -> 1 if "-o" option was used on command line, otherwise 0
+ Project::app_work_dir
+ Args::code_filename -> empty, or copy of command line argument, setting code_file_set
+ Args::header_filename
+ Project::header_file_name
+ Project::header_file_set
+ Project::enter_project_dir()
+    -> project path
+ strings filename:
+    -> filename = launch_path + project_basename + ".txt"|".po"|".msg"
+
+ Interactive Mode:
+
+ Project::proj_filename -> absolute path and name to ".fl" project file
+ Project::header_file_name
+ Project::header_file_set
+ Project::code_file_name
+    -> read from ".fl" file, defaults to ".cxx", can not be overridden
+    -> filepath as in batch mode, but use project_path instead of launch_path
+    -> filename same as in batch mode
+ Project::code_file_set
+ Project::app_work_dir
+ Args::code_filename
+ Args::header_filename
+*/
+
+
 // ---- project settings
 
 /**
@@ -74,8 +124,10 @@ void Project::reset() {
   avoid_early_includes = 0;
   header_file_set = 0;
   code_file_set = 0;
+  strings_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
+  strings_file_name = "";
   include_guard = "";
   write_mergeback_data = 0;
 }
@@ -175,10 +227,11 @@ std::string Project::headerfile_name() const {
  \return the path ending in '/'
  */
 std::string Project::stringsfile_path() const {
+  std::string path = fl_filename_path_str(strings_file_name);
   if (Fluid.batch_mode)
-    return Fluid.launch_path();
+    return end_with_slash(fl_filename_absolute_str(path, Fluid.launch_path()));
   else
-    return projectfile_path();
+    return end_with_slash(fl_filename_absolute_str(path, projectfile_path()));
 }
 
 /**
@@ -186,11 +239,21 @@ std::string Project::stringsfile_path() const {
  \return the file name without path
  */
 std::string Project::stringsfile_name() const {
-  if (proj_filename.empty()) return std::string{};
-  switch (i18n.type) {
-    default: return fl_filename_setext_str(fl_filename_name_str(proj_filename), ".txt");
-    case fluid::I18n_Type::GNU: return fl_filename_setext_str(fl_filename_name_str(proj_filename), ".po");
-    case fluid::I18n_Type::POSIX: return fl_filename_setext_str(fl_filename_name_str(proj_filename), ".msg");
+  std::string name = fl_filename_name_str(strings_file_name);
+  if (name.empty()) {
+    if (proj_filename.empty()) return std::string{};
+    std::string ext;
+    switch (i18n.type) {
+      default: ext = ".txt"; break;
+      case fluid::I18n_Type::GNU: ext = ".po"; break;
+      case fluid::I18n_Type::POSIX: ext = ".msg"; break;
+    }
+    return fl_filename_setext_str(fl_filename_name_str(proj_filename), ext);
+  } else if (name[0] == '.') {
+    if (proj_filename.empty()) return std::string{};
+    return fl_filename_setext_str(fl_filename_name_str(proj_filename), strings_file_name);
+  } else {
+    return name;
   }
 }
 
@@ -369,7 +432,7 @@ void Project::write_strings() {
   int x = fluid::io::write_strings(*this, filename);
   if (x) {
     fluid_message("Can't write %s: %s", filename.c_str(), strerror(errno));
-  } else if (completion_button->value() && !Fluid.batch_mode) {
+  } else if (!Fluid.batch_mode && completion_button->value()) {
     fluid_message("Wrote %s", stringsfile_name().c_str());
   }
 }

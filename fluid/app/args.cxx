@@ -52,6 +52,7 @@ int Args::load(int argc,char **argv) {
     " -cs : write .cxx and .h and strings and exit\n"
     " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
     " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
+    " -s <name> : i18n strings filename, or extension if <name> starts with '.'\n"
     " --help : brief usage information\n"
     " --version, -v : print fluid version number\n"
     " -d : enable internal debugging\n";
@@ -116,6 +117,11 @@ int Args::arg(int argc, char** argv, int& i) {
   }
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
     code_filename = argv[i+1];
+    Fluid.batch_mode++;
+    i += 2; return 2;
+  }
+  if (argv[i][1] == 's' && !argv[i][2] && i+1 < argc) {
+    strings_filename = argv[i+1];
     Fluid.batch_mode++;
     i += 2; return 2;
   }

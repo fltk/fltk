@@ -458,6 +458,21 @@ static void cb_include_H_from_C_button(Fl_Check_Button* o, void* v) {
 //ﬂ ▲ ----------~=~--~~-~=-------------~=-~---~-~~~=~-~----~ ▲ ﬂ//
 }
 
+Fl_Input* strings_file_input = (Fl_Input*)nullptr;
+
+static void cb_strings_file_input(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-==~~-------=---=~-~ ▼ ﬂ//
+  if (v == LOAD) {
+    o->value(Fluid.proj.strings_file_name.c_str());
+  } else {
+    if (strcmp(Fluid.proj.strings_file_name.c_str(), o->value())) {
+      Fluid.proj.strings_file_name = o->value();
+      Fluid.proj.set_modflag(1);
+    }
+  }
+//ﬂ ▲ ----------=~-~-~-=~~-~----------~-=~=-~=-~~----==----- ▲ ﬂ//
+}
+
 Fl_Input* include_guard_input = (Fl_Input*)nullptr;
 
 static void cb_include_guard_input(Fl_Input* o, void* v) {
@@ -2971,7 +2986,21 @@ Fl_Double_Window* make_settings_window() {
           include_H_from_C_button->labelsize(12);
           include_H_from_C_button->callback((Fl_Callback*)cb_include_H_from_C_button);
         } // Fl_Check_Button* include_H_from_C_button
-        { auto* o = include_guard_input = new Fl_Input(110, 188, 230, 20, "Include Guard:");
+        { auto* o = strings_file_input = new Fl_Input(110, 182, 230, 20, "Strings File:");
+          (void)o;
+          strings_file_input->tooltip("Filename for internationalisation strings lookup file");
+          strings_file_input->box(FL_THIN_DOWN_BOX);
+          strings_file_input->labelfont(1);
+          strings_file_input->labelsize(12);
+          strings_file_input->textfont(4);
+          strings_file_input->textsize(12);
+          strings_file_input->callback((Fl_Callback*)cb_strings_file_input, (void*)(1));
+          strings_file_input->when(FL_WHEN_CHANGED);
+//ﬂ ▼ ----------------------- setup -----~-~=~=~--~-=--~=~-- ▼ ﬂ//
+          o->placeholder("automatic (.txt/.po/.msg)");
+//ﬂ ▲ ---------~=--~-~-=~~-~-----------~~--~=-~-=--=-~~-~=~~ ▲ ﬂ//
+        } // Fl_Input* strings_file_input
+        { auto* o = include_guard_input = new Fl_Input(110, 213, 230, 20, "Include Guard:");
           (void)o;
           include_guard_input->tooltip("Name of macro used as\nan include guard in header file:\n\n#ifdef GUARD\n#def"
 "ine GUARD\n...\n#endif");
@@ -2983,20 +3012,20 @@ Fl_Double_Window* make_settings_window() {
           include_guard_input->callback((Fl_Callback*)cb_include_guard_input, (void*)(1));
           include_guard_input->when(FL_WHEN_CHANGED);
         } // Fl_Input* include_guard_input
-        { auto* o = new Fl_Box(110, 214, 0, 20, "Options: ");
+        { auto* o = new Fl_Box(110, 239, 0, 20, "Options: ");
           (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { auto* o = use_FL_COMMAND_button = new Fl_Check_Button(110, 214, 230, 20, "Menu shortcuts use FL_COMMAND");
+        { auto* o = use_FL_COMMAND_button = new Fl_Check_Button(110, 239, 230, 20, "Menu shortcuts use FL_COMMAND");
           (void)o;
           use_FL_COMMAND_button->tooltip("Replace FL_CTRL and FL_META with FL_COMMAND when generating menu shortcuts");
           use_FL_COMMAND_button->down_box(FL_DOWN_BOX);
           use_FL_COMMAND_button->labelsize(12);
           use_FL_COMMAND_button->callback((Fl_Callback*)cb_use_FL_COMMAND_button);
         } // Fl_Check_Button* use_FL_COMMAND_button
-        { auto* o = utf8_in_src_button = new Fl_Check_Button(110, 234, 230, 20, "Allow Unicode UTF-8 in source code");
+        { auto* o = utf8_in_src_button = new Fl_Check_Button(110, 259, 230, 20, "Allow Unicode UTF-8 in source code");
           (void)o;
           utf8_in_src_button->tooltip("For older compilers, characters outside of the printable ASCII range are esca"
 "ped using octal notation `\\0123`. If this option is checked, Fluid will write"
@@ -3005,20 +3034,20 @@ Fl_Double_Window* make_settings_window() {
           utf8_in_src_button->labelsize(12);
           utf8_in_src_button->callback((Fl_Callback*)cb_utf8_in_src_button);
         } // Fl_Check_Button* utf8_in_src_button
-        { auto* o = avoid_early_includes_button = new Fl_Check_Button(110, 254, 230, 20, "Avoid early include of Fl.H");
+        { auto* o = avoid_early_includes_button = new Fl_Check_Button(110, 279, 230, 20, "Avoid early include of Fl.H");
           (void)o;
           avoid_early_includes_button->tooltip("Do not emit #include <FL//Fl.H> until it is needed by another include file.");
           avoid_early_includes_button->down_box(FL_DOWN_BOX);
           avoid_early_includes_button->labelsize(12);
           avoid_early_includes_button->callback((Fl_Callback*)cb_avoid_early_includes_button);
         } // Fl_Check_Button* avoid_early_includes_button
-        { auto* o = new Fl_Box(110, 280, 0, 20, "Experimental: ");
+        { auto* o = new Fl_Box(110, 305, 0, 20, "Experimental: ");
           (void)o;
           o->labelfont(1);
           o->labelsize(12);
           o->align(Fl_Align(FL_ALIGN_LEFT));
         } // Fl_Box* o
-        { auto* o = w_proj_mergeback = new Fl_Check_Button(110, 280, 230, 20, "Generate MergeBack data");
+        { auto* o = w_proj_mergeback = new Fl_Check_Button(110, 305, 230, 20, "Generate MergeBack data");
           (void)o;
           w_proj_mergeback->tooltip("MergeBack is a feature under construction that allows changes in code files t"
 "o be merged back into the project file. Checking this option will generate add"
@@ -3364,7 +3393,7 @@ Fl_Double_Window* make_settings_window() {
             o->textsize(12);
             o->callback((Fl_Callback*)cb_6);
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~~=-~=---=---=--~=-==~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ---=-~=~=~~~~-=~=~-~=- ▼ ﬂ//
             o->menu(fontmenu_w_default);
 //ﬂ ▲ ---------~=~-~-=~~~~~=-----------~=--=--~=-==~~-~~=~=~ ▲ ﬂ//
           } // Fl_Choice* o
