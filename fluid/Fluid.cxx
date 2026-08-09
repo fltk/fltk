@@ -22,6 +22,7 @@
 #include "proj/mergeback.h"
 #include "app/Menu.h"
 #include "app/shell_command.h"
+#include "proj/mergeback.h"
 #include "proj/undo.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
@@ -207,6 +208,29 @@ int Application::run(int argc,char **argv) {
       proj.strings_file_set = 1;
       proj.strings_file_name = args.strings_filename;
     }
+    if (args.mergeback_mode > 0) {
+      // ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE
+      // -mb=info
+      proj::Mergeback::Task task = proj::Mergeback::Task::INFO;
+      // -mb=ask
+      if (args.mergeback_mode == 2) task = proj::Mergeback::Task::INTERACTIVE;
+      // -mb=apply
+      if (args.mergeback_mode == 3) task = proj::Mergeback::Task::APPLY_IF_SAFE;
+      int ret = merge_back(
+        proj,
+        proj.codefile_path() + proj.codefile_name(),
+        proj.projectfile_path() + proj.projectfile_name(),
+        task
+      );
+      if (ret < 0) {
+        printf("\n");
+        fluid::alert("Fluid", "Operation cancelled.");
+        exit(1); // error in mergeback
+      } else if (ret > 0) {
+        printf("\n");
+        fluid::message("Fluid", "Mergeback applied.");
+      }
+    }
   }
 
   if (args.update_file) {            // fluid -u
@@ -228,6 +252,7 @@ int Application::run(int argc,char **argv) {
 
   proj.set_modflag(0);
   proj.undo.clear();
+  if (!proj.tree.empty()) mergeback_on_load();
 
   // Set (but do not start) timer callback for external editor updates
   ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
@@ -503,7 +528,6 @@ bool Application::open_project_file(const std::string &filename_arg) {
   // clear the project and merge a file by the given name
   new_project();
   bool success = proj.load_or_merge(new_filename);
-  if (success) mergeback_on_load();
   return success;
 }
 

@@ -47,6 +47,8 @@ public:
   /// Make all output file paths relative to the .fl project file path
   /// instead of the current working directory, if set.
   bool project_relative { false };  // fluid -pr
+  /// 0=ignore, 1=inform, 2=ask, 3=apply
+  int mergeback_mode { 0 };              // fluid -mb=info, -mb=ask, -mb=apply
   /// Constructor.
   Args() = default;
   // Load args from command line into variables.

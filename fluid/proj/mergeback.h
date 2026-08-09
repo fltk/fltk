@@ -48,7 +48,7 @@ public:
     END_OF_LIST_ = UNUSED_
   };
   enum class Task {
-    ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE
+    ANALYSE = 0, INFO, INTERACTIVE, APPLY, APPLY_IF_SAFE
   };
   enum Feedback { QUIET = 0, CHATTY = 1 };
 protected:
@@ -88,7 +88,7 @@ public:
   Mergeback(Project &proj);
   ~Mergeback();
   int merge_back(const std::string &s, const std::string &p, Task task);
-  int ask_user_to_merge(const std::string &s, const std::string &p);
+  int ask_user_to_merge(const std::string &s, const std::string &p, bool info_only=false);
   int analyse();
   int apply();
   static void print_tag(FILE *out, Tag prev_type, Tag next_type, uint16_t uid, uint32_t crc);
@@ -98,10 +98,14 @@ public:
 extern int merge_back(const std::string &s, const std::string &p, int task);
 
 } // namespace proj
+
+extern int merge_back(Project &proj, const std::string &s, const std::string &p, proj::Mergeback::Task task);
+
 } // namespace fluid
 
 extern void start_auto_mergeback();
 extern void mergeback_on_load();
+
 
 #endif // FLUID_PROJ_MERGEBACK_H
 

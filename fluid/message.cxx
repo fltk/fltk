@@ -179,20 +179,23 @@ int fluid::choice(const std::string &title, const std::string &message,
     printf("%s: %s\n", title.c_str(), message.c_str());
     // Write all available options
     printf("Options: ");
+    int default_index = (option.size() > 1) ? 1 : 0;
     bool comma = false;
+    int ix = 0;
     for (const auto &opt : option) {
       if (comma) printf(", ");
-      printf("%s[%c]", opt.label.c_str(), opt.key);
+      int key = (ix==default_index) ? fl_ascii_toupper(opt.key) : fl_ascii_tolower(opt.key);
+      printf("%s[%c]", opt.label.c_str(), key);
       comma = true;
+      ix++;
     }
     printf(": ");
     fflush(stdout);
     // Loop until we receive a supported key, or the user hits <esc> or <return>
-    int default_index = (option.size() > 1) ? 1 : 0;
     for (;;) {
       int key = read_console_key();
       if (key == 27) { printf("<esc>\n"); return msg::ESC; }
-      if (key == '\r' || key == '\n') { printf("<return>\n"); return default_index; }
+      if (key == '\r' || key == '\n') { printf("%s\n", option[default_index].label.c_str()); return default_index; }
       for (size_t i = 0; i < option.size(); ++i) {
         if (fl_ascii_tolower(key) == fl_ascii_tolower((unsigned char)option[i].key)) {
           printf("%s\n", option[i].label.c_str());

@@ -102,7 +102,7 @@ using namespace fluid::proj;
  \return -2 if no code file was found
  \return see above
  */
-int merge_back(Project &proj, const std::string &s, const std::string &p, Mergeback::Task task) {
+int fluid::merge_back(Project &proj, const std::string &s, const std::string &p, Mergeback::Task task) {
   if (proj.write_mergeback_data) {
     Mergeback mergeback(proj);
     return mergeback.merge_back(s, p, task);
@@ -180,7 +180,7 @@ std::string Mergeback::read_and_unindent_block(long start, long end) {
  \return -1 if the user wants to cancel or an error occurred or an issue was presented
         (message or choice dialog was shown)
  */
-int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &project_filename) {
+int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::string &project_filename, bool info_only) {
   if (tag_error) {
     fluid_message("Comparing\n  \"%s\"\nto\n  \"%s\"\n\n"
                "MergeBack found an error in line %d while reading tags\n"
@@ -225,15 +225,23 @@ int Mergeback::ask_user_to_merge(const std::string &code_filename, const std::st
                num_changed_structure, num_possible_override);
     return -1;
   } else {
-    msg +=    "\n\nClick Cancel to abort the MergeBack operation.\n"
-    "Click Merge to merge all code changes back into\n"
-    "the open project.";
-    int c = fluid_choice(msg.c_str(), "Cancel", "Merge", nullptr,
-                      code_filename.c_str(), project_filename.c_str(),
-                      num_changed_code, num_uid_not_found,
-                      num_changed_structure, num_possible_override);
-    if (c==0) return -1;
-    return 1;
+    if (info_only) {
+      fluid_message(msg.c_str(),
+                 code_filename.c_str(), project_filename.c_str(),
+                 num_changed_code, num_uid_not_found,
+                 num_changed_structure, num_possible_override);
+      return -1;
+    } else {
+      msg += "\n\nClick Cancel to abort the MergeBack operation.\n"
+        "Click Merge to merge all code changes back into\n"
+        "the open project.";
+      int c = fluid_choice(msg.c_str(), "Cancel", "Merge", nullptr,
+                        code_filename.c_str(), project_filename.c_str(),
+                        num_changed_code, num_uid_not_found,
+                        num_changed_structure, num_possible_override);
+      if (c != 1) return -1;
+      return 1;
+    }
   }
 }
 
@@ -626,8 +634,7 @@ int Mergeback::apply() {
 
 /** Dispatch the MergeBack into analysis, interactive, or apply directly.
  \param[in] s source code filename and path
- \param[in] task one of FD_MERGEBACK_ANALYSE, FD_MERGEBACK_INTERACTIVE,
-            FD_MERGEBACK_APPLY_IF_SAFE, or FD_MERGEBACK_APPLY
+ \param[in] task one of ANALYSE, INFO, INTERACTIVE, APPLY, or APPLY_IF_SAFE
  \return -1 if an error was found in a tag
  \return -2 if no code file was found
  \return See more at ::merge_back(const std::string &s, int task).
@@ -637,24 +644,32 @@ int Mergeback::merge_back(const std::string &s, const std::string &p, Task task)
   code = fl_fopen(s.c_str(), "rb");
   if (!code) return -2;
   do { // no actual loop, just make sure we close the code file
-    if (task == Task::ANALYSE) {
+    if ((task == Task::ANALYSE) || (task == Task::INFO)) {
       analyse();
       if (tag_error) {ret = -1; break; }
-      if (num_changed_structure) ret |= 1;
-      if (num_changed_code) ret |= 2;
-      if (num_uid_not_found) ret |= 4;
-      if (num_possible_override) ret |= 8;
+      if (num_changed_structure) ret |= 2;
+      if (num_changed_code) ret |= 4;
+      if (num_uid_not_found) ret |= 8;
+      if (num_possible_override) ret |= 16;
+      if (task == Task::ANALYSE) break;
+    }
+    if (task == Task::INFO) {
+      // tell findings
+      ret = ask_user_to_merge(s, p, true /* info_only */);
       break;
     }
     if (task == Task::INTERACTIVE) {
       analyse();
       ret = ask_user_to_merge(s, p);
       if (ret != 1)
-        return ret;
+        break;
       task = Task::APPLY; // fall through
     }
     if (task == Task::APPLY_IF_SAFE) {
       analyse();
+      if (Fluid.batch_mode) {
+        ask_user_to_merge(s, p, true /* info_only */);
+      }
       if (tag_error || num_changed_structure || num_possible_override) {
         ret = -1;
         break;
@@ -668,9 +683,13 @@ int Mergeback::merge_back(const std::string &s, const std::string &p, Task task)
     if (task == Task::APPLY) {
       ret = apply();
       if (ret == 1) {
-        proj_.set_modflag(1);
-        redraw_browser();
-        load_panel();
+        if (Fluid.batch_mode) {
+          proj_.save();
+        } else {
+          proj_.set_modflag(1);
+          redraw_browser();
+          load_panel();
+        }
       }
       ret = 1; // avoid message box in caller
     }

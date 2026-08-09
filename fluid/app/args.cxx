@@ -130,6 +130,19 @@ int Args::arg(int argc, char** argv, int& i) {
     Fluid.batch_mode++;
     i += 2; return 2;
   }
+  //-mb=info, -mb=ask, -mb=apply
+  if (strcmp(argv[i], "-mb=info")==0) {
+    mergeback_mode = 1; // inform
+    i++; return 1;
+  }
+  if (strcmp(argv[i], "-mb=ask")==0) {
+    mergeback_mode = 2; // ask
+    i++; return 1;
+  }
+  if (strcmp(argv[i], "-mb=apply")==0) {
+    mergeback_mode = 3; // apply
+    i++; return 1;
+  }
 #ifndef NDEBUG
   if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
     autodoc_path = argv[i+1];

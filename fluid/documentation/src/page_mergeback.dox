@@ -61,6 +61,24 @@
    - Fluid will analyze the `.cxx` file, detect changes within the marked
      sections, and offer to merge them back into the `.fl` project file.
 
+ <H2>MergeBack Command Line Options</H2>
+
+ When running in batch mode with `-c` or `-cs`, Fluid offers three command-line
+ options to control MergeBack. If none of these options is specified, MergeBack
+ is disabled and the C++ file is overwritten without warning.
+
+ - `-mb=info`: Analyze the MergeBack status. If no changes are detected, Fluid
+   writes the C++ files as requested. If changes are found, Fluid prints an
+   information message, does not write any files, and exits with status code `1`.
+ - `-mb=apply`: If changes can be merged back safely, Fluid applies them, writes
+   the project file, and then overwrites the C++ file. If unsafe changes are
+   detected that cannot be merged back, Fluid exits with error code `1` without
+   writing any files. If no changes are detected, Fluid simply writes the C++
+   files as requested.
+ - `-mb=ask`: Same as `-mb=apply`, but Fluid asks for confirmation before
+   overwriting the project file. This option may require a key press to
+   continue, so do not use it in automated scripts.
+
  <H2>Things to Keep in Mind</H2>
 
  - **Scope of MergeBack:** Currently, MergeBack supports merging changes
