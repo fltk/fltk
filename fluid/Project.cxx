@@ -30,56 +30,6 @@
 
 using namespace fluid;
 
-/*
- How filennames and paths are determined.
-
- Variables involved:
-
- Fluid.launch_path() -> cwd at launch
- Fluid.batch_mode -> true if command line argument were given to write any kind of file
-
- Batch Mode:
-
- Project::proj_filename -> path and name of ".fl" project file, relative to launch_path
- Project::code_file_name
-    -> read from ".fl" file, defaults to ".cxx", can be overridden by "-o" command line argument
-    -> empty
-       -> filename = launch_path + project_basename + ".cxx"
-    -> if extension only (no '/', starts with '.')
-       -> filename = launch_path + project_basename + extension
-    -> if name only (no '/')
-       -> filename = launch_path + name (extension is part of name)
-    -> if path only (ends in '/')
-       -> filename = launch_path + path + project_basename + ".cxx"
-    -> if path + name (contains '/')
-       -> filename = launch_path + path + name
- Project::code_file_set -> 1 if "-o" option was used on command line, otherwise 0
- Project::app_work_dir
- Args::code_filename -> empty, or copy of command line argument, setting code_file_set
- Args::header_filename
- Project::header_file_name
- Project::header_file_set
- Project::enter_project_dir()
-    -> project path
- strings filename:
-    -> filename = launch_path + project_basename + ".txt"|".po"|".msg"
-
- Interactive Mode:
-
- Project::proj_filename -> absolute path and name to ".fl" project file
- Project::header_file_name
- Project::header_file_set
- Project::code_file_name
-    -> read from ".fl" file, defaults to ".cxx", can not be overridden
-    -> filepath as in batch mode, but use project_path instead of launch_path
-    -> filename same as in batch mode
- Project::code_file_set
- Project::app_work_dir
- Args::code_filename
- Args::header_filename
-*/
-
-
 // ---- project settings
 
 /**
