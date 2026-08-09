@@ -3765,16 +3765,6 @@ int Fl_Cocoa_Window_Driver::set_cursor(Fl_Cursor c)
   return 1;
 }
 
-@interface FLCustomCursor : NSCursor
--(void)dealloc;
-@end
-@implementation FLCustomCursor
--(void)dealloc {
-  [[self image] release];
-  [super dealloc];
-}
-@end
-
 int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   if (cursor) {
     [(NSCursor*)cursor release];
@@ -3799,9 +3789,8 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   }
   NSImage *nsimage = [[NSImage alloc] initWithCGImage:*cgimg // 10.6
                                                  size:NSMakeSize(image->w(), image->h())];
-  cursor = [[FLCustomCursor alloc]
-             initWithImage:nsimage
-             hotSpot:NSMakePoint(hotx, hoty)];
+  cursor = [[NSCursor alloc] initWithImage:nsimage hotSpot:NSMakePoint(hotx, hoty)];
+  [nsimage release];
   [fl_xid(pWindow) invalidateCursorRectsForView:[fl_xid(pWindow) contentView]];
 
   if (image->as_svg_image()) delete image;
