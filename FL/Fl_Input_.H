@@ -101,6 +101,9 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   /** \internal Buffer memory for expanded text. \see expand() */
   char* buffer;
 
+  /** \internal Store placeholder text. */
+  char* placeholder_ { nullptr };
+
   /** \internal Size of text in bytes in the \p value_ field. */
   int size_;
 
@@ -265,6 +268,12 @@ public:
   int ivalue() const;
 
   double dvalue() const;
+
+  /* Set a placeholder text that is displayed when the widget is empty */
+  void placeholder(const char* text);
+
+  /* Get the placeholder text */
+  const char* placeholder() const;
 
   /* Returns the Unicode character at index \p i. */
   unsigned int index(int i) const;

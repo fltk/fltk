@@ -18,12 +18,15 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
 
   Fixes and Improvements in Fluid
 
+  - The Strings file name for internationalization can now be fully customized.
+  - Bigger and clearly assigned fields for custom code for widgets.
 
   Documentation Improvements
 
 
   Other Changes
 
+  - Added "placeholder" text field to Fl_Input_ based widgets
   - Removed autotools (configure/make) support
   - Requires C++11 or higher
 

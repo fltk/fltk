@@ -324,7 +324,24 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H, bool draw_active) {
       draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
                W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
     }
+    // If there is no text, but a placeholder, draw the placeholder text in a light color
+    if (placeholder_ && *placeholder_) {
+      Fl_Color fg = textcolor();
+      Fl_Color bg = color();
+      if (!active_r()) {
+        fg = fl_inactive(fg);
+        bg = fl_inactive(bg);
+      }
+      fl_color(fl_color_average(fg, bg, .5f));
+      fl_font(textfont(), textsize());
+      fl_draw(placeholder_, X, Y, W, H, FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+    }
     return;
+  }
+  // Make sure that a previously drawn placeholder text is cleared when draw_active is set.
+  if (!size() && placeholder_ && do_mu) {
+    draw_box(box(), X-Fl::box_dx(box()), Y-Fl::box_dy(box()),
+              W+Fl::box_dw(box()), H+Fl::box_dh(box()), color());
   }
 
   int selstart, selend;
@@ -1517,6 +1534,24 @@ double Fl_Input_::dvalue() const {
 }
 
 /**
+ Set the placeholder text.
+ \param [in] text the placeholder text
+*/
+void Fl_Input_::placeholder(const char* text) {
+  if (placeholder_) free((void*)placeholder_);
+  placeholder_ = text ? strdup(text) : nullptr;
+}
+
+/**
+ Get the placeholder text.
+ \return pointer to an internal buffer to the placeholder text, or nullptr. The
+ buffer will be freed when the widget is destroyed or a new placeholder is set.
+*/
+const char* Fl_Input_::placeholder() const {
+  return placeholder_;
+}
+
+/**
   Changes the size of the widget.
   This call updates the text layout so that the cursor is visible.
   \param [in] X, Y, W, H new size of the widget
@@ -1539,6 +1574,7 @@ Fl_Input_::~Fl_Input_() {
   delete redo_list_;
   delete undo_;
   if (bufsize) free((void*)buffer);
+  if (placeholder_) free((void*)placeholder_);
 }
 
 /** \internal
