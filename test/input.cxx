@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
   // input[0]->static_value("this is a testgarbage");
   input[1] = new Fl_Float_Input(70,y,300,30,"Float:"); y += 35;
   input[1]->tooltip("Input field for floating-point number (F1)");
+  input[1]->placeholder("e.g., 1.45e3");
   input[1]->shortcut(FL_F+1);
   input[2] = new Fl_Int_Input(70,y,300,30,"Int:"); y += 35;
   input[2]->tooltip("Input field for integer number (F2)");
