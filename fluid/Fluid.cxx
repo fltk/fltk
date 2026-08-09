@@ -721,9 +721,6 @@ int Application::write_code_files(bool dont_show_completion_dialog)
   std::string code_filename = proj.codefile_path() + proj.codefile_name();
   std::string header_filename = proj.headerfile_path() + proj.headerfile_name();
 
-  printf("LaunchDir: %s\n", Fluid.launch_path().c_str());
-  printf("Writing code to\n`%s`\nand\n`%s`\n", code_filename.c_str(), header_filename.c_str());
-
   // -- write the code and header files
   if (!batch_mode) proj.enter_project_dir();
   int x = f.write_code(code_filename, header_filename);
