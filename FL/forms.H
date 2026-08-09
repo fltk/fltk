@@ -291,7 +291,7 @@ enum {  // "p" argument values:
 };
 #define FL_PLACE_FREE_CENTER (FL_PLACE_CENTER|FL_FREE_SIZE)
 #define FL_PLACE_CENTERFREE  (FL_PLACE_CENTER|FL_FREE_SIZE)
-enum {  // "b" arguement values:
+enum {  // "b" argument values:
   FL_NOBORDER = 0,
   FL_FULLBORDER,
   FL_TRANSIENT
