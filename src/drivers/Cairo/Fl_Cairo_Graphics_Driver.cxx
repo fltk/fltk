@@ -1,7 +1,7 @@
 //
 // Support for Cairo graphics for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2024 by Bill Spitzak and others.
+// Copyright 2021-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1250,32 +1250,52 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
   static char *utf8_buffer = NULL;
   static int utf8_buffer_len = 0;
-  char *q = utf8_buffer;
+  int q = 0;
   const char *p = str;
-  const char *retval = str;
   int len, len2;
   const char *end = str + n;
   char buf4[4];
+  int use_priv_buffer = 0;
   while (p < end) {
     unsigned codepoint = fl_utf8decode(p, end, &len);
-    if (retval != str || (len == 1 &&  *(uchar*)p >= 0x80)) { // switch to using utf8_buffer
-      len2 = fl_utf8encode(codepoint, buf4);
-      if (!utf8_buffer_len || utf8_buffer_len < (q - utf8_buffer) + len2) {
-        utf8_buffer_len += (q - utf8_buffer) + len2 + 1000;
+
+    // Switch to using utf8_buffer if needed
+    if (!use_priv_buffer && (len == 1 && *(uchar*)p >= 0x80)) {
+      // Make room if needed
+      if (utf8_buffer_len < p - str) {
+        utf8_buffer_len = (p - str) + 1000;
         utf8_buffer = (char *)realloc(utf8_buffer, utf8_buffer_len);
       }
-      if (retval == str) {
-        retval = utf8_buffer;
-        q = utf8_buffer;
-        if (p > str) { memcpy(q, str, p - str); q += (p - str); }
+      use_priv_buffer = 1;
+      // Fill private buffer with data so far
+      if (p > str) {
+        memcpy(utf8_buffer, str, p - str);
+        q = (p - str);
       }
-      memcpy(q, buf4, len2);
+    }
+
+    if (use_priv_buffer) {
+      len2 = fl_utf8encode(codepoint, buf4);
+
+      // Increase buffer if needed
+      if (utf8_buffer_len < q + len2) {
+        utf8_buffer_len = q + len2 + 1000;
+        utf8_buffer = (char *)realloc(utf8_buffer, utf8_buffer_len);
+      }
+
+      // Copy decoded codepoint
+      memcpy(utf8_buffer + q, buf4, len2);
       q += len2;
     }
     p += len;
   }
-  if (retval != str) n = q - retval;
-  return retval;
+
+  if (use_priv_buffer) {
+    n = q;
+    return utf8_buffer;
+  }
+
+  return str;
 }
 
 
