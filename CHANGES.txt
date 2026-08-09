@@ -20,6 +20,7 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
 
   - The Strings file name for internationalization can now be fully customized.
   - Bigger and clearly assigned fields for custom code for widgets.
+  - New command line argument `-pr` writes files relative to the project file.
 
   Documentation Improvements
 

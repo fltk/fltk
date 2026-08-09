@@ -53,6 +53,7 @@ int Args::load(int argc,char **argv) {
     " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
     " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
     " -s <name> : i18n strings filename, or extension if <name> starts with '.'\n"
+    " -pr : make all output file paths relative to the .fl project file path\n"
     " --help : brief usage information\n"
     " --version, -v : print fluid version number\n"
     " -d : enable internal debugging\n";
@@ -93,6 +94,10 @@ int Args::arg(int argc, char** argv, int& i) {
     return 0;
   if (argv[i][1] == 'd' && !argv[i][2]) {
     Fluid.debug_external_editor=1;
+    i++; return 1;
+  }
+  if (strcmp(argv[i], "-pr")==0) {
+    project_relative = true;
     i++; return 1;
   }
   if (argv[i][1] == 'u' && !argv[i][2]) {

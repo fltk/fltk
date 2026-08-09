@@ -44,6 +44,9 @@ public:
   std::string autodoc_path { };         // fluid --autodoc path
   /// Set, if Fluid was started with the command line argument -v
   int show_version { 0 };           // fluid -v
+  /// Make all output file paths relative to the .fl project file path
+  /// instead of the current working directory, if set.
+  bool project_relative { false };  // fluid -pr
   /// Constructor.
   Args() = default;
   // Load args from command line into variables.
