@@ -783,6 +783,40 @@ int Fl_Graphics_Driver::antialias() {
   return 0;
 }
 
+
+const int Fl_Graphics_Driver::dashes_flat[5][7] = {
+  {-1,0,0,0,0,0,0},
+  {3,1,-1,0,0,0,0},
+  {1,1,-1,0,0,0,0},
+  {3,1,1,1,-1,0,0},
+  {3,1,1,1,1,1,-1}
+};
+
+
+const double Fl_Graphics_Driver::dashes_cap[5][7] = {
+  {-1,0,0,0,0,0,0},
+  {2,2,-1,0,0,0,0},
+  {0.01,1.99,-1,0,0,0,0},
+  {2,2,0.01,1.99,-1,0,0},
+  {2,2,0.01,1.99,0.01,1.99,-1}
+};
+
+
+void Fl_Graphics_Driver::draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
+  struct callback_data *cb_data;
+  const uchar *curdata;
+
+  cb_data = (struct callback_data*)data;
+  int last = x+w;
+  const size_t aD = abs(cb_data->D);
+  curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
+  for (; x<last; x++) {
+    memcpy(buf, curdata, aD);
+    buf += aD;
+    curdata += cb_data->D;
+  }
+}
+
 /**
  \}
  \endcond

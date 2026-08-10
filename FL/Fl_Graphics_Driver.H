@@ -169,6 +169,14 @@ protected:
   matrix m; ///< current transformation matrix
   int n; ///< For internal use by FLTK
   int gap_; ///< For internal use by FLTK
+  struct callback_data { ///< For internal use by FLTK
+    const uchar *data;
+    int D, LD;
+  };
+  static const int dashes_flat[5][7]; ///< For internal use by FLTK
+  static const double dashes_cap[5][7]; ///< For internal use by FLTK
+  /** For internal use by FLTK */
+  static void draw_image_cb(void *data, int x, int y, int w, uchar *buf);
   enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS, COMPLEX_POLYGON} what;
   int rstackptr; ///< For internal use by FLTK
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK

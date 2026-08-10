@@ -68,41 +68,6 @@ FL_EXPORT Fl_Fontdesc *fl_fonts = built_in_table;
 // -1 denotes "not yet initialised"
 Fl_Font Fl_Cairo_Graphics_Driver::font_count_ = -1;
 
-// duplicated from Fl_PostScript.cxx
-struct callback_data {
-  const uchar *data;
-  int D, LD;
-};
-static const int dashes_flat[5][7]={
-{-1,0,0,0,0,0,0},
-{3,1,-1,0,0,0,0},
-{1,1,-1,0,0,0,0},
-{3,1,1,1,-1,0,0},
-{3,1,1,1,1,1,-1}
-};
-static const double dashes_cap[5][7]={
-{-1,0,0,0,0,0,0},
-{2,2,-1,0,0,0,0},
-{0.01,1.99,-1,0,0,0,0},
-{2,2,0.01,1.99,-1,0,0},
-{2,2,0.01,1.99,0.01,1.99,-1}
-};
-static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
-  struct callback_data *cb_data;
-  const uchar *curdata;
-
-  cb_data = (struct callback_data*)data;
-  int last = x+w;
-  const size_t aD = abs(cb_data->D);
-  curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
-  for (; x<last; x++) {
-    memcpy(buf, curdata, aD);
-    buf += aD;
-    curdata += cb_data->D;
-  }
-}
-// end of duplicated part
-
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   cairo_ = NULL;

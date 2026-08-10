@@ -124,24 +124,6 @@ void Fl_PostScript_File_Device::end_current() {
  \{
  */
 
-#if ! USE_PANGO
-static const int dashes_flat[5][7]={
-{-1,0,0,0,0,0,0},
-{3,1,-1,0,0,0,0},
-{1,1,-1,0,0,0,0},
-{3,1,1,1,-1,0,0},
-{3,1,1,1,1,1,-1}
-};
-
-//yeah, hack...
-static const double dashes_cap[5][7]={
-{-1,0,0,0,0,0,0},
-{2,2,-1,0,0,0,0},
-{0.01,1.99,-1,0,0,0,0},
-{2,2,0.01,1.99,-1,0,0},
-{2,2,0.01,1.99,0.01,1.99,-1}
-};
-#endif
 
 /**
  \brief The constructor.
