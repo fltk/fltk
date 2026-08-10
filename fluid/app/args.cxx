@@ -46,17 +46,27 @@ int Args::load(int argc,char **argv) {
       || (!Fluid.batch_mode && (i < argc-1))        // more than one filename found
       || (argv[i] && (argv[i][0] == '-'))) {  // unknown option
     static const char *msg =
-    "usage: %s <switches> name.fl\n"
-    " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"
-    " -c : write .cxx and .h and exit\n"
-    " -cs : write .cxx and .h and strings and exit\n"
-    " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
-    " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
-    " -s <name> : i18n strings filename, or extension if <name> starts with '.'\n"
-    " -pr : make all output file paths relative to the .fl project file path\n"
-    " --help : brief usage information\n"
-    " --version, -v : print fluid version number\n"
-    " -d : enable internal debugging\n";
+    "Usage: %s [options] [action] [file.fl]\n"
+    "\n"
+    "Start without an action to open the GUI; in that case, file.fl is optional.\n"
+    "Specify one action to run in command-line mode.\n"
+    "\n"
+    "Actions:\n"
+    "  -u            update file.fl and exit; may be combined with -c or -cs\n"
+    "  -c            write .cxx and .h and exit\n"
+    "  -cs           write .cxx, .h, and strings and exit\n"
+    "  --help        show this help text\n"
+    "  --version, -v print the Fluid version number\n"
+    "\n"
+    "Options:\n"
+    "  -o <name>     .cxx output filename, or extension if <name> starts with '.'\n"
+    "  -h <name>     .h output filename, or extension if <name> starts with '.'\n"
+    "  -s <name>     i18n strings filename, or extension if <name> starts with '.'\n"
+    "  -pr           make all output file paths relative to the .fl project file path\n"
+    "  -mb=info      report MergeBack changes, but do not apply them\n"
+    "  -mb=ask       ask before applying MergeBack changes\n"
+    "  -mb=apply     apply MergeBack changes automatically\n"
+    "  -d            enable internal debugging\n";
     const char *app_name = nullptr;
     if ( (argc > 0) && argv[0] && argv[0][0] )
       app_name = fl_filename_name(argv[0]);
@@ -76,11 +86,9 @@ int Args::load(int argc,char **argv) {
   return i;
 }
 
-
 int Args::arg_cb(int argc, char** argv, int& i) {
   return Fluid.args.arg(argc, argv, i);
 }
-
 
 /**
  Handle command line arguments.
@@ -130,9 +138,8 @@ int Args::arg(int argc, char** argv, int& i) {
     Fluid.batch_mode++;
     i += 2; return 2;
   }
-  //-mb=info, -mb=ask, -mb=apply
   if (strcmp(argv[i], "-mb=info")==0) {
-    mergeback_mode = 1; // inform
+    mergeback_mode = 1; // info
     i++; return 1;
   }
   if (strcmp(argv[i], "-mb=ask")==0) {
@@ -144,6 +151,9 @@ int Args::arg(int argc, char** argv, int& i) {
     i++; return 1;
   }
 #ifndef NDEBUG
+  // Hidden when no tin debug mode: create screenshots for the Fluid
+  // documentation pages. Must be followed by output path. No other args
+  // should be given.
   if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {
     autodoc_path = argv[i+1];
     i += 2; return 2;
