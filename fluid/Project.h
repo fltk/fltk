@@ -56,36 +56,36 @@ public: // Member Variables
   proj::I18n i18n { *this };
 
   /// If set, generate code to include the header file form the c++ file
-  int include_H_from_C = 1;
+  int include_H_from_C { 1 };
   /// If set, handle keyboard shortcut Ctrl on macOS using Cmd instead
-  int use_FL_COMMAND = 0;
+  int use_FL_COMMAND { 0 };
   /// Clear if UTF-8 characters in statics texts are written as escape sequences
-  int utf8_in_src = 0;
+  int utf8_in_src { 0 };
   /// If set, <FL/Fl.H> will not be included from the header code before anything else
-  int avoid_early_includes = 0;
+  int avoid_early_includes { 0 };
   /// If set, command line overrides header file name in .fl file.
-  int header_file_set = 0;
+  int header_file_set { 0 };
   ///  If set, command line overrides source code file name in .fl file.
-  int code_file_set = 0;
+  int code_file_set { 0 };
   ///  If set, command line overrides strings file name in .fl file.
-  int strings_file_set = 0;
+  int strings_file_set { 0 };
   /// later
-  int write_mergeback_data = 0;
+  int write_mergeback_data { 0 };
   /// Filename of the current .fl project file
   std::string proj_filename;
   /// Hold the default extension for header files, or the entire filename if set via command line.
-  std::string header_file_name = ".h";
+  std::string header_file_name { ".h" };
   /// Hold the default extension for source code  files, or the entire filename if set via command line.
-  std::string code_file_name = ".cxx";
+  std::string code_file_name { ".cxx" };
   /// Hold the default extension for the i18n stringd file
-  std::string strings_file_name = "";
+  std::string strings_file_name {};
   /// Macro used in header file for #ifdef MACRO \n #defined MACRO \n ... \n #endif
-  std::string include_guard = "";
+  std::string include_guard {};
 
   /// Used as a counter to set the .fl project dir as the current directory.
   int in_project_dir { 0 };
   /// Application work directory, stored here when temporarily changing to the source code directory.
-  std::string app_work_dir = "";
+  std::string app_work_dir {};
 
   /// Set if the current design has been modified compared to the associated .fl design file.
   int modflag { 0 };

@@ -77,8 +77,8 @@ void Project::reset() {
   strings_file_set = 0;
   header_file_name = ".h";
   code_file_name = ".cxx";
-  strings_file_name = "";
-  include_guard = "";
+  strings_file_name.clear();
+  include_guard.clear();
   write_mergeback_data = 0;
 }
 

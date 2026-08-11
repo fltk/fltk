@@ -328,7 +328,7 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_c("int main(int argc, char** argv) {\n");
   } else {
     std::string rtype = return_type();
-    std::string star = "";
+    std::string star{};
     // from matt: let the user type "static " at the start of type
     // in order to declare a static method;
     int is_static = 0;

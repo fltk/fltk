@@ -48,28 +48,28 @@ public:
   Project &project_;
 
   /// One of the available internationalization types.
-  fluid::I18n_Type type = I18n_Type::NONE;
+  fluid::I18n_Type type { I18n_Type::NONE };
   /// Include file for GNU i18n, writes an #include statement into the source
   /// file. This is usually `<libintl.h>` or `"gettext.h"` for GNU gettext.
-  std::string gnu_include = "<libintl.h>";
+  std::string gnu_include { "<libintl.h>" };
   // Optional name of a macro for conditional i18n compilation.
-  std::string gnu_conditional = "";
+  std::string gnu_conditional {};
   /// For the gettext/intl.h options, this is the function that translates text
   /// at runtime. This is usually "gettext" or "_".
-  std::string gnu_function = "gettext";
+  std::string gnu_function { "gettext" };
   /// For the gettext/intl.h options, this is the function that marks the translation
   /// of text at initialisation time. This is usually "gettext_noop" or "N_".
-  std::string gnu_static_function = "gettext_noop";
+  std::string gnu_static_function { "gettext_noop" };
 
   /// Include file for Posix i18n, write a #include statement into the source
   /// file. This is usually `<nl_types.h>` for Posix catgets.
-  std::string posix_include = "<nl_types.h>";
+  std::string posix_include { "<nl_types.h>" };
   // Optional name of a macro for conditional i18n compilation.
-  std::string posix_conditional = "";
+  std::string posix_conditional {};
   /// Name of the nl_catd database
-  std::string posix_file = "";
+  std::string posix_file {};
   /// Message set ID for the catalog.
-  std::string posix_set = "1";
+  std::string posix_set { "1" };
 
 public: // Methods
   I18n(Project &p) : project_(p) {};

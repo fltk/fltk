@@ -683,7 +683,7 @@ void Fd_Shell_Command::write(class fluid::io::Project_Writer *out) {
   out->write_string("\n  command {");
   out->write_string("\n    name "); out->write_word(name);
   out->write_string("\n    label "); out->write_word(label);
-  if (shortcut) out->write_string("\n    shortcut %d", shortcut);
+  if (shortcut) out->write_string("\n    shortcut %u", shortcut);
   if (condition) out->write_string("\n    condition %d", condition);
   if (!condition_data.empty()) {
     out->write_string("\n    condition_data "); out->write_word(condition_data);

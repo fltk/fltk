@@ -31,13 +31,13 @@ void I18n::reset() {
   type = fluid::I18n_Type::NONE;
 
   gnu_include = "<libintl.h>";
-  gnu_conditional = "";
+  gnu_conditional.clear();
   gnu_function = "gettext";
   gnu_static_function = "gettext_noop";
 
   posix_include = "<nl_types.h>";
-  posix_conditional = "";
-  posix_file = "";
+  posix_conditional.clear();
+  posix_file.clear();
   posix_set = "1";
 }
 
