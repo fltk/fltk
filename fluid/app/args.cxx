@@ -1,7 +1,7 @@
 //
 // Command Line Arguments Handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -151,7 +151,7 @@ int Args::arg(int argc, char** argv, int& i) {
     i++; return 1;
   }
 #ifndef NDEBUG
-  // Hidden when no tin debug mode: create screenshots for the Fluid
+  // Hidden when not in debug mode: create screenshots for the Fluid
   // documentation pages. Must be followed by output path. No other args
   // should be given.
   if ((i+1 < argc) && (strcmp(argv[i], "--autodoc") == 0)) {

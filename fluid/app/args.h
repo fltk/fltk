@@ -1,7 +1,7 @@
 //
 // Command Line Arguments Handling header for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -39,16 +39,16 @@ public:
   /// command line arguments that overrides the header file extension or name
   std::string header_filename { };  // fluid -h filename
   /// command line arguments that overrides the strings file extension or name
-  std::string strings_filename { };     // fluid -s filename
+  std::string strings_filename { }; // fluid -s filename
   /// if set, generate images for automatic documentation in this directory
-  std::string autodoc_path { };         // fluid --autodoc path
+  std::string autodoc_path { };     // fluid --autodoc path
   /// Set, if Fluid was started with the command line argument -v
   int show_version { 0 };           // fluid -v
   /// Make all output file paths relative to the .fl project file path
   /// instead of the current working directory, if set.
   bool project_relative { false };  // fluid -pr
   /// 0=ignore, 1=inform, 2=ask, 3=apply
-  int mergeback_mode { 0 };              // fluid -mb=info, -mb=ask, -mb=apply
+  int mergeback_mode { 0 };         // fluid -mb=info, -mb=ask, -mb=apply
   /// Constructor.
   Args() = default;
   // Load args from command line into variables.
