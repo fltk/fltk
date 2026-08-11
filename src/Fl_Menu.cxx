@@ -1461,8 +1461,10 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     goto STARTUP;
   }
 
-  // the main loop: runs until p.state goes to State::DONE or the menu
-  // widget is deleted (e.g. from a timer callback, see STR #3503):
+  // The main loop: runs until p.state goes to State::DONE or the menu
+  // widget is deleted (e.g. from a timer callback, see STR #3503).
+  // We enter the loop here if `initial_item` is nullptr. Otherwise, the loop is
+  // entered from the STARTUP label.
   for (;;) {
 
     // make sure all the menus are shown:
@@ -1475,17 +1477,25 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       }
     }
 
-    // get events:
+    // wait for events:
     {
       const Fl_Menu_Item* oldi = pp.current_item;
       Fl::wait();
-      if (pbutton && wp.deleted()) // menu widget has been deleted (STR #3503)
+      // menu widget has been deleted (STR #3503)
+      if (pbutton && wp.deleted())
         break;
-      if (pp.state == State::DONE) break; // done.
+      // one of the events set the state to DONE, so we exit the loop
+      if (pp.state == State::DONE)
+        break;
+      // current item did not change, go back to the stat of the loop
       if (pp.current_item == oldi) continue;
     }
 
-    // only do rest if item changes:
+    // Continue hee is the current item has changed
+
+    // menubar_button_helper simulates a button in the top level of a menubar
+    // (this needs to be documented)
+    // (I have no clue why this is deleted here)
     if (pp.menubar_button_helper) {
       delete pp.menubar_button_helper;
       pp.menubar_button_helper = nullptr;
@@ -1497,32 +1507,45 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       continue;
     }
 
+    // (I have no clue why the code from above is repeated here)
     if (pp.menubar_button_helper) {
       delete pp.menubar_button_helper;
       pp.menubar_button_helper = nullptr;
     }
-    initial_item = 0; // stop the startup code
+
+    initial_item = nullptr; // stop the startup code
+
+    // Current menu index is out of bounds. Restore some safe settings, or leave.
     if (pp.current_menu_ix < 0 || pp.current_menu_ix >= pp.num_menus) {
-      initial_item = 0; // turn off startup code
+      if (pp.num_menus == 0) break; // no menus left, exit the loop
+      menu_state->set_current_item(0, -1); // set a legal state
       continue;
     }
+
+    // Scroll the current menu window so that the current item is visible.
     pp.menu_window[pp.current_menu_ix]->autoscroll(pp.current_item_ix);
 
   STARTUP:
+
+    // Check menu index again.
     if (pp.current_menu_ix < 0 || pp.current_menu_ix >= pp.num_menus) {
-      initial_item = 0; // turn off startup code
+      initial_item = nullptr; // turn off startup code
+      if (pp.num_menus == 0) break; // no menus left, exit the loop
+      menu_state->set_current_item(0, -1); // set a legal state
       continue;
     }
+
     Menu_Window& cw = *pp.menu_window[pp.current_menu_ix];
+
     const Fl_Menu_Item* m = pp.current_item;
     if (!m || !m->selectable()) { // pointing at inactive item
       cw.set_selected(-1);
-      initial_item = 0; // turn off startup code
+      initial_item = nullptr; // turn off startup code
       continue;
     }
     cw.set_selected(pp.current_item_ix);
 
-    if (m==initial_item) initial_item=0; // stop the startup code if item found
+    if (m==initial_item) initial_item = nullptr; // stop the startup code if item found
     if (m->submenu()) {
       if (pp.create_submenu(Fl_Rect { X, Y, W, H }, cw, m, initial_item, menubar))
         goto STARTUP;
@@ -1530,13 +1553,13 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       pp.delete_unused_menus(cw, m);
     }
   }
-  const Fl_Menu_Item* m = (pbutton && wp.deleted()) ? NULL : pp.current_item;
+  const Fl_Menu_Item* m = (pbutton && wp.deleted()) ? nullptr : pp.current_item;
   delete pp.menubar_button_helper;
   while (pp.num_menus>1)
     delete pp.menu_window[--pp.num_menus];
   mw.hide();
-  Fl::grab(0);
-  Menu_Window::parent_ = NULL;
+  Fl::grab(nullptr);
+  Menu_Window::parent_ = nullptr;
   return m;
 }
 
