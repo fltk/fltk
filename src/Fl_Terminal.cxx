@@ -2275,10 +2275,14 @@ void Fl_Terminal::delete_rows(int count) {
   clear_mouse_selection();
 }
 
-// Repeat printing char 'c' for 'rep' times, not to exceed end of line.
+// Repeat plotting char 'c' for 'rep' times, not to exceed end of line.
+// Does not process control sequences or move the cursor.
 void Fl_Terminal::repeat_char(char c, int rep) {
-  rep = clamp(rep, 1, disp_cols());
-  while ( rep-- > 0 && cursor_.col() < disp_cols() ) print_char(c);
+  const int row = cursor_.row();
+  const int col = cursor_.col();
+  rep = clamp(rep, 1, disp_cols() - col);
+  for (int n = 0; n < rep; n++)
+    plot_char(c, row, col + n);
 }
 
 /// Insert char 'c' for 'rep' times at display row \p 'drow' and column \p 'dcol'.
@@ -2590,12 +2594,13 @@ void Fl_Terminal::handle_lf(void) {
 
 // Handle '\e' escape character.
 void Fl_Terminal::handle_esc(void) {
-  if (!ansi_)                                  // not in ansi mode?
-    { handle_unknown_char(); return; }         //   ..show unknown char, early exit
-  if (escseq.esc_mode() == 0x1b)               // already in esc mode?
-    { handle_unknown_char(); }                 //   ..show 1st esc as unknown char, parse 2nd
-  if (escseq.parse(0x1b) == EscapeSeq::fail)   // parse esc
-    { handle_unknown_char(); return; }         //   ..error? show unknown char
+  if (!ansi_)                                          // not in ansi mode?
+    { handle_unknown_char(); return; }                 //   ..show unknown char, early exit
+  if (escseq.esc_mode() == 0x1b)                       // already in esc mode?
+    { escseq.reset(); handle_unknown_char(); }         //   ..show first esc as unknown
+  if (escseq.parse(0x1b) == EscapeSeq::fail)           // parse esc
+    { escseq.reset(); handle_unknown_char(); return; } //   ..error? reset, show error char
+  // successfully entered esc mode
 }
 
 /**
@@ -2640,7 +2645,10 @@ void Fl_Terminal::handle_ctrl(char c) {
     case '\n': handle_lf();                return;  // LF?
     case '\t': cursor_tab_right();         return;  // TAB?
     case 0x1b: handle_esc();               return;  // ESC?
-    default:   handle_unknown_char();      return;  // Unknown ctrl char?
+    default:                                        // Unknown ctrl char?
+      if (ansi_) escseq.reset();
+      handle_unknown_char();
+      return;
   }
 }
 
@@ -2684,9 +2692,7 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
          }
          break;
       case 1: if (val == 2) { rgbmode++; continue; }    // '2'?
-              rgbcode = rgbmode = 0;                    // not '2'? cancel
-              handle_unknown_char();
-              break;
+              goto not_implemented;                     // not '2'? unsupported
       case 2: r=clamp(val,0,255); ++rgbmode; continue;  // parse red value
       case 3: g=clamp(val,0,255); ++rgbmode; continue;  // parse grn value
       case 4: b=clamp(val,0,255);                       // parse blu value
@@ -2707,9 +2713,9 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
         case 3: current_style_->sgr_italic(1);   break; // ESC[3m - italic
         case 4: current_style_->sgr_underline(1);break; // ESC[4m - underline
         case 5: current_style_->sgr_blink(1);    break; // ESC[5m - blink
-        case 6: handle_unknown_char();           break; // ESC[6m - (unused)
+        case 6: goto not_implemented;                   // ESC[6m - (unused)
         case 7: current_style_->sgr_inverse(1);  break; // ESC[7m - inverse
-        case 8: handle_unknown_char();           break; // ESC[8m - (unused)
+        case 8: goto not_implemented;                   // ESC[8m - (unused)
         case 9: current_style_->sgr_strike(1);   break; // ESC[9m - strikeout
       }
     } else if (val >= 21 && val <= 29) {                // attribute extras
@@ -2720,9 +2726,9 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
         case 23: current_style_->sgr_italic(0);   break; // ESC[23m - disable italic
         case 24: current_style_->sgr_underline(0);break; // ESC[24m - disable underline
         case 25: current_style_->sgr_blink(0);    break; // ESC[25m - disable blink
-        case 26: handle_unknown_char();           break; // ESC[26m - (unused)
+        case 26: goto not_implemented;                   // ESC[26m - (unused)
         case 27: current_style_->sgr_inverse(0);  break; // ESC[27m - disable inverse
-        case 28: handle_unknown_char();           break; // ESC[28m - disable hidden
+        case 28: goto not_implemented;                   // ESC[28m - disable hidden
         case 29: current_style_->sgr_strike(0);   break; // ESC[29m - disable strikeout
       }
     } else if (val >= 30 && val <= 37) {                 // Set fg color?
@@ -2737,10 +2743,15 @@ void Fl_Terminal::handle_SGR(void) {     // ESC[...m?
     } else if (val == 49) {                              // ESC[49m -- "normal" bg color:
       Fl_Color bg = current_style_->defaultbgcolor();    // ..get default bg color
       current_style_->bgcolor_xterm(bg);                 // ..set current bg color
-    } else {
-      handle_unknown_char();  // does an escseq.reset()  // unimplemented SGR codes
+    } else {                                             // unimplemented SGR codes
+      goto not_implemented;
     }
   }
+  if (!rgbmode) return;                                  // RGB sequence complete?
+not_implemented:
+  escseq.reset();
+  handle_unknown_char();
+  return;
 }
 
 /**
@@ -2771,7 +2782,7 @@ void Fl_Terminal::handle_escseq(char c) {
   const bool no_scroll = false;
   switch (escseq.parse(c)) {                           // parse char, advance s..
     case EscapeSeq::fail:                              // failed?
-      escseq.reset();                                  //   ..reset to let error_char be visible
+      escseq.reset();                                  //   ..reset to ensure error_char emitted
       handle_unknown_char();                           //   ..show error char (if enabled)
       print_char(c);                                   //   ..show char we couldn't handle
       return;                                          //   ..done.
@@ -2781,36 +2792,35 @@ void Fl_Terminal::handle_escseq(char c) {
       break;                                           //   ..fall through to handle operation
   }
   // Shortcut varnames for escseq parsing..
-  EscapeSeq &esc = escseq;
-  char mode     = esc.esc_mode();
-  int  tot      = esc.total_vals();
-  int  val0     = (tot==0) ? 0 : esc.val(0);
-  int  val1     = (tot<2)  ? 0 : esc.val(1);
+  char mode     = escseq.esc_mode();
+  int  tot      = escseq.total_vals();
+  int  val0     = (tot==0) ? 0 : escseq.val(0);
+  int  val1     = (tot<2)  ? 0 : escseq.val(1);
   const int& dw = disp_cols();
   const int& dh = disp_rows();
-  if (esc.is_csi()) {                            // Was this a CSI (ESC[..) sequence?
+  if (escseq.is_csi()) {                         // Was this a CSI (ESC[..) sequence?
     switch (mode) {
       case '@':                                  // <ESC>[#@ - (ICH) Insert blank Chars (default=1)
-        insert_char(' ', esc.defvalmax(1,dw));
+        insert_char(' ', escseq.defvalmax(1,dw));
         break;
       case 'A':                                  // <ESC>[#A - (CUU) cursor up, no scroll/wrap
-        cursor_up(esc.defvalmax(1,dh));
+        cursor_up(escseq.defvalmax(1,dh));
         break;
       case 'B':                                  // <ESC>[#B - (CUD) cursor down, no scroll/wrap
-        cursor_down(esc.defvalmax(1,dh), no_scroll);
+        cursor_down(escseq.defvalmax(1,dh), no_scroll);
         break;
       case 'C':                                  // <ESC>[#C - (CUF) cursor right, no wrap
-        cursor_right(esc.defvalmax(1,dw), no_scroll);
+        cursor_right(escseq.defvalmax(1,dw), no_scroll);
         break;
       case 'D':                                  // <ESC>[#D - (CUB) cursor left, no wrap
-        cursor_left(esc.defvalmax(1,dw));
+        cursor_left(escseq.defvalmax(1,dw));
         break;
       case 'E':                                  // <ESC>[#E - (CNL) cursor next line (crlf) xterm, !gnome
-        cursor_crlf(esc.defvalmax(1,dh));
+        cursor_crlf(escseq.defvalmax(1,dh));
         break;
       case 'F':                                  // <ESC>[#F - (CPL) move to sol and up # lines
         cursor_cr();
-        cursor_up(esc.defvalmax(1,dh));
+        cursor_up(escseq.defvalmax(1,dh));
         break;
       case 'G':                                  // <ESC>[#G - (CHA) cursor horizal absolute
         switch (clamp(tot,0,1)) {                //   │
@@ -2873,24 +2883,24 @@ cup:
         }
         break;
       case 'L':                                  // ESC[#L - Insert # lines (def=1)
-        insert_rows(esc.defvalmax(1,dh));
+        insert_rows(escseq.defvalmax(1,dh));
         break;
       case 'M':                                  // ESC[#M - Delete # lines (def=1)
-        delete_rows(esc.defvalmax(1,dh));
+        delete_rows(escseq.defvalmax(1,dh));
         break;
       case 'P':                                  // ESC[#P - Delete # chars (def=1)
-        delete_chars(esc.defvalmax(1,dh));
+        delete_chars(escseq.defvalmax(1,dh));
         break;
       case 'S':                                  // ESC[#S - scroll up # lines (def=1)
-        scroll( +(esc.defvalmax(1,dh)) );
+        scroll( +(escseq.defvalmax(1,dh)) );
         //      ⮤ positive=scroll up
         break;
       case 'T':                                  // ESC[#T - scroll dn # lines (def=1)
-        scroll( -(esc.defvalmax(1,dh)) );
+        scroll( -(escseq.defvalmax(1,dh)) );
         //      ⮤ negative=scroll down
         break;
       case 'X':                                  // <ESC>[#X - (ECH) Erase Characters (default=1)
-        repeat_char(' ', esc.defvalmax(1,dw));
+        repeat_char(' ', escseq.defvalmax(1,dw));
         break;
       case 'Z':                                  // ESC[#Z - backtab # tabs
         switch (clamp(tot,0,1)) {                //   │
@@ -2902,53 +2912,45 @@ cup:
             break;
         }
         break;
-      case 'a':  // TODO                         // ESC[#a - (HPR) move cursor relative [columns] (default=[row,col+1])
-      case 'b':  // TODO                         // ESC[#b - (REP) repeat prev graphics char # times
-      case 'd':  // TODO                         // ESC[#d - (VPA) line pos absolute [row]
-      case 'e':  // TODO                         // ESC[#e - line pos relative [rows]
-        handle_unknown_char();                   // does an escseq.reset()
-        break;
+      case 'a': goto not_implemented;  // TODO   // ESC[#a - (HPR) move cursor relative [columns] (default=[row,col+1])
+      case 'b': goto not_implemented;  // TODO   // ESC[#b - (REP) repeat prev graphics char # times
+      case 'd': goto not_implemented;  // TODO   // ESC[#d - (VPA) line pos absolute [row]
+      case 'e': goto not_implemented;  // TODO   // ESC[#e - line pos relative [rows]
       case 'f':                                  // <ESC>[#f - (CUP) cursor position (#'s 1 based)
         goto cup;                                //            (same as ESC[H)
       case 'g':                                  // ESC[...g? Tabulation Clear (TBC)
         switch (val0) {
           case  0: clear_tabstop();       break; // clears tabstop at cursor
           case  3: clear_all_tabstops();  break; // clears all tabstops
-          default:
-            handle_unknown_char();               // does an escseq.reset()
-            break;
+          default: goto not_implemented;
         }
         break;
       case 'm': handle_SGR();             break; // ESC[#m - set character attributes (SGR)
       case 's': save_cursor();            break; // ESC[s - save cur pos (xterm+gnome)
       case 'u': restore_cursor();         break; // ESC[u - restore cur pos (xterm+gnome)
-      case 'q':  // TODO?                        // ESC[>#q set cursor style (block/line/blink..)
-      case 'r':  // TODO                         // ESC[#;#r set scroll region top;bot
-                                                 // default=full window
-        handle_unknown_char();                   // does an escseq.reset()
-        break;
-      case 't': handle_DECRARA();         break; // ESC[#..$t -- (DECRARA)
-                                                 // Reverse attribs in Rect Area (row,col)
-      default:
-        handle_unknown_char();                   // does an escseq.reset()
-        break;
+      case 'q': goto not_implemented;  // TODO?  // ESC[>#q set cursor style (block/line/blink..)
+      case 'r': goto not_implemented;  // TODO   // ESC[#;#r set scroll region top;bot (default=full window)
+      case 't': handle_DECRARA();         break; // ESC[#..$t -- (DECRARA) Reverse attribs in Rect Area (row,col)
+      default: goto not_implemented;
     }
   } else {
     // Not CSI? Might be C1 Control code (<ESC>D, etc)
-    switch (esc.esc_mode()) {
+    switch (escseq.esc_mode()) {
       case 'c': reset_terminal();          break;// <ESC>c - Reset term to Initial State (RIS)
       case 'D': cursor_down(1, do_scroll); break;// <ESC>D - down line, scroll at bottom
       case 'E': cursor_crlf();             break;// <ESC>E - do a crlf
       case 'H': set_tabstop();             break;// <ESC>H - set a tabstop
       case 'M': cursor_up(1, true);        break;// <ESC>M - (RI) Reverse Index (up w/scroll)
-      case '7': handle_unknown_char();     break;// <ESC>7 - Save cursor & attrs    // TODO
-      case '8': handle_unknown_char();     break;// <ESC>8 - Restore cursor & attrs // TODO
+      case '7': goto not_implemented;            // <ESC>7 - Save cursor & attrs    // TODO
+      case '8': goto not_implemented;            // <ESC>8 - Restore cursor & attrs // TODO
       default:
-        handle_unknown_char();                   // does an escseq.reset()
-        break;
+not_implemented:
+        escseq.reset();
+        handle_unknown_char();
+        return;
     }
   }
-  esc.reset();   // done handling escseq, reset()
+  escseq.reset();   // done handling escseq, reset()
 }
 
 /**
@@ -3042,11 +3044,14 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::utf8_char_at_glob(int grow, int gcol) 
 */
 void Fl_Terminal::plot_char(const char *text, int len, int drow, int dcol) {
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
-  // text_utf8() warns we must do invalid checks first
-  if (!text || len<1 || len>u8c->max_utf8() || len!=fl_utf8len(*text)) {
+  if (!text || len<1) {
+fail:
     handle_unknown_char(drow, dcol);
     return;
   }
+  int u8len = fl_utf8len(*text);   // -1 if invalid UTF-8
+  // text_utf8() warns we must do invalid checks first
+  if (len>u8c->max_utf8() || u8len<0 || u8len!=len) goto fail;
   u8c->text_utf8(text, len, *current_style_);
 }
 
@@ -3117,7 +3122,7 @@ void Fl_Terminal::print_char(const char *text, int len/*=-1*/) {
   The character is displayed at the current cursor position
   using the current text color/attributes.
 
-  - \p c must be ASCII, not utf-8
+  - \p c must be ASCII, not UTF-8
   - Does not trigger redraws
 */
 void Fl_Terminal::print_char(char c) {
@@ -3165,8 +3170,11 @@ void Fl_Terminal::append_utf8(const char *buf, int len/*=-1*/) {
   //
   if (pub_.buflen() > 0) {                         // partial UTF-8 to deal with?
     while (len>0 && pub_.is_continuation(*buf)) {  // buffer 'continuation' chars
-      if (pub_.append(buf, 1) == false)            // append byte to partial UTF-8 buffer
-        { mod |= handle_unknown_char(); break; }   // overrun? break loop
+      if (pub_.append(buf, 1) == false) {          // append to partial UTF-8 buffer. Overrun?
+        if (ansi_) escseq.reset();                 // ..reset escseq
+        mod |= handle_unknown_char();              // ..show error char
+        break;                                     // ..break loop
+      }
       else { buf++; len--; }                       // shrink our buffer
     }
     if (pub_.is_complete()) utf8_cache_flush();    // complete UTF-8 captured? flush to tty
@@ -3177,19 +3185,20 @@ void Fl_Terminal::append_utf8(const char *buf, int len/*=-1*/) {
   }
 
   // For sure buf is now pointing at a valid char, so walk to end of buffer
-  int clen;                                 // char length
   const char *p = buf;                      // ptr to walk buffer
   while (len>0) {
-    clen = fl_utf8len(*p);                  // how many bytes long is this char?
-    if (clen == -1) {                       // not expecting bad UTF-8 here
-      mod |= handle_unknown_char();
-      p   += 1;
-      len -= 1;
+    const int clen = fl_utf8len(*p);        // save byte length of char
+    if (clen == -1) {                       // Encountered invalid UTF-8?
+      if (ansi_) escseq.reset();            //   ..reset escseq
+      mod |= handle_unknown_char();         //   ..show err char
+      p   += 1;                             //   ..skip char
+      len -= 1;                             //   ..adj len
     } else {
       if (len && clen>len) {                // char longer than buffer?
-        if (pub_.append(p, len) == false) { // buffer it
-          mod |= handle_unknown_char();
-          utf8_cache_clear();
+        if (pub_.append(p, len) == false) { // buffer it. Fail?
+          if (ansi_) escseq.reset();        //   ..reset escseq
+          mod |= handle_unknown_char();     //   ..show err char
+          utf8_cache_clear();               //   ..clear utf8 cache
         }
         break;
       }
@@ -3290,13 +3299,16 @@ void Fl_Terminal::append(const char *s, int len/*=-1*/) {
   This writes the "unknown" character to the output stream
   if show_unknown() is true.
 
+  Note: This method uses print_char() to emit the error_char(); if ansi() is
+  enabled and an ansi sequence is in progress, the error_char() may be consumed
+  as part of the ANSI sequence. It is therefore best to call escseq.reset() first.
+
   Returns 1 if tty modified, 0 if not.
   \see show_unknown()
 */
 int Fl_Terminal::handle_unknown_char(void) {
-  if (!show_unknown_) return 0;
-  escseq.reset();               // disable any pending esc seq to prevent eating unknown char
-  print_char(error_char_);
+  if (!show_unknown_ || error_char_.empty()) return 0;
+  print_char(error_char_.c_str());
   return 1;
 }
 
@@ -3311,10 +3323,10 @@ int Fl_Terminal::handle_unknown_char(void) {
   \see show_unknown()
 */
 int Fl_Terminal::handle_unknown_char(int drow, int dcol) {
-  if (!show_unknown_) return 0;
-  int len = (int)strlen(error_char_);
+  if (!show_unknown_ || error_char_.empty()) return 0;
+  int len = (int)error_char_.length();
   Utf8Char *u8c = u8c_disp_row(drow) + dcol;
-  u8c->text_utf8(error_char_, len, *current_style_);
+  u8c->text_utf8(error_char_.c_str(), len, *current_style_);
   return 1;
 }
 
@@ -4098,10 +4110,10 @@ bool Fl_Terminal::show_unknown(void) const {
 /**
   Set the "show unknown" flag.
 
-  If true, invalid utf8 and invalid ANSI sequences will be shown
+  If true, invalid UTF-8 and invalid ANSI sequences will be shown
   with the error character "¿".
 
-  If false, errors characters won't be shown.
+  If false, error characters won't be shown.
 
   \see handle_unknown_char(), error_char(const char*).
 */
@@ -4191,4 +4203,3 @@ void Fl_Terminal::vprintf(const char *fmt, va_list ap) {
   buffer[1024-1] = 0;   // XXX: MICROSOFT
   append(buffer);
 }
-

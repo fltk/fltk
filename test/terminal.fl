@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 utf8_in_src
 header_name {.h}
 code_name {.cxx}
@@ -428,7 +428,7 @@ const char *test[] = {
   "  \\033[2;35m Dim Mag(35)   [█]\\033[0m   \\033[35m Normal Mag(35)   [█]\\033[0m  \\033[1;35m Bold Mag(35)   [█]\\033[0m\\n"
   "  \\033[2;36m Dim Cyn(36)   [█]\\033[0m   \\033[36m Normal Cyn(36)   [█]\\033[0m  \\033[1;36m Bold Cyn(36)   [█]\\033[0m\\n"
   "  \\033[2;37m Dim ---(37)   [█]\\033[0m   \\033[37m Normal ---(37)   [█]\\033[0m  \\033[1;37m Bold ---(37)   [█]\\033[0m\\n"
-  "  \\033[2;38m Dim ---(38)   [█]\\033[0m   \\033[38m Normal ---(38)   [█]\\033[0m  \\033[1;38m Bold ---(38)   [█]\\033[0m\\n"
+//"  \\033[2;38m Dim ---(38)   [█]\\033[0m   \\033[38m Normal ---(38)   [█]\\033[0m  \\033[1;38m Bold ---(38)   [█]\\033[0m\\n" // 38 is reserved
   "  \\033[2;39m Dim Def(39)   [█]\\033[0m   \\033[39m Normal Def(39)   [█]\\033[0m  \\033[1;39m Bold Def(39)   [█]\\033[0m\\n"
   "\\n"
   "Xterm Fg/Bg Colors With Attributes\\n"
@@ -1189,7 +1189,7 @@ return show_test(test, index);} {}
   } {
     code {static int index = 0;
 const char *test[] = {
-  // Screen 90
+  // Screen 0090
   "\\033[2J\\033[H" "ESC TEST 0090: Scrolling up/down\\n",
   "Line 2   🡅\\n",
   "Line 3  [A]\\n",
@@ -1229,8 +1229,21 @@ const char *test[] = {
   "\\033[H\\033M\\033M\\033M\\033[19H", // Line 18 because down 3 lines
   //TODO Other ESC commands to scroll up/down?
   "---> Hit 'e' for next test: \\033[K",
-  // Screen 100
-  "\\033[2J\\033[HESC TEST 0091: Cursor Save/Restore Test\\n",
+  "\\033[2J\\033[HESC TEST 0091: Handle Bad ANSI/UTF-8 Chars\\n",
+  "Should show the error char if show_unknown() is ON.\\n",
+  "\\n",
+  "         Double escape ESC+ESC: -->\\033\\033<-- ESC+ESC is unknown escape sequence\\n",
+  "    Bad escape sequence ESC(_): -->\\033_<-- ESC(_) is an unknown escape sequence\\n",
+  "   Double Height Letters ESC\#3: -->\\033\#3<-- ESC\#3 is not supported\\n",
+  "   Double Height Letters ESC\#4: -->\\033\#4<-- ESC\#4 is not supported\\n",
+  "                Typo CSI ESC]m: -->\\033]m<-- ESC]m is a typo for ESC[m, not supported\\n",
+  "               Bad UTF-8 bytes: 0xC0 >\\xC0<, 0xC1 >\\xC1\\n"
+  "                                0xF5 >\\xF5<, 0xF6 >\\xF6<, 0xF7 >\\xF7<, 0xF8 >\\xF8<,\\n",
+  "                                0xF9 >\\xF9<, 0xFA >\\xFA<, 0xFB >\\xFB<, 0xFC >\\xFC<,\\n",
+  "                                0xFD >\\xFD<, 0xFE >\\xFE<, 0xFF >\\xFF<\\n",
+  "\\n",
+  "---> Hit 'e' for next test: \\033[K",
+  "\\033[2J\\033[HESC TEST 0092: Cursor Save/Restore Test\\n",
   "\\n",
   "     Cursor positon at 'A' was saved with ESC[s.\\n",
   "\\033[12;39H>\\033[1;31m\\033[s""A""\\033[0m<\\033[20H",
@@ -1540,6 +1553,11 @@ switch ( G_tty->box() ) {
   outflags_lf_to_crlf->value((out&Fl_Terminal::LF_TO_CRLF) ? 1 : 0);
   outflags_lf_to_cr->value(  (out&Fl_Terminal::LF_TO_CR)   ? 1 : 0);
   outflags_cr_to_lf->value(  (out&Fl_Terminal::CR_TO_LF)   ? 1 : 0);
+}
+
+// error_char()
+{
+  error_char_input->value(G_tty->error_char());
 }} {}
   }
   Function {handle_output_translate(void)} {
@@ -1557,7 +1575,7 @@ G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
     Fl_Window win {
       label {Fl_Terminal Test}
       callback {exit(0);} open
-      xywh {800 79 897 838} type Double size_range {897 330 0 0} visible
+      xywh {610 66 897 838} type Double size_range {897 330 0 0} visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1703,39 +1721,39 @@ G_tty->redraw();}
       Fl_Check_Button outflags_lf_to_crlf {
         label LF_TO_CRLF
         callback {handle_output_translate();}
-        tooltip {Line-feed (\\n) performs carriage-return and line-feed (CRLF)} xywh {333 7 77 24} down_box DOWN_BOX labelsize 9
+        tooltip {Line-feed (\\n) performs carriage-return and line-feed (CRLF)} xywh {331 5 77 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button outflags_lf_to_cr {
         label LF_TO_CR
         callback {handle_output_translate();}
-        tooltip {Line-feed (\\n) performs carriage-return (\\r)} xywh {432 7 70 24} down_box DOWN_BOX labelsize 9
+        tooltip {Line-feed (\\n) performs carriage-return (\\r)} xywh {432 5 70 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button outflags_cr_to_lf {
         label CR_TO_LF
         callback {handle_output_translate();}
-        tooltip {Carriage-return (\\r) performs line-feed (\\n)} xywh {528 7 70 24} down_box DOWN_BOX labelsize 9
+        tooltip {Carriage-return (\\r) performs line-feed (\\n)} xywh {528 5 70 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button showunknown_radio {
         label {show_unknown()}
         callback {G_tty->show_unknown(showunknown_radio->value() ? true : false);
 G_tty->redraw();}
-        tooltip {Shows  unknown escape sequences/unprintable chars as "¿" character} xywh {331 31 105 24} down_box DOWN_BOX labelsize 9
+        tooltip {Shows  unknown escape sequences/unprintable chars as "¿" character} xywh {331 25 105 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button interactivecursor_radio {
         label {Interactive Cursor}
         callback {bool val = interactivecursor_radio->value() ? true : false;
 G_tty->interactive_cursor(val);}
         tooltip {Allow Up/Dn/Lt/Rt keys to move cursor
-when terminal has focus} xywh {473 31 125 24} down_box DOWN_BOX labelsize 9
+when terminal has focus} xywh {473 25 125 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button ansi_radio {
         label {ansi()}
         callback {G_tty->ansi(ansi_radio->value() ? true : false);}
-        tooltip {Handle ANSI/xterm escape sequences} xywh {331 55 95 24} down_box DOWN_BOX labelsize 9
+        tooltip {Handle ANSI/xterm escape sequences} xywh {331 45 95 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Check_Button stdout_radio {
         label {Echo tests to stdout}
-        tooltip {Also send test output to stdout} xywh {473 55 125 24} down_box DOWN_BOX labelsize 9
+        tooltip {Also send test output to stdout} xywh {473 45 125 20} down_box DOWN_BOX labelsize 9
       }
       Fl_Input textcolor_input {
         label {textcolor()}
@@ -1748,7 +1766,7 @@ G_tty->redraw();}
         tooltip {The widget's text color. Has the effect of simultaneously setting:
 > textfgcolor()
 >textfgcolor_default()
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 79 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 65 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input textfgcolor_input {
         label {textfgcolor()}
@@ -1759,7 +1777,7 @@ update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
         tooltip {The text foreground color.
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 103 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 89 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input textfgcolor_default_input {
         label {textfgcolor_default()}
@@ -1770,7 +1788,7 @@ update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
         tooltip {The text foreground default color.
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 127 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 113 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input cursorfgcolor_input {
         label {cursorfgcolor()}
@@ -1780,7 +1798,7 @@ G_tty->cursorfgcolor(c);
 update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
-        tooltip {Foreground color for text under the cursor.} xywh {333 151 77 20} labelsize 9 when 28 textfont 4 textsize 9
+        tooltip {Foreground color for text under the cursor.} xywh {333 137 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input selectionfgcolor_input {
         label {selectionfgcolor()}
@@ -1791,7 +1809,13 @@ update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
         tooltip {The mouse selection foreground color.
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 175 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 161 77 20} labelsize 9 when 28 textfont 4 textsize 9
+      }
+      Fl_Input error_char_input {
+        label {error_char()}
+        callback {G_tty->error_char(error_char_input->value());
+G_tty->redraw();} selected
+        tooltip {The error character shown for bad UTF-8/ANSI sequences if show_unknown() is enabled.} xywh {333 184 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input color_input {
         label {color()}
@@ -1802,7 +1826,7 @@ update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
         tooltip {The widget's background color().
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 79 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 65 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input textbgcolor_input {
         label {textbgcolor()}
@@ -1814,7 +1838,7 @@ update_inputs();
 G_tty->redraw();}
         tooltip {The text background color.
 Refer to the docs for the special value 0xffffffff.
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 103 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 89 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input textbgcolor_default_input {
         label {textbgcolor_default()}
@@ -1826,7 +1850,7 @@ update_inputs();
 G_tty->redraw();}
         tooltip {The text background default color.
 Refer to the docs for the special value 0xffffffff.
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 127 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 113 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input cursorbgcolor_input {
         label {cursorbgcolor()}
@@ -1837,7 +1861,7 @@ update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
         tooltip {Background color for the cursor.
-This is the cursor block's color} xywh {521 151 77 20} labelsize 9 when 28 textfont 4 textsize 9
+This is the cursor block's color} xywh {521 137 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input selectionbgcolor_input {
         label {selectionbgcolor()}
@@ -1848,11 +1872,11 @@ update_inputs();
 //DEBUG ::printf("IVAL is %08lx\\n",ival);
 G_tty->redraw();}
         tooltip {The mouse selection background color.
-Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 175 77 20} labelsize 9 when 28 textfont 4 textsize 9
+Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {521 161 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Choice {} {
         label {Terminal Color} open
-        tooltip {The (XTERM) colors can be influenced by Dim/Bold, whereas the (RGB) colors are not.} xywh {379 206 180 20} down_box BORDER_BOX labelsize 9 textsize 9
+        tooltip {The (XTERM) colors can be influenced by Dim/Bold, whereas the (RGB) colors are not.} xywh {379 211 180 20} down_box BORDER_BOX labelsize 9 textsize 9
       } {
         MenuItem {} {
           label {White on DarkAmber (XTERM)}
@@ -2009,7 +2033,7 @@ Moves what was on the screen to the scroll history.} xywh {616 138 64 24} labels
           Fl_Input clear_color_input {
             tooltip {The color used by "Clear Screen To Color" button
 Can be decimal (e.g. 12) or hex (e.g. \#0c, \#ff000000, etc)} xywh {686 138 64 24} labelsize 9 when 28 textfont 4 textsize 9
-            code0 {clear_color_input->value("\#ff000000");}
+            code3 {clear_color_input->value("\#ff000000");}
           }
         }
         Fl_Button {} {
@@ -2112,6 +2136,7 @@ The command's stdout will appear in terminal.} xywh {109 269 773 25} labelsize 1
 G_tty = tty;              // global access
 G_tty->color(0x30200000); // dark orange (makes true black easy to see)
 G_tty->textsize(12);      // smaller text (RGB demo needs this)
+G_tty->show_unknown(1);   // on by default for tests
 win->resizable(tty);
 
 command_input->when(FL_WHEN_ENTER_KEY_ALWAYS);
@@ -2126,8 +2151,7 @@ command_input->value("ls -la --color && ping google.com -c 5");
 \#endif
 
 // Sync input vals with widget's current values
-update_inputs();} {selected
-    }
+update_inputs();} {}
   }
 }
 

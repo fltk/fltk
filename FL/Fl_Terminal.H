@@ -30,6 +30,7 @@
 #include <FL/fl_utf8.h>         // fl_utf8_is_continuation()
 
 #include <stdarg.h>             // va_list (MinGW)
+#include <string>
 
 /** \class Fl_Terminal
 
@@ -89,7 +90,7 @@
   - Printing text to the terminal, see Fl_Terminal::printf() and Fl_Terminal::append()
   - Clearing the screen, see clear()
   - Getting the terminal's buffer contents, see text()
-  - Getting single utf8 characters by row/col from the terminal display, see utf8_char_at_disp()
+  - Getting single UTF-8 characters by row/col from the terminal display, see utf8_char_at_disp()
   - Getting the text from a text selection, see get_selection()
 
   For applications that need input support, the widget can be subclassed to provide
@@ -842,7 +843,7 @@ public:
   Fl_Scrollbar  *hscrollbar;        // horizontal scrollbar
 private:
   // Special utf8 symbols
-  const char    *error_char_;       // utf8 string shown for invalid utf8, bad ANSI, etc
+  std::string    error_char_;       // utf8 string shown for invalid utf8, bad ANSI, etc
   bool           fontsize_defer_;   // flag defers font calcs until first draw() (issue 837)
   int            scrollbar_size_;   // local preference for scrollbar size
   ScrollbarStyle hscrollbar_style_;
@@ -1164,13 +1165,16 @@ public:
   // API: Show unknown/invalid utf8/ANSI sequences with an error character (¿).
   bool  show_unknown(void) const;
   void  show_unknown(bool val);
-  /// Sets the "error character" utf8 string shown for invalid utf8
+  /// Sets the "error character" UTF-8 string shown for invalid UTF-8
   /// or bad ANSI sequences if show_unknown() is true. Default: "¿".
+  /// This method internally makes a copy of the specified string.
+  /// \p val must be a valid null terminated UTF-8 string containing exactly one
+  /// character of at most four bytes, or undefined behavior will result.
   /// \see show_unknown(bool)
-  void error_char(const char* val) { error_char_ = val; }
-  /// Returns the "error character" utf8 string, which is shown for invalid utf8
+  void error_char(const char* val) { error_char_ = val ? val : ""; }
+  /// Returns the "error character" UTF-8 string, which is shown for invalid UTF-8
   /// or bad ANSI sequences if show_unknown() is true. \see show_unknown(bool)
-  const char* error_char(void) const { return error_char_; }
+  const char* error_char(void) const { return error_char_.c_str(); }
   // API: ANSI sequences
   bool  ansi(void) const;
   void  ansi(bool val);
