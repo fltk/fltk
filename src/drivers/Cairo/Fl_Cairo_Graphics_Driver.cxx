@@ -1311,19 +1311,20 @@ const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
   const char *p = str;
   int len, len2;
   const char *end = str + n;
-  char buf4[4];
-  int use_priv_buffer = 0;
+  char buf6[6];
+  bool use_priv_buffer = false;
   while (p < end) {
     unsigned codepoint = fl_utf8decode(p, end, &len);
+    bool invalid = (len == 1 && *(uchar*)p >= 0x80);
 
     // Switch to using utf8_buffer if needed
-    if (!use_priv_buffer && (len == 1 && *(uchar*)p >= 0x80)) {
+    if (!use_priv_buffer && invalid) {
       // Make room if needed
       if (utf8_buffer_len < p - str) {
         utf8_buffer_len = (p - str) + 1000;
         utf8_buffer = (char *)realloc(utf8_buffer, utf8_buffer_len);
       }
-      use_priv_buffer = 1;
+      use_priv_buffer = true;
       // Fill private buffer with data so far
       if (p > str) {
         memcpy(utf8_buffer, str, p - str);
@@ -1332,7 +1333,12 @@ const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
     }
 
     if (use_priv_buffer) {
-      len2 = fl_utf8encode(codepoint, buf4);
+      if (invalid) {
+        len2 = fl_utf8encode(codepoint, buf6);
+      } else {
+        memcpy(buf6, p, len);
+        len2 = len;
+      }
 
       // Increase buffer if needed
       if (utf8_buffer_len < q + len2) {
@@ -1341,7 +1347,7 @@ const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
       }
 
       // Copy decoded codepoint
-      memcpy(utf8_buffer + q, buf4, len2);
+      memcpy(utf8_buffer + q, buf6, len2);
       q += len2;
     }
     p += len;
