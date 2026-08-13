@@ -45,8 +45,8 @@ FL_EXPORT extern int                e_x;                ///< Mouse X position (w
 FL_EXPORT extern int                e_y;                ///< Mouse Y position (window relative)
 FL_EXPORT extern int                e_x_root;           ///< Mouse X position (screen absolute)
 FL_EXPORT extern int                e_y_root;           ///< Mouse Y position (screen absolute)
-FL_EXPORT extern int                e_dx;               ///< Mouse wheel horizontal delta
-FL_EXPORT extern int                e_dy;               ///< Mouse wheel vertical delta
+FL_EXPORT extern float              e_dx;               ///< Mouse wheel horizontal delta
+FL_EXPORT extern float              e_dy;               ///< Mouse wheel vertical delta
 
 // Mouse click handling
 FL_EXPORT extern int                e_clicks;           ///< Number of consecutive clicks
@@ -132,13 +132,13 @@ FL_EXPORT inline int event_y_root()             { return e_y_root; }
   Returns the current horizontal mouse scrolling associated with the
   FL_MOUSEWHEEL event. Right is positive.
 */
-FL_EXPORT inline int event_dx()                 { return e_dx; }
+FL_EXPORT inline float event_dx()               { return e_dx; }
 
 /**
   Returns the current vertical mouse scrolling associated with the
   FL_MOUSEWHEEL event. Down is positive.
 */
-FL_EXPORT inline int event_dy()                 { return e_dy; }
+FL_EXPORT inline float event_dy()               { return e_dy; }
 
 //
 // Mouse Query Functions

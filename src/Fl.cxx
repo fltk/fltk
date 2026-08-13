@@ -52,8 +52,6 @@ int             Fl::damage_,
                 Fl::e_y,
                 Fl::e_x_root,
                 Fl::e_y_root,
-                Fl::e_dx,
-                Fl::e_dy,
                 Fl::e_state,
                 Fl::e_clicks,
                 Fl::e_is_click,
@@ -61,6 +59,10 @@ int             Fl::damage_,
                 Fl::e_original_keysym,
                 Fl::scrollbar_size_ = 16,
                 Fl::menu_linespacing_ = 4;      // 4: was a local macro in Fl_Menu.cxx called "LEADING"
+
+// Displacement in linesize units
+float           Fl::e_dx,
+                Fl::e_dy;
 
 char            *Fl::e_text = (char *)"";
 int             Fl::e_length;

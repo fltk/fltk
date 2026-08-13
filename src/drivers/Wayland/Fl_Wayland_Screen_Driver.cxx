@@ -394,9 +394,8 @@ static void pointer_axis(void *data, struct wl_pointer *wl_pointer,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   wld_event_time = time;
-  int delta = wl_fixed_to_int(value);
-  if (abs(delta) >= 10) delta /= 10;
-  // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
+  float delta = wl_fixed_to_double(value) / 10.0f;
+  // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%f\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
   // allow both horizontal and vertical movements to be processed by the widget
   if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL) {
     if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
