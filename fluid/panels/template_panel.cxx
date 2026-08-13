@@ -294,7 +294,7 @@ void template_load() {
   struct dirent **files;
   int num_files;
 
-  Fluid.preferences.getUserdataPath(path, sizeof(path));
+  Fluid.preferences.get_userdata_path(path, sizeof(path));
   strlcat(path, "templates", sizeof(path));
   fl_make_path(path);
 

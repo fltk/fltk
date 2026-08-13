@@ -66,7 +66,7 @@ Undo::~Undo() {
 // The return value is a pointer to this internal string.
 char *Undo::filename(int level) {
   if (!path_len_) {
-    Fluid.preferences.getUserdataPath(path_, sizeof(path_));
+    Fluid.preferences.get_userdata_path(path_, sizeof(path_));
     path_len_ = (unsigned int)strlen(path_);
   }
 

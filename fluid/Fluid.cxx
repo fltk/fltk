@@ -470,23 +470,34 @@ const std::string &Application::get_tmpdir() {
 
 
 /**
- Return the path and filename of a temporary file for cut or duplicated data.
- \param[in] which 0 gets the cut/copy/paste buffer, 1 gets the duplication buffer
- \return a pointer to a string in a static buffer
+ Return the path and filename of a temporary file for cut/copy/paste operations.
+ \return the address of a string containing the path and filename of the temporary file.
  */
-const char *Application::cutfname(int which) {
-  static char name[2][FL_PATH_MAX];
-  static char beenhere = 0;
-
+const std::string &Application::cut_buffer_filename() {
+  static std::string name {};
+  static bool beenhere = false;
   if (!beenhere) {
-    beenhere = 1;
-    preferences.getUserdataPath(name[0], sizeof(name[0]));
-    strlcat(name[0], "cut_buffer", sizeof(name[0]));
-    preferences.getUserdataPath(name[1], sizeof(name[1]));
-    strlcat(name[1], "dup_buffer", sizeof(name[1]));
+    beenhere = true;
+    if (preferences.get_userdata_path(name))
+      name += "cut_buffer";
   }
+  return name;
+}
 
-  return name[which];
+
+/**
+ Return the path and filename of a temporary file for duplicating nodes.
+ \return the address of a string containing the path and filename of the temporary file.
+ */
+const std::string &Application::dup_buffer_filename() {
+  static std::string name {};
+  static bool beenhere = false;
+  if (!beenhere) {
+    beenhere = true;
+    if (preferences.get_userdata_path(name))
+      name += "dup_buffer";
+  }
+  return name;
 }
 
 
@@ -614,8 +625,8 @@ bool Application::new_project_from_template()
         return false;
       }
 
-      if ((outfile = fl_fopen(cutfname(1), "wb")) == nullptr) {
-        fluid_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
+      if ((outfile = fl_fopen(dup_buffer_filename().c_str(), "wb")) == nullptr) {
+        fluid_alert("Error writing buffer file \"%s\":\n%s", dup_buffer_filename().c_str(),
                  strerror(errno));
         fclose(infile);
         proj.set_modflag(0);
@@ -637,8 +648,8 @@ bool Application::new_project_from_template()
       fclose(outfile);
 
       proj.undo.suspend();
-      fluid::io::read_file(proj, cutfname(1), 0);
-      fl_unlink(cutfname(1));
+      fluid::io::read_file(proj, dup_buffer_filename().c_str(), 0);
+      fl_unlink(dup_buffer_filename().c_str());
       proj.undo.resume();
     } else {
       // No instance name, so read the template without replacements...
@@ -791,8 +802,8 @@ void Application::cut_selected() {
     return;
   }
   flush_text_widgets();
-  if (!fluid::io::write_file(proj, cutfname(),1)) {
-    fluid_message("Can't write %s: %s", cutfname(), strerror(errno));
+  if (!fluid::io::write_file(proj, cut_buffer_filename().c_str(), 1)) {
+    fluid_message("Can't write %s: %s", cut_buffer_filename().c_str(), strerror(errno));
     return;
   }
   proj.undo.checkpoint();
@@ -817,8 +828,8 @@ void Application::copy_selected() {
   }
   flush_text_widgets();
   ipasteoffset = 10;
-  if (!fluid::io::write_file(proj, cutfname(),1)) {
-    fluid_message("Can't write %s: %s", cutfname(), strerror(errno));
+  if (!fluid::io::write_file(proj, cut_buffer_filename().c_str(), 1)) {
+    fluid_message("Can't write %s: %s", cut_buffer_filename().c_str(), strerror(errno));
     return;
   }
 }
@@ -845,9 +856,9 @@ void Application::paste_from_clipboard() {
       //strategy = Strategy::FROM_FILE_AS_FIRST_CHILD;
     }
   }
-  if (!fluid::io::read_file(proj, cutfname(), 1, strategy)) {
+  if (!fluid::io::read_file(proj, cut_buffer_filename().c_str(), 1, strategy)) {
     widget_browser->rebuild();
-    fluid_message("Can't read %s: %s", cutfname(), strerror(errno));
+    fluid_message("Can't read %s: %s", cut_buffer_filename().c_str(), strerror(errno));
   }
   proj.undo.resume();
   widget_browser->display(proj.tree.current);
@@ -888,8 +899,8 @@ void Application::duplicate_selected() {
     proj.tree.current = new_insert;
 
   // write the selected widgets to a file:
-  if (!fluid::io::write_file(proj, cutfname(1),1)) {
-    fluid_message("Can't write %s: %s", cutfname(1), strerror(errno));
+  if (!fluid::io::write_file(proj, dup_buffer_filename().c_str(), 1)) {
+    fluid_message("Can't write %s: %s", dup_buffer_filename().c_str(), strerror(errno));
     return;
   }
 
@@ -897,10 +908,10 @@ void Application::duplicate_selected() {
   pasteoffset  = 0;
   proj.undo.checkpoint();
   proj.undo.suspend();
-  if (!fluid::io::read_file(proj, cutfname(1), 1, Strategy::FROM_FILE_AFTER_CURRENT)) {
-    fluid_message("Can't read %s: %s", cutfname(1), strerror(errno));
+  if (!fluid::io::read_file(proj, dup_buffer_filename().c_str(), 1, Strategy::FROM_FILE_AFTER_CURRENT)) {
+    fluid_message("Can't read %s: %s", dup_buffer_filename().c_str(), strerror(errno));
   }
-  fl_unlink(cutfname(1));
+  fl_unlink(dup_buffer_filename().c_str());
   widget_browser->display(proj.tree.current);
   widget_browser->rebuild();
   proj.undo.resume();
@@ -973,26 +984,31 @@ void Application::toggle_widget_bin() {
  Open a dialog to show the HTML help page form the FLTK documentation folder.
  \param[in] name name of the HTML help file.
  */
-void Application::show_help(const char *name) {
-  const char    *docdir;
-  char          helpname[FL_PATH_MAX];
+void Application::show_help(const std::string& name) {
+  const char    *docdir { nullptr };
+  std::string   helpname { };
+  bool          builtin_browser { true };
 
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
-  if ((docdir = fl_getenv("FLTK_DOCDIR")) == nullptr) {
+  docdir = fl_getenv("FLTK_DOCDIR");
+  if (docdir == nullptr) {
     docdir = FLTK_DOCDIR;
   }
-  snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);
+  if (docdir == nullptr) {
+    docdir = ".";
+  }
+  helpname = std::string(docdir) + "/" + name;
 
   // make sure that we can read the file
-  FILE *f = fopen(helpname, "rb");
+  FILE *f = fopen(helpname.c_str(), "rb");
   if (f) {
     fclose(f);
-    help_dialog->load(helpname);
+    help_dialog->load(helpname.c_str());
   } else {
     // if we can not read the file, we display the canned version instead
     // or ask the native browser to open the page on www.fltk.org
-    if (strcmp(name, "fluid.html")==0) {
+    if (name == "fluid.html") {
       if (!Fl_Shared_Image::find("embedded:/fluid_flow_chart_800.png"))
         new Fl_PNG_Image("embedded:/fluid_flow_chart_800.png", fluid_flow_chart_800_png, sizeof(fluid_flow_chart_800_png));
       help_dialog->value
@@ -1022,15 +1038,15 @@ void Application::show_help(const char *name) {
        "\"https://www.fltk.org/doc-1.5/fluid.html\">https://www.fltk.org/</a>"
        "</body></html>"
        );
-    } else if (strcmp(name, "license.html")==0) {
+    } else if (name == "license.html") {
       fl_open_uri("https://www.fltk.org/doc-1.5/license.html");
       return;
-    } else if (strcmp(name, "index.html")==0) {
+    } else if (name == "index.html") {
       fl_open_uri("https://www.fltk.org/doc-1.5/index.html");
       return;
     } else {
-      snprintf(helpname, sizeof(helpname), "https://www.fltk.org/%s", name);
-      fl_open_uri(helpname);
+      helpname = "https://www.fltk.org/" + std::string(name);
+      fl_open_uri(helpname.c_str());
       return;
     }
   }

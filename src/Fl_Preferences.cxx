@@ -1201,15 +1201,15 @@ int Fl_Preferences::size( const char *key ) {
  If the name is too long, it will be clipped.
 
  This function can be used with direct paths that don't end in \c .prefs .
- \a getUserDataPath() will remove any extension and end the path with a \c / .
- If the file name has no extension, \a getUserDataPath() will append \c .data/
+ \a get_userdata_path() will remove any extension and end the path with a \c / .
+ If the file name has no extension, \a get_userdata_path() will append \c .data/
  to the path name.
 
  Example:
  \code
  Fl_Preferences prefs( USER, "matthiasm.com", "test" );
  char path[FL_PATH_MAX];
- prefs.getUserdataPath( path, FL_PATH_MAX );
+ prefs.get_userdata_path( path, FL_PATH_MAX );
  \endcode
  creates the preferences database in the directory (User 'matt' on Linux):
  \code
@@ -1232,6 +1232,17 @@ int Fl_Preferences::size( const char *key ) {
 char Fl_Preferences::get_userdata_path( char *path, int pathlen ) {
   if ( rootNode )
     return rootNode->getPath( path, pathlen );
+  return 0;
+}
+
+char Fl_Preferences::get_userdata_path( std::string& path ) {
+  if ( rootNode ) {
+    char buf[FL_PATH_MAX];
+    if ( rootNode->getPath( buf, FL_PATH_MAX ) ) {
+      path = buf;
+      return 1;
+    }
+  }
   return 0;
 }
 

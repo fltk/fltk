@@ -358,7 +358,7 @@ Fl_Preferences app( Fl_Preferences::USER_L, project, application );
     printf("App Preferences file is actually located at:\\n%s\\n", path);
   }
 
-  app.getUserdataPath( path, sizeof(path) );
+  app.get_userdata_path( path, sizeof(path) );
   if (path[0]) {
     printf("Preferences user data directory is located at:\\n%s\\n", path);
   } else {

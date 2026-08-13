@@ -73,7 +73,7 @@ void fluid::app::save_template() {
 
   // Find the templates directory...
   char filename[FL_PATH_MAX];
-  Fluid.preferences.getUserdataPath(filename, sizeof(filename));
+  Fluid.preferences.get_userdata_path(filename, sizeof(filename));
 
   strlcat(filename, "templates", sizeof(filename));
   if (fl_access(filename, 0)) fl_make_path(filename);

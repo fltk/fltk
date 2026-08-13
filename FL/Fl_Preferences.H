@@ -258,6 +258,7 @@ public:
   int size( const char *entry );
 
   char get_userdata_path( char *path, int pathlen );
+  char get_userdata_path( std::string& path );
 
   int flush();
 

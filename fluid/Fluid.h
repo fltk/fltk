@@ -149,8 +149,9 @@ public: // Methods
   const std::string &launch_path() const;
   // Return the path to a temporary directory for this instance of Fluid.
   const std::string &get_tmpdir();
-  // Return the path and filename of a temporary file for cut or duplicated data.
-  const char *cutfname(int which = 0);
+  // Return the path and filename of a temporary file for cut/copy/paste or duplication data.
+  const std::string &cut_buffer_filename();
+  const std::string &dup_buffer_filename();
 
   // Clear the current project and create a new, empty one.
   void new_project();
@@ -180,7 +181,7 @@ public: // Methods
   // Show or hide the widget bin.
   void toggle_widget_bin();
   // Open a dialog to show the HTML help page from the FLTK documentation folder.
-  void show_help(const char *name);
+  void show_help(const std::string& name);
   // Open the "About" dialog.
   void about();
 
