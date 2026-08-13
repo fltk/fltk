@@ -28,6 +28,7 @@
 #include <stdlib.h>
 
 #undef fl_open
+#define fl_min(a,b) ((a) < (b) ? (a) : (b))
 
 /** \addtogroup fl_unicode
     @{
@@ -1689,7 +1690,7 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
       if (from >= end) break;
       skip = fl_utf8len(*from);
       if (skip < 1) break;
-      from += skip; // skip joined codepoint
+      from += fl_min(skip, end - from); // skip joined codepoint
     } else if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
       from += fl_utf8len(*from); // skip variation selector
     } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
