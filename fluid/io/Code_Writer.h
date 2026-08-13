@@ -27,6 +27,7 @@
 #include <string>
 #include <set>
 #include <map>
+#include <vector>
 #include <sstream>
 
 class Node;
