@@ -1054,8 +1054,8 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
     if (g_shell_config) {
       o->clear();
       w_settings_shell_list_selected = 0;
-      for (int i=0; i<g_shell_config->list_size; i++) {
-        Fd_Shell_Command *cmd = g_shell_config->list[i];
+      for (int i=0; i<(int)g_shell_config->list.size(); i++) {
+        Fd_Shell_Command *cmd = g_shell_config->list[i].get();
         o->add(cmd->name.c_str());
         if (cmd->storage == fluid::Tool_Store::USER)
           o->icon(i+1, w_settings_shell_fd_user->image());
@@ -1074,7 +1074,7 @@ static void cb_w_settings_shell_list(Fl_Browser* o, void* v) {
     w_settings_shell_cmd->do_callback(w_settings_shell_cmd, LOAD);
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
   }
-//ﬂ ▲ ----------=~---~~=~~=~-----------~~~~~~=-~~=-~-~-~-~=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~---~~=~~=~-----------~=--~~--~-=---~=~-~-= ▲ ﬂ//
 }
 
 Fl_Group* w_settings_shell_toolbox = (Fl_Group*)nullptr;
@@ -1123,7 +1123,7 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     }
   } else {
     if (!selected) return;
-    Fd_Shell_Command *cmd = new Fd_Shell_Command(g_shell_config->list[selected-1]);
+    Fd_Shell_Command *cmd = new Fd_Shell_Command(g_shell_config->list[selected-1].get());
     g_shell_config->insert(selected, cmd);
     w_settings_shell_list->insert(selected+1, cmd->name.c_str());
     w_settings_shell_list->deselect();
@@ -1139,7 +1139,7 @@ static void cb_w_settings_shell_dup(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
-//ﬂ ▲ ----------=~=--~~-=~=-----------~--==~-==~=-=-~==~=-~- ▲ ﬂ//
+//ﬂ ▲ ----------=~=--~~-=~=-------------=~~~~--=---=~~~~~~=- ▲ ﬂ//
 }
 
 Fl_Button* w_settings_shell_remove = (Fl_Button*)nullptr;
@@ -1156,7 +1156,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
   } else {
     if (!selected) return;
     int ret = fluid_choice("Delete the shell command\n\"%s\"?\n\nThis can not be undone.",
-      "Delete", "Cancel", nullptr, g_shell_config->list[selected-1]->name.c_str());
+      "Delete", "Cancel", nullptr, g_shell_config->list[selected-1].get()->name.c_str());
     if (ret==1) return;
     if (g_shell_config->at(selected-1)->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     g_shell_config->remove(selected-1);
@@ -1170,7 +1170,7 @@ static void cb_w_settings_shell_remove(Fl_Button* o, void* v) {
     w_settings_shell_toolbox->do_callback(w_settings_shell_toolbox, LOAD);
     g_shell_config->rebuild_shell_menu();
   }
-//ﬂ ▲ ----------=~~-~==~-~~=------------=~=-=--=-==~-==~-=~- ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~==~-~~=------------=~=~=~--~-~~=-=~-~=- ▲ ﬂ//
 }
 
 Fl_Menu_Button* w_settings_shell_menu = (Fl_Menu_Button*)nullptr;
@@ -1219,10 +1219,10 @@ static void cb_w_settings_shell_play(Fl_Button* o, void* v) {
     }
   } else {
     if (!selected) return;
-    Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+    Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
     cmd->run();
   }
-//ﬂ ▲ ----------~=~-=--~-=~------------~~--~=-=-=~-~=-=-=--~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~-=--~-=~-------------=---=-=--~-=--=-~=-~ ▲ ﬂ//
 }
 
 Fl_Group* w_settings_shell_cmd = (Fl_Group*)nullptr;
@@ -1246,19 +1246,19 @@ static void cb_Name(Fl_Input* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->name.c_str());
+      o->value(g_shell_config->list[selected-1].get()->name.c_str());
     } else {
       o->value("");
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       cmd->name = o->value();
       w_settings_shell_list->text(selected, o->value());
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~~-~-~~~-=~----------~-~-~=-~=-~=~--~=~~~~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~-~~~-=~-------------=--~--~-~~~-~=---=~ ▲ ﬂ//
 }
 
 static void cb_Menu(Fl_Input* o, void* v) {
@@ -1266,19 +1266,19 @@ static void cb_Menu(Fl_Input* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->label.c_str());
+      o->value(g_shell_config->list[selected-1].get()->label.c_str());
     } else {
       o->value("");
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       cmd->label = o->value();
       cmd->update_shell_menu();
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=~-~=-~~~~=----------~-~=~--~~-~=~=-~-~=~-~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~-~=-~~~~=----------~-~-~-=-~=~-=--=-~-=~- ▲ ﬂ//
 }
 
 static void cb_b(Fl_Group* o, void* v) {
@@ -1292,20 +1292,20 @@ static void cb_Shortcut(Fl_Shortcut_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->shortcut);
+      o->value(g_shell_config->list[selected-1].get()->shortcut);
       //o->default_value(o->value());
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       cmd->shortcut = o->value();
       cmd->update_shell_menu();
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=-~=-~--=-~------------~~---=--~-=~~~-~--~~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-~=-~--=-~-----------~--~~~~-=~=~==--~=--- ▲ ﬂ//
 }
 
 static void cb_Store(Fl_Choice* o, void* v) {
@@ -1313,14 +1313,14 @@ static void cb_Store(Fl_Choice* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      fluid::Tool_Store ts = g_shell_config->list[selected-1]->storage;
+      fluid::Tool_Store ts = g_shell_config->list[selected-1].get()->storage;
       o->value(o->find_item_with_argument((long)ts));
     } else {
       o->value(o->find_item_with_argument((long)fluid::Tool_Store::USER));
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       fluid::Tool_Store ts = (fluid::Tool_Store)(o->mvalue()->argument());
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
       cmd->storage = ts;
@@ -1332,7 +1332,7 @@ static void cb_Store(Fl_Choice* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=-=-=-~~~------------~~----=~~~=-=-~~~=---= ▲ ﬂ//
+//ﬂ ▲ ----------~=-=-=-~~~------------~~-~-~-=~=~--=-=---~-- ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Store[] = {
@@ -1347,7 +1347,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
   int cond = Fd_Shell_Command::ALWAYS;
   if (v == LOAD) {
     if (selected) {
-      cond = g_shell_config->list[selected-1]->condition;
+      cond = g_shell_config->list[selected-1].get()->condition;
       o->value(o->find_item_with_argument(cond));
     } else {
       o->value(o->find_item_with_argument(0));
@@ -1355,7 +1355,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       cond = (int)(o->mvalue()->argument());
       cmd->condition = cond;
       g_shell_config->rebuild_shell_menu();
@@ -1367,7 +1367,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
     w_shell_cond_text->show();
   else
     w_shell_cond_text->hide();
-//ﬂ ▲ ----------~=-=~~=-~~~~-----------~-~~~-=----=-=-~=~~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~~=-~~~~------------=~~---~~~-~~-=~~=~~= ▲ ﬂ//
 }
 
 Fl_Menu_Item menu_Condition[] = {
@@ -1390,19 +1390,19 @@ static void cb_w_shell_cond_text(Fl_Input* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected)
-      o->value(g_shell_config->list[selected-1]->condition_data.c_str());
+      o->value(g_shell_config->list[selected-1].get()->condition_data.c_str());
     else
       o->value("");
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       cmd->condition_data = o->value();
       g_shell_config->rebuild_shell_menu();
       if (cmd->storage == fluid::Tool_Store::PROJECT)
         Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=~~=~-==-~=----------~-~=-=-----~~--=~---~- ▲ ﬂ//
+//ﬂ ▲ ----------~=~~=~-==-~=----------~~~~~==~~==-~~~~-=~=-- ▲ ﬂ//
 }
 
 Fl_Text_Editor* w_settings_shell_command = (Fl_Text_Editor*)nullptr;
@@ -1412,18 +1412,18 @@ static void cb_w_settings_shell_command(Fl_Text_Editor* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->buffer()->text(g_shell_config->list[selected-1]->command.c_str());
+      o->buffer()->text(g_shell_config->list[selected-1].get()->command.c_str());
     } else {
       o->buffer()->text("");
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       cmd->command = o->buffer()->text();
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-=-=-==-~------------~~~~~=~~---~-~~~~=~~~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-=-=-==-~-----------~~=----==~-==---=--=-= ▲ ﬂ//
 }
 
 Fl_Menu_Button* w_settings_shell_text_macros = (Fl_Menu_Button*)nullptr;
@@ -1492,13 +1492,13 @@ static void cb_save(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_PROJECT);
+      o->value(g_shell_config->list[selected-1].get()->flags & Fd_Shell_Command::SAVE_PROJECT);
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       int v = o->value();
       if (v) {
         cmd->flags |= Fd_Shell_Command::SAVE_PROJECT;
@@ -1508,7 +1508,7 @@ static void cb_save(Fl_Check_Button* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~--~==--==---------------~-=~~=~=~=~~=--==~ ▲ ﬂ//
+//ﬂ ▲ ----------=~--~==--==-----------~~-=-~=~~---~=~=~-=~-= ▲ ﬂ//
 }
 
 static void cb_save1(Fl_Check_Button* o, void* v) {
@@ -1516,13 +1516,13 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_SOURCECODE);
+      o->value(g_shell_config->list[selected-1].get()->flags & Fd_Shell_Command::SAVE_SOURCECODE);
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       int v = o->value();
       if (v) {
         cmd->flags |= Fd_Shell_Command::SAVE_SOURCECODE;
@@ -1532,7 +1532,7 @@ static void cb_save1(Fl_Check_Button* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=-~~=~=-~=~-----------~-~-=~==~-==-=--~--~= ▲ ﬂ//
+//ﬂ ▲ ----------~=-~~=~=-~=~-----------~~~~~--~==-~=-~~---=~ ▲ ﬂ//
 }
 
 static void cb_save2(Fl_Check_Button* o, void* v) {
@@ -1540,13 +1540,13 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::SAVE_STRINGS);
+      o->value(g_shell_config->list[selected-1].get()->flags & Fd_Shell_Command::SAVE_STRINGS);
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       int v = o->value();
       if (v) {
         cmd->flags |= Fd_Shell_Command::SAVE_STRINGS;
@@ -1556,7 +1556,7 @@ static void cb_save2(Fl_Check_Button* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~~-~~~=~=-=----------~~--~~~=~=-~-==-~==~~= ▲ ﬂ//
+//ﬂ ▲ ----------=~~-~~~=~=-=----------~-=-=~~-=~~==--=-==-~= ▲ ﬂ//
 }
 
 static void cb_show(Fl_Check_Button* o, void* v) {
@@ -1564,13 +1564,13 @@ static void cb_show(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(!(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::DONT_SHOW_TERMINAL));
+      o->value(!(g_shell_config->list[selected-1].get()->flags & Fd_Shell_Command::DONT_SHOW_TERMINAL));
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       int v = o->value();
       if (!v) {
         cmd->flags |= Fd_Shell_Command::DONT_SHOW_TERMINAL;
@@ -1580,7 +1580,7 @@ static void cb_show(Fl_Check_Button* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~==--~~~~=------------~~~-~==~=~=~~~-=~=--=~ ▲ ﬂ//
+//ﬂ ▲ ----------~==--~~~~=--------------~-~=~---~~=--~=-=--- ▲ ﬂ//
 }
 
 static void cb_clear(Fl_Check_Button* o, void* v) {
@@ -1588,13 +1588,13 @@ static void cb_clear(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::CLEAR_TERMINAL);
+      o->value(g_shell_config->list[selected-1].get()->flags & Fd_Shell_Command::CLEAR_TERMINAL);
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       int v = o->value();
       if (v) {
         cmd->flags |= Fd_Shell_Command::CLEAR_TERMINAL;
@@ -1604,7 +1604,7 @@ static void cb_clear(Fl_Check_Button* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=~--=~=--------------~~-=~~-~-==~~==~=-=~-- ▲ ﬂ//
+//ﬂ ▲ ----------~=~--=~=---------------~-~-----~=-=~=~~~--=~ ▲ ﬂ//
 }
 
 static void cb_clear1(Fl_Check_Button* o, void* v) {
@@ -1612,13 +1612,13 @@ static void cb_clear1(Fl_Check_Button* o, void* v) {
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected) {
-      o->value(g_shell_config->list[selected-1]->flags & Fd_Shell_Command::CLEAR_HISTORY);
+      o->value(g_shell_config->list[selected-1].get()->flags & Fd_Shell_Command::CLEAR_HISTORY);
     } else {
       o->value(0);
     }
   } else {
     if (selected) {
-      Fd_Shell_Command *cmd = g_shell_config->list[selected-1];
+      Fd_Shell_Command *cmd = g_shell_config->list[selected-1].get();
       int v = o->value();
       if (v) {
         cmd->flags |= Fd_Shell_Command::CLEAR_HISTORY;
@@ -1628,7 +1628,7 @@ static void cb_clear1(Fl_Check_Button* o, void* v) {
       if (cmd->storage == fluid::Tool_Store::PROJECT) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~~~-~~=~==~----------~~~~~=-=~==-=~~=~---~- ▲ ﬂ//
+//ﬂ ▲ ----------=~~~-~~=~==~----------~-=---~-~=--~==-~=~-=~ ▲ ﬂ//
 }
 
 Fl_Box* w_settings_shell_fd_project = (Fl_Box*)nullptr;

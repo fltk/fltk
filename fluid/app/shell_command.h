@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <memory>
+#include <vector>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>
@@ -85,12 +87,25 @@ protected:
 };
 
 
-class Fd_Shell_Command {
+class Fd_Shell_Command
+{
 public:
   enum { ALWAYS, NEVER, MAC_ONLY, UX_ONLY, WIN_ONLY, MAC_AND_UX_ONLY,
     USER_ONLY, HOST_ONLY, ENV_ONLY }; // conditions
   enum { SAVE_PROJECT = 1, SAVE_SOURCECODE = 2, SAVE_STRINGS = 4, SAVE_ALL = 7,
     DONT_SHOW_TERMINAL = 8, CLEAR_TERMINAL = 16, CLEAR_HISTORY = 32 }; // flags
+
+  std::string name { };
+  std::string label { };
+  Fl_Shortcut shortcut = 0;
+  fluid::Tool_Store storage = fluid::Tool_Store::USER;
+  int condition = ALWAYS; // always, hide, windows only, linux only, mac only, user, machine
+  std::string condition_data { }; // user name, machine name
+  std::string command { };
+  int flags = 0; // save_project, save_code, save_string, ...
+  Fl_Menu_Item *shell_menu_item_ = nullptr;
+
+public:
   Fd_Shell_Command();
   Fd_Shell_Command(const Fd_Shell_Command *rhs);
   Fd_Shell_Command(const std::string &in_name);
@@ -102,15 +117,7 @@ public:
                    const std::string &in_condition_data,
                    const std::string &in_command,
                    int in_flags);
-  std::string name { };
-  std::string label { };
-  Fl_Shortcut shortcut = 0;
-  fluid::Tool_Store storage = fluid::Tool_Store::USER;
-  int condition = ALWAYS; // always, hide, windows only, linux only, mac only, user, machine
-  std::string condition_data { }; // user name, machine name
-  std::string command { };
-  int flags = 0; // save_project, save_code, save_string, ...
-  Fl_Menu_Item *shell_menu_item_;
+
   void run();
   void read(Fl_Preferences &prefs);
   void write(Fl_Preferences &prefs, bool save_location = false);
@@ -121,13 +128,16 @@ public:
 };
 
 
-class Fd_Shell_Command_List {
+class Fd_Shell_Command_List
+{
 public:
-  Fd_Shell_Command **list = nullptr;
-  int list_size = 0;
-  int list_capacity = 0;
+  std::vector<std::unique_ptr<Fd_Shell_Command>> list;
+  // Fd_Shell_Command **list = nullptr;
+  // int list_size = 0;
+  // int list_capacity = 0;
   Fl_Menu_Item *shell_menu_ = nullptr;
-public:
+
+  public:
   Fd_Shell_Command_List();
   ~Fd_Shell_Command_List();
   Fd_Shell_Command *at(int index) const;

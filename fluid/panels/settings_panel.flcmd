@@ -1,0 +1,31 @@
+; FLTK preferences file format 1.0
+; vendor: flcmd.fluid.fltk.org
+; application: unknown
+
+[.]
+
+
+[./shell_commands]
+
+
+[./shell_commands/0]
+
+name:Run
+label:Run
+shortcut:4194418
+storage:1
+condition:2
+command:osascript <<EOD\n  tell application "Xcode"\n    run workspa
++ce document 1\n  end tell\nEOD\n
+flags:11
+
+[./shell_commands/1]
+
+name:Run
+label:Run Some
+shortcut:4194418
+storage:1
+condition:2
+command:osascript <<EOD\n  tell application "Xcode"\n    run workspa
++ce document 1\n  end tell\nEOD\n
+flags:11

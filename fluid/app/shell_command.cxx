@@ -702,29 +702,21 @@ Fd_Shell_Command_List::~Fd_Shell_Command_List() {
  \return a pointer to the shell command data
  */
 Fd_Shell_Command *Fd_Shell_Command_List::at(int index) const {
-  return list[index];
+  return list[index].get();
 }
 
 /**
  Clear all shell commands.
  */
 void Fd_Shell_Command_List::clear() {
-  if (list) {
-    for (int i=0; i<list_size; i++) {
-      delete list[i];
-    }
-    ::free(list);
-    list_size = 0;
-    list_capacity = 0;
-    list = nullptr;
-  }
+  list.clear();
 }
 
 /**
  remove all shell commands of the given storage location from the list.
  */
 void Fd_Shell_Command_List::clear(fluid::Tool_Store storage) {
-  for (int i=list_size-1; i>=0; i--) {
+  for (int i=list.size()-1; i>=0; i--) {
     if (list[i]->storage == storage) {
       remove(i);
     }
@@ -776,10 +768,10 @@ void Fd_Shell_Command_List::write(Fl_Preferences &prefs, fluid::Tool_Store stora
   Fl_Preferences shell_commands(prefs, "shell_commands");
   shell_commands.delete_all_groups();
   int index = 0;
-  for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == fluid::Tool_Store::USER) {
-      Fl_Preferences cmd(shell_commands, Fl_Preferences::Name(index++));
-      list[i]->write(cmd);
+  for (auto &cmd : list) {
+    if (cmd->storage == fluid::Tool_Store::USER) {
+      Fl_Preferences cmd_prefs(shell_commands, Fl_Preferences::Name(index++));
+      cmd->write(cmd_prefs);
     }
   }
 }
@@ -809,15 +801,15 @@ void Fd_Shell_Command_List::read(fluid::io::Project_Reader *in) {
  */
 void Fd_Shell_Command_List::write(fluid::io::Project_Writer *out) {
   int n_in_project_file = 0;
-  for (int i=0; i<list_size; i++) {
-    if (list[i]->storage == fluid::Tool_Store::PROJECT)
+  for (auto &cmd : list) {
+    if (cmd->storage == fluid::Tool_Store::PROJECT)
       n_in_project_file++;
   }
   if (n_in_project_file > 0) {
     out->write_string("\nshell_commands {");
-    for (int i=0; i<list_size; i++) {
-      if (list[i]->storage == fluid::Tool_Store::PROJECT)
-        list[i]->write(out);
+    for (auto &cmd : list) {
+      if (cmd->storage == fluid::Tool_Store::PROJECT)
+        cmd->write(out);
     }
     out->write_string("\n}");
   }
@@ -829,11 +821,7 @@ void Fd_Shell_Command_List::write(fluid::io::Project_Writer *out) {
  \param[in] cmd a pointer to the command that we want to add
  */
 void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
-  if (list_size == list_capacity) {
-    list_capacity += 16;
-    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command*));
-  }
-  list[list_size++] = cmd;
+  list.emplace_back(cmd);
 }
 
 /**
@@ -843,13 +831,7 @@ void Fd_Shell_Command_List::add(Fd_Shell_Command *cmd) {
  \param[in] cmd a pointer to the command that we want to add
  */
 void Fd_Shell_Command_List::insert(int index, Fd_Shell_Command *cmd) {
-  if (list_size == list_capacity) {
-    list_capacity += 16;
-    list = (Fd_Shell_Command**)::realloc(list, list_capacity * sizeof(Fd_Shell_Command*));
-  }
-  ::memmove(list+index+1, list+index, (list_size-index)*sizeof(Fd_Shell_Command**));
-  list_size++;
-  list[index] = cmd;
+  list.insert(list.begin() + index, std::unique_ptr<Fd_Shell_Command>(cmd));
 }
 
 /**
@@ -858,9 +840,7 @@ void Fd_Shell_Command_List::insert(int index, Fd_Shell_Command *cmd) {
  \param[in] index must be between 0 and list_size-1
  */
 void Fd_Shell_Command_List::remove(int index) {
-  delete list[index];
-  list_size--;
-  ::memmove(list+index, list+index+1, (list_size-index)*sizeof(Fd_Shell_Command**));
+  list.erase(list.begin() + index);
 }
 
 /**
@@ -892,14 +872,14 @@ void Fd_Shell_Command_List::rebuild_shell_menu() {
 
   int i, j, num_active_items = 0;
   // count the active commands
-  for (i=0; i<list_size; i++) {
-    if (list[i]->is_active()) num_active_items++;
+  for (auto &cmd : list) {
+    if (cmd->is_active()) num_active_items++;
   }
   // allocate a menu item array
   Fl_Menu_Item *mi = (Fl_Menu_Item*)::calloc(num_active_items+2, sizeof(Fl_Menu_Item));
   // set the menu item pointer for all active commands
-  for (i=j=0; i<list_size; i++) {
-    Fd_Shell_Command *cmd = list[i];
+  for (i=j=0; i<(int)list.size(); i++) {
+    Fd_Shell_Command *cmd = list[i].get();
     if (cmd->is_active()) {
       cmd->shell_menu_item_ = mi + j;
       mi[j].callback(menu_shell_cmd_cb);
@@ -958,7 +938,7 @@ void Fd_Shell_Command_List::menu_marker(Fl_Widget*, void*) {
  into an external file.
  */
 void Fd_Shell_Command_List::export_selected() {
-  if (!g_shell_config || (g_shell_config->list_size == 0)) return;
+  if (!g_shell_config || (g_shell_config->list.empty())) return;
   if (!w_settings_shell_list) return;
 
   std::string filename = fluid::io::filechooser(
@@ -990,7 +970,7 @@ void Fd_Shell_Command_List::export_selected() {
  file chooser and import all items.
  */
 void Fd_Shell_Command_List::import_from_file() {
-  if (!g_shell_config || (g_shell_config->list_size == 0)) return;
+  if (!g_shell_config || (g_shell_config->list.empty())) return;
   if (!w_settings_shell_list) return;
 
   std::string filename = fluid::io::filechooser(
