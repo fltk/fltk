@@ -1686,7 +1686,10 @@ const char *fl_utf8_next_composed_char(const char *from, const char *end) {
     u = fl_utf8decode(from, end, NULL);
     if (u == 0x200D) { // zero-width joiner
       from += fl_utf8len(*from); // skip joiner
-      from += fl_utf8len(*from); // skip joined codepoint
+      if (from >= end) break;
+      skip = fl_utf8len(*from);
+      if (skip < 1) break;
+      from += skip; // skip joined codepoint
     } else if (u >= 0xFE00 && u <= 0xFE0F) { // a variation selector
       from += fl_utf8len(*from); // skip variation selector
     } else if (u >= 0x1F3FB && u <= 0x1F3FF) { // EMOJI MODIFIER FITZPATRICK
