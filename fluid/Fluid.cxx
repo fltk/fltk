@@ -118,20 +118,31 @@ Application::Application()
 /**
  Start Fluid.
 
- Fluid can run in interactive mode with a full user interface to design new
- user interfaces and write the C++ files to manage them,
+ Fluid supports two execution modes:
+ - Interactive mode: launches the full GUI for editing interfaces and
+   generating C++ code.
+ - Batch mode: runs from the command line and converts .fl files to C++
+   source and header files.
 
- Fluid can run form the command line in batch mode to convert .fl design files
- into C++ source and header files. In batch mode, no display is needed,
- particularly no X11 connection will be attempted on Linux/Unix.
+ Batch mode is headless. On Linux/Unix, Fluid does not attempt to connect
+ to X11.
 
- \param[in] argc number of arguments in the list
- \param[in] argv pointer to an array of arguments
- \return in batch mode, an error code will be returned via \c exit() . This
- function return 1, if there was an error in the parameters list.
- \todo On Windows, Fluid can under certain conditions open a dialog box, even
- in batch mode. Is that intentional? Does it circumvent issues with Windows'
- stderr and stdout?
+ \param[in] argc number of command-line arguments
+ \param[in] argv pointer to the command-line argument array
+ \return in batch mode, status is reported via \c exit(). This function
+ returns 1 only if command-line argument parsing fails.
+
+ On Windows, Fluid is built in two variants:
+ - fluid.exe: GUI variant without console I/O (stdin/stdout).
+ - fluid-cmd.exe: console variant that uses stdin/stdout and can attach to or
+   open a console.
+
+ This split avoids unwanted console windows in GUI workflows while preserving
+ predictable console behavior for scripting and batch runs.
+
+ Application::console_mode() controls how diagnostics are emitted:
+ GUI dialogs or console output. fluid.exe always uses dialogs. fluid-cmd.exe,
+ and all non-Windows builds, choose behavior based on the `batch_mode` flag.
  */
 int Application::run(int argc,char **argv) {
   setlocale(LC_ALL, "");      // enable multi-language errors in file chooser

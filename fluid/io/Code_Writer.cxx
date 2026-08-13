@@ -471,7 +471,7 @@ void Code_Writer::write_c_indented(const std::string& codeblock, int additional_
  constructor whereas functions, declarations, and inline data are seen as
  members of the class itself.
  */
-bool is_class_member(Node *t) {
+bool is_direct_class_member(Node *t) {
   return    dynamic_cast<Function_Node*>(t)
          || dynamic_cast<Decl_Node*>(t)
          || dynamic_cast<Data_Node*>(t)
@@ -491,13 +491,13 @@ bool is_class_member(Node *t) {
  \param[in] q should be a comment type
  \return true if this comment is followed by a class member
  \return false if it is followed by a widget or code
- \see is_class_member(Node *t)
+ \see is_direct_class_member(Node *t)
  */
 static bool is_comment_before_class_member(Node *q) {
   if (dynamic_cast<Comment_Node*>(q) && q->next && q->next->level==q->level) {
     if (dynamic_cast<Comment_Node*>(q->next))
       return is_comment_before_class_member(q->next);
-    if (is_class_member(q->next))
+    if (is_direct_class_member(q->next))
       return true;
   }
   return false;
@@ -547,10 +547,11 @@ Node* Code_Writer::write_code(Node* p) {
     // instead of inside a constructor. So below we have to treat all children
     // that  are widgets in write_code1(), and all children that are regular
     // class members (Methods, Variables) *after* write_code2().
-    // \todo Widgets should be required to be in a constructor
+    // \todo Improve the concept of Widget_Class_Node to be more like a regular
+    //       class, with a constructor
     for (q = p->next; q && q->level > p->level;) {
       // note: maybe declaration blocks should be handled like comments in the context
-      if (!is_class_member(q) && !is_comment_before_class_member(q)) {
+      if (!is_direct_class_member(q) && !is_comment_before_class_member(q)) {
         q = write_code(q);
       } else {
         int level = q->level;
@@ -566,7 +567,7 @@ Node* Code_Writer::write_code(Node* p) {
     mark_end(p->finalize_node);
 
     for (q = p->next; q && q->level > p->level;) {
-      if (is_class_member(q) || is_comment_before_class_member(q)) {
+      if (is_direct_class_member(q) || is_comment_before_class_member(q)) {
         q = write_code(q);
       } else {
         int level = q->level;

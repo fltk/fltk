@@ -44,9 +44,6 @@ using namespace fluid::proj;
 //        [] check mergeback when loading project
 //        [] check mergeback when app gets focus
 //          [] always apply if safe
-// TODO: command line option for mergeback
-//        -mb or --merge-back
-//        -mbs or --merge-back-if-safe
 // NOTE: automatic mergeback on timer when file changes if app focus doesn't work
 // NOTE: allow the user to edit comment blocks
 
@@ -741,7 +738,7 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
     // Fluid may have written the source code elsewhere (e.g. in a CMake setup).
     // Fluid tries to keep track of the last write location of a source file
     // matching a project, and uses that location instead.
-    // TODO: this is not working as expected yet.
+    // TODO: Verify that this works in all common cases
     Fl_Preferences build_records(Fl_Preferences::USER_L, "fltk.org", "fluid-build");
     Fl_Preferences path(build_records, project_filename.c_str());
     int i, n = (int)project_filename.size();

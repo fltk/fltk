@@ -350,11 +350,6 @@ static void expand_macros(std::string &cmd) {
   expand_macro(cmd, "@HEADERFILE_NAME@",  Fluid.proj.headerfile_name());
   expand_macro(cmd, "@TEXTFILE_PATH@",    Fluid.proj.stringsfile_path());
   expand_macro(cmd, "@TEXTFILE_NAME@",    Fluid.proj.stringsfile_name());
-//  TODO: implement finding the script `fltk-config` for all platforms
-//  if (cmd.find("@FLTK_CONFIG@") != std::string::npos) {
-//    find_fltk_config();
-//    expand_macro(cmd, "@FLTK_CONFIG@",      fltk_config_cmd.c_str());
-//  }
   if (cmd.find("@TMPDIR@") != std::string::npos)
     expand_macro(cmd, "@TMPDIR@",           Fluid.get_tmpdir());
 }

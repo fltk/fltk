@@ -213,7 +213,7 @@ static char *copy_trunc(char *p, const char *str, int maxl, int quote, int trunc
  \param[in] X, Y, W, H position and size of widget
  \param[in] l optional label
  \todo It would be nice to be able to grab one or more nodes and move them
-    within the hierarchy.
+    within the hierarchy via drag'n'drop.
  */
 Node_Browser::Node_Browser(int X,int Y,int W,int H,const char*l) :
   Fl_Browser_(X,Y,W,H,l)
@@ -253,7 +253,6 @@ void *Node_Browser::item_prev(void *l) const {
  Override the method to check if an item was selected.
  \param l this item
  \return 1 if selected, 0 if not
- \todo what is the difference between selected and selected, and why do we do this?
  */
 int Node_Browser::item_selected(void *l) const {
   return ((Node*)l)->selected;

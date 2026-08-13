@@ -15,28 +15,20 @@
 //
 
 /**
+ This file implements the FLUID node factory for built-in widget types.
 
+ It defines prototype instances for most widget node classes and the lookup
+ tables used to map type names to those prototypes.
 
- \todo Verify the text
+ Most shared widget-node behavior is implemented in Widget_Node.cxx and in
+ specialized node files (for example Button_Node.cxx, Group_Node.cxx, and
+ Window_Node.cxx).
 
- Type classes for most of the fltk widgets.  Most of the work
- is done by code in Widget_Node.cxx.  Also a factory instance
- of each of these type classes.
-
- This file also contains the "new" menu, which has a pointer
- to a factory instance for every class (both the ones defined
- here and ones in other files)
-
-
- Type classes for most of the fltk widgets.  Most of the work
- is done by code in Widget_Node.C.  Also a factory instance
- of each of these type classes.
-
- This file also contains the "new" menu, which has a pointer
- to a factory instance for every class (both the ones defined
- here and ones in other files)
-
+ This file also defines the *New* menu model. Each menu entry stores a pointer
+ to a node prototype, including prototypes defined here and in other
+ translation units.
  */
+
 #include "nodes/factory.h"
 
 #include "app/Snap_Action.h"
