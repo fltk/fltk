@@ -60,10 +60,16 @@ static int Toupper(int ucs) {
 }
 
 /**
-  Returns the byte length of the UTF-8 sequence, or -1.
+  Returns the byte length of the UTF-8 sequence, or -1 if \p c is not a
+  valid leading byte.
 
-  This function is helpful for finding faulty UTF-8 style encodings. It does
-  not check for undefined Unicode values.
+  This function is helpful for identifying invalid UTF-8 leading bytes.
+  It examines only \p c. It does not inspect continuation bytes or determine
+  whether the complete UTF-8 sequence represents a valid Unicode code point.
+
+  ASCII bytes and valid modern UTF-8 leading bytes are recognized. Continuation
+  bytes, obsolete leading bytes for 5- and 6-byte encodings, and other invalid
+  leading bytes return -1.
 
   Example:
   \code{.cpp}
@@ -73,59 +79,62 @@ static int Toupper(int ucs) {
     if (str == nullptr) return true;
     const char *src = str;
     for (int p = 0; ; p++) {
-      if (src == 0) return true;
+      if (*src == 0) return true;
       int len = fl_utf8len(*src);
       if (len == -1) {
         printf("Invalid UTF-8 character start: 0x%02x\n", (unsigned char)*src);
         return false;
       } else {
-        while (len > 0) {
+        int tlen = len;
+        while (tlen > 0) {
           if (*src == 0) {
             printf("Interrupted UTF-8 sequence at %d\n", (int)(src-str));
             return false;
           }
           src++;
-          len--;
+          tlen--;
         }
-        printf("Character %d at %d uses %d bytes\n", p, (int)(src-str), len);
+        printf("Character %d at %d uses %d bytes\n", p, (int)(src-str-len), len);
       }
     }
   }
+
+  // Examples of interest:
+  fl_utf8len('A');        // returns 1
+  fl_utf8len('\xC3');     // returns 2
+  fl_utf8len('\x80');     // returns -1: continuation byte
+  fl_utf8len('\xC0');     // returns -1: obsolete/invalid leading byte
+  fl_utf8len('\xF5');     // returns -1: outside the Unicode range
+
   \endcode
 
-  \param[in] c the first character in a UTF- sequence
-  \return the number of bytes in that sequence, or -1 if c is not a valid
-    character for UTF-8 style encoding.
+  \param[in] c the first byte of a potential UTF-8 sequence
+  \return the expected number of bytes in the sequence, or -1 if \p c is not a valid
+    leading byte for UTF-8 style encoding.
 
   \see fl_utf8len1
 */
 int fl_utf8len(char c)
 {
-  if (!(c & 0x80)) return 1;
-  if (c & 0x40) {
-    if (c & 0x20) {
-      if (c & 0x10) {
-        if (c & 0x08) {
-          if (c & 0x04) {
-            return 6;
-          }
-          return 5;
-        }
-        return 4;
-      }
-      return 3;
-    }
-    return 2;
-  }
+  const unsigned char u = (unsigned char)c;
+  if (u <= 0x7f) return 1;
+  if (u >= 0xc2 && u <= 0xdf) return 2;
+  if (u >= 0xe0 && u <= 0xef) return 3;
+  if (u >= 0xf0 && u <= 0xf4) return 4;
   return -1;
-} // fl_utf8len
-
+}
 
 /**
- Returns the byte length of the UTF-8 sequence with first byte \p c, or 1 if \p c is not valid.
+ Returns the byte length of the UTF-8 sequence with first byte \p c,
+ or 1 if \p c is not valid.
 
- This function can be used to scan faulty UTF-8 sequences, albeit
- ignoring invalid codes.
+ This function can be used to scan faulty UTF-8 sequence's leading bytes,
+ albeit ignoring invalid codes.
+
+ This function has the same behavior as fl_utf8len(), except that it returns
+ 1 rather than -1 for a byte that is not a recognized UTF-8 leading byte.
+ This guarantees that a loop scanning possibly malformed input can always
+ advance by at least one byte.
 
   Example:
   \code
@@ -141,33 +150,17 @@ int fl_utf8len(char c)
   }
   \endcode
 
-  \param[in] c the first character in a UTF-8 sequence
-  \return the number of bytes in that sequence, or 1 if c is not a recognized
-    character for UTF-8 style encoding, so a loop can continue to scan a string.
+  \param[in] c the first byte of a potential UTF-8 sequence
+  \return the expected number of bytes in the sequence, or 1 if \p c is not
+          a recognized UTF-8 leading byte, so a loop can continue to scan a string.
 
-  \see fl_utf8len  \see fl_utf8len
+  \see fl_utf8len
 */
 int fl_utf8len1(char c)
 {
-  if (!(c & 0x80)) return 1;
-  if (c & 0x40) {
-    if (c & 0x20) {
-      if (c & 0x10) {
-        if (c & 0x08) {
-          if (c & 0x04) {
-            return 6;
-          }
-          return 5;
-        }
-        return 4;
-      }
-      return 3;
-    }
-    return 2;
-  }
-  return 1;
-} // fl_utf8len1
-
+  const int len = fl_utf8len(c);
+  return len < 0 ? 1 : len;
+}
 
 /**
  Return the length in bytes of a UTF-8 string.
