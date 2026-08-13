@@ -109,10 +109,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// ---- global variables
-
-Node *in_this_only; // set if menu popped-up in window
-
 // ---- various functions
 
 /**
@@ -120,11 +116,6 @@ Node *in_this_only; // set if menu popped-up in window
  */
 void select_all_cb(Fl_Widget *,void *) {
   Node *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
-  if (in_this_only) {
-    Node *t = p;
-    for (; t && t != in_this_only; t = t->parent) {/*empty*/}
-    if (t != in_this_only) p = in_this_only;
-  }
   for (;;) {
     if (p) {
       int foundany = 0;
@@ -147,11 +138,6 @@ void select_all_cb(Fl_Widget *,void *) {
  */
 void select_none_cb(Fl_Widget *,void *) {
   Node *p = Fluid.proj.tree.current ? Fluid.proj.tree.current->parent : nullptr;
-  if (in_this_only) {
-    Node *t = p;
-    for (; t && t != in_this_only; t = t->parent) {/*empty*/}
-    if (t != in_this_only) p = in_this_only;
-  }
   for (;;) {
     if (p) {
       int foundany = 0;

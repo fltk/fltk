@@ -41,9 +41,6 @@ using namespace fluid;
 using namespace fluid::io;
 using namespace fluid::proj;
 
-/// Set a current class, so that the code of the children is generated correctly.
-Class_Node *current_class = nullptr;
-
 /**
  Check if the node tree has a top-level function with the given return type and signature.
  \param[in] return_type_regex regex for the return type of the function,
@@ -1492,9 +1489,8 @@ void Class_Node::open() {
  Write the header code that declares this class.
  */
 void Class_Node::write_code1(fluid::io::Code_Writer& f) {
-  parent_class = current_class;
-  current_class = this;
-  write_public_state = 0;
+  f.class_stack.push_back(this);
+  write_public_state = 0; // private:
   f.write_h("\n");
   write_comment_h(f);
   if (!prefix().empty())
@@ -1512,6 +1508,6 @@ void Class_Node::write_code1(fluid::io::Code_Writer& f) {
  */
 void Class_Node::write_code2(fluid::io::Code_Writer& f) {
   f.write_h("};\n");
-  current_class = parent_class;
+  f.class_stack.pop_back();
 }
 

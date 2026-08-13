@@ -474,10 +474,11 @@ void Code_Writer::write_c_indented(const std::string& codeblock, int additional_
 bool is_class_member(Node *t) {
   return    dynamic_cast<Function_Node*>(t)
          || dynamic_cast<Decl_Node*>(t)
-         || dynamic_cast<Data_Node*>(t);
-//         || dynamic_cast<Class_Node*>(t)          // FLUID can't handle a class inside a class
-//         || dynamic_cast<Widget_Class_Node*>(t)   // ???
-//         || dynamic_cast<DeclBlock_Node*>(t)      // Declaration blocks are generally not handled well
+         || dynamic_cast<Data_Node*>(t)
+         || dynamic_cast<Class_Node*>(t)        // Caution, class in a class mostly untested
+         || dynamic_cast<Widget_Class_Node*>(t) // Caution, class in a class mostly untested
+//         || dynamic_cast<DeclBlock_Node*>(t)  // Declaration blocks are generally not handled well
+          ;
 }
 
 /**
@@ -537,8 +538,16 @@ Node* Code_Writer::write_code(Node* p) {
   }
   // recursively write the code of all children
   Node* q;
-  if (p->is_widget() && p->is_class()) {
-    // Handle widget classes specially
+  if (dynamic_cast<Widget_Class_Node*>(p)) {
+    // Legacy handling for Widget_Class_Node:
+    // As the name suggests, these are widgets and classes at the same time.
+    // The implementation is a class that generates a collection of widgets
+    // in a Fl_Group of Fl_Window (or derived).
+    // Problem is, widgets are created directly as children of Widget_Class_Node
+    // instead of inside a constructor. So below we have to treat all children
+    // that  are widgets in write_code1(), and all children that are regular
+    // class members (Methods, Variables) *after* write_code2().
+    // \todo Widgets should be required to be in a constructor
     for (q = p->next; q && q->level > p->level;) {
       // note: maybe declaration blocks should be handled like comments in the context
       if (!is_class_member(q) && !is_comment_before_class_member(q)) {
@@ -568,7 +577,7 @@ Node* Code_Writer::write_code(Node* p) {
     }
 
     write_h("};\n");
-    current_widget_class = nullptr;
+    class_stack.pop_back();
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
     // write all code that come after the children
@@ -788,12 +797,26 @@ int Code_Writer::flush()
  This avoids repeating these words if the mode is already set.
  \param[in] state 0 for private, 1 for public, 2 for protected
  */
-void Code_Writer::write_public(int state) {
-  if (!current_class && !current_widget_class) return;
-  if (current_class && current_class->write_public_state == state) return;
-  if (current_widget_class && current_widget_class->write_public_state == state) return;
-  if (current_class) current_class->write_public_state = state;
-  if (current_widget_class) current_widget_class->write_public_state = state;
+void Code_Writer::write_public(int state)
+{
+  if (class_stack.empty()) {
+    return;
+  }
+  auto* top = class_stack.back();
+  auto* current_class = dynamic_cast<Class_Node*>(top);
+  auto* current_widget_class = dynamic_cast<Widget_Class_Node*>(top);
+  if (current_class) {
+    if (current_class->write_public_state == state)
+      return;
+    current_class->write_public_state = state;
+  } else if (current_widget_class) {
+    if (current_widget_class->write_public_state == state)
+      return;
+    current_widget_class->write_public_state = state;
+  } else {
+    return;
+  }
+
   switch (state) {
     case 0: write_h("private:\n"); break;
     case 1: write_h("public:\n"); break;

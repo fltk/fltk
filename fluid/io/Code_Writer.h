@@ -130,6 +130,10 @@ public:
   /// (disables binary data blocks, for example)
   bool write_codeview { false };
 
+  /// Set while we are descending inside a Class or Widget Class node, so we can
+  /// write public/private/protected keywords as needed.
+  std::vector<Node*> class_stack { };
+
 public:
   Code_Writer(Project &proj);
   Code_Writer(const Code_Writer &) = delete;

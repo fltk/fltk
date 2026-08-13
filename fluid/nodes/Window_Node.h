@@ -27,7 +27,6 @@
 class Widget_Class_Node;
 
 extern Fl_Menu_Item window_type_menu[];
-extern Widget_Class_Node *current_widget_class;
 
 void toggle_overlays(Fl_Widget *,void *);
 void toggle_guides(Fl_Widget *,void *);

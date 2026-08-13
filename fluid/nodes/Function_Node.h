@@ -36,7 +36,6 @@
 
 #include <string>
 
-extern class Class_Node *current_class;
 
 bool has_toplevel_function(const std::string& return_type_regex, const std::string& function_sig_regex);
 

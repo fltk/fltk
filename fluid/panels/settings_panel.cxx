@@ -2723,7 +2723,7 @@ static void cb_Reset(Fl_Button* o, void* v) {
   o->parent()->do_callback(o->parent(), LOAD);
   widget_browser->redraw();
   widget_browser->save_prefs();
-//ﬂ ▲ ----------~=-=~==~~=~------------~-=~~~~-~~=~-~~=~~=~- ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~==~~=~------------~~-~~~==~=-=-=-~-=--~ ▲ ﬂ//
 }
 
 static void cb_Close(Fl_Button*, void*) {
