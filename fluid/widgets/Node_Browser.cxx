@@ -645,17 +645,29 @@ void Node_Browser::load_prefs() {
   int c;
   Fl_Preferences p(Fluid.preferences, "widget_browser");
   p.get("label_color",  c, 72); label_color = c;
-  p.get("label_font",   c, FL_HELVETICA); label_font = c;
+  p.get("label_font",   c, FL_HELVETICA);
+  if (c<FL_HELVETICA || c>FL_ZAPF_DINGBATS) c = FL_HELVETICA;
+  label_font = c;
   p.get("class_color",  c, FL_FOREGROUND_COLOR); class_color = c;
-  p.get("class_font",   c, FL_HELVETICA_BOLD); class_font = c;
+  p.get("class_font",   c, FL_HELVETICA_BOLD);
+  if (c<FL_HELVETICA || c>FL_ZAPF_DINGBATS) c = FL_HELVETICA;
+  class_font = c;
   p.get("func_color",   c, FL_FOREGROUND_COLOR); func_color = c;
-  p.get("func_font",    c, FL_HELVETICA); func_font = c;
+  p.get("func_font",    c, FL_HELVETICA);
+  if (c<FL_HELVETICA || c>FL_ZAPF_DINGBATS) c = FL_HELVETICA;
+  func_font = c;
   p.get("name_color",   c, FL_FOREGROUND_COLOR); name_color = c;
-  p.get("name_font",    c, FL_HELVETICA); name_font = c;
+  p.get("name_font",    c, FL_HELVETICA);
+  if (c<FL_HELVETICA || c>FL_ZAPF_DINGBATS) c = FL_HELVETICA;
+  name_font = c;
   p.get("code_color",   c, FL_FOREGROUND_COLOR); code_color = c;
-  p.get("code_font",    c, FL_HELVETICA); code_font = c;
+  p.get("code_font",    c, FL_HELVETICA);
+  if (c<FL_HELVETICA || c>FL_ZAPF_DINGBATS) c = FL_HELVETICA;
+  code_font = c;
   p.get("comment_color",c, FL_DARK_GREEN); comment_color = c;
-  p.get("comment_font", c, FL_HELVETICA); comment_font = c;
+  p.get("comment_font", c, FL_HELVETICA);
+  if (c<FL_HELVETICA || c>FL_ZAPF_DINGBATS) c = FL_HELVETICA;
+  comment_font = c;
 }
 
 void Node_Browser::save_prefs() {

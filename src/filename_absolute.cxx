@@ -85,8 +85,8 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from, c
   const char *start = from;
   strlcpy(temp, base, tolen);
   a = temp+strlen(temp);
-  /* remove trailing '/' in current working directory */
-  if (isdirsep(*(a-1))) a--;
+  /* remove trailing '/' in current working directory - strlen(temp) may be 0 */
+  if ((a>temp) && isdirsep(*(a-1))) a--;
   /* remove intermediate . and .. names: */
   while (*start == '.') {
     if (start[1]=='.' && (isdirsep(start[2]) || start[2]==0) ) {

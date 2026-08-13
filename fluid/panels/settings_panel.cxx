@@ -2719,7 +2719,7 @@ static void cb_Reset(Fl_Button* o, void* v) {
   Node_Browser::code_color = FL_FOREGROUND_COLOR;
   Node_Browser::code_font = FL_HELVETICA;
   Node_Browser::comment_color = FL_DARK_GREEN;
-  Node_Browser::comment_font = FL_DARK_GREEN;
+  Node_Browser::comment_font = FL_HELVETICA;
   o->parent()->do_callback(o->parent(), LOAD);
   widget_browser->redraw();
   widget_browser->save_prefs();
