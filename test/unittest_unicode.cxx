@@ -25,6 +25,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Hor_Value_Slider.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_utf8.h>
 
 static const char *utf8_box_test =
   "╳╳ ██ ▏▏┏━━┓ ╔══╗ ╔═╦═╗ ██████\n"
@@ -117,3 +118,21 @@ public:
 };
 
 UnitTest unicode_font_test(UT_TEST_UNICODE, "Unicode Boxes", Ut_Unicode_Box_Test::create);
+
+// Test fl_utf8len() for invalid strings using the "Google Test" TEST() macro registration
+TEST(fl, fl_utf8len) {
+  EXPECT_EQ( fl_utf8len((char)'A'), 1);         // 'A': valid ascii
+  EXPECT_EQ(fl_utf8len1((char)'A'), 1);         // 'A': valid ascii
+  EXPECT_EQ( fl_utf8len((char)0xf4), 4);        // 0xf4: valid UTF-8
+  EXPECT_EQ(fl_utf8len1((char)0xf4), 4);        // 0xf4: valid UTF-8
+  EXPECT_EQ( fl_utf8len((char)0xc0), -1);       // invalid UTF-8: 0xc0
+  EXPECT_EQ(fl_utf8len1((char)0xc0), 1);        // invalid UTF-8: 0xc0
+  EXPECT_EQ( fl_utf8len((char)0xc1), -1);       // invalid UTF-8: 0xc1
+  EXPECT_EQ(fl_utf8len1((char)0xc1), 1);        // invalid UTF-8: 0xc1
+  for (int i = 0xf5; i <= 0xff; i++) {          // invalid UTF-8: 0xf5..0xff
+    EXPECT_EQ( fl_utf8len((char)i), -1);
+    EXPECT_EQ(fl_utf8len1((char)i), 1);
+  }
+  return true;
+}
+
