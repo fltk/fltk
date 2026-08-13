@@ -154,7 +154,7 @@ Fl_Terminal::Selection::Selection(Fl_Terminal *terminal)
 
 /**
   Return selection start/end.
-  Ensures (start < end) to allow walking 'forward' thru selection,
+  Ensures (start <= end) to allow walking 'forward' thru selection,
   left-to-right, top-to-bottom.
 
   Returns:
@@ -166,7 +166,7 @@ bool Fl_Terminal::Selection::get_selection(int &srow,int &scol,
   srow = srow_; scol = scol_;
   erow = erow_; ecol = ecol_;
   if (!is_selection_) return false;
-  // Ensure (start < end) on return
+  // Ensure (start <= end) on return
   if (srow_ == erow_ && scol_ > ecol_) swap(scol, ecol);
   if (srow_ > erow_)
     { swap(srow, erow); swap(scol, ecol); }
@@ -223,7 +223,7 @@ bool Fl_Terminal::Selection::extend(int row, int col, bool char_right) {
   bool changed = (   (osrow != srow_) || (oerow != erow_)
                   || (oscol != scol_) || (oecol != ecol_)
                   || (oselection != is_selection_) );
-  return !changed;
+  return changed;
 }
 
 // End selection (turn dragging() off)
@@ -347,7 +347,7 @@ bool Fl_Terminal::EscapeSeq::parse_in_progress(void) const {
   return (esc_mode_ == 0) ? false : true;
 }
 
-// See if we're in the middle of parsing an ESC sequence
+// See if the escape sequence is a CSI sequence
 bool Fl_Terminal::EscapeSeq::is_csi(void) const { return csi_; }
 
 // Return with default value (if none) or vals[0] (if at least one val spec'd).
@@ -386,7 +386,7 @@ void Fl_Terminal::EscapeSeq::restore_cursor(int &row, int &col) {
 int Fl_Terminal::EscapeSeq::parse(char c) {
   // NOTE: During parsing esc_mode() will be:
   //             0 - reset/not parsing
-  //          0x1b - ESC received, expecting next one of A/B/C/D or '['
+  //          0x1b - ESC received, expecting '[' or a supported final character
   //           '[' - actively parsing CSI sequence, e.g. ESC[
   //
   //       At the /end/ of parsing, after 'completed' is returned,
@@ -608,7 +608,7 @@ void Fl_Terminal::Utf8Char::text_utf8(const char *text,
 //
 void Fl_Terminal::Utf8Char::text_ascii(char c, const CharStyle& style) {
   // Signed char vals above 0x7f are /negative/, so <0x20 check covers those
-  if (c < 0x20 || c >= 0x7e) return;           // ASCII non-printable?
+  if (c < 0x20 || c > 0x7e) return;           // ASCII non-printable?
   text_utf8(&c, 1, style);
 }
 
@@ -733,7 +733,7 @@ void Fl_Terminal::RingBuffer::new_copy(int drows, int dcols, int hrows, const Ch
   // Create new buffer
   int addhist       = disp_rows() - drows;                  // adjust history use
   int new_ring_rows = (drows+hrows);
-  int new_hist_use  = clamp(hist_use_ + addhist, 0, hrows); // clamp incase new_hist_rows smaller than old
+  int new_hist_use  = clamp(hist_use_ + addhist, 0, hrows); // clamp in case new_hist_rows smaller than old
   int new_nchars    = (new_ring_rows * dcols);
   Utf8Char *new_ring_chars = new Utf8Char[new_nchars];      // Create new ring buffer (†)
   // Preserve old contents in new buffer
@@ -1023,8 +1023,8 @@ void Fl_Terminal::RingBuffer::create(int drows, int dcols, int hrows) {
 
 // Resize the buffer, preserve previous contents as much as possible
 void Fl_Terminal::RingBuffer::resize(int drows, int dcols, int hrows, const CharStyle& style) {
-  int  new_rows     = drows + hrows;              // old display + history rows
-  int  old_rows     = disp_rows() + hist_rows();  // new display + history rows
+  int  new_rows     = drows + hrows;              // new display + history rows
+  int  old_rows     = disp_rows() + hist_rows();  // old display + history rows
   bool cols_changed = (dcols != disp_cols());     // was there a change in total #columns?
   bool rows_changed = (new_rows != old_rows);     // was there a change in total #rows?
   // If rows or cols changed, make a NEW buffer and copy old contents.
@@ -1113,7 +1113,7 @@ Fl_Terminal::Utf8Char* Fl_Terminal::u8c_hist_row(int hrow)
   of the scrollback history.
 
   'hurow' is indexed relative to the beginning of the 'in use' part
-  of the scrollback history buffer. This may be a different from
+  of the scrollback history buffer. This may be different from
   u8c_hist_row(int) if the history was recently cleared, and there
   aren't many (or any) rows in the history buffer that have been
   populated with scrollback text yet.
@@ -1123,7 +1123,7 @@ Fl_Terminal::Utf8Char* Fl_Terminal::u8c_hist_row(int hrow)
   // Walk the entire screen history ("in use") and display to stdout
   for (int row=0; row<hist_use(); row++) {
       const Utf8Char *u8c = u8c_hist_use_row(row);            // first char in row
-      for (int col=0; col<=hist_cols(); col++,u8c++) {        // walk columns left-to-right
+      for (int col=0; col<hist_cols(); col++,u8c++) {         // walk columns left-to-right
           // ..Do things here with each u8c char..
           ::printf("%.*s", u8c->length(), u8c->text_utf8());  // show each utf8 char to stdout
       }
@@ -1139,7 +1139,7 @@ Fl_Terminal::Utf8Char* Fl_Terminal::u8c_hist_use_row(int hurow)
 /**
   Return pointer to the first u8c character in row \p drow of the display.
   - 'drow' is indexed relative to the beginning of the display buffer.
-  - This can be used to walk all columns in the specfied row, e.g.
+  - This can be used to walk all columns in the specified row, e.g.
     \code
     // Print all chars in first row of display (ASCII and UTF-8)
     Utf8Char *u8c = u8c_disp_row(0);            // first char of first display row
@@ -1156,9 +1156,9 @@ Fl_Terminal::Utf8Char* Fl_Terminal::u8c_hist_use_row(int hurow)
     // Write all chars in display up to cursor row to stdout
     for (int row=0; row<disp_rows() && row<=cursor_row(); row++) {
         const Utf8Char *u8c = u8c_disp_row(row);                // first char in row
-        for (int col=0; col<=display_cols(); col++,u8c++) {     // walk columns left-to-right
+        for (int col=0; col<disp_cols(); col++,u8c++) {         // walk columns left-to-right
             // ..Do things here with each u8c char..
-            ::printf("%.*s", u8c->text_utf8(), u8c->length());  // write each utf8 char to stdout
+            ::printf("%.*s", u8c->length(), u8c->text_utf8());  // write each utf8 char to stdout
         }
         ::printf("\n");
     }
@@ -1224,12 +1224,10 @@ void Fl_Terminal::clear_all_tabstops(void) {
   memset(tabstops_, 0, tabstops_size_);
 }
 
-// Set/clear tabstop at current cursor x position
-//    val: 0 clears tabstop, 1 sets tabstop
-//
+// Set tabstop at current cursor x position
 void Fl_Terminal::set_tabstop(void) {
   int index = clamp(cursor_col(), 0, tabstops_size_-1);    // clamp cursor pos
-  tabstops_[index] = 1;                                    // set/clr tabstop
+  tabstops_[index] = 1;                                    // set tabstop
 }
 
 // Clear tabstop at current cursor x position
@@ -1365,7 +1363,7 @@ void Fl_Terminal::refit_disp_to_screen(void) {
         if (below_cur) {                        // CASE 3: shrinking below cursor? drop lines below
           ring_.disp_rows(display_rows() - 1);  // effectively "deletes" lines below cursor
         } else {                                // CASE 4: need to move cursor + lines up into hist
-          cursor_up(-1, false);                 // move cursor down to follow ring_.resize()
+          cursor_up(1, false);                  // move cursor up to follow ring_.resize()
           // Handle shrinking ring's display up into history
           ring_.resize(display_rows()-1, dcols, hist_rows(), *current_style_);
         }
@@ -1491,7 +1489,7 @@ void Fl_Terminal::history_rows(int hrows) {
   This value will be 0 if history was recently cleared with e.g.
   clear_history() or \c "<ESC>c".
 
-  Return value will be in the range 0 .. (history_lines()-1).
+  Return value will be in the range 0 .. history_lines().
 */
 int Fl_Terminal::history_use(void) const {
   return ring_.hist_use();
@@ -1671,7 +1669,7 @@ void Fl_Terminal::textfgcolor_xterm(uchar val) {
 /**
   Sets the background text color as one of the 8 'xterm color' values.
 
-  This will be the foreground color used for all newly printed text,
+  This will be the background color used for all newly printed text,
   similar to the \c \<ESC\>[\#m escape sequence, where \# is between 40 and 47.
 
   This color will be reset to the default bg color if reset_terminal()
@@ -1707,7 +1705,7 @@ void Fl_Terminal::textbgcolor_xterm(uchar val) {
   ensuring both are set to the same value.
 
   Colors set this way will NOT be influenced by the xterm Dim/Bold color intensity attributes.
-  For that, use textcolor_xterm() instead.
+  For that, use textfgcolor_xterm() instead.
 
   \see textfgcolor(Fl_Color), textfgcolor_default(Fl_Color), textbgcolor_xterm(uchar)
 */
@@ -1933,7 +1931,7 @@ void Fl_Terminal::clear_screen_home(bool scroll_to_hist) {
   clear_screen(scroll_to_hist);
 }
 
-/// Clear from cursor to Start Of Display (EOD), like \c "<ESC>[1J".
+/// Clear from cursor to Start Of Display (SOD), like \c "<ESC>[1J".
 void Fl_Terminal::clear_sod(void) {
   for (int drow=0; drow <= cursor_.row(); drow++)
     if (drow == cursor_.row())
@@ -1945,7 +1943,7 @@ void Fl_Terminal::clear_sod(void) {
   //TODO: Clear mouse selection?
 }
 
-/// Clear from cursor to End Of Display (EOD), like \c "<ESC>[J<ESC>[0J".
+/// Clear from cursor to End Of Display (EOD), like \c "<ESC>[J" or "<ESC>[0J".
 void Fl_Terminal::clear_eod(void) {
   for (int drow=cursor_.row(); drow<disp_rows(); drow++)
     if (drow == cursor_.row())
@@ -2036,7 +2034,7 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::walk_selection(
 /**
   Return mouse selection's start/end position in the ring buffer, if any.
 
-  Ensures (start < end) to allow walking 'forward' thru selection,
+  Ensures (start <= end) to allow walking 'forward' thru selection,
   left-to-right, top-to-bottom. The row/col values are indexes into
   the entire ring buffer.
 
@@ -2051,7 +2049,7 @@ const Fl_Terminal::Utf8Char* Fl_Terminal::walk_selection(
     for (int row=srow; row<=erow; row++) {                 // walk rows of selection
       const Utf8Char *u8c = u8c_ring_row(row);             // ptr to first character in row
       int col_start = (row==srow) ? scol : 0;              // start row? start at scol
-      int col_end   = (row==erow) ? ecol : ring_cols();    // end row?   end at ecol
+      int col_end   = (row==erow) ? ecol : ring_cols()-1;  // end row?   end at ecol
       u8c += col_start;                                    // include col offset (if any)
       for (int col=col_start; col<=col_end; col++,u8c++) { // walk columns
         ..do something with each char at *u8c..
@@ -2088,7 +2086,7 @@ bool Fl_Terminal::is_inside_selection(int grow, int gcol) const {
   int check = (grow * ncols) + gcol;
   int start = (select_.srow() * ncols) + select_.scol();
   int end   = (select_.erow() * ncols) + select_.ecol();
-  if (start > end) swap(start, end);        // ensure (start < end)
+  if (start > end) swap(start, end);        // ensure (start <= end)
   return (check >= start && check <= end);
 }
 
@@ -2393,7 +2391,7 @@ void Fl_Terminal::reset_terminal(void) {
 //DEBUG }
 
 //DEBUG // Show two buffers side-by-side on stdout.
-//DEBUG //    Second buffer can be NULL to just show the a buffer.
+//DEBUG //    Second buffer can be NULL to just show the A buffer.
 //DEBUG //
 //DEBUG void Fl_Terminal::show_buffers(RingBuffer *a, RingBuffer *b) const {
 //DEBUG   int arows = a->ring_rows(), acols = a->ring_cols();
@@ -2822,7 +2820,7 @@ void Fl_Terminal::handle_escseq(char c) {
         cursor_cr();
         cursor_up(escseq.defvalmax(1,dh));
         break;
-      case 'G':                                  // <ESC>[#G - (CHA) cursor horizal absolute
+      case 'G':                                  // <ESC>[#G - (CHA) cursor horizontal absolute
         switch (clamp(tot,0,1)) {                //   │
           case 0:                                //   ├── <ESC>[G    -- move to sol
             cursor_sol();                        //   │                 default <ESC>[1G
@@ -2860,7 +2858,7 @@ cup:
         break;
       case 'J':                                  // <ESC>[#J - (ED) erase in display
         switch (clamp(tot,0,1)) {                //   │
-          case 0: clear_eol(); break;            //   ├── <ESC>[J  -- no vals: default <ESC>[0J
+          case 0: clear_eod(); break;            //   ├── <ESC>[J  -- no vals: default <ESC>[0J
           case 1:                                //   │
             switch (clamp(val0,0,3)) {           //   │
               case 0: clear_eod();     break;    //   ├── <ESC>[0J -- clear to end of display
@@ -3093,18 +3091,18 @@ void Fl_Terminal::plot_char(char c, int drow, int dcol) {
   Handles control codes and can be used to construct ANSI/XTERM
   escape sequences.
 
-  - If optional \p len isn't specified or <0, strlen(text) is used.
+  - If optional \p len isn't specified or <0, fl_utf8len1(*text) is used.
   - \p text must not be NULL.
   - \p len must not be 0.
   - \p text must be a single char only (whether UTF-8 or ASCII)
-  - \p text can be an ASCII character, though not as efficent as print_char()
+  - \p text can be an ASCII character, though not as efficient as print_char()
   - Invalid UTF-8 chars show the error character (¿) depending on show_unknown(bool).
   - Does not trigger redraws
 
   \see show_unknown(bool), handle_unknown_char()
 */
 void Fl_Terminal::print_char(const char *text, int len/*=-1*/) {
-  len = len<0 ? fl_utf8len(*text) : len;       // int(strlen(text)) : len;
+  len = len<0 ? fl_utf8len1(*text) : len;
   const bool do_scroll = true;
   if (is_ctrl(text[0])) {                      // Handle ctrl character
     handle_ctrl(*text);
@@ -3153,7 +3151,7 @@ void Fl_Terminal::utf8_cache_flush(void) {
   Append NULL terminated UTF-8 string to terminal.
 
   - If buf is NULL, UTF-8 cache buffer is cleared
-  - If optional \p len isn't specified or is -1, strlen(text) is used.
+  - If optional \p len isn't specified or is -1, strlen(buf) is used.
   - If \p len is 0 or <-1, no changes are made
   - Handles UTF-8 chars split across calls (e.g. block writes from pipes, etc)
   - Redraws are triggered automatically, depending on redraw_style()
@@ -3269,7 +3267,7 @@ void Fl_Terminal::append_ascii(const char *s) {
       Fl::wait(0.05);                                  // give fltk .05 secs of cpu to manage UI
       ssize_t bytes = read(fd, s, sizeof(s));          // read block from pipe
       if (bytes == -1 && errno == EAGAIN) continue;    // no data yet? continue
-      if (bytes > 0) G_tty->append(s);                 // append output to terminal
+      if (bytes > 0) G_tty->append(s, bytes);          // append output to terminal
       else break;                                      // end of pipe?
     }
 
@@ -3425,7 +3423,7 @@ Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L)
   the initial text buffer size based on the widget's pixel width/height, bypassing calls to
   the font system before the widget is displayed.
 
-  \note fluid uses this constructor internally to avoid font calculations that opens
+  \note fluid uses this constructor internally to avoid font calculations that open
   the display, useful for when running in a headless context. (issue 837)
 */
 Fl_Terminal::Fl_Terminal(int X,int Y,int W,int H,const char*L,int rows,int cols,int hist)
@@ -3650,7 +3648,7 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   int X = scrn_.x();
   draw_row_bg(grow, X, Y);
 
-  // Draw forground text
+  // Draw foreground text
   int  baseline = Y + current_style_->fontheight() - current_style_->fontdescent();
   int  scrollval = scrollbar->value();
   int  disp_top = (disp_srow() - scrollval);              // top row we need to view
@@ -3715,7 +3713,7 @@ void Fl_Terminal::draw_row(int grow, int Y) const {
   Draws the buffer position we are scrolled to onto the FLTK screen
   starting at pixel position Y.
 
-  This can be anywhere in the ring buffer, not just the 'active diplay';
+  This can be anywhere in the ring buffer, not just the 'active display';
   depends on what position the scrollbar is set to.
 
   Handles attributes, colors, text selections, cursor.
@@ -3999,7 +3997,7 @@ int Fl_Terminal::handle(int e) {
 
   \param[in]  lines_below_cursor  include lines below cursor, default: false
 
-  \return A string allocated with strdup(3) which must be free'd, text is UTF-8.
+  \return A string allocated with strdup(3) which must be free()ed, text is UTF-8.
 */
 const char* Fl_Terminal::text(bool lines_below_cursor) const {
   std::string lines;          // lines of text we'll return
