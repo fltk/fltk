@@ -1469,7 +1469,7 @@ int fl_wcwidth_(unsigned int ucs) {
   characters before calling fl_wcwidth(), and handle them separately.
 */
 int fl_wcwidth(const char* src) {
-  int len = fl_utf8len(*src);
+  int len = fl_utf8len1(*src);    // len->len1: issue #1576
   int ret = 0;
   unsigned int ucs = fl_utf8decode(src, src+len, &ret);
   int width = fl_wcwidth_(ucs);

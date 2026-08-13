@@ -210,8 +210,8 @@ double Fl_Input_::expandpos(
   int l;
   if (input_type()==FL_SECRET_INPUT) {
     while (p<e) {
-      l = fl_utf8len((char)p[0]);
-      if (l >= 1) n += l_secret;
+      l = fl_utf8len1((char)p[0]);    // len->len1: issue #1576
+      n += l_secret;
       p += l;
     }
   } else while (p<e) {
