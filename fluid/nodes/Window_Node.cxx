@@ -358,7 +358,8 @@ void Window_Node::setlabel(const char *n) {
 void Overlay_Window::resize(int X,int Y,int W,int H) {
   // Make sure we don't create undo checkpoints if the window does not actually change.
   // Some WMs seem to send spurious resize events.
-  if (X!=x() || Y!=y() || W!=w() || H!=h()) {
+  // Some window managers reposition the window, so ignore those changes too.
+  if ( /*X!=x() || Y!=y() ||*/ W!=w() || H!=h()) {
     // Set a checkpoint on the first resize event, ignore further resizes until
     // a different type of checkpoint is triggered.
     if (Fluid.proj.undo.checkpoint(fluid::proj::Undo::OnceType::WINDOW_RESIZE))
