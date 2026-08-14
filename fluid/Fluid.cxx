@@ -144,7 +144,8 @@ Application::Application()
  GUI dialogs or console output. fluid.exe always uses dialogs. fluid-cmd.exe,
  and all non-Windows builds, choose behavior based on the `batch_mode` flag.
  */
-int Application::run(int argc,char **argv) {
+int Application::run(int argc,char **argv)
+{
   setlocale(LC_ALL, "");      // enable multi-language errors in file chooser
   setlocale(LC_NUMERIC, "C"); // make sure numeric values are written correctly
   launch_path_ = end_with_slash(fl_getcwd_str()); // store the current path at launch
@@ -158,94 +159,136 @@ int Application::run(int argc,char **argv) {
     ::exit(0);
   }
 
-  const char *c = nullptr;
-  if (args.autodoc_path.empty())
-    c = argv[i];
+  std::string filename {};
+  if (args.autodoc_path.empty() && (i > 0) && (i < argc) && (argv[i])) {
+    filename = argv[i];
+  }
 
+  // Make sure that Fluid can handle all known image formats
   fl_register_images();
-
+  // We need the main window, even in bacth mode
   make_main_window();
 
-  if (c) {
-    if (batch_mode) {
-      proj.set_filename(c);
-    } else {
-      // In GUI mode, filenames must always be absolute.
-      proj.set_filename(fl_filename_absolute_str(c));
-    }
+  if (batch_mode) {
+    run_batch(filename);
+  } else {
+    run_interactive(argc, argv, filename);
   }
-  if (!batch_mode) {
+  return 0;
+}
+
+
+// Run in interactive mode
+void Application::run_interactive(int argc, char **argv, const std::string& filename)
+{
+  if (!filename.empty()) {
+    proj.set_filename(fl_filename_absolute_str(filename));
+  }
 #ifdef __APPLE__
-    fl_open_callback(apple_open_cb);
+  fl_open_callback(apple_open_cb);
 #endif // __APPLE__
-    Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
-    Fl_File_Icon::load_system_icons();
-    main_window->callback(exit_cb);
-    make_fluid_icon(main_window); // assign icon to main window
-    position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
-    if (g_shell_config) {
-      g_shell_config->read(preferences, fluid::Tool_Store::USER);
-      g_shell_config->update_settings_dialog();
-      g_shell_config->rebuild_shell_menu();
-    }
-    Fluid.layout_list.read(preferences, fluid::Tool_Store::USER);
-    main_window->show(argc,argv);
-    toggle_widget_bin();
-    if (!c && openlast_button->value() && history.abspath[0][0] && args.autodoc_path.empty()) {
-      // Open previous file when no file specified...
-      open_project_file(history.abspath[0]);
-    }
-    toggle_codeview_cb(nullptr,nullptr);
+  Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
+  Fl_File_Icon::load_system_icons();
+  main_window->callback(exit_cb);
+  make_fluid_icon(main_window); // assign icon to main window
+  position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
+  if (g_shell_config) {
+    g_shell_config->read(preferences, fluid::Tool_Store::USER);
+    g_shell_config->update_settings_dialog();
+    g_shell_config->rebuild_shell_menu();
+  }
+  Fluid.layout_list.read(preferences, fluid::Tool_Store::USER);
+  main_window->show(argc, argv);
+  toggle_widget_bin();
+  if (filename.empty() && openlast_button->value() && history.abspath[0][0] && args.autodoc_path.empty()) {
+    // Open previous file when no file specified...
+    open_project_file(history.abspath[0]);
+  }
+  toggle_codeview_cb(nullptr,nullptr);
+
+  proj.undo.suspend();
+  if (!filename.empty() && !fluid::io::read_file(proj, filename.c_str(),0)) {
+    fluid_message("Can't read project file '%s': %s", filename.c_str(), strerror(errno));
+  }
+  proj.undo.resume();
+  proj.set_modflag(0);
+  proj.undo.clear();
+  if (!proj.tree.empty())
+    mergeback_on_load();
+
+  // Set (but do not start) timer callback for external editor updates
+  ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
+
+#ifndef NDEBUG
+  // check if the user wants FLUID to generate image for the user documentation
+  if (!args.autodoc_path.empty()) {
+    run_autodoc(args.autodoc_path);
+    proj.set_modflag(0, 0);
+    quit();
+    return;
+  }
+#endif
+
+  start_auto_mergeback();
+  Fl::run();
+
+  proj.undo.clear();
+  return;
+}
+
+// Run in batch mode
+void Application::run_batch(const std::string& filename)
+{
+  if (!filename.empty()) {
+    proj.set_filename(filename);
   }
   proj.undo.suspend();
-  if (c && !fluid::io::read_file(proj, c,0)) {
-    fluid_message("Can't read project file '%s': %s", c, strerror(errno));
+  if (!filename.empty() && !fluid::io::read_file(proj, filename.c_str(),0)) {
+    fluid_message("Can't read project file '%s': %s", filename.c_str(), strerror(errno));
     if (batch_mode) exit(1);
   }
   proj.undo.resume();
 
   // command line args override code and header filenames from the project file
   // in batch mode only
-  if (batch_mode) {
-    if (!args.code_filename.empty()) {
-      proj.code_file_set = 1;
-      proj.code_file_name = args.code_filename;
-    }
-    if (!args.header_filename.empty()) {
-      proj.header_file_set = 1;
-      proj.header_file_name = args.header_filename;
-    }
-    if (!args.strings_filename.empty()) {
-      proj.strings_file_set = 1;
-      proj.strings_file_name = args.strings_filename;
-    }
-    if (args.mergeback_mode > 0) {
-      // ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE
-      // -mb=info
-      proj::Mergeback::Task task = proj::Mergeback::Task::INFO;
-      // -mb=ask
-      if (args.mergeback_mode == 2) task = proj::Mergeback::Task::INTERACTIVE;
-      // -mb=apply
-      if (args.mergeback_mode == 3) task = proj::Mergeback::Task::APPLY_IF_SAFE;
-      int ret = merge_back(
-        proj,
-        proj.codefile_path() + proj.codefile_name(),
-        proj.projectfile_path() + proj.projectfile_name(),
-        task
-      );
-      if (ret < 0) {
-        printf("\n");
-        fluid::alert("Fluid", "Operation cancelled.");
-        exit(1); // error in mergeback
-      } else if (ret > 0) {
-        printf("\n");
-        fluid::message("Fluid", "Mergeback applied.");
-      }
+  if (!args.code_filename.empty()) {
+    proj.code_file_set = 1;
+    proj.code_file_name = args.code_filename;
+  }
+  if (!args.header_filename.empty()) {
+    proj.header_file_set = 1;
+    proj.header_file_name = args.header_filename;
+  }
+  if (!args.strings_filename.empty()) {
+    proj.strings_file_set = 1;
+    proj.strings_file_name = args.strings_filename;
+  }
+  if (args.mergeback_mode > 0) {
+    // ANALYSE = 0, INTERACTIVE, APPLY, APPLY_IF_SAFE
+    // -mb=info
+    proj::Mergeback::Task task = proj::Mergeback::Task::INFO;
+    // -mb=ask
+    if (args.mergeback_mode == 2) task = proj::Mergeback::Task::INTERACTIVE;
+    // -mb=apply
+    if (args.mergeback_mode == 3) task = proj::Mergeback::Task::APPLY_IF_SAFE;
+    int ret = merge_back(
+      proj,
+      proj.codefile_path() + proj.codefile_name(),
+      proj.projectfile_path() + proj.projectfile_name(),
+      task
+    );
+    if (ret < 0) {
+      printf("\n");
+      fluid::alert("Fluid", "Operation cancelled.");
+      exit(1); // error in mergeback
+    } else if (ret > 0) {
+      printf("\n");
+      fluid::message("Fluid", "Mergeback applied.");
     }
   }
 
   if (args.update_file) {            // fluid -u
-    fluid::io::write_file(proj, c, 0);
+    fluid::io::write_file(proj, filename.c_str(), 0);
     if (!args.compile_file)
       exit(0);
   }
@@ -258,31 +301,7 @@ int Application::run(int argc,char **argv) {
   }
 
   // don't lock up if inconsistent command line arguments were given
-  if (batch_mode)
-    exit(0);
-
-  proj.set_modflag(0);
-  proj.undo.clear();
-  if (!proj.tree.empty()) mergeback_on_load();
-
-  // Set (but do not start) timer callback for external editor updates
-  ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
-
-#ifndef NDEBUG
-  // check if the user wants FLUID to generate image for the user documentation
-  if (!args.autodoc_path.empty()) {
-    run_autodoc(args.autodoc_path);
-    proj.set_modflag(0, 0);
-    quit();
-    return 0;
-  }
-#endif
-
-  start_auto_mergeback();
-  Fl::run();
-
-  proj.undo.clear();
-  return 0;
+  exit(0);
 }
 
 
@@ -1094,6 +1113,7 @@ void Application::make_main_window() {
     overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
     guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
     restricted_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_restricted);
+
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();

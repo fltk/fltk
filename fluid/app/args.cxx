@@ -31,8 +31,9 @@ using namespace fluid::app;
 
  \param[in] argc number of arguments in the list
  \param[in] argv pointer to an array of arguments
- \return 0 if the args were handled successfully, -1 if there was an error
-    and the usage message was shown.
+ \return 0 if the args were handled successfully, but no filename was given
+ \return -1, if there was an error and the usage message was shown.
+ \return the index of the first non-option argument, which is expected to be a .fl filename
 
  \todo argument to override the application directory, helpful when running in batch mode
  \todo argument to run a specific shell command as set in shell_command list
@@ -83,7 +84,11 @@ int Args::load(int argc,char **argv) {
 #endif
     return -1;
   }
-  return i;
+  if (argv[i] && (argv[i][0])) {
+    // a filename was given
+    return i;
+  }
+  return 0;
 }
 
 int Args::arg_cb(int argc, char** argv, int& i) {

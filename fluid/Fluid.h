@@ -81,6 +81,10 @@ class Application {
   void create_tmpdir();
   // Delete the temporary directory and all its contents.
   void delete_tmpdir();
+  // Run in interactive mode
+  void run_interactive(int argc, char **argv, const std::string& filename);
+  // Run in batch mode
+  void run_batch(const std::string& filename);
 
 public: // Member Variables
   /// Application wide preferences
