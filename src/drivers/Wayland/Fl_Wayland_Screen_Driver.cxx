@@ -2067,7 +2067,10 @@ void Fl_Wayland_Screen_Driver::default_cursor(struct wl_cursor *cursor) {
 
 
 struct wl_cursor *Fl_Wayland_Screen_Driver::cache_cursor(const char *cursor_name) {
-  return wl_cursor_theme_get_cursor(seat->cursor_theme, cursor_name);
+  if (seat->cursor_theme)
+    return wl_cursor_theme_get_cursor(seat->cursor_theme, cursor_name);
+  else
+    return seat->default_cursor;
 }
 
 
