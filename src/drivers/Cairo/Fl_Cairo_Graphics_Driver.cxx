@@ -1163,19 +1163,18 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
   descent = pango_font_metrics_get_descent(metrics);
-/* Function pango_font_metrics_get_height() giving the line height of a pango font
- appears with pango version 1.44. However, with pango version 1.48.10 and below,
- this function gives values that make the underscore invisible on lowdpi display
- and at 100% scaling (the underscore becomes visible starting at 120% scaling).
- With pango version 1.50.6 (Ubuntu 22.04) this problem disappears.
- Consequently, function pango_font_metrics_get_height() is not used until version 1.50.6
-*/
-//#if PANGO_VERSION_CHECK(1,44,0)
-#if PANGO_VERSION_CHECK(1,50,6)
-  line_height = pango_font_metrics_get_height(metrics); // 1.44
-#else
-  line_height = (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) * 1.025 + 0.5;
-#endif
+/*
+ Pango documents that function pango_font_metrics_get_height() gives
+ "the recommended distance between successive baselines in wrapped text".
+ In general pango_font_metrics_get_height() = ascent + descent,
+ so the recommended line height equals ascent + descent, as expected by FLTK.
+ However, pango_font_metrics_get_height() is sometimes < ascent + descent
+ (e.g., this happens when size = 11 for all FLTK standard fonts)
+ and that results in underscore not being reliably displayed by FLTK text widgets.
+ Therefore, we use ascent + descent rather than pango_font_metrics_get_height()
+ to compute the distance between successive lines of text (see #1572).
+ */
+  line_height = ascent + descent;
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
 //fprintf(stderr, "[%s](%d) ascent=%d descent=%d line_height=%d\n", name, size, ascent, descent, line_height);
