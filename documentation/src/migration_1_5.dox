@@ -75,19 +75,22 @@ functions or methods, for instance https://www.fltk.org/doc-1.4/deprecated.html.
 The following (possibly incomplete) list can help to identify and replace
 these removed methods and functions.
 
-Removed Symbol                          | Please Replace With ...
-----------------------------------------|-------------------------
-Fl::release()                           | Fl::grab(0)
-Fl::set_idle(Fl_Old_Idle_Handler cb)    | Fl::add_idle(cb [, data])
-fl_ask(const char *fmt,...)             | fl_choice()
-fl_clip(int, int, int, int)             | fl_push_clip(int x, int y, int w, int h)
-Fl_Group::focus(Fl_Widget *W)           | (Fl_Widget*) W->take_focus()
-Fl_Menu_Item::check()                   | Fl_Menu_Item::set()
-Fl_Menu_Item::checked() const           | int Fl_Menu_Item::value() const
-Fl_Menu_Item::uncheck()                 | Fl_Menu_Item::clear()
-Fl_Widget::color2() const               | Fl_Widget::selection_color() const
-Fl_Widget::color2(unsigned)             | Fl_Widget::selection_color(unsigned)
-
+Removed Symbol                            | Please Replace With ...
+------------------------------------------|-------------------------
+Fl::release()                             | Fl::grab(0)
+Fl::set_idle(Fl_Old_Idle_Handler cb)      | Fl::add_idle(cb [, data])
+fl_ask(const char *fmt,...)               | fl_choice()
+fl_clip(int, int, int, int)               | fl_push_clip(int x, int y, int w, int h)
+Fl_Group::focus(Fl_Widget *W)             | (Fl_Widget*) W->take_focus()
+Fl_Menu_Item::check()                     | Fl_Menu_Item::set()
+Fl_Menu_Item::checked() const             | int Fl_Menu_Item::value() const
+Fl_Menu_Item::uncheck()                   | Fl_Menu_Item::clear()
+Fl_Widget::color2() const                 | Fl_Widget::selection_color() const
+Fl_Widget::color2(unsigned)               | Fl_Widget::selection_color(unsigned)
+void Fl_File_Input::errorcolor(Fl_Color)  | no replacement (not unused)
+Fl_Color Fl_File_Input::errorcolor()      | no replacement (was FL_RED)
+static int Fl_Browser_::scrollbar_width() | static int Fl::scrollbar_size()
+void Fl_Browser_::scrollbar_width(int)    | Fl_Browser_::scrollbar_size(int)
 
 
 \section migration_1_5_deprecated More Deprecated Methods and Functions
