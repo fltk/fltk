@@ -493,20 +493,14 @@ int Fl_Screen_Driver::scale_handler(int event)
 
       if (Fl::event_key() == '=') zoom = zoom_in;
 
+      // The concerns described in the following note are fixed using XKB-X11
+      // that makes FLTK aware of changes to the selected keyboard layout. Manolo, June 2026.
+
       // Note: Fl::event_key() is often incorrect under X11 *if* the selected keyboard
       // layout is *not* the primary one in the keyboard selection list, e.g. under Gnome.
       // The observation is that Fl::event_key() is erroneously derived from the primary
       // keyboard layout instead. This can be very confusing and I don't know why this
       // happens. Albrecht-S, Oct 2024, on Debian 12 (Bookworm aka Stable as of now).
-
-      // Example: 0xfe51 ("dead_acute") is sent by the '=' key of the US layout if the
-      // primary layout is German. This *would* be the correct key value for the German
-      // keyboard layout but not for the US layout.
-      // The following statement would work around this for this very special case but
-      // this should IMHO not be done. A valid workaround by the user is to make the
-      // *used* layout the first in the keyboard layout selection list!
-
-      // else if (Fl::event_key() == 0xfe51) zoom = zoom_in; // dead_acute, see above
     }
   }
   if (zoom != none) {
