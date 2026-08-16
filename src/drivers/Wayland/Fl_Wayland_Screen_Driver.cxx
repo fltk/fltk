@@ -52,6 +52,7 @@
 #include <poll.h>
 #include <errno.h>
 #include <string.h> // for strerror()
+#include <math.h> // floorf()
 #include <map>
 
 extern "C" {
@@ -394,27 +395,52 @@ static void pointer_axis(void *data, struct wl_pointer *wl_pointer,
   Fl_Window *win = Fl_Wayland_Window_Driver::surface_to_window(seat->pointer_focus);
   if (!win) return;
   wld_event_time = time;
-  int delta = wl_fixed_to_int(value);
-  if (abs(delta) >= 10) delta /= 10;
-  // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%d\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
+  // Delta values on Wayland are in "pixels". A line is assumed to be 10 pixels, so mouse wheel
+  // increments are often +/-10.0 pixels per detent. FLTK expects deltas to be in "lines", so we divide by 10.
+  // Note that this is a heuristic, and the actual number of pixels per line may vary depending on 
+  // the device and user settings.
+  // Also note that there are mice with hires wheels (no detents but smooth scrolling)
+  // and touchpads with two-finger scrolling, which can produce fractional pixel values.
+  float delta = (float)wl_fixed_to_double(value) / 10.0f;
+  // fprintf(stderr, "FL_MOUSEWHEEL: %c delta=%f\n", axis==WL_POINTER_AXIS_HORIZONTAL_SCROLL?'H':'V', delta);
   // allow both horizontal and vertical movements to be processed by the widget
   if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL) {
     if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
+      Fl::e_dx_f = 0.0f;
+      Fl::e_dy_f = delta;
       Fl::e_dx = 0;
-      Fl::e_dy = delta;
+      Fl::e_dy_err += Fl::e_dy_f;
+      float dyi = floorf(Fl::e_dy_err);
+      Fl::e_dy_err -= dyi;
+      Fl::e_dy = (int)dyi;
     } else { // shift key not pressed (normal behavior): send horizontal mousewheel event
-      Fl::e_dx = delta;
+      Fl::e_dx_f = delta;
+      Fl::e_dy_f = 0.0f;
+      Fl::e_dx_err += Fl::e_dx_f;
+      float dxi = floorf(Fl::e_dx_err);
+      Fl::e_dx_err -= dxi;
+      Fl::e_dx = (int)dxi;
       Fl::e_dy = 0;
     }
     Fl::handle(FL_MOUSEWHEEL, win->top_window());
   }
   if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL) {
     if (Fl::event_shift()) { // shift key pressed: send horizontal mousewheel event
-      Fl::e_dx = delta;
+      Fl::e_dx_f = delta;
+      Fl::e_dy_f = 0.0f;
+      Fl::e_dx_err += Fl::e_dx_f;
+      float dxi = floorf(Fl::e_dx_err);
+      Fl::e_dx_err -= dxi;
+      Fl::e_dx = (int)dxi;
       Fl::e_dy = 0;
     } else {// shift key not pressed (normal behavior): send vertical mousewheel event
+      Fl::e_dx_f = 0.0f;
+      Fl::e_dy_f = delta;
       Fl::e_dx = 0;
-      Fl::e_dy = delta;
+      Fl::e_dy_err += Fl::e_dy_f;
+      float dyi = floorf(Fl::e_dy_err);
+      Fl::e_dy_err -= dyi;
+      Fl::e_dy = (int)dyi;
     }
     Fl::handle(FL_MOUSEWHEEL, win->top_window());
   }
@@ -427,6 +453,12 @@ static struct wl_pointer_listener pointer_listener = {
   pointer_motion,
   pointer_button,
   pointer_axis
+  /* since Wayland INterface Version 5:
+  frame,
+  pointer_axis_source, // could be used to differentiate scroll wheel and touch pad.
+  axis_stop,
+  axis_discrete
+  */
 };
 
 

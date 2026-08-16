@@ -62,6 +62,11 @@ int             Fl::damage_,
                 Fl::scrollbar_size_ = 16,
                 Fl::menu_linespacing_ = 4;      // 4: was a local macro in Fl_Menu.cxx called "LEADING"
 
+float           Fl::e_dx_err = 0.5f;
+float           Fl::e_dy_err = 0.5f;
+float           Fl::e_dx_f = 0.0f;
+float           Fl::e_dy_f = 0.0f;
+
 char            *Fl::e_text = (char *)"";
 int             Fl::e_length;
 const char      *Fl::e_clipboard_type = "";
