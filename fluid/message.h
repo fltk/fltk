@@ -38,7 +38,7 @@ namespace fluid {
 
 namespace msg {
 
-using Option = struct { const std::string &label; char key; };
+using Option = struct Option { const std::string &label; char key; };
 constexpr int CLOSE = -2;
 constexpr int ESC = -1;
 constexpr int ABORT = 0;
