@@ -1728,7 +1728,7 @@ content  key    keyboard layout
       } // case WM_DEADCHAR ... WM_SYSCHAR
 
       case WM_MOUSEWHEEL: {
-        float delta = (HIWORD(wParam)) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
+        float delta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
         if (delta == 0.0f) // nothing to do
           return 0;
         if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
@@ -1750,9 +1750,10 @@ content  key    keyboard layout
         }
         Fl::handle(FL_MOUSEWHEEL, window);
         return 0;
+      }
 
       case WM_MOUSEHWHEEL: {
-        float delta = (HIWORD(wParam)) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
+        float delta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
         if (delta == 0.0f) // nothing to do
           return 0;
         if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
