@@ -275,7 +275,7 @@ int fluid::big_choice(const std::string &title, const std::string &message,
         Dialog* dlg = (Dialog*)win->user_data();
         dlg->result = fl_int(data);
         dlg->ok->activate();
-    }, fl_voidptr(i));
+    }, fl_voidptr((long)i));
     dlg.choice[i]->shortcut(option[i].key);
   }
   dlg.ok = new Fl_Return_Button(dlg.win->w()-220, dlg.win->h() - 10 - 25, 100, 25, "OK");
