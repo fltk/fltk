@@ -1163,18 +1163,11 @@ Fl_Cairo_Font_Descriptor::Fl_Cairo_Font_Descriptor(const char* name, Fl_Fontsize
   PangoFontMetrics *metrics = pango_fontset_get_metrics(fontset);
   ascent = pango_font_metrics_get_ascent(metrics);
   descent = pango_font_metrics_get_descent(metrics);
-/*
- Pango documents that function pango_font_metrics_get_height() gives
- "the recommended distance between successive baselines in wrapped text".
- In general pango_font_metrics_get_height() = ascent + descent,
- so the recommended line height equals ascent + descent, as expected by FLTK.
- However, pango_font_metrics_get_height() is sometimes < ascent + descent
- (e.g., this happens when size = 11 for all FLTK standard fonts)
- and that results in underscore not being reliably displayed by FLTK text widgets.
- Therefore, we use ascent + descent rather than pango_font_metrics_get_height()
- to compute the distance between successive lines of text (see #1572).
- */
-  line_height = ascent + descent;
+  #if PANGO_VERSION_CHECK(1,44,0)
+    line_height = pango_font_metrics_get_height(metrics); // 1.44
+  #else
+    line_height = ascent + descent;
+  #endif
   pango_font_metrics_unref(metrics);
   g_object_unref(fontset);
 //fprintf(stderr, "[%s](%d) ascent=%d descent=%d line_height=%d\n", name, size, ascent, descent, line_height);
@@ -1308,7 +1301,7 @@ void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
-  cairo_translate(cairo_, x - 0.5, y - (fd->line_height - fd->descent) / float(PANGO_SCALE) - 0.5);
+  cairo_translate(cairo_, x - 0.5, y - fd->ascent / float(PANGO_SCALE) - 0.5);
   str = clean_utf8(str, n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_); // 1.1O
@@ -1393,7 +1386,7 @@ void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int
   double f = PANGO_SCALE;
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
   dx = ink_rect.x / f;
-  dy = (ink_rect.y - fd->line_height + fd->descent) / f;
+  dy = (ink_rect.y - fd->ascent) / f;
   w = ceil(ink_rect.width / f);
   h = ceil(ink_rect.height / f);
 }
