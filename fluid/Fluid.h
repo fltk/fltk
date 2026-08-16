@@ -29,6 +29,7 @@
 
 #include <string>
 #include <exception>
+#include <stdexcept>
 
 constexpr int BROWSERWIDTH = 300;
 constexpr int BROWSERHEIGHT = 500;
