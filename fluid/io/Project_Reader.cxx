@@ -412,7 +412,15 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
     deselect();
   else
     proj_.reset();
-  read_children(Fluid.proj.tree.current, merge, strategy);
+
+  try {
+    read_children(Fluid.proj.tree.current, merge, strategy);
+  } catch (const fluid::UserCanceledException&) {
+    // User chose abort - silently return or log
+  } catch (const fluid::ReadException& e) {
+    fluid_alert("Error reading file: %s", e.what());
+  }
+
   // clear this
   Fluid.proj.tree.current = nullptr;
   // Force menu items to be rebuilt...
@@ -448,7 +456,9 @@ int Project_Reader::read_project(const char *filename, int merge, Strategy strat
 void Project_Reader::read_error(const char *format, ...) {
   va_list args;
   va_start(args, format);
-  fluid_alert(format, args);
+  if (fluid_choice("Fluid: ERROR reading project file", format, "Abort", "Ignore", nullptr, args) == msg::ABORT) {
+    throw fluid::UserCanceledException();
+  }
   va_end(args);
 }
 

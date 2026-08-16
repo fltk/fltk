@@ -18,6 +18,11 @@
 #include "Fluid.h"
 
 #include <FL/fl_ask.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Check_Button.H>
+
 #include "../src/flstring.h"
 
 #undef min
@@ -97,14 +102,18 @@ int fluid_choice(const char *fmt, const char *b0, const char *b1, const char *b2
 }
 
 int fluid_choice(const char *fmt, const char *b0, const char *b1, const char *b2, va_list ap) {
+  return fluid_choice("Fluid", fmt, b0, b1, b2, ap);
+}
+
+int fluid_choice(const char *title, const char *fmt, const char *b0, const char *b1, const char *b2, va_list ap) {
   char buffer[8096];
   vsnprintf(buffer, sizeof(buffer), fmt, ap);
   if (b0 && b1 && b2) {
-    return fluid::choice("Fluid", buffer, { {b0, b0[0]}, {b1, b1[0]}, {b2, b2[0]} });
+    return fluid::choice(title, buffer, { {b0, b0[0]}, {b1, b1[0]}, {b2, b2[0]} });
   } else if (b0 && b1) {
-    return fluid::choice("Fluid", buffer, { {b0, b0[0]}, {b1, b1[0]} });
+    return fluid::choice(title, buffer, { {b0, b0[0]}, {b1, b1[0]} });
   } else if (b0) {
-    return fluid::choice("Fluid", buffer, { {b0, b0[0]} });
+    return fluid::choice(title, buffer, { {b0, b0[0]} });
   } else {
     return -1;
   }
@@ -220,3 +229,75 @@ int fluid::choice(const std::string &title, const std::string &message,
   }
 }
 
+int fluid::big_choice(const std::string &title, const std::string &message,
+    const std::vector<msg::Option> &option)
+{
+  if (Fluid.console_mode()) return fluid::choice(title, message, option);
+  struct Dialog {
+    Fl_Window* win;
+    Fl_Box* symbol, *msg;
+    Fl_Button* ok;
+    Fl_Button* cancel;
+    Fl_Check_Button* choice[3];
+    int result = msg::ESC;
+  } dlg;
+  dlg.win = new Fl_Window(400, 400, title.c_str());
+  dlg.win->set_modal();
+  dlg.win->callback(
+    [](Fl_Widget* w, void* data) {
+      Fl_Window* win = (Fl_Window*)w;
+      Dialog* dlg = (Dialog*)data;
+      dlg->result = msg::ESC;
+      win->hide();
+    }, &dlg);
+  dlg.symbol = new Fl_Box(10, 10, 50, 50, "?");
+  dlg.symbol->box(FL_THIN_UP_BOX);
+  dlg.symbol->labelfont(FL_COURIER_BOLD);
+  dlg.symbol->labelsize(42);
+  dlg.symbol->labeltype(FL_SHADOW_LABEL);
+  dlg.symbol->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
+  dlg.symbol->labelcolor(FL_BLUE);
+  dlg.symbol->color(FL_WHITE);
+  fl_font(FL_HELVETICA, 12);
+  int w = 320, h = 0;
+  fl_measure(message.c_str(), w, h, 0);
+  if (h < 50) h = 50;
+  dlg.msg = new Fl_Box(70, 10, 320, h, message.c_str());
+  dlg.msg->box(FL_FLAT_BOX);
+  dlg.msg->align(FL_ALIGN_TOP_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_WRAP);
+  dlg.win->size(400, 10 + h + 18 + option.size() * 28 + 10 + 25 + 10);
+  for (size_t i = 0; i < option.size(); ++i) {
+    dlg.choice[i] = new Fl_Check_Button(70, 10 + h + 18 + i * 28, 320, 25, option[i].label.c_str());
+    dlg.choice[i]->type(FL_RADIO_BUTTON);
+    dlg.choice[i]->callback(
+      [](Fl_Widget* w, void* data) {
+        Fl_Window* win = w->window();
+        Dialog* dlg = (Dialog*)win->user_data();
+        dlg->result = fl_int(data);
+        dlg->ok->activate();
+    }, fl_voidptr(i));
+    dlg.choice[i]->shortcut(option[i].key);
+  }
+  dlg.ok = new Fl_Return_Button(dlg.win->w()-220, dlg.win->h() - 10 - 25, 100, 25, "OK");
+  dlg.ok->deactivate();
+  dlg.ok->callback(
+    [](Fl_Widget* w, void* data) {
+      w->window()->hide();
+    }, &dlg);
+  dlg.cancel = new Fl_Button(dlg.win->w()-110, dlg.win->h() - 10 - 25, 100, 25, "Cancel");
+  dlg.cancel->callback(
+    [](Fl_Widget* w, void* data) {
+      Dialog* dlg = (Dialog*)data;
+      dlg->result = msg::ESC;
+      w->window()->hide();
+    }, &dlg);
+  dlg.win->show();
+  Fl_Window* gg = Fl::grab();
+  if (gg) Fl::grab(nullptr);
+  while (dlg.win->shown()) {
+    Fl::wait();
+  }
+  delete dlg.win;
+  if (gg) Fl::grab(gg);
+  return dlg.result;
+}
