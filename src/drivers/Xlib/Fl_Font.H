@@ -34,6 +34,7 @@ class Fl_Xlib_Font_Descriptor : public Fl_Font_Descriptor {
 public:
 #  if USE_XFT || FLTK_USE_CAIRO
 #    if USE_PANGO
+        int ascent_;
         int descent_;
         int height_;
         int **width;

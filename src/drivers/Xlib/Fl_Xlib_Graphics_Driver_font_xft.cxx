@@ -1,7 +1,7 @@
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1160,6 +1160,7 @@ PangoContext *Fl_Xlib_Graphics_Driver::context() {
   return pctxt_;
 }
 
+static void fl_pango_layout_get_pixel_extents(PangoLayout *layout, int &dx, int &dy, int &w, int &h, int desc, int lheight, int &y_correction);
 
 void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   if (!size) return;
@@ -1189,16 +1190,23 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Xlib_Font_Descriptor *fd = (Fl_Xlib_Font_Descriptor*)font_descriptor();
   if (!fd->height_) {
     PangoFont *pfont = pango_font_map_load_font(pfmap_, pctxt_, pfd_array[fnum]);
-    PangoRectangle logical_rect;
-    pango_font_get_glyph_extents(pfont, /*PangoGlyph glyph*/'p', NULL, &logical_rect);
-    fd->descent_ = PANGO_DESCENT(logical_rect)/PANGO_SCALE;
-    fd->height_ = logical_rect.height/PANGO_SCALE;
-    if (fd->height_ == 0) { // this occurs with some fonts
-      PangoFontMetrics *pfmt = pango_font_get_metrics(pfont, pango_script_get_sample_language(PANGO_SCRIPT_LATIN) /* 1.4 */);
-      fd->descent_ = pango_font_metrics_get_descent(pfmt)/PANGO_SCALE;
-      fd->height_ = (pango_font_metrics_get_ascent(pfmt) + pango_font_metrics_get_descent(pfmt))/PANGO_SCALE ;
-      pango_font_metrics_unref(pfmt);
-    }
+    PangoFontMetrics *pfmt = pango_font_get_metrics(pfont,
+                                            pango_language_get_default() /* 1.16*/);
+    fd->descent_ = pango_font_metrics_get_descent(pfmt)/PANGO_SCALE;
+    fd->ascent_ = pango_font_metrics_get_ascent(pfmt)/PANGO_SCALE;
+#if PANGO_VERSION_CHECK(1,44,0)
+    fd->height_ = pango_font_metrics_get_height(pfmt)/PANGO_SCALE; // 1.44
+#else
+    fd->height_ = fd->ascent_ + fd->descent_;
+#endif
+    pango_font_metrics_unref(pfmt);
+    g_object_unref(pfont);
+    // make sure '_' is visible
+    int  dx, dy, w, h, y_correction;
+    pango_layout_set_font_description(playout_, pfd_array[fnum]);
+    pango_layout_set_text(playout_, "_", 1);
+    fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, fd->descent_, fd->height_, y_correction);
+    fd->ascent_ += y_correction;
   }
 }
 
@@ -1287,13 +1295,11 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
     XftDrawChange(draw_, draw_window = fl_window);
   XftDrawSetClip(draw_, region);
 
-  int  dx, dy, w, h, y_correction, desc = descent_unscaled(), lheight = height_unscaled();
-  fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, desc, lheight, y_correction);
   if (from_right) {
-    x -= w;
+    x -= width_unscaled(str, n);
   }
-  pango_xft_render_layout(draw_, &color, playout_, x * PANGO_SCALE,
-                          (y - y_correction  - lheight + desc) * PANGO_SCALE ); // 1.8
+  int asc = ((Fl_Xlib_Font_Descriptor*)font_descriptor())->ascent_;
+  pango_xft_render_layout(draw_, &color, playout_, x * PANGO_SCALE, (y - asc) * PANGO_SCALE );// 1.8
   }
 
 // cache the widths of single Unicode characters
