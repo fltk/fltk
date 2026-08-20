@@ -42,6 +42,8 @@ class FL_EXPORT Fl_Scrollbar : public Fl_Slider {
 
   int linesize_;
   int pushed_;
+  // error for fractional scrolling
+  float scroll_err_ = 0.5f;
   static void timeout_cb(void*);
   void increment_cb();
 protected:

@@ -130,14 +130,24 @@ int Fl_Scrollbar::handle(int event) {
     return Fl_Slider::handle(event, X,Y,W,H);
   case FL_MOUSEWHEEL :
     if (horizontal()) {
-      if (Fl::e_dx==0) return 0;
+      // use hires scrolling input and map it to scrollbar line resolution
+      if (Fl::e_dx_f==0.0f) return 0;
+      // map pixel scrolling to line scrolling
       int ls = maximum()>=minimum() ? linesize_ : -linesize_;
-      handle_drag(clamp(value() + ls * Fl::e_dx));
+      scroll_err_ += Fl::e_dx_f * ls;
+      float dxi = floorf(scroll_err_);
+      scroll_err_ -= dxi;
+      handle_drag(clamp(value() + int(dxi)));
       return 1;
     } else {
-      if (Fl::e_dy==0) return 0;
+      // use hires scrolling input and map it to scrollbar line resolution
+      if (Fl::e_dy_f==0.0f) return 0;
+      // map pixel scrolling to line scrolling
       int ls = maximum()>=minimum() ? linesize_ : -linesize_;
-      handle_drag(clamp(value() + ls * Fl::e_dy));
+      scroll_err_ += Fl::e_dy_f * ls;
+      float dyi = floorf(scroll_err_);
+      scroll_err_ -= dyi;
+      handle_drag(clamp(value() + int(dyi)));
       return 1;
     }
   case FL_SHORTCUT:

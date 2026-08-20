@@ -959,10 +959,11 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
   fl_lock_function();
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
-  // Under OSX, mousewheel deltas are floats, but fltk only supports ints.
+  // Under OSX, mousewheel deltas are floats, separate into low res and hire scrolling
   float s = Fl::screen_driver()->scale(0);
-  float edx = [theEvent deltaX];
-  float edy = [theEvent deltaY];
+  BOOL precise = [theEvent hasPreciseScrollingDeltas]; // macOS 10.7 and later
+  float edx = -(precise ? [theEvent scrollingDeltaX] / 10.0 : [theEvent deltaX]) / s;
+  float edy = -(precise ? [theEvent scrollingDeltaY] / 10.0 : [theEvent deltaY]) / s;
 
   if (Fl::event_shift()) {
     std::swap(edx, edy);
@@ -972,18 +973,22 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
   if (edx != 0.0f) {
     // accumulate dx floating point value and convert to int
     Fl::e_dx_f = edx;
+    Fl::e_dy_f = 0.0f;
     Fl::e_dx_err += edx;
     float dxi = floorf(Fl::e_dx_err);
     Fl::e_dx_err -= dxi;
     Fl::e_dx = (int)dxi;
+    Fl::e_dy = 0;
     Fl::handle( FL_MOUSEWHEEL, window );
   }
-    if (edy != 0.0f) {
+  if (edy != 0.0f) {
+    Fl::e_dx_f = 0.0f;
     Fl::e_dy_f = edy;
     // accumulate dy floating point value and convert to int
     Fl::e_dy_err += edy;
     float dyi = floorf(Fl::e_dy_err);
     Fl::e_dy_err -= dyi;
+    Fl::e_dx = 0;
     Fl::e_dy = (int)dyi;
     Fl::handle( FL_MOUSEWHEEL, window );
   }
