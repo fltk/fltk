@@ -26,6 +26,7 @@
         +-+ Decl_Node
         | +-- Fl_Data
         +-- DeclBlock_Node
+        +-- Preprocessor_Node
         +-- Comment_Node
         +-- Class_Node
         +-+ Widget_Node, 'o' points to a class derived from Fl_Widget
@@ -876,7 +877,8 @@ int Node::read_fdesign(const char*, const char*) {
 void Node::write_comment_h(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    f.write_h(std::string(pre) + "/**\n");
+    bool dox = !(pre && strstr(pre, "//"));
+    if (dox) f.write_h(std::string(pre) + "/**\n");
     const char *s = comment();
     f.write_h(std::string(pre) + " ");
     while(*s) {
@@ -889,7 +891,8 @@ void Node::write_comment_h(fluid::io::Code_Writer& f, const char *pre)
       }
       s++;
     }
-    f.write_h("\n" + std::string(pre) + "*/\n");
+    f.write_h("\n");
+    if (dox) f.write_h(std::string(pre) + "*/\n");
   }
 }
 
@@ -899,7 +902,8 @@ void Node::write_comment_h(fluid::io::Code_Writer& f, const char *pre)
 void Node::write_comment_c(fluid::io::Code_Writer& f, const char *pre)
 {
   if (comment() && *comment()) {
-    f.write_c(std::string(pre) + "/**\n");
+    bool dox = !(pre && strstr(pre, "//"));
+    if (dox) f.write_c(std::string(pre) + "/**\n");
     const char *s = comment();
     if (*s && *s!='\n')
       f.write_c(std::string(pre) + " ");
@@ -914,7 +918,8 @@ void Node::write_comment_c(fluid::io::Code_Writer& f, const char *pre)
       }
       s++;
     }
-    f.write_c("\n" + std::string(pre) + "*/\n");
+    f.write_c("\n");
+    if (dox) f.write_c(std::string(pre) + "*/\n");
   }
 }
 

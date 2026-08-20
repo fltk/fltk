@@ -128,7 +128,7 @@ decl {Fl_Widget* w_cpp_code_act[6] = { };} {uid 4660 private local
 }
 
 Function {use_tab_navigation(int, Fl_Text_Editor*)} {uid c8dd
-  comment {Allow widget navigation on text fields with Tab.} private return_type int
+  comment {Allow widget navigation on text fields with Tab.} open private return_type int
 } {
   code {return 0;} {uid 5afc
   }
@@ -2795,7 +2795,7 @@ if (v == LOAD) {
       } {
         Fl_Group data_tabs_data {uid 28fc
           label {Inline Data}
-          callback propagate_load open
+          callback propagate_load
           xywh {10 30 400 330} labelsize 11 resizable
         } {
           Fl_Group {} {uid d107
@@ -2822,7 +2822,7 @@ if (v == LOAD) {
       redraw_browser();
     }
   }
-}} open
+}}
               xywh {95 50 210 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
               MenuItem {} {uid 9bbe
@@ -2861,7 +2861,7 @@ if (v == LOAD) {
       redraw_browser();
     }
   }
-}} open
+}}
               xywh {95 50 75 20} down_box BORDER_BOX labelsize 11 textsize 11
             } {
               MenuItem {} {uid 4f7e
@@ -3533,6 +3533,104 @@ if (v == LOAD) {
   free(c);
 }}
             xywh {95 225 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
+            code3 {o->buffer(new Fl_Text_Buffer());
+o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+          }
+        }
+      }
+      Fl_Tabs preprocessor_tabs {uid 1686
+        callback {if (current_node && (dynamic_cast<Preprocessor_Node*>(current_node)))
+  propagate_load((Fl_Group *)o,v);}
+        xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 255 hide
+      } {
+        Fl_Group preprocessor_tabs_main {uid b33d
+          label {Preprocessor Directive}
+          callback propagate_load open
+          xywh {10 30 400 330} labelsize 11 resizable
+        } {
+          Fl_Choice {} {uid 866c
+            label {Type:}
+            callback {if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
+Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
+
+if (v == LOAD) {
+  o->value(static_cast<int>(nd->use_));
+} else {
+  if (static_cast<int>(nd->use_) != o->value()) {
+    nd->use_ = static_cast<Preprocessor_Node::Use>(o->value());
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}} open
+            xywh {95 50 260 22} down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+          } {
+            MenuItem {} {uid 818c
+              label {Start of condition (\#if, \#ifdef)}
+              user_data {Preprocessor_Node::Use::IFDEF}
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {uid 1950
+              label {Inside condition block (\#elif, \#else)}
+              user_data {Preprocessor_Node::Use::ELSE}
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {uid d4ea
+              label {End of condition (\#endif)}
+              user_data {Preprocessor_Node::Use::ENDIF}
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {uid 5e4f
+              label {Verbatim in Header (\#include, \#define, ...)}
+              user_data {Preprocessor_Node::Use::VERBATIM_H}
+              xywh {0 0 100 20} labelsize 11
+            }
+            MenuItem {} {uid bd6c
+              label {Verbatim in Source (\#include, \#define, \#pragma, ...)}
+              user_data {Preprocessor_Node::Use::VERBATIM_CXX}
+              xywh {0 0 100 20} labelsize 11
+            }
+          }
+          Fl_Input {} {uid d45d
+            label {Directive:}
+            callback {if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
+Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
+
+if (v == LOAD) {
+  the_panel->label("Preprocessor Directive Properties");
+  o->value( nd->name() );
+} else {
+  const char *nn = nd->name();
+  if (   ( nn && (strcmp(nn, o->value()) != 0))
+      || (!nn && (strcmp("", o->value()) != 0)) )
+  {
+    nd->name( o->value() );
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+}}
+            tooltip {\#if, \#else, \#endif, \#include, \#define, etc.} xywh {95 77 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
+          }
+          Fl_Text_Editor {} {uid 13f0
+            label {Comment:}
+            callback {if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
+Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
+
+if (v == LOAD) {
+  const char *cmttext = nd->comment();
+  o->buffer()->text( cmttext ? cmttext : "" );
+} else {
+  char *c = o->buffer()->text();
+  const char *nn = nd->comment();
+  if (   ( nn && (strcmp(nn, c) != 0))
+      || (!nn && (strcmp("", c) != 0)) )
+  {
+    nd->comment(c);
+    Fluid.proj.set_modflag(1);
+    redraw_browser();
+  }
+  free(c);
+}}
+            xywh {95 102 305 117} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 59 resizable
             code3 {o->buffer(new Fl_Text_Buffer());
 o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
           }

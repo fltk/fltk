@@ -567,7 +567,7 @@ Node* Code_Writer::write_code(Node* p) {
     mark_end(p->finalize_node);
 
     for (q = p->next; q && q->level > p->level;) {
-      if (is_direct_class_member(q) || is_comment_before_class_member(q)) {
+      if (is_direct_class_member(q) || is_comment_before_class_member(q) || dynamic_cast<Preprocessor_Node*>(q)) {
         q = write_code(q);
       } else {
         int level = q->level;

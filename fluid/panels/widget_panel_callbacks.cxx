@@ -744,6 +744,10 @@ void load_panel() {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(declblock_tabs);
       numselected = 1;
+    } else if (dynamic_cast<Preprocessor_Node*>(Fluid.proj.tree.current)) {
+      current_node = Fluid.proj.tree.current;
+      tabs_wizard->value(preprocessor_tabs);
+      numselected = 1;
     } else if (dynamic_cast<Decl_Node*>(Fluid.proj.tree.current)) {
       current_node = Fluid.proj.tree.current;
       tabs_wizard->value(decl_tabs);

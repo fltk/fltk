@@ -25,6 +25,7 @@
 #include "io/Code_Writer.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Group_Node.h"
+#include "nodes/Menu_Node.h"
 #include "panels/function_panel.h"
 #include "rsrcs/comments.h"
 #include "widgets/Node_Browser.h"
@@ -1266,6 +1267,140 @@ void DeclBlock_Node::write_code2(fluid::io::Code_Writer& f) {
       f.write_h(end_code() + "\n");
     if (write_map_ & CODE_IN_SOURCE)
       f.write_c(end_code() + "\n");
+  }
+}
+
+// ---- Preprocessor_Node declaration
+
+/** \class Preprocessor_Node
+ Manage a preprocessor directive.
+
+ Preprocessor directives can be set anywhere in the node hierarchy.
+
+ They are used to include header files, define macros, and
+ limit code compilation based on predefined macros.
+
+ If the directive is part of a conditions block (#if, #else, #endif), the user
+ can choose which part of the block is currently visible and can be edited.
+ */
+
+/// Prototype for a declaration block to be used by the factory.
+Preprocessor_Node Preprocessor_Node::prototype;
+
+/**
+ Create a new declaration block.
+ \param[in] strategy add after current or as last child
+ \return new Declaration Block node
+ */
+Node *Preprocessor_Node::make(Strategy strategy) {
+  Node *anchor = Fluid.proj.tree.current, *p = anchor;
+  if (p && (strategy.placement() == Strategy::AFTER_CURRENT)) p = p->parent;
+  while (dynamic_cast<Menu_Manager_Node*>(p) || dynamic_cast<Menu_Item_Node*>(p) ) {
+    anchor = p;
+    strategy.placement(Strategy::AFTER_CURRENT);
+    p = p->parent;
+  }
+  Preprocessor_Node *o = new Preprocessor_Node();
+  o->name("#define MY_MACRO 1");
+  o->add(anchor, strategy);
+  o->factory = this;
+  return o;
+}
+
+/**
+ Write the specific properties.
+  - "public"/"protected"
+  - "after" followed by the second code block.
+ */
+void Preprocessor_Node::write_properties(fluid::io::Project_Writer &f) {
+  Node::write_properties(f);
+  f.write_string("use %u", (int)use_);
+}
+
+/**
+ Read the specific properties.
+ */
+void Preprocessor_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
+  if (!strcmp(c,"use")) {
+    use_ = static_cast<Use>(atoi(f.read_word()));
+  } else {
+    Node::read_property(f, c);
+  }
+}
+
+/**
+ Open the declblock_panel to edit this node.
+ */
+void Preprocessor_Node::open() {
+  open_panel();
+}
+
+/**
+ Write the \b before static code to the source file, and to the header file if declared public.
+ The before code is stored in the name() field.
+ */
+void Preprocessor_Node::write_static(fluid::io::Code_Writer& f) {
+  const char* c = name();
+  if (c && *c) {
+    // The first level is output static, inst, static, inst
+    // All other levels output static, static, static, inst, inst, inst
+    if (parent == nullptr) {
+      if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_CXX) {
+        write_comment_c(f, "// ");
+        f.write_c(std::string(c) + "\n");
+      }
+      if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_H) {
+        write_comment_h(f, "// ");
+        f.write_h(std::string(c) + "\n");
+      }
+    } else {
+      if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_CXX) {
+        if (use_ == Use::IFDEF)
+          f.write_c("\n");
+        write_comment_c(f, "// ");
+        f.write_c(std::string(c) + "\n");
+        if (use_ == Use::ENDIF)
+          f.write_c("\n");
+      }
+      if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_H) {
+        if (use_ == Use::IFDEF)
+          f.write_h("\n");
+        write_comment_h(f, "// ");
+        f.write_h(std::string(c) + "\n");
+        if (use_ == Use::ENDIF)
+          f.write_h("\n");
+      }
+    }
+  }
+}
+
+/**
+ Write the \b before code to the source file, and to the header file if declared public.
+ The before code is stored in the name() field.
+ */
+void Preprocessor_Node::write_code1(fluid::io::Code_Writer& f) {
+  const char* c = name();
+  if (c && *c) {
+    // The first level is output static, inst, static, inst
+    // All other levels output static, static, static, inst, inst, inst
+    if (parent == nullptr) {
+      // Writing here would duplicate the directive, so skip this.
+    } else {
+      if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF) {
+        if (use_ == Use::IFDEF)
+          f.write_c("\n");
+        f.write_c(std::string(c) + "\n");
+        if (use_ == Use::ENDIF)
+          f.write_c("\n");
+      }
+      if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF) {
+        if (use_ == Use::IFDEF)
+          f.write_h("\n");
+        f.write_h(std::string(c) + "\n");
+        if (use_ == Use::ENDIF)
+          f.write_h("\n");
+      }
+    }
   }
 }
 

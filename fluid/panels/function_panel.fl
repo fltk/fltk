@@ -63,7 +63,7 @@ Function {make_widgetbin()} {open
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   Fluid.quit();
 else
-  Fluid.toggle_widget_bin();}
+  Fluid.toggle_widget_bin();} open selected
     xywh {395 227 600 102} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
@@ -114,10 +114,10 @@ else
         code3 {o->image(pixmap_for("decl"));}
       }
       Fl_Button {} {
-        user_data {"declblock"}
+        user_data {"preprocessor"}
         callback type_make_cb
-        tooltip {Declaration Block} xywh {30 71 24 24} box THIN_UP_BOX
-        code3 {o->image(pixmap_for("declblock"));}
+        tooltip {Preprocessor Directive} xywh {30 71 24 24} box THIN_UP_BOX
+        code3 {o->image(pixmap_for("preprocessor"));}
       }
       Fl_Button {} {
         user_data {"data"}
@@ -501,5 +501,5 @@ else
 }
 
 comment {
-//} {selected in_source in_header
+//} {in_source in_header
 }

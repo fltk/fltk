@@ -398,7 +398,13 @@ void run_autodoc(const std::string &target_dir) {
   t_btn->extra_code(2, "o->box(FL_UP_BOX);");
   ((Fl_Button*)t_btn->o)->shortcut(FL_COMMAND|'g');
   Node *t_sldr = add_new_widget_from_user("Fl_Slider", Strategy::AS_LAST_CHILD, false);
+  Node *t_ifdef = add_new_widget_from_user("preprocessor", Strategy::AS_LAST_CHILD, false);
+  ((Preprocessor_Node*)t_ifdef)->use_ = Preprocessor_Node::Use::IFDEF;
+  ((Preprocessor_Node*)t_ifdef)->name("#ifdef USE_INPUT_WIDGET");
   Node *t_inp = add_new_widget_from_user("Fl_Input", Strategy::AS_LAST_CHILD, false);
+  Node *t_endif = add_new_widget_from_user("preprocessor", Strategy::AS_LAST_CHILD, false);
+  ((Preprocessor_Node*)t_endif)->use_ = Preprocessor_Node::Use::ENDIF;
+  ((Preprocessor_Node*)t_endif)->name("#endif // USE_INPUT_WIDGET");
   Node *t_flx = add_new_widget_from_user("Fl_Flex", Strategy::AS_LAST_CHILD, false);
   Node *t_flxc = add_new_widget_from_user("Fl_Button", Strategy::AS_LAST_CHILD, false);
   select_only(t_grp);
@@ -414,7 +420,7 @@ void run_autodoc(const std::string &target_dir) {
   Node *t_code = add_new_widget_from_user("Code", Strategy::AS_LAST_CHILD, false);
   t_code->name("// increment user count\nif (new_user) {\n  user_count++;\n}\n");
   Node *t_codeblock = add_new_widget_from_user("CodeBlock", Strategy::AFTER_CURRENT, false);
-  Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
+  //Node *t_declblock = add_new_widget_from_user("DeclBlock", Strategy::AS_LAST_CHILD, false);
 
   widget_browser->rebuild();
   Fluid.proj.update_settings_dialog();
@@ -522,8 +528,12 @@ void run_autodoc(const std::string &target_dir) {
   fl_snapshot((target_dir + "decl_panel.png").c_str(), decl_tabs_main, tab_margin, row_blend);
 
   // -- DeclBlock
-  select_only(t_declblock);
-  fl_snapshot((target_dir + "declblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
+  //select_only(t_declblock);
+  //fl_snapshot((target_dir + "declblock_panel.png").c_str(), declblock_tabs_main, tab_margin, row_blend);
+
+  // -- Preprocessor
+  select_only(t_ifdef);
+  fl_snapshot((target_dir + "preprocessor_panel.png").c_str(), preprocessor_tabs_main, tab_margin, row_blend);
 
   // -- Class
   select_only(t_class);
