@@ -162,23 +162,32 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
 
   w(0); h(0); d(0); ld(0);      // make sure these are all zero
 
-  // Get the header...
+  // BITMAPFILEHEADER: get the header...
   if (ico_height < 1) {
-    byte = rdr.read_byte();       // Check "BM" sync chars
-    bit  = rdr.read_byte();
+    byte = rdr.read_byte();       // bfType.1: check "BM" sync chars
+    bit  = rdr.read_byte();       // bfType.2
     if (byte != 'B' || bit != 'M') {
       ld(ERR_FORMAT);
       return;
     }
 
-    rdr.read_dword();             // Skip size
-    rdr.read_word();              // Skip reserved stuff
-    rdr.read_word();
-    offbits = (long)rdr.read_dword();// Read offset to image data
+    rdr.read_dword();             // bfSize: skip size info
+    rdr.read_word();              // bfReserved1; should be 0, but not reliably
+    rdr.read_word();              // bfReserved2; should be 0, but not reliably
+    offbits = (long)rdr.read_dword();// bfOffBits: read offset to image data
   }
 
   // Then the bitmap information...
-  info_size = rdr.read_dword();
+  info_size = rdr.read_dword();   // 14: uint32 size of info header
+  // Known info header sizes:
+  // 12: BITMAPCOREHEADER, Windows 2.0, OS/2 1.x
+  // 16: OS22XBITMAPHEADER
+  // 40: BITMAPINFOHEADER, Windows 3.x
+  // 52: BITMAPV2INFOHEADER, undocumented by Microsoft
+  // 56: BITMAPV3INFOHEADER, not officially documented
+  // 64: OS22XBITMAPHEADER
+  // 108: BITMAPV4HEADER, Windows NT 4.0, 95 or later
+  // 124: BITMAPV5HEADER, Windows NT 5.0, 98 or later
   CHECK_ERROR
 
   //  printf("offbits = %ld, info_size = %d\n", offbits, info_size);
@@ -188,16 +197,18 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   use_5_6_5 = 0;
 
   if (info_size < 40) {
+    // BITMAPCOREHEADER, OS21XBITMAPHEADER, OS22XBITMAPHEADER
     // Old Windows/OS2 BMP header...
-    width = rdr.read_word();
-    height = rdr.read_word();
-    rdr.read_word();
-    depth = rdr.read_word();
+    width = rdr.read_word();        // 18: uint16 width
+    height = rdr.read_word();       // 20: uint16 height
+    rdr.read_word();                // 22: uint16 planes, must be 1
+    depth = rdr.read_word();        // 24: uint16 bits per pixel
     compression = BI_RGB;
     colors_used = 0;
 
     repcount = info_size - 12;
   } else {
+    // BITMAPINFOHEADER and newer (mostly backward compatible)
     if (ico_height > 0 && ico_width > 0) {
       rdr.read_long();
       rdr.read_long();
@@ -205,22 +216,23 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
       height = ico_height;
     } else {
       // New BMP header...
-      width = rdr.read_long();
+      width = rdr.read_long();      // 18: int32 width
       w(width);
       // If the height is negative, the row order is flipped
-      temp = rdr.read_long();
+      temp = rdr.read_long();       // 22: int32 height
       if (temp < 0) row_order = 1;
       height = abs(temp);
     }
 
-    rdr.read_word();
-    depth = rdr.read_word();
-    compression = rdr.read_dword();
-    dataSize = rdr.read_dword();
-    rdr.read_long();
-    rdr.read_long();
-    colors_used = rdr.read_dword();
-    rdr.read_dword();
+    rdr.read_word();                // 26: uint16 num color planes, must be 1
+    depth = rdr.read_word();        // 28: uint16 bits per pixel, 1, 4, 8, 16, 24 or 32.
+    compression = rdr.read_dword(); // 30: uint32 compression type, 0=none, 1=RLE8, 2=RLE4, 3=bitfields
+    dataSize = rdr.read_dword();    // 34: uint32 size of image data in bytes, may be 0 for uncompressed images
+    rdr.read_long();                // 38: int32 horizontal resolution
+    rdr.read_long();                // 42: int32 vertical resolution
+    colors_used = rdr.read_dword(); // 46: uint32 number of colors used, 0 = all colors
+    rdr.read_dword();               // 50: uint32 "important" colors, ignored
+    // Newer BMP headers have more fields which we will skip
 
     repcount = info_size - 40;
 
@@ -299,6 +311,11 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
     start_y = 0;
     end_y   = height;
   }
+
+  // If the image depth is 32 bits, the format may be RGB0 or RGBA. We set
+  // this bit as soon as we find an alpha value that is not 0. If all alpha
+  // values are 0, we will treat the image as RGB0 and update our image.
+  bool d32_no_alpha = true;
 
   for (y = start_y; y != end_y; y += row_order) {
     ptr = (uchar *)array + y * width * bDepth;
@@ -499,7 +516,9 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
           ptr[2] = rdr.read_byte();
           ptr[1] = rdr.read_byte();
           ptr[0] = rdr.read_byte();
-          ptr[3] = rdr.read_byte();
+          auto alpha = rdr.read_byte();
+          if (alpha != 0) d32_no_alpha = false;
+          ptr[3] = alpha;
         }
         break;
     }
@@ -527,6 +546,23 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   }
 
   CHECK_ERROR
+
+  if (depth == 32 && d32_no_alpha) {
+    // If all alpha values are 0, we will treat the image as RGB0 and update our image.
+    auto* old_array = array;
+    bDepth = 3;
+    array = new uchar[width * height * 3];
+    for (y = 0; y < height; y++) {
+      uchar* src = (uchar *)old_array + y * width * 4;
+      uchar* dst = (uchar *)array + y * width * 3;
+      for (x = 0; x < width; x++, src += 4, dst += 3) {
+        dst[2] = src[2];
+        dst[1] = src[1];
+        dst[0] = src[0];
+      }
+    }
+    delete[] old_array;
+  }
 
   // Success: set image attributes and return
   // File is closed when returning...
