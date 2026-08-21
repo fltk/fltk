@@ -1731,7 +1731,7 @@ content  key    keyboard layout
         float delta = -GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
         if (delta == 0.0f) // nothing to do
           return 0;
-        if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
+        if (Fl::event_shift()) { // shift key pressed: send horizontal mousewheel event
           Fl::e_dx_f = delta;
           Fl::e_dy_f = 0.0f;
           Fl::e_dx_err += Fl::e_dx_f;
