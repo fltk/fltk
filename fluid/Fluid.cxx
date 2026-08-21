@@ -1006,7 +1006,6 @@ void Application::toggle_widget_bin() {
 void Application::show_help(const std::string& name) {
   const char    *docdir { nullptr };
   std::string   helpname { };
-  bool          builtin_browser { true };
 
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
