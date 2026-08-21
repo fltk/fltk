@@ -959,7 +959,7 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
   fl_lock_function();
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
-  // Under OSX, mousewheel deltas are floats, separate into low res and hire scrolling
+  // Under OSX, mousewheel deltas are floats, separate into low res and high res scrolling
   float s = Fl::screen_driver()->scale(0);
   BOOL precise = [theEvent hasPreciseScrollingDeltas]; // macOS 10.7 and later
   float edx = -(precise ? [theEvent scrollingDeltaX] / 10.0 : [theEvent deltaX]) / s;

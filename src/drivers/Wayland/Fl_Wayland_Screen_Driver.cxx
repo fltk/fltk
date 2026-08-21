@@ -397,7 +397,7 @@ static void pointer_axis(void *data, struct wl_pointer *wl_pointer,
   wld_event_time = time;
   // Delta values on Wayland are in "pixels". A line is assumed to be 10 pixels, so mouse wheel
   // increments are often +/-10.0 pixels per detent. FLTK expects deltas to be in "lines", so we divide by 10.
-  // Note that this is a heuristic, and the actual number of pixels per line may vary depending on 
+  // Note that this is a heuristic, and the actual number of pixels per line may vary depending on
   // the device and user settings.
   // Also note that there are mice with hires wheels (no detents but smooth scrolling)
   // and touchpads with two-finger scrolling, which can produce fractional pixel values.
@@ -453,9 +453,9 @@ static struct wl_pointer_listener pointer_listener = {
   pointer_motion,
   pointer_button,
   pointer_axis
-  /* since Wayland INterface Version 5:
+  /* since Wayland Interface Version 5:
   frame,
-  pointer_axis_source, // could be used to differentiate scroll wheel and touch pad.
+  pointer_axis_source, // could be used to differentiate scroll wheel and touchpad.
   axis_stop,
   axis_discrete
   */
