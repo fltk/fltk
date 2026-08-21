@@ -51,8 +51,10 @@ Fl_File_Browser::full_height() const
         th;                             // Total height of list.
 
 
-  for (i = 0, th = 0; i < size(); i ++)
-    th += item_height(find_line(i)) + linespacing();
+  for (i = 0, th = 0; i < size(); i ++) {
+    // Note: find_line() is 1-based!
+    th += item_height(find_line(i+1)) + linespacing();
+  }
 
   return (th);
 }
