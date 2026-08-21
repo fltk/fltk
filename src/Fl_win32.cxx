@@ -1739,7 +1739,7 @@ content  key    keyboard layout
           Fl::e_dx_err -= dxi;
           Fl::e_dx = (int)dxi;
           Fl::e_dy = 0;
-        } else { // shift key not pressed (normal behavior): send horizontal mousewheel event
+        } else { // shift key not pressed (normal behavior): send vertical mousewheel event
           Fl::e_dx_f = 0.0f;
           Fl::e_dy_f = delta;
           Fl::e_dx = 0;
