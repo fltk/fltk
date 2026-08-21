@@ -96,8 +96,23 @@ fl_check_images(const char *name,               // I - Filename
 
   // BMP
 
-  if (memcmp(header, "BM", 2) == 0)     // BMP file
-    return new Fl_BMP_Image(name);
+  if (memcmp(header, "BM", 2) == 0) {    // Probably BMP file
+    // Further checks, so we don't confuse text files for BMPs or return
+    // BMP file that are not supported by our reader. See issue #228.
+    uint32_t biSize = header[14] | (header[15] << 8) | (header[16] << 16) | (header[17] << 24);
+    uint16_t biBitCount = 0; // bits per pixel
+    if (biSize >= 40) { // BITMAPINFOHEADER or newer (should be at most 124 bytes)
+      biBitCount = header[28] | (header[29] << 8);
+    } else if (biSize >= 12) { // very old BMP (pre Windows 3.11) format
+      biBitCount = header[24] | (header[25] << 8);
+    }
+    // Check for the depths that our reader supports
+    if (biBitCount == 1 || biBitCount == 4 || biBitCount == 8 ||
+        biBitCount == 16 || biBitCount == 24 || biBitCount == 32) {
+      return new Fl_BMP_Image(name);
+    }
+    // If we get here, the file is not BMP or not supported by our reader.
+  }
 
   if (memcmp(header, "\0\0\1\0", 4) == 0 && header[5] == 0)   // ICO file
     return new Fl_ICO_Image(name);
