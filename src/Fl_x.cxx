@@ -2054,18 +2054,23 @@ int fl_handle(const XEvent& thisevent)
     Fl::e_keysym = 0;       // init: not used (zero) for scroll wheel events
     set_event_xy(window);
     Fl::e_dx = Fl::e_dy = 0;
+    Fl::e_dx_f = Fl::e_dy_f = 0.0f;
 
     if (mb == Button4 && !Fl::event_shift()) {
       Fl::e_dy = -1;                            // up
+      Fl::e_dy_f = -1.0f;
       event = FL_MOUSEWHEEL;
     } else if (mb == Button5 && !Fl::event_shift()) {
       Fl::e_dy = +1;                            // down
+      Fl::e_dy_f = +1.0f;
       event = FL_MOUSEWHEEL;
     } else if (mb == 6 || (mb == Button4 && Fl::event_shift())) {
       Fl::e_dx = -1;                            // left
+      Fl::e_dx_f = -1.0f;
       event = FL_MOUSEWHEEL;
     } else if (mb == 7 || (mb == Button5 && Fl::event_shift())) {
       Fl::e_dx = +1;                            // right
+      Fl::e_dx_f = +1.0f;
       event = FL_MOUSEWHEEL;
     } else if (mb < 4 || mb > 7) {              // real mouse *buttons*, not scroll wheel
       if (mb > 7)                               // 8 = back, 9 = forward

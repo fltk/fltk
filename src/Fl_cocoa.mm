@@ -47,6 +47,7 @@ extern "C" {
 #include <dlfcn.h>
 #include <string.h>
 #include <pwd.h>
+#include <utility> // std::swap()
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7 || \
     MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_7
@@ -958,24 +959,37 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
   fl_lock_function();
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
-  // Under OSX, mousewheel deltas are floats, but fltk only supports ints.
+  // Under OSX, mousewheel deltas are floats, separate into low res and high res scrolling
   float s = Fl::screen_driver()->scale(0);
-  float edx = [theEvent deltaX];
-  float edy = [theEvent deltaY];
-  int dx = roundf(edx / s);
-  int dy = roundf(edy / s);
-  // make sure that even small wheel movements count at least as one unit
-  if (edx>0.0f) dx++; else if (edx<0.0f) dx--;
-  if (edy>0.0f) dy++; else if (edy<0.0f) dy--;
+  BOOL precise = [theEvent hasPreciseScrollingDeltas]; // macOS 10.7 and later
+  float edx = -(precise ? [theEvent scrollingDeltaX] / 10.0 : [theEvent deltaX]) / s;
+  float edy = -(precise ? [theEvent scrollingDeltaY] / 10.0 : [theEvent deltaY]) / s;
+
+  if (Fl::event_shift()) {
+    std::swap(edx, edy);
+  }
+
   // allow both horizontal and vertical movements to be processed by the widget
-  if (dx) {
-    Fl::e_dx = -dx;
+  if (edx != 0.0f) {
+    // accumulate dx floating point value and convert to int
+    Fl::e_dx_f = edx;
+    Fl::e_dy_f = 0.0f;
+    Fl::e_dx_err += edx;
+    float dxi = floorf(Fl::e_dx_err);
+    Fl::e_dx_err -= dxi;
+    Fl::e_dx = (int)dxi;
     Fl::e_dy = 0;
     Fl::handle( FL_MOUSEWHEEL, window );
   }
-  if (dy) {
+  if (edy != 0.0f) {
+    Fl::e_dx_f = 0.0f;
+    Fl::e_dy_f = edy;
+    // accumulate dy floating point value and convert to int
+    Fl::e_dy_err += edy;
+    float dyi = floorf(Fl::e_dy_err);
+    Fl::e_dy_err -= dyi;
     Fl::e_dx = 0;
-    Fl::e_dy = -dy;
+    Fl::e_dy = (int)dyi;
     Fl::handle( FL_MOUSEWHEEL, window );
   }
   fl_unlock_function();

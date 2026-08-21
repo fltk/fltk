@@ -215,7 +215,7 @@ static Fl_Window *track_mouse_win = 0; // current TrackMouseEvent() window
 #endif
 
 #ifndef WHEEL_DELTA
-#  define WHEEL_DELTA 120       // according to MSDN.
+#  define WHEEL_DELTA 120.0f       // according to MSDN.
 #endif
 
 // This is only defined on Vista and upwards...
@@ -1728,35 +1728,49 @@ content  key    keyboard layout
       } // case WM_DEADCHAR ... WM_SYSCHAR
 
       case WM_MOUSEWHEEL: {
-        static int delta = 0; // running total of all vertical mousewheel motion
-        delta += (SHORT)(HIWORD(wParam));
-        int dy = -delta / WHEEL_DELTA;
-        delta += dy * WHEEL_DELTA;
-        if (dy == 0) // nothing to do
+        float delta = -GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
+        if (delta == 0.0f) // nothing to do
           return 0;
         if (Fl::event_shift()) { // shift key pressed: send horizontal mousewheel event
-          Fl::e_dx = dy;
+          Fl::e_dx_f = delta;
+          Fl::e_dy_f = 0.0f;
+          Fl::e_dx_err += Fl::e_dx_f;
+          float dxi = floorf(Fl::e_dx_err);
+          Fl::e_dx_err -= dxi;
+          Fl::e_dx = (int)dxi;
           Fl::e_dy = 0;
-        } else { // shift key not pressed (normal behavior): send vertical mousewheel event
+        } else { // shift key not pressed (normal behavior): send horizontal mousewheel event
+          Fl::e_dx_f = 0.0f;
+          Fl::e_dy_f = delta;
           Fl::e_dx = 0;
-          Fl::e_dy = dy;
+          Fl::e_dy_err += Fl::e_dy_f;
+          float dyi = floorf(Fl::e_dy_err);
+          Fl::e_dy_err -= dyi;
+          Fl::e_dy = (int)dyi;
         }
         Fl::handle(FL_MOUSEWHEEL, window);
         return 0;
       }
 
       case WM_MOUSEHWHEEL: {
-        static int delta = 0; // running total of all horizontal mousewheel motion
-        delta += (SHORT)(HIWORD(wParam));
-        int dx = delta / WHEEL_DELTA;
-        delta -= dx * WHEEL_DELTA;
-        if (dx == 0) // nothing to do
+        float delta = -GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA; // HIWORD is of type SHORT or int16_t
+        if (delta == 0.0f) // nothing to do
           return 0;
-        if (Fl::event_shift()) { // shift key pressed: send *vertical* mousewheel event
+        if (Fl::event_shift()) { // shift key pressed: send vertical mousewheel event
+          Fl::e_dx_f = 0.0f;
+          Fl::e_dy_f = delta;
           Fl::e_dx = 0;
-          Fl::e_dy = dx;
+          Fl::e_dy_err += Fl::e_dy_f;
+          float dyi = floorf(Fl::e_dy_err);
+          Fl::e_dy_err -= dyi;
+          Fl::e_dy = (int)dyi;
         } else { // shift key not pressed (normal behavior): send horizontal mousewheel event
-          Fl::e_dx = dx;
+          Fl::e_dx_f = delta;
+          Fl::e_dy_f = 0.0f;
+          Fl::e_dx_err += Fl::e_dx_f;
+          float dxi = floorf(Fl::e_dx_err);
+          Fl::e_dx_err -= dxi;
+          Fl::e_dx = (int)dxi;
           Fl::e_dy = 0;
         }
         Fl::handle(FL_MOUSEWHEEL, window);

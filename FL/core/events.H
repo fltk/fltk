@@ -47,6 +47,10 @@ FL_EXPORT extern int                e_x_root;           ///< Mouse X position (s
 FL_EXPORT extern int                e_y_root;           ///< Mouse Y position (screen absolute)
 FL_EXPORT extern int                e_dx;               ///< Mouse wheel horizontal delta
 FL_EXPORT extern int                e_dy;               ///< Mouse wheel vertical delta
+FL_EXPORT extern float              e_dx_err;           ///< internal error var for conversion from hires to integer dx
+FL_EXPORT extern float              e_dy_err;           ///< internal error var for conversion from hires to integer dy
+FL_EXPORT extern float              e_dx_f;             ///< Mouse wheel and touchpad horizontal hires delta
+FL_EXPORT extern float              e_dy_f;             ///< Mouse wheel and touchpad vertical hires delta
 
 // Mouse click handling
 FL_EXPORT extern int                e_clicks;           ///< Number of consecutive clicks
@@ -139,6 +143,18 @@ FL_EXPORT inline int event_dx()                 { return e_dx; }
   FL_MOUSEWHEEL event. Down is positive.
 */
 FL_EXPORT inline int event_dy()                 { return e_dy; }
+
+/**
+  Returns the current horizontal mouse scrolling associated with the
+  FL_MOUSEWHEEL event. Right is positive.
+*/
+FL_EXPORT inline float event_dx_f()             { return e_dx_f; }
+
+/**
+  Returns the current vertical mouse scrolling associated with the
+  FL_MOUSEWHEEL event. Down is positive.
+*/
+FL_EXPORT inline float event_dy_f()             { return e_dy_f; }
 
 //
 // Mouse Query Functions
