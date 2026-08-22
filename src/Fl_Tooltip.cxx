@@ -105,17 +105,22 @@ void Fl_TooltipBox::layout() {
       oy += p->y();
     }
   }
+  screen_num(Fl_Tooltip::current()->top_window()->screen_num());
   if (Fl::screen_driver()->screen_boundaries_known()) {
-    int scr_x, scr_y, scr_w, scr_h;
-    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
-    if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
-    if (ox < scr_x) ox = scr_x;
-    if (currentTooltipH > 30) {
-      if (oy+hh > scr_y+scr_h) oy -= 23+hh;
-    } else {
-      if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
+    int mx, my;
+    int nscreen = Fl::screen_driver()->get_mouse(mx, my);
+    if (screen_num() == nscreen) {
+      int scr_x, scr_y, scr_w, scr_h;
+      Fl::screen_driver()->screen_xywh(scr_x, scr_y, scr_w, scr_h, nscreen);
+      if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
+      if (ox < scr_x) ox = scr_x;
+      if (currentTooltipH > 30) {
+        if (oy+hh > scr_y+scr_h) oy -= 23+hh;
+      } else {
+        if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
+      }
+      if (oy < scr_y) oy = scr_y;
     }
-    if (oy < scr_y) oy = scr_y;
   }
 
   resize(ox, oy, ww, hh);
