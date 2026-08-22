@@ -27,7 +27,10 @@
 
 
 
-Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
+Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off)
+: Fl_Image_Surface_Driver(w, h, high_res, off)
+, pre_window(0)
+{
   float d = 1;
   if (!off) {
     fl_open_display();

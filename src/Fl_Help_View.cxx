@@ -105,6 +105,8 @@ public:
     selected_ = false;
     selection_first_ = 0;
     selection_last_ = 0;
+    tmp_selection_color_ = FL_SELECTION_COLOR;
+    selection_text_color_ = FL_FOREGROUND_COLOR;
 
     scrollbar_size_ = 0;
   }

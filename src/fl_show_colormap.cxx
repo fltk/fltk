@@ -39,11 +39,14 @@ public:
   Fl_Color run();
 };
 
-ColorMenu::ColorMenu(Fl_Color oldcol) :
-  Fl_Window(BOXSIZE*8+1+2*BORDER, BOXSIZE*32+1+2*BORDER) {
+ColorMenu::ColorMenu(Fl_Color oldcol)
+: Fl_Window(BOXSIZE*8+1+2*BORDER, BOXSIZE*32+1+2*BORDER)
+, initial(oldcol)
+, which(oldcol), previous(oldcol)
+, done(0)
+{
   clear_border();
   set_modal();
-  initial = which = oldcol;
 }
 
 void ColorMenu::drawbox(Fl_Color c) {

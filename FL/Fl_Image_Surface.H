@@ -106,7 +106,11 @@ protected:
   int height;
   Fl_Offscreen offscreen;
   int external_offscreen;
-  Fl_Image_Surface_Driver(int w, int h, int /*high_res*/, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
+  Fl_Image_Surface_Driver(int w, int h, int /*high_res*/, Fl_Offscreen off)
+  : Fl_Widget_Surface(NULL), image_surface_(nullptr), width(w), height(h), offscreen(off)
+  {
+    external_offscreen = (off != 0);
+  }
   virtual ~Fl_Image_Surface_Driver() {}
   static void copy_with_mask(Fl_RGB_Image* mask, uchar *dib_dst, uchar *dib_src,
                              int line_size, bool bottom_to_top);

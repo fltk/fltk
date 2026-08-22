@@ -141,6 +141,7 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
 #endif
   ps_filename_ = NULL;
   nPages = 0;
+  linedash_[0] = 0;
 }
 
 /** \brief The destructor. */

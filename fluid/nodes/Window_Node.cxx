@@ -127,7 +127,7 @@ class Overlay_Window : public Fl_Overlay_Window {
   void draw_overlay() override;
   static void close_cb(Overlay_Window *self, void*);
 public:
-  Window_Node *window;
+  Window_Node *window = nullptr;
   int handle(int) override;
   Overlay_Window(int W,int H) : Fl_Overlay_Window(W,H) {
     Fl_Group::current(nullptr);

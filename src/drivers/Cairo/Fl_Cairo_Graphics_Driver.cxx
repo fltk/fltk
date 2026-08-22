@@ -82,6 +82,7 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver() : Fl_Graphics_Driver() {
   left_margin = top_margin = 0;
   needs_commit_tag_ = NULL;
   what = NONE;
+  linedash_[0] = 0;
 }
 
 Fl_Cairo_Graphics_Driver::~Fl_Cairo_Graphics_Driver() {
