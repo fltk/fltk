@@ -1234,76 +1234,12 @@ void Fl_Cairo_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize s) {
 }
 
 
-// Scans the input string str with fl_utf8decode() that, by default, accepts
-// also non-UTF-8 and processes it as if encoded in CP1252.
-// Returns a true UTF-8 string and its length, possibly transformed from CP1252.
-// If the input string is true UTF-8, the returned string is the same pointer as input.
-// Otherwise, the returned string is in private memory allocated inside clean_utf8()
-// and extended when necessary.
-const char *Fl_Cairo_Graphics_Driver::clean_utf8(const char* str, int &n) {
-  static char *utf8_buffer = NULL;
-  static int utf8_buffer_len = 0;
-  int q = 0;
-  const char *p = str;
-  int len, len2;
-  const char *end = str + n;
-  char buf6[6];
-  bool use_priv_buffer = false;
-  while (p < end) {
-    unsigned codepoint = fl_utf8decode(p, end, &len);
-    bool invalid = (len == 1 && *(uchar*)p >= 0x80);
-
-    // Switch to using utf8_buffer if needed
-    if (!use_priv_buffer && invalid) {
-      // Make room if needed
-      if (utf8_buffer_len < p - str) {
-        utf8_buffer_len = (p - str) + 1000;
-        utf8_buffer = (char *)realloc(utf8_buffer, utf8_buffer_len);
-      }
-      use_priv_buffer = true;
-      // Fill private buffer with data so far
-      if (p > str) {
-        memcpy(utf8_buffer, str, p - str);
-        q = (p - str);
-      }
-    }
-
-    if (use_priv_buffer) {
-      if (invalid) {
-        len2 = fl_utf8encode(codepoint, buf6);
-      } else {
-        memcpy(buf6, p, len);
-        len2 = len;
-      }
-
-      // Increase buffer if needed
-      if (utf8_buffer_len < q + len2) {
-        utf8_buffer_len = q + len2 + 1000;
-        utf8_buffer = (char *)realloc(utf8_buffer, utf8_buffer_len);
-      }
-
-      // Copy decoded codepoint
-      memcpy(utf8_buffer + q, buf6, len2);
-      q += len2;
-    }
-    p += len;
-  }
-
-  if (use_priv_buffer) {
-    n = q;
-    return utf8_buffer;
-  }
-
-  return str;
-}
-
-
 void Fl_Cairo_Graphics_Driver::draw(const char* str, int n, float x, float y) {
   if (!n) return;
   cairo_save(cairo_);
   Fl_Cairo_Font_Descriptor *fd = (Fl_Cairo_Font_Descriptor*)font_descriptor();
   cairo_translate(cairo_, x - 0.5, y - fd->ascent / float(PANGO_SCALE) - 0.5);
-  str = clean_utf8(str, n);
+  str = fl_utf8_clean(str, &n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_cairo_show_layout(cairo_, pango_layout_); // 1.1O
   cairo_restore(cairo_);
@@ -1371,7 +1307,7 @@ double Fl_Cairo_Graphics_Driver::width(const char* str, int n) {
 
 int Fl_Cairo_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
   if (!n) return 0;
-  str = clean_utf8(str, n);
+  str = fl_utf8_clean(str, &n);
   pango_layout_set_text(pango_layout_, str, n);
   PangoRectangle p_rect;
   pango_layout_get_extents(pango_layout_, NULL, &p_rect);
@@ -1380,7 +1316,7 @@ int Fl_Cairo_Graphics_Driver::do_width_unscaled_(const char* str, int n) {
 
 
 void Fl_Cairo_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int& dy, int& w, int& h) {
-  txt = clean_utf8(txt, n);
+  txt = fl_utf8_clean(txt, &n);
   pango_layout_set_text(pango_layout_, txt, n);
   PangoRectangle ink_rect;
   pango_layout_get_extents(pango_layout_, &ink_rect, NULL);

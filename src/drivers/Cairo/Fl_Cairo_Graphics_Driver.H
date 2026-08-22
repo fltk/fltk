@@ -1,7 +1,7 @@
 //
 // Support for Cairo graphics for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -67,7 +67,6 @@ public:
   PangoLayout *pango_layout() {return pango_layout_;}
   void set_cairo(cairo_t *c, float f = 0);
   static cairo_pattern_t *calc_cairo_mask(const Fl_RGB_Image *rgb);
-  static const char *clean_utf8(const char* str, int &n);
 
   unsigned char cr_,cg_,cb_;
   char  linedash_[256];//should be enough

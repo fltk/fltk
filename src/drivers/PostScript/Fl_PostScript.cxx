@@ -1,7 +1,7 @@
 //
 // Classes Fl_PostScript_File_Device and Fl_PostScript_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2024 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1555,7 +1555,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   pango_layout_set_font_description(pango_layout_, pfd);
   int pwidth, pheight;
   cairo_save(cairo_);
-  str = Fl_Cairo_Graphics_Driver::clean_utf8(str, n);
+  str = fl_utf8_clean(str, &n);
   pango_layout_set_text(pango_layout_, str, n);
   pango_layout_get_size(pango_layout_, &pwidth, &pheight);
   if (pwidth > 0) {

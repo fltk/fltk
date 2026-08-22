@@ -1,6 +1,9 @@
 /*
- * Author: Jean-Marc Lienher ( http://oksid.ch )
+ * Unicode to UTF-8 conversion functions for the Fast Light Tool Kit (FLTK).
+ *
+ * Original author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
+ *
  * Copyright 2016-2026 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
@@ -29,8 +32,8 @@
 
 #include "Fl_Export.H"
 #include "fl_types.h"
-#include <stdio.h>      // FILE *fl_fopen()
-#include <sys/stat.h>   // struct stat
+#include <stdio.h>      /* FILE *fl_fopen() */
+#include <sys/stat.h>   /* struct stat */
 
 #ifdef __cplusplus
 extern "C" {
@@ -212,9 +215,13 @@ FL_EXPORT const char *fl_utf8_next_composed_char(const char *from, const char *e
 
 FL_EXPORT const char *fl_utf8_previous_composed_char(const char *from, const char *begin);
 
+
+/* Clean UTF-8 string by re-encoding if necessary - see src/fl_utf8.cxx */
+FL_EXPORT const char* fl_utf8_clean(const char* str, int* n);
+
 /** @} */
 
-/*****************************************************************************/
+/* ************************************************************************* */
 
 #ifdef __cplusplus
 }

@@ -1,8 +1,9 @@
 //
-// Unicode to UTF-8 conversion functions.
+// Unicode to UTF-8 conversion functions for the Fast Light Tool Kit (FLTK).
 //
-// Author: Jean-Marc Lienher ( http://oksid.ch )
+// Original author: Jean-Marc Lienher ( http://oksid.ch )
 // Copyright 2000-2010 by O'ksi'D.
+//
 // Copyright 2016-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -1761,5 +1762,74 @@ const char *fl_utf8_previous_composed_char(const char *from, const char *begin) 
   }
   return from;
 }
+
+/**
+  Test and optionally re-encode a UTF-8 string (character sequence).
+
+  Scans the input string \p str with fl_utf8decode() that, by default, accepts
+  also non-UTF-8 and processes it as if encoded in CP-1252.
+  Returns a true UTF-8 string and its length, possibly transformed from CP-1252.
+  If the input string is true UTF-8, the returned string is the same pointer as input.
+  Otherwise, the returned string is in private memory allocated by fl_utf8_clean()
+  and extended when necessary.
+
+  The input string \p str (UTF-8) need not be nul-terminated.
+
+  The ouput string (return value) is nul-terminated if
+    - the original string was valid and nul-terminated (not changed), or
+    - the original string contained invalid UTF-8 characters and was re-encoded.
+  Its length is returned in \p len.
+
+  The purpose of this method is to return a clean, UTF-8 encoded string that can
+  be used for system output functions like Pango text formatting and output.
+
+  \note The output string (buffer address and size) is only valid until this
+        function is subsequently called or the input string buffer is modified,
+        whichever is returned by this function. See description.
+
+  \param[in]    str   UTF-8 input sequence (may contain invalid encodings)
+  \param[inout] len   length of UTF-8 input sequence
+
+  \return clean UTF-8 string (may not be nul-terminated) and its \p len
+*/
+const char* fl_utf8_clean(const char* str, int* len) {
+  static std::string utf8_buffer; // local buffer for re-encoded string
+  int len1;                       // decode and test whether a UTF-8 sequence is valid
+  int len2;                       // length of re-encoded UTF-8 sequence of invalid UTF-8
+  const char* inp = str;          // pointer to input string
+  const char* end = str + *len;
+  bool use_local_buffer = false;
+  while (inp < end) {
+    unsigned codepoint = fl_utf8decode(inp, end, &len1);
+    bool invalid = (len1 == 1 && *(uchar*)inp >= 0x80);
+    // Switch to using utf8_buffer if needed
+    if (!use_local_buffer && invalid) {
+      // Fill local buffer with data so far; reserve at least len + X bytes
+      utf8_buffer.reserve(*len + 100);
+      utf8_buffer.assign(str, inp - str);
+      use_local_buffer = true;
+    }
+    if (use_local_buffer) {
+      if (invalid) {
+        char cbuf[8];
+        len2 = fl_utf8encode(codepoint, cbuf);  // encode invalid code point
+        utf8_buffer.append(cbuf, len2);
+      } else {
+        utf8_buffer.append(inp, len1);          // copy from original string
+      }
+    }
+    inp += len1;
+  }
+
+  if (use_local_buffer) {
+    *len = (int)utf8_buffer.size(); // return length
+    return utf8_buffer.c_str();
+  }
+
+  return str;
+}
+
+
+// End of group fl_unicode:
 
 /** @} */
