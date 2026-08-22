@@ -240,7 +240,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
 
     repcount = info_size - 40;
 
-    if (info_size >= 56) {
+    if (info_size >= 56) { // BITMAPV3INFOHEADER or later
       is_v3 = true;
       // V3 adds lookup words for R, G,B, and Alpha. They are usually
       // 0x00ff0000, 0x0000ff00, 0x000000ff, and 0x00000000 respectively.
@@ -573,8 +573,6 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   }
 
   CHECK_ERROR
-
-  printf("compression %d bpp %d s %d d %d\n", compression, depth, srcBDepth, dstBDepth);
 
   // Success: set image attributes and return
   // File is closed when returning...
