@@ -750,20 +750,26 @@ int Fl_Browser_::handle(int event) {
           }
           return 1;
         }
-      } else  {
+      } else {
         switch (Fl::event_key()) {
         case FL_Enter:
         case FL_KP_Enter:
-          select_only(l, when() & ~FL_WHEN_ENTER_KEY);
-          if (wp.deleted()) return 1;
-          if (when() & FL_WHEN_ENTER_KEY) {
-            set_changed();
-            do_callback(FL_REASON_CHANGED);
+          if (select_only(l, when() & ~FL_WHEN_ENTER_KEY_ALWAYS)) {
+            if (wp.deleted()) return 1;
+            if (when() & FL_WHEN_ENTER_KEY) {
+              set_changed();
+              do_callback(FL_REASON_CHANGED);
+            }
+          } else {
+            if (wp.deleted()) return 1;
+            if ((when() & FL_WHEN_ENTER_KEY) && (when() & FL_WHEN_NOT_CHANGED)) {
+              do_callback(FL_REASON_RESELECTED);
+            }
           }
           return 1;
         case ' ':
           selection_ = l;
-          select(l, !item_selected(l), when() & ~FL_WHEN_ENTER_KEY);
+          select(l, !item_selected(l), when());
           return 1;
         case FL_Down:
           while ((l = item_next(l))) {
