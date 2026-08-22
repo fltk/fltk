@@ -3297,6 +3297,87 @@ static void cb_Comment2(Fl_Text_Editor* o, void* v) {
 //ﬂ ▲ ----------~=-=~~~~~--------------~=--==~~~--=--=---~=~ ▲ ﬂ//
 }
 
+Fl_Tabs* preprocessor_tabs = (Fl_Tabs*)nullptr;
+
+static void cb_preprocessor_tabs(Fl_Tabs* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~-~=-~--=~-=~~~--=~~~~ ▼ ﬂ//
+  if (current_node && (dynamic_cast<Preprocessor_Node*>(current_node)))
+    propagate_load((Fl_Group *)o,v);
+//ﬂ ▲ ----------~=-~~~~---~=-----------~=~-==~~~~=-~-=~-~=~~ ▲ ﬂ//
+}
+
+Fl_Group* preprocessor_tabs_main = (Fl_Group*)nullptr;
+
+static void cb_Type(Fl_Choice* o, void* v) {
+//ﬂ ▼ ---------------------- callback -~~~=--=~--~=~~==~~--- ▼ ﬂ//
+  if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
+  Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
+
+  if (v == LOAD) {
+    o->value(static_cast<int>(nd->use_));
+  } else {
+    if (static_cast<int>(nd->use_) != o->value()) {
+      nd->use_ = static_cast<Preprocessor_Node::Use>(o->value());
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~--~~-~=--=--------------~==~~----~=-~-~~=- ▲ ﬂ//
+}
+
+Fl_Menu_Item menu_Type[] = {
+ {"Start of condition (#if, #ifdef)", 0,  nullptr, (void*)(Preprocessor_Node::Use::IFDEF), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"Inside condition block (#elif, #else)", 0,  nullptr, (void*)(Preprocessor_Node::Use::ELSE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"End of condition (#endif)", 0,  nullptr, (void*)(Preprocessor_Node::Use::ENDIF), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"Verbatim in Header (#include, #define, ...)", 0,  nullptr, (void*)(Preprocessor_Node::Use::VERBATIM_H), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ {"Verbatim in Source (#include, #define, #pragma, ...)", 0,  nullptr, (void*)(Preprocessor_Node::Use::VERBATIM_CXX), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
+ { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
+};
+
+static void cb_Directive(Fl_Input* o, void* v) {
+//ﬂ ▼ ---------------------- callback ---=-=--~~-~=-=-=~=--= ▼ ﬂ//
+  if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
+  Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
+
+  if (v == LOAD) {
+    the_panel->label("Preprocessor Directive Properties");
+    o->value( nd->name() );
+  } else {
+    const char *nn = nd->name();
+    if (   ( nn && (strcmp(nn, o->value()) != 0))
+        || (!nn && (strcmp("", o->value()) != 0)) )
+    {
+      nd->name( o->value() );
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+  }
+//ﬂ ▲ ----------=~=-~--~~~=--------------=--~=~-=-~~-=~-~=~~ ▲ ﬂ//
+}
+
+static void cb_Comment3(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~----~~=-=~---~==~~=-~ ▼ ﬂ//
+  if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
+  Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
+
+  if (v == LOAD) {
+    const char *cmttext = nd->comment();
+    o->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    char *c = o->buffer()->text();
+    const char *nn = nd->comment();
+    if (   ( nn && (strcmp(nn, c) != 0))
+        || (!nn && (strcmp("", c) != 0)) )
+    {
+      nd->comment(c);
+      Fluid.proj.set_modflag(1);
+      redraw_browser();
+    }
+    free(c);
+  }
+//ﬂ ▲ ----------~=-~-~=~~=--------------~-~-~~=-~=~-~~-=~~-~ ▲ ﬂ//
+}
+
 Fl_Tabs* decl_tabs = (Fl_Tabs*)nullptr;
 
 static void cb_decl_tabs(Fl_Tabs* o, void* v) {
@@ -3401,8 +3482,8 @@ static void cb_Declaration(fluid::widget::Code_Editor* o, void* v) {
 //ﬂ ▲ ----------~=~=-~-~=---------------~=~~~==-=~--~~=---~= ▲ ﬂ//
 }
 
-static void cb_Comment3(Fl_Text_Editor* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~----~~=-=~---~==~~=-~ ▼ ﬂ//
+static void cb_Comment4(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback --=~-~~--~---~=~=--=-= ▼ ﬂ//
   if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
 
@@ -3467,8 +3548,8 @@ static void cb_End1(Fl_Input* o, void* v) {
 //ﬂ ▲ ----------=~--~==-=~~-----------~~~~-~=~=~-=~~=~=-=~~= ▲ ﬂ//
 }
 
-static void cb_Comment4(Fl_Text_Editor* o, void* v) {
-//ﬂ ▼ ---------------------- callback --=~-~~--~---~=~=--=-= ▼ ﬂ//
+static void cb_Comment5(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback ~~-~---==~-=-~=-~~-~~= ▼ ﬂ//
   if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
   CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
 
@@ -3659,8 +3740,8 @@ static void cb_Return(fluid::widget::Code_Editor* o, void* v) {
 //ﬂ ▲ ----------=~=-=~~=-~~~----------~~~~-~~=-=-~-==~~==~-- ▲ ﬂ//
 }
 
-static void cb_Comment5(Fl_Text_Editor* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~~-~---==~-=-~=-~~-~~= ▼ ﬂ//
+static void cb_Comment6(Fl_Text_Editor* o, void* v) {
+//ﬂ ▼ ---------------------- callback -----~-=--~--~-~-~~=-~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
 
@@ -5333,6 +5414,56 @@ Fl_Double_Window* make_widget_panel() {
         } // Fl_Group* declblock_tabs_main
         declblock_tabs->end();
       } // Fl_Tabs* declblock_tabs
+      { auto* o = preprocessor_tabs = new Fl_Tabs(10, 10, 400, 350);
+        (void)o;
+        preprocessor_tabs->selection_color((Fl_Color)12);
+        preprocessor_tabs->labelsize(11);
+        preprocessor_tabs->labelcolor(FL_WHITE);
+        preprocessor_tabs->callback((Fl_Callback*)cb_preprocessor_tabs);
+        preprocessor_tabs->hide();
+        { auto* o = preprocessor_tabs_main = new Fl_Group(10, 30, 400, 330, "Preprocessor Directive");
+          (void)o;
+          preprocessor_tabs_main->labelsize(11);
+          preprocessor_tabs_main->callback((Fl_Callback*)propagate_load);
+          { auto* o = new Fl_Choice(95, 50, 260, 22, "Type:");
+            (void)o;
+            o->down_box(FL_BORDER_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Type);
+            o->menu(menu_Type);
+          } // Fl_Choice* o
+          { auto* o = new Fl_Input(95, 77, 305, 20, "Directive:");
+            (void)o;
+            o->tooltip("#if, #else, #endif, #include, #define, etc.");
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(4);
+            o->textsize(11);
+            o->callback((Fl_Callback*)cb_Directive);
+          } // Fl_Input* o
+          { auto* o = new Fl_Text_Editor(95, 102, 305, 117, "Comment:");
+            (void)o;
+            o->box(FL_DOWN_BOX);
+            o->labelfont(1);
+            o->labelsize(11);
+            o->textfont(6);
+            o->textsize(11);
+            o->textcolor((Fl_Color)59);
+            o->callback((Fl_Callback*)cb_Comment3);
+            o->align(Fl_Align(FL_ALIGN_LEFT));
+            Fl_Group::current()->resizable(o);
+//ﬂ ▼ ---------------------- finalize ~-~--=--~-=~=----=~~~= ▼ ﬂ//
+            o->buffer(new Fl_Text_Buffer());
+            o->add_key_binding(FL_Tab, 0, use_tab_navigation);
+//ﬂ ▲ ---------~~=-~-~=~~=--------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
+          } // Fl_Text_Editor* o
+          preprocessor_tabs_main->end();
+          Fl_Group::current()->resizable(preprocessor_tabs_main);
+        } // Fl_Group* preprocessor_tabs_main
+        preprocessor_tabs->end();
+      } // Fl_Tabs* preprocessor_tabs
       { auto* o = decl_tabs = new Fl_Tabs(10, 10, 400, 350);
         (void)o;
         decl_tabs->selection_color((Fl_Color)12);
@@ -5407,7 +5538,7 @@ Fl_Double_Window* make_widget_panel() {
                 o->align(Fl_Align(132));
                 o->when(FL_WHEN_RELEASE);
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ~-~~=~=~~=-~-=~=~-=~=~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~=~-=~=-~-~=~~~=-~=~~ ▼ ﬂ//
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=~=-~-~=-------------~---=---~-~--------~=~ ▲ ﬂ//
               } // fluid::widget::Code_Editor* o
@@ -5425,10 +5556,10 @@ Fl_Double_Window* make_widget_panel() {
                 o->textfont(6);
                 o->textsize(11);
                 o->textcolor((Fl_Color)59);
-                o->callback((Fl_Callback*)cb_Comment3);
+                o->callback((Fl_Callback*)cb_Comment4);
                 o->align(Fl_Align(FL_ALIGN_LEFT));
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize -~~~~--~=~-~~--~~---~~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~---~~~-------=~~~---~ ▼ ﬂ//
                 o->buffer(new Fl_Text_Buffer());
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~==~~=-==~~~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5483,10 +5614,10 @@ Fl_Double_Window* make_widget_panel() {
             o->textfont(6);
             o->textsize(11);
             o->textcolor((Fl_Color)59);
-            o->callback((Fl_Callback*)cb_Comment4);
+            o->callback((Fl_Callback*)cb_Comment5);
             o->align(Fl_Align(FL_ALIGN_LEFT));
             Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize -~~--=---~=~~-=~=~-=-= ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~-~=~~~-~----==~~-=~=~ ▼ ﬂ//
             o->buffer(new Fl_Text_Buffer());
             o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=-==----~~-------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//
@@ -5657,10 +5788,10 @@ Fl_Double_Window* make_widget_panel() {
                 o->textfont(6);
                 o->textsize(11);
                 o->textcolor((Fl_Color)59);
-                o->callback((Fl_Callback*)cb_Comment5);
+                o->callback((Fl_Callback*)cb_Comment6);
                 o->align(Fl_Align(FL_ALIGN_LEFT));
                 Fl_Group::current()->resizable(o);
-//ﬂ ▼ ---------------------- finalize ---~=~~-~==-=-=~~-~=~- ▼ ﬂ//
+//ﬂ ▼ ---------------------- finalize ~~=~=-=~~==~=~=--=~~~= ▼ ﬂ//
                 o->buffer(new Fl_Text_Buffer());
                 o->add_key_binding(FL_Tab, 0, use_tab_navigation);
 //ﬂ ▲ ---------~~=~~--=~~--~------------~=~----~~=~=-~-~=-=~ ▲ ﬂ//

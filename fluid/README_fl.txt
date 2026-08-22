@@ -248,7 +248,8 @@ Types represent all possible entries in the hierarchy including C functions,
 class definitions, and of course all Widgets. A Type is any of the supported
 Widgets classes, or one of the following (case sensitive):
 
-Function, code, codeblock, decl, data, declblock, comment, class, widget_class
+Function, code, codeblock, decl, data, declblock, preprocessor,
+comment, class, widget_class
 
 Every Type keyword is followed by a Word, which is usually interpreted as the
 C++ name of the Type, followed by an opening `{`, a list of properties, and
@@ -300,6 +301,7 @@ The list of known Types and their inheritance is:
    +-- decl
    +-- data
    +-- declblock
+   +-- preprocessor
    +-- comment
    +-- class
    +-- Fl_Widget (note: can't be written)
@@ -415,13 +417,17 @@ Type "data" <word> : C++ variable name
   "std_binary", "std_textmode", "std_compressed"
   ... : inherits more from decl
 
-Type "declblock" <word> : C++ code
+Type "declblock" <word> : C++ code, deprecated after FLTK v1.4
 
   none or "public" or "protected" : defaults to private (obsolete)
   "map" <word> : integer value, default is 2 (CODE_IN_SOURCE),
       see DeclBlock_Node::write_map_
   "after" <word> : C++ code or comment following the block
   ... : inherits more from Node
+
+Type "preprocessor" <word> : Preprocessor Directive, new since FLTK v1.5
+  "use" <int> : 0 = ifdef, 1 = else, 2 = endif,
+                3 = verbatim in header, 4 = verbatim in source code
 
 Type "comment" <word> : comment text
 

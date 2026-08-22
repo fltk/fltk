@@ -122,6 +122,8 @@ extern Fl_Tabs* class_tabs;
 extern Fl_Group* class_tabs_main;
 extern Fl_Tabs* declblock_tabs;
 extern Fl_Group* declblock_tabs_main;
+extern Fl_Tabs* preprocessor_tabs;
+extern Fl_Group* preprocessor_tabs_main;
 extern Fl_Tabs* decl_tabs;
 extern Fl_Group* decl_tabs_main;
 #include <FL/Fl_Tile.H>
@@ -149,6 +151,7 @@ extern Fl_Menu_Item menu_5[];
 extern Fl_Menu_Item menu_6[];
 extern Fl_Menu_Item menu_7[];
 extern Fl_Menu_Item menu_8[];
+extern Fl_Menu_Item menu_Type[];
 extern Fl_Menu_Item menu_9[];
 extern Fl_Menu_Item menu_a[];
 extern Fl_Menu_Item menu_b[];

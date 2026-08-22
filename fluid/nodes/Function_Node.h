@@ -246,6 +246,39 @@ public:
   void write_map(int v) { write_map_ = v; }
 };
 
+// ---- Preprocessor_Node declaration
+
+class Preprocessor_Node : public Node
+{
+public:
+  typedef Node super;
+  static Preprocessor_Node prototype;
+
+public: // public for the dialog box
+  // Not yet impemented: make branches in a condition block invisible, so they can;t be edited.
+  // This should be a feature of all nodes (see Invisible_inherited_, commented_out_, etc.)
+  bool visible_ = true;
+
+  // The type of preprocessor directive.
+  enum class Use : uint8_t {
+    IFDEF, ELSE, ENDIF, VERBATIM_H, VERBATIM_CXX
+  };
+  Use use_ = Use::VERBATIM_H;
+
+public:
+  Preprocessor_Node() = default;
+  ~Preprocessor_Node() override = default;
+
+  Node *make(Strategy strategy) override;
+  void write_static(fluid::io::Code_Writer& f) override;
+  void write_code1(fluid::io::Code_Writer& f) override;
+  void open() override;
+  const char *type_name() override {return "preprocessor";}
+  void write_properties(fluid::io::Project_Writer &f) override;
+  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  int is_public() const override { return (use_ != Use::VERBATIM_CXX); }
+};
+
 // ---- Comment_Node declaration
 
 class Comment_Node : public Node

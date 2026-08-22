@@ -109,10 +109,10 @@ Fl_Window* make_widgetbin() {
       } // Fl_Button* o
       { auto* o = new Fl_Button(30, 71, 24, 24);
         (void)o;
-        o->tooltip("Declaration Block");
+        o->tooltip("Preprocessor Directive");
         o->box(FL_THIN_UP_BOX);
-        o->callback((Fl_Callback*)type_make_cb, (void*)("declblock"));
-        o->image(pixmap_for("declblock"));
+        o->callback((Fl_Callback*)type_make_cb, (void*)("preprocessor"));
+        o->image(pixmap_for("preprocessor"));
       } // Fl_Button* o
       { auto* o = new Fl_Button(55, 71, 24, 24);
         (void)o;

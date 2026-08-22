@@ -264,54 +264,48 @@
 
  ![](flDeclarationBlock.png) Declaration Block
 
- Declaration Blocks are a way to selectively compile child nodes via
- preprocessor commands, typically `#ifdef TEST` and `#endif`.
+ Declaration Blocks are only supported for back compatibility with Fluid 1.4
+ and earlier. Please use Preprocessor Directive node instead.
+
+ <!-- ---------------------------------------------------------------------- -->
+
+ \section functional_preprocessor Preprocessor Directive
+
+ ![](flPreprocessor.png) Preprocessor Directive Node
+
+ Preprocessor Directive nodes let you write C preprocessor directives, such as
+ `#include`, `#define`, or `#if` and `#endif`, directly into the generated
+ header or source file. Use them to add includes and macros outside of function
+ or class bodies, or to conditionally include or exclude parts of the generated
+ code at compile time.
 
  ### Parents ###
 
- Declaration Blocks can be created at the top level or inside classes.
+ Preprocessor Directives can be created anywhere except within menu item arrays.
 
- ### Children ###
+ \image html preprocessor_panel.png "Preprocessor Directive Properties"
+ \image latex preprocessor_panel.png "Preprocessor Directive Properties" width=7cm
 
- Declaration Blocks can contain classes, functions, methods, declarations, and
- comments.
+ ### Properties ###
 
- \image html declblock_panel.png "Declaration Block Properties"
- \image latex declblock_panel.png "Declaration Block Properties" width=7cm
+ Choose how this directive is used in the generated files:
 
- The C++ code in the "Start" field is output before the code of
- all children of this node is written to the source file. The text in the "End"
- field is written after code for all children was generated.
+ **Verbatim in Header** copies the text as-is into the header file.
+ **Verbatim in Source** copies it into the source file.
 
- The following check boxes enable code generation for different locations in
- header and source code files. The first two boxes modify the C++ source code
- file.
- If the first check box, "implementations", is ticked, all C++ code that
- implements the children of this declaration block will be enclosed with the
- code from the "Start" and "End" fields. This check box is marked by default.
+ **Start of Condition**, **Inside Condition**, and **End of Condition** generate
+ `#if`, `#else`, and `#endif` respectively. The three nodes must be siblings at
+ the same level in the project tree; the nodes between Start and End are then
+ conditionally compiled.
 
- The second check box, "static initializations and callbacks", will enclose
- callbacks that may be created by child widgets, menu item arrays, and code
- as well as data for images. This box should be ticked in most cases, but
- may be harmful if one image is used more than once and outside of this
- declaration block.
+ The directive text may be written more than once, since it can bracket several
+ kinds of generated code: custom code and declarations in the header file, and
+ static initializations and widget instantiation code in the source file. It is
+ written even when there is no content between the Start and End nodes.
 
- The next two boxes modify the C++ code in the header file. Ticking "forward
- declarations" will wrap the code that declares functions, methods, and menus.
- The last box ensure that code declaring widgets is wrapped with yet another
- copy of from the "Start" and "End" fields. This will also wrap
- `#include` statements and declarations from widget "Code" fields.
-
- FLUID optimizes header files by removing duplicate include statements and
- certain declarations. Declaration blocks are commonly used for conditional
- compilation and may effectively "optimize away" include statements that are
- still needed elsewhere. This can be litigated by explicitly creating
- Declaration nodes outside of the declaration block.
-
- The "Start" and "End" code may appear multiple times per file if more than
- one of the check boxes above is ticked. The code should not have any side
- effects or cause conflicts when compiled more than once. It's not safe to rely
- on a specific order of the generated blocks.
+ \note Fluid removes duplicate `#include` lines contributed by widgets' custom
+ code. To keep an include inside a conditional block from being removed as a
+ duplicate, add it through the widget's custom declaration field instead.
 
  <!-- ---------------------------------------------------------------------- -->
 

@@ -78,7 +78,7 @@
  - \ref functional_code
  - \ref functional_codeblock
  - \ref functional_decl
- - \ref functional_declblock
+ - \ref functional_preprocessor
  - \ref functional_class
  - \ref functional_widgetclass
  - \ref functional_comment
