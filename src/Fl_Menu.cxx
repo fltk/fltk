@@ -298,6 +298,9 @@ public:
   // Scroll so item i is visible on screen. This may move the entire window..
   void autoscroll(item_index_t i);
 
+  // Scroll the window up or down by the given number of pixels if parts are offscreen.
+  void scroll(int dy_pixels);
+
   // Also reposition the title (relative to the parent_ window?)
   void position(int x, int y);
 
@@ -952,6 +955,14 @@ int Menu_Window::handle_part1(int e) {
     case FL_RELEASE:
       if (pp.handle_mouse_events(e)) return 1;
       break;
+    case FL_MOUSEWHEEL:
+      // if (pp.current_menu_ix >= 0 && pp.current_menu_ix < pp.num_menus &&
+      //     pp.menu_window[pp.current_menu_ix] == this) {
+      if (Fl::event_x_root() >= x() && Fl::event_x_root() < x()+w() &&
+          Fl::event_y_root() >= y() && Fl::event_y_root() < y()+h()) {
+        scroll(static_cast<int>(Fl::event_dy_f() * -10.0));
+        return 1;
+      }
   }
   return Fl_Window::handle(e);
 }
@@ -1059,6 +1070,37 @@ void Menu_Window::autoscroll(item_index_t n) {
   }
   Fl_Window_Driver::driver(this)->reposition_menu_window(x(), y()+Y);
   // y(y()+Y); // don't wait for response from X
+}
+
+/**
+ * Scroll the window up or down by the given number of pixels if parts are offscreen.
+ * \param[in] dy_pixels number of pixels to scroll
+ */
+void Menu_Window::scroll(int dy_pixels) {
+  int scr_y, scr_h;
+  int xx, ww;
+  int Y = y() + dy_pixels;
+
+  Fl_Window_Driver::driver(this)->menu_window_area(xx, scr_y, ww, scr_h, this->screen_num());
+  if (dy_pixels > 0) {
+    // We can only move the menu window down if the top is above the top of the screen
+    if (y() >= scr_y) return;
+    // Don't move the window lower than the top boundary of the screen
+    if (Y > scr_y) Y = scr_y;
+  } else {
+    // We can only move the menu window up if the bottom is below the bottom of the screen
+    if (y() + h() <= scr_y + scr_h) return;
+    // Don't move the window higher than the bottom boundary of the screen
+    if (Y + h() < scr_y + scr_h) {
+      Y = scr_y + scr_h - h();
+    }
+  }
+  Fl_Window_Driver::driver(this)->reposition_menu_window(x(), Y);
+  Menu_State &pp = *menu_state;
+  int ix = find_selected(Fl::event_x_root(), Fl::event_y_root());
+  if (ix >= 0) {
+    pp.set_current_item(pp.current_menu_ix, ix);
+  }
 }
 
 /* Set the position of this menu and its title window. */
