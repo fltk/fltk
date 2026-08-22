@@ -31,7 +31,7 @@ public:
   int *width[64];
   TEXTMETRIC metr;
   int angle;
-  FL_EXPORT Fl_GDI_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  FL_EXPORT Fl_GDI_Font_Descriptor(const char* fontname, Fl_Fontsize size, int weight, int style, bool legacy);
 #  if HAVE_GL
   char glok[64];
 #  endif // HAVE_GL

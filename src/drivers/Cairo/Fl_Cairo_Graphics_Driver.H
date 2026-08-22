@@ -32,7 +32,7 @@ typedef struct _PangoFontDescription PangoFontDescription;
 
 class Fl_Cairo_Font_Descriptor : public Fl_Font_Descriptor {
 public:
-  Fl_Cairo_Font_Descriptor(const char* fontname, Fl_Fontsize size, PangoContext *context);
+  Fl_Cairo_Font_Descriptor(const char* fontname, Fl_Fontsize size, PangoContext *context, int weight, int style);
   FL_EXPORT ~Fl_Cairo_Font_Descriptor() FL_OVERRIDE;
   PangoFontDescription *fontref;
   int **width; // array of arrays of character widths
@@ -181,8 +181,9 @@ public:
   static void init_built_in_fonts();
   Fl_Font set_fonts(const char* pattern_name) FL_OVERRIDE;
   const char *font_name(int num) FL_OVERRIDE;
-  void font_name(int num, const char *name) FL_OVERRIDE;
+  void font_name(int num, const char *name, int weight, int style, bool legacy) FL_OVERRIDE;
   const char* get_font_name(Fl_Font fnum, int* ap) FL_OVERRIDE;
+  const char* get_font_name2(Fl_Font fnum, int* weight, int* style) FL_OVERRIDE;
   int get_font_sizes(Fl_Font fnum, int*& sizep) FL_OVERRIDE;
   Fl_Region XRectangleRegion(int x, int y, int w, int h) FL_OVERRIDE;
   void XDestroyRegion(Fl_Region r) FL_OVERRIDE;

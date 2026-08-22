@@ -149,8 +149,9 @@ protected:
   Fl_Font set_fonts(const char *name) FL_OVERRIDE;
   int get_font_sizes(Fl_Font fnum, int*& sizep) FL_OVERRIDE;
   const char* get_font_name(Fl_Font fnum, int* ap) FL_OVERRIDE;
+  const char* get_font_name2(Fl_Font fnum, int* weight, int* style) FL_OVERRIDE;
   const char *font_name(int num) FL_OVERRIDE;
-  void font_name(int num, const char *name) FL_OVERRIDE;
+  void font_name(int num, const char *name, int weight, int style, bool legacy) FL_OVERRIDE;
   void global_gc() FL_OVERRIDE;
   void overlay_rect(int x, int y, int w , int h) FL_OVERRIDE;
   void cache_size(Fl_Image *img, int &width, int &height) FL_OVERRIDE;
