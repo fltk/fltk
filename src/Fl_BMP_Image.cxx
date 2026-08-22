@@ -135,7 +135,8 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
         width,            // Width of image (pixels)
         height,           // Height of image (pixels)
         depth,            // Depth of image (bits)
-        bDepth = 3,       // Depth of image (bytes)
+        srcBDepth = 3,    // Depth of source data (bytes)
+        dstBDepth = 3,    // Depth of image (bytes)
         compression,      // Type of compression
         colors_used,      // Number of colors used
         x, y,             // Looping vars
@@ -154,6 +155,9 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   uchar colormap[256][3]; // Colormap
   uchar havemask;         // Single bit mask follows image data
   int   use_5_6_5;        // Use 5:6:5 for R:G:B channels in 16 bit images
+  bool  is_v3 = false;    // True if BITMAPV3INFOHEADER or later
+  bool  use_v3_alpha = false; // True if V3 header overrides BI_RGB to use alpha = false;    // True if BITMAPV4HEADER or later
+
 
   // Implementation notes: Reader is already open at this point.
   // Use local variables (width, height) until image is complete
@@ -236,15 +240,30 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
 
     repcount = info_size - 40;
 
+    if (info_size >= 56) {
+      is_v3 = true;
+      // V3 adds lookup words for R, G,B, and Alpha. They are usually
+      // 0x00ff0000, 0x0000ff00, 0x000000ff, and 0x00000000 respectively.
+      // If the alpha mask is set, it overrides the BI_RGB compression type
+      // and indicates that the image has an alpha channel.
+      uint32_t red_mask   = rdr.read_dword();
+      uint32_t green_mask = rdr.read_dword();
+      uint32_t blue_mask  = rdr.read_dword();
+      uint32_t alpha_mask = rdr.read_dword();
+      use_v3_alpha = ((compression == BI_RGB) && (alpha_mask != 0));
+      repcount -= 16;
+    }
+
     if (!compression && depth >= 8 && width > 32/depth) {
       int Bpp = depth/8;
       int maskSize = (((width*Bpp+3)&~3)*height) + (((((width+7)/8)+3)&~3)*height);
       if (maskSize == 2*dataSize) {
         havemask = 1;
         height = height/2;
-        bDepth = 4;
+        srcBDepth = dstBDepth = 4;
       }
     }
+
   }
   CHECK_ERROR
 
@@ -282,19 +301,25 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
     use_5_6_5 = (rdr.read_dword() == 0xf800);
 
   // Set byte depth for RGBA images
-  if (depth == 32)
-    bDepth = 4;
+  if (depth == 32) {
+    if (compression == 0 && !use_v3_alpha) { // BI_RGB and not V3 alpha
+      srcBDepth = 4;
+      dstBDepth = 3;
+    } else {  // should be BI_BITFIELDS
+      srcBDepth = dstBDepth = 4;
+    }
+  }
 
   // Setup image and buffers...
   if (offbits) rdr.seek((unsigned int)offbits);
   CHECK_ERROR
 
-  if (((size_t)width) * height * bDepth > max_size() ) {
+  if (((size_t)width) * height * srcBDepth > max_size() ) {
     Fl::warning("BMP file \"%s\" is too large!\n", rdr.name());
     ld(ERR_FORMAT);
     return;
   }
-  array = new uchar[width * height * bDepth];
+  array = new uchar[width * height * dstBDepth];
   alloc_array = 1;
 
   // Read the image data...
@@ -312,13 +337,8 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
     end_y   = height;
   }
 
-  // If the image depth is 32 bits, the format may be RGB0 or RGBA. We set
-  // this bit as soon as we find an alpha value that is not 0. If all alpha
-  // values are 0, we will treat the image as RGB0 and update our image.
-  bool d32_no_alpha = true;
-
   for (y = start_y; y != end_y; y += row_order) {
-    ptr = (uchar *)array + y * width * bDepth;
+    ptr = (uchar *)array + y * width * dstBDepth;
 
     switch (depth)
     {
@@ -479,7 +499,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
         break;
 
       case 16 : // 16-bit 5:5:5 or 5:6:5 RGB
-        for (x = width; x > 0; x --, ptr += bDepth) {
+        for (x = width; x > 0; x --, ptr += dstBDepth) {
           uchar b = rdr.read_byte(), a = rdr.read_byte() ;
           if (use_5_6_5) {
             ptr[2] = (uchar)(( b << 3 ) & 0xf8);
@@ -499,7 +519,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
         break;
 
       case 24 : // 24-bit RGB
-        for (x = width; x > 0; x --, ptr += bDepth) {
+        for (x = width; x > 0; x --, ptr += dstBDepth) {
           ptr[2] = rdr.read_byte();
           ptr[1] = rdr.read_byte();
           ptr[0] = rdr.read_byte();
@@ -512,13 +532,20 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
         break;
 
       case 32 : // 32-bit RGBA
-        for (x = width; x > 0; x --, ptr += bDepth) {
-          ptr[2] = rdr.read_byte();
-          ptr[1] = rdr.read_byte();
-          ptr[0] = rdr.read_byte();
-          auto alpha = rdr.read_byte();
-          if (alpha != 0) d32_no_alpha = false;
-          ptr[3] = alpha;
+        if (dstBDepth == 3) { // BI_RGB
+          for (x = width; x > 0; x --, ptr += dstBDepth) {
+            ptr[2] = rdr.read_byte();
+            ptr[1] = rdr.read_byte();
+            ptr[0] = rdr.read_byte();
+            rdr.read_byte();
+          }
+        } else {
+          for (x = width; x > 0; x --, ptr += dstBDepth) {
+            ptr[2] = rdr.read_byte();
+            ptr[1] = rdr.read_byte();
+            ptr[0] = rdr.read_byte();
+            ptr[3] = rdr.read_byte();
+          }
         }
         break;
     }
@@ -527,8 +554,8 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
 
   if (havemask) {
     for (y = height - 1; y >= 0; y --) {
-      ptr = (uchar *)array + y * width * bDepth + 3;
-      for (x = width, bit = 128; x > 0; x --, ptr += bDepth) {
+      ptr = (uchar *)array + y * width * dstBDepth + 3;
+      for (x = width, bit = 128; x > 0; x --, ptr += dstBDepth) {
         if (bit == 128) byte = rdr.read_byte();
         if (byte & bit)
           *ptr = 0;
@@ -547,29 +574,14 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
 
   CHECK_ERROR
 
-  if (depth == 32 && d32_no_alpha) {
-    // If all alpha values are 0, we will treat the image as RGB0 and update our image.
-    auto* old_array = array;
-    bDepth = 3;
-    array = new uchar[width * height * 3];
-    for (y = 0; y < height; y++) {
-      uchar* src = (uchar *)old_array + y * width * 4;
-      uchar* dst = (uchar *)array + y * width * 3;
-      for (x = 0; x < width; x++, src += 4, dst += 3) {
-        dst[2] = src[2];
-        dst[1] = src[1];
-        dst[0] = src[0];
-      }
-    }
-    delete[] old_array;
-  }
+  printf("compression %d bpp %d s %d d %d\n", compression, depth, srcBDepth, dstBDepth);
 
   // Success: set image attributes and return
   // File is closed when returning...
 
   w(width);
   h(height);
-  d(bDepth);
+  d(dstBDepth);
   ld(0);
 
 } // load_bmp_()
