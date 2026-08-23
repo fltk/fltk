@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
   tty->ansi(true);
 
   window.resizable(browser);
-  window.show(argc,argv);
+  window.show();
   return Fl::run();
 }
 

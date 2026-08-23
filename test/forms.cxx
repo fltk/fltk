@@ -184,6 +184,7 @@ int main(int argc, char *argv[]) {
 #include <FL/fl_ask.H>
 
 int main(int argc, char **argv) {
+  Fl::args(argc, argv);
   fl_message_title("This program needs the Forms compatibility library");
   fl_message(
     "Please configure FLTK with Forms enabled, i.e.\n"

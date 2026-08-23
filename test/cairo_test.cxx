@@ -209,6 +209,7 @@ int main(int argc, char **argv) {
 #include <FL/fl_ask.H>
 
 int main(int argc, char **argv) {
+  Fl::args(argc, argv);
   fl_message_title("This program needs a Cairo enabled FLTK library");
   fl_message(
     "Please configure FLTK with Cairo enabled, i.e. use one of the\n"

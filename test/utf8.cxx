@@ -703,9 +703,12 @@ Fl_Grid *make_grid(int off) {
 int main(int argc, char** argv) {
 
   int off = 2;
-  if (argc > 1) {
-    off = (int)strtoul(argv[1], NULL, 0);
-    argc = 1;
+
+  Fl::args_to_utf8(argc, argv);
+  int n = 0;
+  Fl::args(argc, argv, n);
+  if (n < argc) {
+    off = (int)strtoul(argv[n], NULL, 0);
   }
 
   make_font_chooser();
@@ -795,7 +798,7 @@ int main(int argc, char** argv) {
 
   // fl_set_status(0, 370, 100, 30);
 
-  main_win->show(argc, argv);
+  main_win->show();
 
   fnt_chooser_win->show();
 
