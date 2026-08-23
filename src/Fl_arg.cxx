@@ -41,6 +41,8 @@ static const char *title;
 extern const char *fl_fg;
 extern const char *fl_bg;
 extern const char *fl_bg2;
+// user selected application scaling
+float fl_scaling_factor = 1.0f;
 
 /**
   Parse a single switch from \p argv, starting at word \p i.
@@ -206,6 +208,9 @@ int Fl::arg(int argc, char **argv, int &i) {
   } else if (fl_match(s, "fg", 2) || fl_match(s, "foreground", 10)) {
     fl_fg = v;
 
+  } else if (fl_match(s, "scaling", 2) || fl_match(s, "scaling_factor", 14)) {
+    fl_scaling_factor = (float)atof(v);
+
   } else if (fl_match(s, "scheme", 1)) {
     Fl::scheme(v);
 
@@ -349,6 +354,7 @@ static const char * const helpmsg =
 " -nok[bd]\n"
 " -not[ooltips]\n"
 " -s[cheme] scheme\n"
+" -scaling[_factor] factor\n"
 " -ti[tle] windowtitle\n"
 " -to[oltips]";
 

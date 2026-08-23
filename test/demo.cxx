@@ -112,7 +112,7 @@ char app_path     [FL_PATH_MAX];          // directory of all demo binaries
 char fluid_path   [FL_PATH_MAX];          // binary directory of fluid
 char options_path [FL_PATH_MAX];          // binary directory of fltk-options
 char data_path    [FL_PATH_MAX];          // working directory of all demos
-char command      [2 * FL_PATH_MAX + 40]; // command to be executed
+char command      [2 * FL_PATH_MAX + 80]; // command to be executed
 
 // platform specific suffix for executable files
 
@@ -392,12 +392,20 @@ void dobut(Fl_Widget *, long arg) {
     path = options_path;
 
   // format commandline with optional parameters
+  char scaling_arg[40];
+  scaling_arg[0] = 0;
+  float scaling_factor = Fl::normalized_screen_scale(0);
+  if (scaling_factor != 1.0f) {
+    snprintf(scaling_arg, sizeof(scaling_arg) - 1, " -scaling_factor %.1f", scaling_factor);
+  }
 
 #if defined(USE_MAC_OS) // macOS
 
   if (params[0]) {
     // we assume that we have only one argument which is a filename in 'data_path'
-    snprintf(command, sizeof(command), "open '%s/%s%s' --args '%s/%s'", path, cmdbuf, suffix, data_path, params);
+    snprintf(command, sizeof(command), "open '%s/%s%s' --args%s '%s/%s'", path, cmdbuf, suffix, scaling_arg, data_path, params);
+  } else if (scaling_arg[0]) {
+    snprintf(command, sizeof(command), "open '%s/%s%s' --args%s", path, cmdbuf, suffix, scaling_arg);
   } else {
     snprintf(command, sizeof(command), "open '%s/%s%s'", path, cmdbuf, suffix);
   }
@@ -405,9 +413,9 @@ void dobut(Fl_Widget *, long arg) {
 #else // other platforms
 
   if (params[0])
-    snprintf(command, sizeof(command), "%s/%s%s %s", path, cmdbuf, suffix, params);
+    snprintf(command, sizeof(command), "%s/%s%s%s %s", path, cmdbuf, suffix, scaling_arg, params);
   else
-    snprintf(command, sizeof(command), "%s/%s%s", path, cmdbuf, suffix);
+    snprintf(command, sizeof(command), "%s/%s%s%s", path, cmdbuf, suffix, scaling_arg);
 
 #endif
 

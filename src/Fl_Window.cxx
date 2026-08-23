@@ -548,7 +548,16 @@ void Fl_Window::label(const char *name, const char *mininame) {
   pWindowDriver->label(name, mininame);
 }
 
+extern float fl_scaling_factor;
+
 void Fl_Window::show() {
+  static bool first_show = true;
+  if (first_show && !parent()) {
+    first_show = false;
+    if (fl_scaling_factor != 1.0f)
+      Fl::normalized_screen_scale(-1, fl_scaling_factor);
+  }
+
   image(Fl::scheme_bg_);
   if (Fl::scheme_bg_) {
     labeltype(FL_NORMAL_LABEL);

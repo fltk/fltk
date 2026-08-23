@@ -571,6 +571,8 @@ FL_EXPORT extern void screen_work_area(int &X, int &Y, int &W, int &H, int n); /
 FL_EXPORT extern void screen_work_area(int &X, int &Y, int &W, int &H); // via screen driver
 FL_EXPORT extern float screen_scale(int n); // via screen driver
 FL_EXPORT extern void screen_scale(int n, float factor); // via screen driver
+FL_EXPORT extern float normalized_screen_scale(int n);
+FL_EXPORT extern void normalized_screen_scale(int n, float factor);
 FL_EXPORT extern int screen_scaling_supported();
 FL_EXPORT extern void keyboard_screen_scaling(int value);
 

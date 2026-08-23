@@ -2508,6 +2508,25 @@ float Fl::screen_scale(int n) {
   return Fl::screen_driver()->scale(n);
 }
 
+/**
+ Gets the normalized GUI scaling factor of screen number \p n.
+
+ Calculate the scale of the windows and their graphics on a screen in relation
+ to the initial scale of the screen. The initial scale is the scale of the
+ screen when the application was started. This is the samle value that is
+ shown in the transient popup windows during interactive app scaling.
+
+ \param[in] n screen index between 0 and Fl::screen_count() - 1
+ \return screen scaling factor in relation to the initial scale
+ \see Fl::screen_scale(int)
+ \since 1.5.0
+*/
+float Fl::normalized_screen_scale(int n) {
+  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count())
+    return 1.;
+  return Fl::screen_driver()->scale(n) / Fl::screen_driver()->base_scale(n);
+}
+
 /** Sets the GUI scaling factor of screen number \p n.
 
   The valid range of \p n is 0 .. Fl::screen_count() - 1.
@@ -2535,6 +2554,28 @@ void Fl::screen_scale(int n, float factor) {
     }
   } else
     Fl::screen_driver()->rescale_all_windows_from_screen(n, factor, factor);
+}
+
+/**
+ Sets the normalized GUI scaling factor of screen number \p n.
+
+ Set the scale of the windows and their graphics on a screen in relation
+ to the initial scale of the screen.
+
+ \param[in] n Screen index between 0 and Fl::screen_count() - 1. Set this to
+            -1 to scale all screens.
+ \param[in] factor Scaling factor for the given screen.
+ \see Fl::screen_scale(int, float)
+ \since 1.5.0
+*/
+void Fl::normalized_screen_scale(int n, float factor) {
+  if (n == -1) {
+    for (int s = 0; s < Fl::screen_count(); s++) {
+      Fl::screen_scale(s, factor * Fl::screen_driver()->base_scale(s));
+    }
+  } else {
+    Fl::screen_scale(n, factor * Fl::screen_driver()->base_scale(n));
+  }
 }
 
 /**
