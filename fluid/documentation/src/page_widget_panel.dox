@@ -368,7 +368,7 @@
 
  <h3>setup</h3>
 
- Code in the `setup` field is inserted into the constructor right after the
+ Code in the `setup` field is inserted into the instantiation code right after the
  widget has been created and all of its attributes have been set, but before
  any of its children are instantiated. This is the place to run
  initialization that must happen before the widget's children exist, such as
@@ -376,8 +376,8 @@
 
  <h3>final</h3>
 
- Code in the `final` field is inserted into the constructor after the widget
- and all of its children have been fully instantiated. Use it for any setup
+ Code in the `final` field is inserted into the instantiation code after the widget
+ and all of its children have been created. Use it for any setup
  that depends on the complete widget subtree already being in place, such as
  wiring up cross-references between the widget and its children.
 

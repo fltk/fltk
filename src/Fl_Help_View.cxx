@@ -46,6 +46,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <algorithm> // std::min, std::max
 
 //
 // Debugging
@@ -66,6 +67,7 @@
 //
 
 static constexpr int MAX_COLUMNS = 200;
+static constexpr int MAX_LINES = 32; // maximum number of lines per block
 
 //
 // Implementation class
@@ -152,7 +154,7 @@ public:
     int           y;                    // Starting Y coordinate
     int           w;                    // Width
     int           h;                    // Height
-    int           line[32];             // Left starting position for each line
+    int           line[MAX_LINES];      // Left starting position for each line
     int           ol;                   // is ordered list <OL> element
     int           ol_num;               // item number in ordered list
   };
@@ -247,6 +249,7 @@ public:
 
   // HTML source and raw data, getter
 
+  bool          skip(const char *&ptr, const char *tag, const char *end);
   void          free_data();
   std::shared_ptr<Link> find_link(int, int);
   void          follow_link(std::shared_ptr<Link>);
@@ -260,10 +263,10 @@ public:
   void          format();
   void          format_table(int *table_width, int *columns, const char *table);
   Align         get_align(const char *p, Align a);
-  const char    *get_attr(const char *p, const char *n, char *buf, int bufsize);
-  Fl_Color      get_color(const char *n, Fl_Color c);
-  Fl_Shared_Image *get_image(const char *name, int W, int H);
-  int           get_length(const char *l);
+  bool          get_attr(const char *p, const char *n, std::string& buf);
+  Fl_Color      get_color(const std::string& n, Fl_Color c);
+  Fl_Shared_Image *get_image(const std::string& name, int W, int H);
+  int           get_length(const std::string& l);
 
   // Font and font stack
 
@@ -595,6 +598,34 @@ size_t Fl_Help_View::Impl::Font_Stack::count() const {
 // ---- HTML source and raw data, getter
 
 /**
+  \brief Skip over a tag and find the end tag.
+  \param[in,out] ptr Pointer to the current position in the HTML source.
+  \param[in] tag The tag to skip (e.g., "script").
+  \param[in] end The corresponding end tag (e.g., "</script>").
+  \return true if the tag and the end tag were found and skipped, false otherwise.
+  \note This function assumes that the input pointer is at the start of the tag.
+*/
+bool Fl_Help_View::Impl::skip(const char *&ptr, const char *tag, const char *end) {
+  size_t taglen = strlen(tag);
+  const char *p = ptr;
+
+  if (strncmp(p, tag, taglen) == 0 && (p[taglen] == '>' || fl_ascii_isspace(p[taglen])))
+  {
+    // skip tag and find end tag
+    p += taglen;
+    if ((p = strstr(p, end)) != nullptr) {
+      p += strlen(end);
+      ptr = p;
+      return true;
+    } else {
+      return false;
+    }
+  }
+  return false;
+}
+
+
+/**
   \brief Frees memory used for the document.
   */
 void Fl_Help_View::Impl::free_data() {
@@ -603,9 +634,9 @@ void Fl_Help_View::Impl::free_data() {
     const char  *ptr,           // Pointer into block
                 *attrs;         // Pointer to start of element attributes
     Edit_Buffer buf;            // Text buffer
-    char        attr[1024],     // Attribute buffer
-                wattr[1024],    // Width attribute buffer
-                hattr[1024];    // Height attribute buffer
+    std::string attr;           // Attribute buffer
+    std::string wattr;          // Width attribute buffer
+    std::string hattr;          // Height attribute buffer
 
     DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
@@ -627,6 +658,10 @@ void Fl_Help_View::Impl::free_data() {
           else
             break;
         }
+        if (skip(ptr, "script", "</script>"))
+          continue;
+        if (skip(ptr, "label", "</label>"))
+          continue;
 
         buf.clear();
 
@@ -646,12 +681,12 @@ void Fl_Help_View::Impl::free_data() {
           int           width;
           int           height;
 
-          get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
-          get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+          get_attr(attrs, "WIDTH", wattr);
+          get_attr(attrs, "HEIGHT", hattr);
           width  = get_length(wattr);
           height = get_length(hattr);
 
-          if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+          if (get_attr(attrs, "SRC", attr)) {
             // Get and release the image to free it from memory...
             img = get_image(attr, width, height);
             if ((void*)img != &broken_image) {
@@ -773,7 +808,7 @@ Fl_Help_View::Impl::Text_Block *Fl_Help_View::Impl::add_block(
   // printf("add_block(s = %p, xx = %d, yy = %d, ww = %d, hh = %d, border = %d)\n",
   //        s, xx, yy, ww, hh, border);
 
-  blocks_.push_back(Text_Block()); // Add a new block to the vector
+  blocks_.emplace_back(); // Add a new block to the vector
   temp = &blocks_.back();
 
   memset(temp, 0, sizeof(Text_Block));
@@ -861,7 +896,7 @@ int Fl_Help_View::Impl::do_align(
 
   block->line[line] = block->x + offset;
 
-  if (line < 31)
+  if (line < MAX_LINES-1)
     line ++;
 
   while (l < (int)link_list_.size()) {
@@ -896,10 +931,10 @@ void Fl_Help_View::Impl::format() {
                 *start,         // Pointer to start of element
                 *attrs;         // Pointer to start of element attributes
   Edit_Buffer   buf;            // Text buffer
-  char          attr[1024],     // Attribute buffer
-                wattr[1024],    // Width attribute buffer
-                hattr[1024],    // Height attribute buffer
-                linkdest[1024]; // Link destination
+  std::string   attr;           // Attribute buffer
+  std::string   linkdest;       // Link destination
+  std::string   wattr;          // Width attribute buffer
+  std::string   hattr;          // Height attribute buffer
   int           xx, yy, ww, hh = 0; // Size of current text fragment
   int           line;           // Current line in block
   int           links;          // Links for current line
@@ -970,7 +1005,7 @@ void Fl_Help_View::Impl::format() {
     talign       = Align::LEFT;
     newalign     = Align::LEFT;
     needspace    = 0;
-    linkdest[0]  = '\0';
+    linkdest.clear();
     table_offset = 0;
 
     // Html text character loop
@@ -1006,7 +1041,7 @@ void Fl_Help_View::Impl::format() {
             hh       = 0;
           }
 
-          if (linkdest[0])
+          if (!linkdest.empty())
             add_link(linkdest, xx, yy - fsize, ww, fsize);
 
           xx += ww;
@@ -1018,7 +1053,7 @@ void Fl_Help_View::Impl::format() {
         else if (pre)
         {
           // Add a link as needed...
-          if (linkdest[0])
+          if (!linkdest.empty())
             add_link(linkdest, xx, yy - hh, ww, hh);
 
           xx += ww;
@@ -1083,6 +1118,10 @@ void Fl_Help_View::Impl::format() {
           else
             break;
         }
+        if (skip(ptr, "script", "</script>"))
+          continue;
+        if (skip(ptr, "label", "</label>"))
+          continue;
 
         while (*ptr && *ptr != '>' && !fl_ascii_isspace(*ptr))
           buf += *ptr++;
@@ -1109,22 +1148,22 @@ void Fl_Help_View::Impl::format() {
         }
         else if (buf.cmp("A"))
         {
-          if (get_attr(attrs, "NAME", attr, sizeof(attr)) != nullptr)
+          if (get_attr(attrs, "NAME", attr))
             add_target(attr, yy - fsize - 2);
 
-          if (get_attr(attrs, "HREF", attr, sizeof(attr)) != nullptr)
-            strlcpy(linkdest, attr, sizeof(linkdest));
+          if (get_attr(attrs, "HREF", attr))
+            linkdest = attr;
         }
         else if (buf.cmp("/A"))
-          linkdest[0] = '\0';
+          linkdest.clear();
         else if (buf.cmp("BODY"))
         {
-          bgcolor_   = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)),
-                                 view.color());
-          textcolor_ = get_color(get_attr(attrs, "TEXT", attr, sizeof(attr)),
-                                 textcolor());
-          linkcolor_ = get_color(get_attr(attrs, "LINK", attr, sizeof(attr)),
-                                 fl_contrast(FL_BLUE, view.color()));
+          get_attr(attrs, "BGCOLOR", attr);
+          bgcolor_   = get_color(attr, view.color());
+          get_attr(attrs, "TEXT", attr);
+          textcolor_ = get_color(attr, textcolor());
+          get_attr(attrs, "LINK", attr);
+          linkcolor_ = get_color(attr, fl_contrast(FL_BLUE, view.color()));
         }
         else if (buf.cmp("BR"))
         {
@@ -1160,11 +1199,11 @@ void Fl_Help_View::Impl::format() {
 
           if (buf.cmp("OL")) {
             int ol_num = 1;
-            if (get_attr(attrs, "START", attr, sizeof(attr)) != nullptr) {
+            if (get_attr(attrs, "START", attr)) {
               errno = 0;
               char *endptr = 0;
-              ol_num = (int)strtol(attr, &endptr, 10);
-              if (errno || endptr == attr || ol_num < 0)
+              ol_num = (int)strtol(attr.c_str(), &endptr, 10);
+              if (errno || endptr == attr.c_str() || ol_num < 0)
                 ol_num = 1;
             }
             OL_num.push_back(ol_num);
@@ -1181,12 +1220,13 @@ void Fl_Help_View::Impl::format() {
           }
           else if (buf.cmp("TABLE"))
           {
-            if (get_attr(attrs, "BORDER", attr, sizeof(attr)))
-              border = (uchar)atoi(attr);
+            if (get_attr(attrs, "BORDER", attr))
+              border = (uchar)atoi(attr.c_str());
             else
               border = 0;
 
-            tc = rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), bgcolor_);
+            get_attr(attrs, "BGCOLOR", attr);
+            tc = rc = get_color(attr, bgcolor_);
 
             block->h += fsize + 2;
 
@@ -1381,7 +1421,8 @@ void Fl_Help_View::Impl::format() {
           column    = 0;
           line      = 0;
 
-          rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), tc);
+          get_attr(attrs, "BGCOLOR", attr);
+          rc = get_color(attr, tc);
         }
         else if (buf.cmp("/TR") && row)
         {
@@ -1437,8 +1478,8 @@ void Fl_Help_View::Impl::format() {
 
           margins.push(xx - margins.current());
 
-          if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != nullptr)
-            colspan = atoi(attr);
+          if (get_attr(attrs, "COLSPAN", attr))
+            colspan = atoi(attr.c_str());
           else
             colspan = 1;
 
@@ -1465,8 +1506,8 @@ void Fl_Help_View::Impl::format() {
 
           column += colspan;
 
-          block->bgcolor = get_color(get_attr(attrs, "BGCOLOR", attr,
-                                              sizeof(attr)), rc);
+          get_attr(attrs, "BGCOLOR", attr);
+          block->bgcolor = get_color(attr, rc);
         }
         else if ((buf.cmp("/TD") ||
                   buf.cmp("/TH")) && row)
@@ -1478,23 +1519,23 @@ void Fl_Help_View::Impl::format() {
         }
         else if (buf.cmp("FONT"))
         {
-          if (get_attr(attrs, "FACE", attr, sizeof(attr)) != nullptr) {
-            if (!strncasecmp(attr, "helvetica", 9) ||
-                !strncasecmp(attr, "arial", 5) ||
-                !strncasecmp(attr, "sans", 4)) font = FL_HELVETICA;
-            else if (!strncasecmp(attr, "times", 5) ||
-                     !strncasecmp(attr, "serif", 5)) font = FL_TIMES;
-            else if (!strncasecmp(attr, "symbol", 6)) font = FL_SYMBOL;
+          if (get_attr(attrs, "FACE", attr)) {
+            if (!strncasecmp(attr.c_str(), "helvetica", 9) ||
+                !strncasecmp(attr.c_str(), "arial", 5) ||
+                !strncasecmp(attr.c_str(), "sans", 4)) font = FL_HELVETICA;
+            else if (!strncasecmp(attr.c_str(), "times", 5) ||
+                     !strncasecmp(attr.c_str(), "serif", 5)) font = FL_TIMES;
+            else if (!strncasecmp(attr.c_str(), "symbol", 6)) font = FL_SYMBOL;
             else font = FL_COURIER;
           }
 
-          if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-            if (fl_ascii_isdigit(attr[0])) {
+          if (get_attr(attrs, "SIZE", attr)) {
+            if (!attr.empty() && fl_ascii_isdigit(attr[0])) {
               // Absolute size
-              fsize = (int)(textsize_ * pow(1.2, atoi(attr) - 3.0));
+              fsize = (int)(textsize_ * pow(1.2, atoi(attr.c_str()) - 3.0));
             } else {
               // Relative size
-              fsize = (int)(fsize * pow(1.2, atoi(attr)));
+              fsize = (int)(fsize * pow(1.2, atoi(attr.c_str())));
             }
           }
 
@@ -1531,12 +1572,12 @@ void Fl_Help_View::Impl::format() {
           int           height;
 
 
-          get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
-          get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+          get_attr(attrs, "WIDTH", wattr);
+          get_attr(attrs, "HEIGHT", hattr);
           width  = get_length(wattr);
           height = get_length(hattr);
 
-          if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+          if (get_attr(attrs, "SRC", attr)) {
             img    = get_image(attr, width, height);
             width  = img->w();
             height = img->h();
@@ -1562,7 +1603,7 @@ void Fl_Help_View::Impl::format() {
             hh       = 0;
           }
 
-          if (linkdest[0])
+          if (!linkdest.empty())
             add_link(linkdest, xx, yy-fsize, ww, height);
 
           xx += ww;
@@ -1575,7 +1616,7 @@ void Fl_Help_View::Impl::format() {
       }
       else if (*ptr == '\n' && pre)
       {
-        if (linkdest[0])
+        if (!linkdest.empty())
           add_link(linkdest, xx, yy - hh, ww, hh);
 
         if (xx > hsize_) {
@@ -1650,7 +1691,7 @@ void Fl_Help_View::Impl::format() {
         hh       = 0;
       }
 
-      if (linkdest[0])
+      if (!linkdest.empty())
         add_link(linkdest, xx, yy - fsize, ww, fsize);
 
       xx += ww;
@@ -1736,9 +1777,9 @@ void Fl_Help_View::Impl::format_table(
                 pre,                                    // <PRE> text?
                 needspace;                              // Need whitespace?
   Edit_Buffer   buf;                                    // Text buffer
-  char          attr[1024],                             // Other attribute
-                wattr[1024],                            // WIDTH attribute
-                hattr[1024];                            // HEIGHT attribute
+  std::string   attr;                                // Other attribute
+  std::string   wattr;                                  // WIDTH attribute
+  std::string   hattr;                                  // HEIGHT attribute
   const char    *ptr,                                   // Pointer into table
                 *attrs,                                 // Pointer to attributes
                 *start;                                 // Start of element
@@ -1930,8 +1971,8 @@ void Fl_Help_View::Impl::format_table(
         else
           column ++;
 
-        if (get_attr(attrs, "COLSPAN", attr, sizeof(attr)) != nullptr)
-          colspan = atoi(attr);
+        if (get_attr(attrs, "COLSPAN", attr))
+          colspan = std::max(1, atoi(attr.c_str()));
         else
           colspan = 1;
 
@@ -1954,7 +1995,7 @@ void Fl_Help_View::Impl::format_table(
 
         pushfont(font, fsize);
 
-        if (get_attr(attrs, "WIDTH", attr, sizeof(attr)) != nullptr)
+        if (get_attr(attrs, "WIDTH", attr))
           max_width = get_length(attr);
         else
           max_width = 0;
@@ -1995,12 +2036,12 @@ void Fl_Help_View::Impl::format_table(
         int             iwidth, iheight;
 
 
-        get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
-        get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+        get_attr(attrs, "WIDTH", wattr);
+        get_attr(attrs, "HEIGHT", hattr);
         iwidth  = get_length(wattr);
         iheight = get_length(hattr);
 
-        if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+        if (get_attr(attrs, "SRC", attr)) {
           img     = get_image(attr, iwidth, iheight);
           iwidth  = img->w();
           iheight = img->h();
@@ -2053,7 +2094,7 @@ void Fl_Help_View::Impl::format_table(
 
   // Now that we have scanned the entire table, adjust the table and
   // cell widths to fit on the screen...
-  if (get_attr(table + 6, "WIDTH", attr, sizeof(attr)))
+  if (get_attr(table + 6, "WIDTH", attr))
     *table_width = get_length(attr);
   else
     *table_width = 0;
@@ -2150,14 +2191,14 @@ void Fl_Help_View::Impl::format_table(
 */
 Fl_Help_View::Impl::Align Fl_Help_View::Impl::get_align(const char *p, Align a)
 {
-  char  buf[255];                       // Alignment value
+  std::string buf;                        // Alignment value
 
-  if (get_attr(p, "ALIGN", buf, sizeof(buf)) == nullptr)
+  if (!get_attr(p, "ALIGN", buf))
     return (a);
 
-  if (strcasecmp(buf, "CENTER") == 0)
+  if (strcasecmp(buf.c_str(), "CENTER") == 0)
     return Align::CENTER;
-  else if (strcasecmp(buf, "RIGHT") == 0)
+  else if (strcasecmp(buf.c_str(), "RIGHT") == 0)
     return Align::RIGHT;
   else
     return Align::LEFT;
@@ -2169,21 +2210,20 @@ Fl_Help_View::Impl::Align Fl_Help_View::Impl::get_align(const char *p, Align a)
   \param[in] p Pointer to start of attributes.
   \param[in] n Name of attribute.
   \param[out] buf Buffer for attribute value.
-  \param[in] bufsize Size of buffer.
-  \return Pointer to buf or nullptr if not found.
+  \return true if the attribute was found, false otherwise.
+    If the attribute was found, the buffer will contain the value of the attribute, which can be empty.
+    If the attribute was not found, the buffer will be cleared.
   */
-const char *Fl_Help_View::Impl::get_attr(
+bool Fl_Help_View::Impl::get_attr(
   const char *p,
   const char *n,
-  char *buf,
-  int bufsize)
+  std::string& buf)
 {
-  char  name[255],                              // Name from string
-        *ptr,                                   // Pointer into name or value
-        quote;                                  // Quote
+  std::string name;                             // Name from string
+  char  *ptr;                                   // Pointer into name or value
+  char  quote;                                  // Quote
 
-
-  buf[0] = '\0';
+  buf.clear();
 
   while (*p && *p != '>')
   {
@@ -2191,55 +2231,49 @@ const char *Fl_Help_View::Impl::get_attr(
       p ++;
 
     if (*p == '>' || !*p)
-      return (nullptr);
+      return false;
 
-    for (ptr = name; *p && !fl_ascii_isspace(*p) && *p != '=' && *p != '>';)
-      if (ptr < (name + sizeof(name) - 1))
-        *ptr++ = *p++;
-      else
-        p ++;
-
-    *ptr = '\0';
+    name.clear();
+    for ( ; *p && !fl_ascii_isspace(*p) && *p != '=' && *p != '>'; )
+      name += *p++;
 
     if (fl_ascii_isspace(*p) || !*p || *p == '>')
-      buf[0] = '\0';
+    {
+      buf.clear();
+    }
     else
     {
       if (*p == '=')
         p ++;
 
-      for (ptr = buf; *p && !fl_ascii_isspace(*p) && *p != '>';)
-        if (*p == '\'' || *p == '\"')
-        {
-          quote = *p++;
+      buf.clear();
+      if (*p == '\'' || *p == '\"')
+      {
+        quote = *p++;
 
-          while (*p && *p != quote)
-            if ((ptr - buf + 1) < bufsize)
-              *ptr++ = *p++;
-            else
-              p ++;
+        while (*p && *p != quote)
+          buf += *p++;
 
-          if (*p == quote)
-            p ++;
-        }
-        else if ((ptr - buf + 1) < bufsize)
-          *ptr++ = *p++;
-        else
+        if (*p == quote)
           p ++;
-
-      *ptr = '\0';
+      }
+      else
+      {
+        while (*p && !fl_ascii_isspace(*p) && *p != '>')
+          buf += *p++;
+      }
     }
 
-    if (strcasecmp(n, name) == 0)
-      return (buf);
+    if (strcasecmp(n, name.c_str()) == 0)
+      return true;
     else
-      buf[0] = '\0';
+      buf.clear();
 
     if (*p == '>')
-      return (nullptr);
+      return false;
   }
 
-  return (nullptr);
+  return false;
 }
 
 
@@ -2249,7 +2283,7 @@ const char *Fl_Help_View::Impl::get_attr(
   \param[in] c the default color value.
   \return the color value, either the color from the name or the default value.
   */
-Fl_Color Fl_Help_View::Impl::get_color(const char *n, Fl_Color c)
+Fl_Color Fl_Help_View::Impl::get_color(const std::string& n, Fl_Color c)
 {
   int   i;                              // Looping var
   int   rgb, r, g, b;                   // RGB values
@@ -2279,13 +2313,13 @@ Fl_Color Fl_Help_View::Impl::get_color(const char *n, Fl_Color c)
   };
 
 
-  if (!n || !n[0]) return c;
+  if (n.empty()) return c;
 
   if (n[0] == '#') {
     // Do hex color lookup
-    rgb = (int)strtol(n + 1, nullptr, 16);
+    rgb = (int)strtol(n.c_str() + 1, nullptr, 16);
 
-    if (strlen(n) > 4) {
+    if (n.length() > 4) {
       r = rgb >> 16;
       g = (rgb >> 8) & 255;
       b = rgb & 255;
@@ -2297,7 +2331,7 @@ Fl_Color Fl_Help_View::Impl::get_color(const char *n, Fl_Color c)
     return (fl_rgb_color((uchar)r, (uchar)g, (uchar)b));
   } else {
     for (i = 0; i < (int)(sizeof(colors) / sizeof(colors[0])); i ++)
-      if (!strcasecmp(n, colors[i].name)) {
+      if (!strcasecmp(n.c_str(), colors[i].name)) {
         return fl_rgb_color(colors[i].r, colors[i].g, colors[i].b);
       }
     return c;
@@ -2349,44 +2383,43 @@ Fl_Color Fl_Help_View::Impl::get_color(const char *n, Fl_Color c)
   Fl_Pixmap broken_image, but this is _not_ compatible with the
   return type Fl_Shared_Image (release() must not be called).
 */
-Fl_Shared_Image *Fl_Help_View::Impl::get_image(const char *name, int W, int H)
+Fl_Shared_Image *Fl_Help_View::Impl::get_image(const std::string& name, int W, int H)
 {
   std::string url;
   Fl_Shared_Image *ip;                  // Image pointer...
 
-  if (!name || !name[0]) {
+  if (name.empty()) {
     // No image name given, return broken image
     return (Fl_Shared_Image *)&broken_image;
   }
-  std::string imagename = name;
 
   size_t directory_scheme_length = url_scheme(directory_);
-  size_t imagename_scheme_length = url_scheme(imagename);
+  size_t imagename_scheme_length = url_scheme(name);
 
   // See if the image can be found...
   if ( (directory_scheme_length > 0) && (imagename_scheme_length == 0) ) {
     // If directory_ starts with a scheme (e.g.ftp:), but linkp->filename_ does not:
-    if (imagename[0] == '/') {
+    if (name[0] == '/') {
       // If linkp->filename_ is absolute...
-      url = directory_.substr(0, directory_scheme_length) + imagename;;
+      url = directory_.substr(0, directory_scheme_length) + name;;
     } else {
       // If linkp->filename_ is relative, the URL is the directory_ plus the filename
-      url = directory_ + "/" + imagename;
+      url = directory_ + "/" + name;
     }
-  } else if (imagename[0] != '/' && (imagename_scheme_length == 0)) {
+  } else if (name[0] != '/' && (imagename_scheme_length == 0)) {
     // If the filename is relative and does not start with a scheme (ftp: , etc.)...
     if (!directory_.empty()) {
       // If we have a current directory, use that as the base for the URL
-      url = directory_ + "/" + imagename;
+      url = directory_ + "/" + name;
     } else {
       // If we do not have a current directory, use the application's current working directory
       char dir[FL_PATH_MAX];       // Current directory (static size ok until we have fl_getcwd_std()
       fl_getcwd(dir, sizeof(dir));
-      url = "file:" + std::string(dir) + "/" + imagename;
+      url = "file:" + std::string(dir) + "/" + name;
     }
   } else {
     // If the filename is absolute or starts with a protocol (e.g.ftp:), use it as is
-    url = imagename;
+    url = name;
   }
   if (link_) {
     const char *n = (*link_)(&view, url.c_str());
@@ -2422,15 +2455,14 @@ Fl_Shared_Image *Fl_Help_View::Impl::get_image(const char *name, int W, int H)
   \param[in] l string containing the length value
   \return the length in pixels, or 0 if the string is empty.
 */
-int Fl_Help_View::Impl::get_length(const char *l) {
+int Fl_Help_View::Impl::get_length(const std::string& l) {
   int val;
 
-  if (!l[0]) return 0;
+  if (l.empty()) return 0;
 
-  val = atoi(l);
-  if (l[strlen(l) - 1] == '%') {
-    if (val > 100) val = 100;
-    else if (val < 0) val = 0;
+  val = atoi(l.c_str());
+  if (l.back() == '%') {
+    val = std::min(std::max(val, 0), 100); // Clamp val between 0 and 100
 
     int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
     val = val * (hsize_ - scrollsize) / 100;
@@ -2625,7 +2657,7 @@ void Fl_Help_View::Impl::draw()
   const char            *ptr,           // Pointer to text in block
                         *attrs;         // Pointer to start of element attributes
   Edit_Buffer           buf;            // Text buffer
-  char                  attr[1024];     // Attribute buffer
+  std::string           attr;           // Attribute buffer
   int                   xx, yy, ww, hh; // Current positions and sizes
   int                   line;           // Current line
   Fl_Font               font;
@@ -2728,7 +2760,7 @@ void Fl_Help_View::Impl::draw()
 
             if ((xx + ww) > block->w)
             {
-              if (line < 31)
+              if (line < MAX_LINES-1)
                 line ++;
               xx = block->line[line];
               yy += hh;
@@ -2762,7 +2794,7 @@ void Fl_Help_View::Impl::draw()
                                          xx + view.x() - leftline_ + buf.width());
                 buf.clear();
                 current_pos_ = (int) (ptr-value_);
-                if (line < 31)
+                if (line < MAX_LINES-1)
                   line ++;
                 xx = block->line[line];
                 yy += hh;
@@ -2823,6 +2855,10 @@ void Fl_Help_View::Impl::draw()
             else
               break;
           }
+          if (skip(ptr, "script", "</script>"))
+            continue;
+          if (skip(ptr, "label", "</label>"))
+            continue;
 
           while (*ptr && *ptr != '>' && !fl_ascii_isspace(*ptr))
             buf += *ptr++;
@@ -2840,7 +2876,7 @@ void Fl_Help_View::Impl::draw()
             head = 1;
           else if (buf.cmp("BR"))
           {
-            if (line < 31)
+            if (line < MAX_LINES-1)
               line ++;
             xx = block->line[line];
             yy += hh;
@@ -2851,7 +2887,7 @@ void Fl_Help_View::Impl::draw()
             fl_line(block->x + view.x(), yy + view.y(), block->w + view.x(),
                     yy + view.y());
 
-            if (line < 31)
+            if (line < MAX_LINES-1)
               line ++;
             xx = block->line[line];
             yy += 2 * fsize;//hh;
@@ -2907,9 +2943,7 @@ void Fl_Help_View::Impl::draw()
             pushfont(font, fsize);
             buf.clear();
           }
-          else if (buf.cmp("A") &&
-                   get_attr(attrs, "HREF", attr, sizeof(attr)) != nullptr)
-          {
+          else if (buf.cmp("A") && get_attr(attrs, "HREF", attr)) {
             fl_color(linkcolor_);
             underline = 1;
           }
@@ -2920,27 +2954,27 @@ void Fl_Help_View::Impl::draw()
           }
           else if (buf.cmp("FONT"))
           {
-            if (get_attr(attrs, "COLOR", attr, sizeof(attr)) != nullptr) {
+            if (get_attr(attrs, "COLOR", attr)) {
               textcolor_ = get_color(attr, textcolor_);
             }
 
-            if (get_attr(attrs, "FACE", attr, sizeof(attr)) != nullptr) {
-              if (!strncasecmp(attr, "helvetica", 9) ||
-                  !strncasecmp(attr, "arial", 5) ||
-                  !strncasecmp(attr, "sans", 4)) font = FL_HELVETICA;
-              else if (!strncasecmp(attr, "times", 5) ||
-                       !strncasecmp(attr, "serif", 5)) font = FL_TIMES;
-              else if (!strncasecmp(attr, "symbol", 6)) font = FL_SYMBOL;
+            if (get_attr(attrs, "FACE", attr)) {
+              if (!strncasecmp(attr.c_str(), "helvetica", 9) ||
+                  !strncasecmp(attr.c_str(), "arial", 5) ||
+                  !strncasecmp(attr.c_str(), "sans", 4)) font = FL_HELVETICA;
+              else if (!strncasecmp(attr.c_str(), "times", 5) ||
+                       !strncasecmp(attr.c_str(), "serif", 5)) font = FL_TIMES;
+              else if (!strncasecmp(attr.c_str(), "symbol", 6)) font = FL_SYMBOL;
               else font = FL_COURIER;
             }
 
-            if (get_attr(attrs, "SIZE", attr, sizeof(attr)) != nullptr) {
-              if (fl_ascii_isdigit(attr[0])) {
+            if (get_attr(attrs, "SIZE", attr)) {
+              if (!attr.empty() && fl_ascii_isdigit(attr[0])) {
                 // Absolute size
-                fsize = (int)(textsize_ * pow(1.2, atof(attr) - 3.0));
+                fsize = (int)(textsize_ * pow(1.2, atof(attr.c_str()) - 3.0));
               } else {
                 // Relative size
-                fsize = (int)(fsize * pow(1.2, atof(attr) - 3.0));
+                fsize = (int)(fsize * pow(1.2, atof(attr.c_str()) - 3.0));
               }
             }
 
@@ -3033,23 +3067,24 @@ void Fl_Help_View::Impl::draw()
           {
             Fl_Shared_Image *img = 0;
             int         width, height;
-            char        wattr[8], hattr[8];
+            std::string wattr;
+            std::string hattr;
 
 
-            get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
-            get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+            get_attr(attrs, "WIDTH", wattr);
+            get_attr(attrs, "HEIGHT", hattr);
             width  = get_length(wattr);
             height = get_length(hattr);
 
-            if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
+            if (get_attr(attrs, "SRC", attr)) {
               img = get_image(attr, width, height);
               if (!width) width = img->w();
               if (!height) height = img->h();
             }
 
             if (!width || !height) {
-              if (get_attr(attrs, "ALT", attr, sizeof(attr)) == nullptr) {
-                strcpy(attr, "IMG");
+              if (!get_attr(attrs, "ALT", attr)) {
+                attr = "IMG";
               }
             }
 
@@ -3060,7 +3095,7 @@ void Fl_Help_View::Impl::draw()
 
             if ((xx + ww) > block->w)
             {
-              if (line < 31)
+              if (line < MAX_LINES-1)
                 line ++;
 
               xx = block->line[line];
@@ -3086,7 +3121,7 @@ void Fl_Help_View::Impl::draw()
           hv_draw(buf.c_str(), xx + view.x() - leftline_, yy + view.y());
           buf.clear();
 
-          if (line < 31)
+          if (line < MAX_LINES-1)
             line ++;
           xx = block->line[line];
           yy += hh;
@@ -3153,7 +3188,7 @@ void Fl_Help_View::Impl::draw()
 
         if ((xx + ww) > block->w)
         {
-          if (line < 31)
+          if (line < MAX_LINES-1)
             line ++;
           xx = block->line[line];
           yy += hh;
