@@ -2220,7 +2220,6 @@ bool Fl_Help_View::Impl::get_attr(
   std::string& buf)
 {
   std::string name;                             // Name from string
-  char  *ptr;                                   // Pointer into name or value
   char  quote;                                  // Quote
 
   buf.clear();
