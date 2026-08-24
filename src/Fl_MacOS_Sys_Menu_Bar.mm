@@ -420,6 +420,50 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
   }
 }
 
+/*
+ * Locate the NSMenu of the system menu bar's "Window" menu, if any.
+ */
+static NSMenu *getWindowMenu()
+{
+  if (!localized_Window) return nil;
+  NSMenuItem *item = [[NSApp mainMenu] itemWithTitle:localized_Window];
+  return item ? [item submenu] : nil;
+}
+
+/*
+ * Set the on/off state of every open-window entry of the Window submenu to
+ * match the FL_MENU_VALUE flag of its corresponding Fl_Menu_Item, without
+ * touching anything else in the system menu bar.
+ */
+static void syncWindowMenuStates(NSMenu *submenu, Fl_Menu_Item *window_menu_items,
+                                  int first_window_menu_item, int native_offset)
+{
+  int i = first_window_menu_item;
+  while (window_menu_items[i].label()) {
+    int ni = native_offset + (i - first_window_menu_item);
+    if (ni < [submenu numberOfItems]) setMenuFlags(submenu, ni, window_menu_items + i);
+    i++;
+  }
+}
+
+/*
+ * Rebuild the entire Window submenu (fixed items *and* open-window entries)
+ * from the current window_menu_items array, in place, without touching the
+ * "Window" item itself or any other part of the system menu bar. This is
+ * needed after window_menu_items has been reallocated, because that moves
+ * *every* entry (fixed items included, since they too live in that array)
+ * to a new address, invalidating the representedObject pointers of all
+ * previously created native menu items in this submenu.
+ */
+static void rebuildWholeWindowMenu(NSMenu *submenu, Fl_Menu_Item *window_menu_items)
+{
+  while ([submenu numberOfItems] > 0) {
+    [submenu removeItemAtIndex:[submenu numberOfItems] - 1];
+  }
+  pFl_Menu_Item mm = window_menu_items;
+  createSubMenu(submenu, mm, NULL, @selector(doCallback));
+}
+
 
 /*
  * convert a complete Fl_Menu_Item array into a series of menus in the top menu bar
@@ -624,6 +668,7 @@ static void merge_all_windows_cb(Fl_Widget *, void *)
 
 static bool window_menu_installed = false;
 static int window_menu_items_count = 0;
+static int window_menu_native_offset = -1; // index of the first open-window entry in the native Window submenu
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
 {
@@ -675,6 +720,10 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
 #endif
   fl_sys_menu_bar->menu_end();
   fl_sys_menu_bar->update();
+  // remember where open-window entries begin in the native Window submenu,
+  // so new_window/remove_window/rename_window can update it in place later
+  NSMenu *submenu = getWindowMenu();
+  window_menu_native_offset = submenu ? (int)[submenu numberOfItems] : 0;
 }
 
 
@@ -682,12 +731,14 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
 {
   if (!window_menu_style() || !win->label()) return;
   int index = window_menu_items->size() - 1;
+  bool reallocated = false;
   if (index >= window_menu_items_count - 1) {
     window_menu_items_count += 5;
     window_menu_items = (Fl_Menu_Item*)realloc(window_menu_items,
                                     window_menu_items_count * sizeof(Fl_Menu_Item));
     Fl_Menu_Item *item = (Fl_Menu_Item*)fl_sys_menu_bar->find_item("Window");
     item->user_data(window_menu_items);
+    reallocated = true;
   }
   const char *p = win->iconlabel() ? win->iconlabel() : win->label();
   window_menu_items[index].label(p);
@@ -696,7 +747,21 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
   window_menu_items[index].flags = FL_MENU_RADIO;
   window_menu_items[index+1].label(NULL);
   window_menu_items[index].setonly();
-  fl_sys_menu_bar->update();
+  // Update only the Window submenu in place instead of rebuilding the whole
+  // system menu bar: a full rebuild here races with AppKit's own menu bar
+  // tracking while the window is being activated, which produces spurious
+  // "Menu_Tracking" console warnings.
+  NSMenu *submenu = getWindowMenu();
+  if (!submenu || window_menu_native_offset < 0) { fl_sys_menu_bar->update(); return; }
+  if (reallocated) {
+    // window_menu_items moved: every native item of this submenu (fixed
+    // items included, since they live in the same array) now holds a
+    // dangling representedObject pointer and must be recreated
+    rebuildWholeWindowMenu(submenu, window_menu_items);
+  } else {
+    [FLMenuItem addNewItem:(window_menu_items + index) menu:submenu action:@selector(doCallback)];
+    syncWindowMenuStates(submenu, window_menu_items, first_window_menu_item, window_menu_native_offset);
+  }
 }
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
@@ -720,7 +785,22 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
           item->setonly();
         }
       }
-      bar->update();
+      // Update only the Window submenu in place (see new_window() for why).
+      NSMenu *submenu = getWindowMenu();
+      if (!submenu || window_menu_native_offset < 0) { bar->update(); break; }
+      // relabel the entries that shifted down over the removed one, then
+      // drop the now-superfluous trailing native item
+      for (int i = index; i < count - 2; i++) {
+        int ni = window_menu_native_offset + (i - first_window_menu_item);
+        if (ni < (int)[submenu numberOfItems]) {
+          char *ts = remove_ampersand(window_menu_items[i].label());
+          [[submenu itemAtIndex:ni] setTitle:NSLocalizedString([NSString stringWithUTF8String:ts], nil)];
+          free(ts);
+        }
+      }
+      int lastNative = window_menu_native_offset + (count - 2 - first_window_menu_item);
+      if (lastNative >= 0 && lastNative < (int)[submenu numberOfItems]) [submenu removeItemAtIndex:lastNative];
+      syncWindowMenuStates(submenu, window_menu_items, first_window_menu_item, window_menu_native_offset);
       break;
     }
     index++;
@@ -738,7 +818,16 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
     if (item->user_data() == win) {
       item->label(win->iconlabel() ? win->iconlabel() : win->label());
       if (!item->label()) item->label("");
-      bar->update();
+      // Update only the Window submenu in place (see new_window() for why).
+      NSMenu *submenu = getWindowMenu();
+      int ni = window_menu_native_offset + (index - first_window_menu_item);
+      if (submenu && window_menu_native_offset >= 0 && ni < (int)[submenu numberOfItems]) {
+        char *ts = remove_ampersand(item->label());
+        [[submenu itemAtIndex:ni] setTitle:NSLocalizedString([NSString stringWithUTF8String:ts], nil)];
+        free(ts);
+      } else {
+        bar->update();
+      }
       return;
     }
     index++;
