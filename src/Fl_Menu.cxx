@@ -85,6 +85,9 @@ enum class State {
  */
 struct Menu_State
 {
+  // true for tall (non-sub-)menu positioned by constraints (e.g., Wayland)
+  bool is_huge = false;
+
   // menu item under the mouse pinter or selected by keyboard, or nullptr
   const Fl_Menu_Item* current_item = nullptr;
 
@@ -616,10 +619,10 @@ int Menu_State::handle_mouse_events(int e) {
     case FL_RELEASE:
       // Mouse must either be held down/dragged some, or this must be
       // the second click (not the one that popped up the menu):
-      if (   !Fl::event_is_click()
-          || state == State::PUSHED
+      if (   !Fl::event_is_click() || ((!is_huge) && (
+           state == State::PUSHED
           || (in_menubar && current_item && !current_item->submenu()) // button
-          ) {
+          ))) {
 #if 0 // makes the check/radio items leave the menu up
         const Fl_Menu_Item* m = current_item;
         if (m && button && (m->flags & (FL_MENU_TOGGLE|FL_MENU_RADIO))) {
@@ -632,6 +635,7 @@ int Menu_State::handle_mouse_events(int e) {
                                    (!current_item->submenu() || current_item->callback_ || (in_menubar && current_menu_ix <= 0))))
             state = State::DONE;
       }
+      is_huge = false;
       return 1;
   }
   return 0;
@@ -935,6 +939,12 @@ int Menu_Window::handle(int e) {
   return ret;
 }
 
+
+static void after_show(Menu_Window *win) {
+  win->handle(FL_ENTER);
+}
+
+
 /* Window event handling implementation.
  \param[in] e event number
  \return 1 if the event was used
@@ -949,12 +959,27 @@ int Menu_Window::handle_part1(int e) {
       if (pp.handle_shortcut()) return 1;
       break;
     case FL_MOVE:
+      menu_state->is_huge = false;
     case FL_ENTER:
     case FL_PUSH:
     case FL_DRAG:
     case FL_RELEASE:
       if (pp.handle_mouse_events(e)) return 1;
       break;
+    case FL_SHOW: {
+      int retval = Fl_Window::handle(e);
+      if (!Fl::screen_driver()->screen_boundaries_known() &&
+          !Fl_Window_Driver::menu_leftorigin(this)) {
+        int HH;
+        Fl_Window_Driver::menu_parent(&HH);
+        if (h() > HH) {
+          wait_for_expose();
+          menu_state->is_huge = true;
+          Fl::add_timeout(0., (Fl_Timeout_Handler)after_show, this);
+        }
+      }
+      return retval;
+    }
     case FL_MOUSEWHEEL:
       // if (pp.current_menu_ix >= 0 && pp.current_menu_ix < pp.num_menus &&
       //     pp.menu_window[pp.current_menu_ix] == this) {
