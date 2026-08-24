@@ -1052,6 +1052,9 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
     if (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
       libdecor_dispatch(scr_driver->libdecor_context, 0);
     }
+  } else {
+     while (!wl_list_length(&xid->outputs))
+       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   }
 }
 
