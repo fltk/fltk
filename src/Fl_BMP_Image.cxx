@@ -155,9 +155,8 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   uchar colormap[256][3]; // Colormap
   uchar havemask;         // Single bit mask follows image data
   int   use_5_6_5;        // Use 5:6:5 for R:G:B channels in 16 bit images
-  bool  is_v3 = false;    // True if BITMAPV3INFOHEADER or later
-  bool  use_v3_alpha = false; // True if V3 header overrides BI_RGB to use alpha = false;    // True if BITMAPV4HEADER or later
-
+  //bool  is_v3 = false;    // True if BITMAPV3INFOHEADER or later
+  bool  use_v3_alpha = false; // True if V3 header overrides BI_RGB to use alpha
 
   // Implementation notes: Reader is already open at this point.
   // Use local variables (width, height) until image is complete
@@ -241,14 +240,14 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
     repcount = info_size - 40;
 
     if (info_size >= 56) { // BITMAPV3INFOHEADER or later
-      is_v3 = true;
+      //is_v3 = true; // not used at the moment
       // V3 adds lookup words for R, G,B, and Alpha. They are usually
       // 0x00ff0000, 0x0000ff00, 0x000000ff, and 0x00000000 respectively.
       // If the alpha mask is set, it overrides the BI_RGB compression type
       // and indicates that the image has an alpha channel.
-      uint32_t red_mask   = rdr.read_dword();
-      uint32_t green_mask = rdr.read_dword();
-      uint32_t blue_mask  = rdr.read_dword();
+      /* uint32_t red_mask   = */ rdr.read_dword();
+      /* uint32_t green_mask = */ rdr.read_dword();
+      /* uint32_t blue_mask  = */ rdr.read_dword();
       uint32_t alpha_mask = rdr.read_dword();
       use_v3_alpha = ((compression == BI_RGB) && (alpha_mask != 0));
       repcount -= 16;
