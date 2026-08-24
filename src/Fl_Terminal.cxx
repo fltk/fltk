@@ -3781,6 +3781,9 @@ void Fl_Terminal::draw(void) {
     draw_buff(Y);
   }
   fl_pop_clip();
+
+  // Clear modified flag after drawing
+  display_modified_clear();
 }
 
 /**
@@ -4065,8 +4068,11 @@ Fl_Terminal::RedrawStyle Fl_Terminal::redraw_style() const {
 void  Fl_Terminal::redraw_style(RedrawStyle val) {
   redraw_style_ = val;
   // Disable rate limit timer if it's being turned off
-  if (redraw_style_ != RATE_LIMITED && redraw_timer_)
-    { Fl::remove_timeout(redraw_timer_cb, this); redraw_timer_ = false; }
+  if (redraw_style_ != RATE_LIMITED && redraw_timer_) {
+    Fl::remove_timeout(redraw_timer_cb, this);
+    redraw_timer_ = false;
+    redraw_modified_ = false;
+  }
 }
 
 /**
