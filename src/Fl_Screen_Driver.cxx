@@ -31,7 +31,12 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Tooltip.H>
+#include "flstring.h"
 #include <string.h> // for memchr
+
+#undef min
+#undef max
+#include <algorithm> // std::min/max
 
 // these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
 extern const char *fl_fg;
@@ -709,7 +714,21 @@ static int ReadInteger(char* string, char** NextString)
     return (-Result);
 }
 
+/**
+ Parse the X11 geometry string: =<WIDT>x<HEIGHT>{+-}<XOFF>{+-}<YOFF>
 
+ The equal sign at the beginning is optional.
+ WIDTHxHEIGHT is optional if +XOFF+YOFF is specified.
+ +XOFF+YOFF is optional, and either can be negative.
+
+ \param[in] string The geometry string to parse.
+ \param[out] x Pointer to an integer to store the X offset.
+ \param[out] y Pointer to an integer to store the Y offset.
+ \param[out] width Pointer to an unsigned integer to store the width.
+ \param[out] height Pointer to an unsigned integer to store the height.
+ \return A bitmask indicating which values were found in the string.
+ \see Fl_Screen_Driver::fl_WidthValue etc. for the bitmask values.
+*/
 int Fl_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
                    unsigned int* width, unsigned int* height)
 {
@@ -724,73 +743,66 @@ int Fl_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
     string++;  /* ignore possible '=' at beg of geometry spec */
 
   strind = (char *)string;
-  if (*strind != '+' && *strind != '-' && *strind != 'x') {
-    tempWidth = ReadInteger(strind, &nextCharacter);
+  if (fl_ascii_isdigit(*strind)) {
+    // width and height specified
+    // first read the width
+    tempWidth = abs(ReadInteger(strind, &nextCharacter));
     if (strind == nextCharacter)
       return (0);
     strind = nextCharacter;
     mask |= fl_WidthValue;
-  }
-
-  if (*strind == 'x' || *strind == 'X') {
-    strind++;
-    tempHeight = ReadInteger(strind, &nextCharacter);
-    if (strind == nextCharacter)
-      return (0);
-    strind = nextCharacter;
-    mask |= fl_HeightValue;
-  }
-
-  if ((*strind == '+') || (*strind == '-')) {
-    if (*strind == '-') {
+    // check for the 'x' or 'X' separator between width and height
+    if (*strind == 'x' || *strind == 'X') {
       strind++;
-      tempX = -ReadInteger(strind, &nextCharacter);
+      if (!fl_ascii_isdigit(*strind)) return 0; // expected a digit after 'x'
+      // read the height
+      tempHeight = abs(ReadInteger(strind, &nextCharacter));
       if (strind == nextCharacter)
         return (0);
       strind = nextCharacter;
-      mask |= fl_XNegative;
-
+      mask |= fl_HeightValue;
     } else {
-      strind++;
-      tempX = ReadInteger(strind, &nextCharacter);
-      if (strind == nextCharacter)
-        return(0);
-      strind = nextCharacter;
+      return 0; // expected 'x' or 'X' after width
     }
-    mask |= fl_XValue;
-    if ((*strind == '+') || (*strind == '-')) {
-      if (*strind == '-') {
-        strind++;
-        tempY = -ReadInteger(strind, &nextCharacter);
-        if (strind == nextCharacter)
-          return(0);
-        strind = nextCharacter;
-        mask |= fl_YNegative;
+  }
 
-      } else {
-        strind++;
-        tempY = ReadInteger(strind, &nextCharacter);
-        if (strind == nextCharacter)
-          return(0);
-        strind = nextCharacter;
-      }
-      mask |= fl_YValue;
-    }
+  // now read the X and Y offsets
+
+  // read the x offset first, which must be preceded by a '+' or '-' sign
+  if ((*strind == '+') || (*strind == '-')) {
+    tempX = ReadInteger(strind, &nextCharacter);
+    if (strind == nextCharacter)
+      return(0);
+    strind = nextCharacter;
+    mask |= fl_XValue;
+  } else if (*strind != '\0') { // unexpected character
+    return 0;
+  }
+
+  // read the y offset next, which must be preceded by a '+' or '-' sign
+  if ((*strind == '+') || (*strind == '-')) {
+    tempY = ReadInteger(strind, &nextCharacter);
+    if (strind == nextCharacter)
+      return(0);
+    strind = nextCharacter;
+    mask |= fl_YValue;
+  } else if (*strind != '\0') { // unexpected character
+    return 0;
   }
 
   /* If strind isn't at the end of the string the it's an invalid
    geometry specification. */
-
   if (*strind != '\0') return (0);
 
+  // apply all teh values that were actually set
   if (mask & fl_XValue)
     *x = tempX;
   if (mask & fl_YValue)
     *y = tempY;
   if (mask & fl_WidthValue)
-    *width = tempWidth;
+    *width = std::max(tempWidth, 80u);
   if (mask & fl_HeightValue)
-    *height = tempHeight;
+    *height = std::max(tempHeight, 30u);
   return (mask);
 }
 
