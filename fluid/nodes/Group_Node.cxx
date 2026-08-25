@@ -812,11 +812,17 @@ Fl_Widget *Scroll_Node::enter_live_mode() {
 
 void Scroll_Node::copy_properties() {
   Group_Node::copy_properties();
-  Fl_Scroll *s = (Fl_Scroll*)o, *d = (Fl_Scroll*)live_widget;
-  d->scroll_to(s->xposition(), s->yposition());
-  d->type(s->type());
-  d->scrollbar.align(s->scrollbar.align());
-  d->hscrollbar.align(s->hscrollbar.align());
+  // Fl_Scroll changes the coordintaes of its children. FLuid can't handle
+  // those offsets currently, so we only created an Fl_Group for o. For live
+  // mode, we create a simple Fl_Scroll with no additional properties.
+  Fl_Group *s = (Fl_Group*)o;
+  Fl_Scroll *d = (Fl_Scroll*)live_widget;
+  (void)s; (void)d;
+  d->type(Fl_Scroll::BOTH_ALWAYS);
+  // d->scroll_to(s->xposition(), s->yposition());
+  // d->type(s->type());
+  // d->scrollbar.align(s->scrollbar.align());
+  // d->hscrollbar.align(s->hscrollbar.align());
 }
 
 // ---- Tile_Node --------------------------------------------------- MARK: -
