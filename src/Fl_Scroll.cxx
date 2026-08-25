@@ -565,14 +565,12 @@ Fl_Scroll::Fl_Scroll(int X, int Y, int W, int H, const char *L)
 int Fl_Scroll::handle(int event) {
   fix_scrollbar_order();
   if (event == FL_MOUSEWHEEL) {
-    // A scrollbar that isn't visible doesn't take events (see
-    // Fl_Widget::takesevents()), so Fl_Group's normal event dispatch never
-    // reaches it and mouse wheel scrolling would otherwise stop working
-    // for that axis. Drive such a scrollbar directly here instead, so an
-    // Fl_Scroll stays wheel-scrollable even with a hidden scrollbar (e.g.
-    // clear_visible() called explicitly to keep it functional but undrawn).
+    // Give the children of Fl_Scroll first dibs on the event
+    if (Fl_Group::handle(event)) return 1;
+    // Now send FL_MOUSEWHEEL to the scrollbars, even if they are hidden.
     if (!scrollbar.visible() && scrollbar.handle(FL_MOUSEWHEEL)) return 1;
     if (!hscrollbar.visible() && hscrollbar.handle(FL_MOUSEWHEEL)) return 1;
+    return 0;
   }
   return Fl_Group::handle(event);
 }
