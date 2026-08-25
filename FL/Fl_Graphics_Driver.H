@@ -53,10 +53,6 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 struct Fl_Fontdesc;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-// Issues #1139 ("FL_REGION_STACK_SIZE could be increased") and #1140
-// ("Fix static array allocation") asked for the matrix and clip-region
-// stacks (including Fl_OpenGL_Graphics_Driver's own, separate one) to no
-// longer be fixed-size arrays. All are now std::stack's with no fixed depth.
 
 /**
  An abstract class subclassed for each graphics driver FLTK uses.
