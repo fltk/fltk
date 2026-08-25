@@ -2541,7 +2541,7 @@ const char *Fl_WinAPI_System_Driver::filename_name(const char *name) {
 
 ////////////////////////////////////////////////////////////////
 
-static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon, int hotx, int hoty) {
+HICON fl_image_to_HICON(const Fl_RGB_Image *image, bool is_icon, int hotx, int hoty) {
   BITMAPV5HEADER bi;
   HBITMAP bitmap, mask;
   DWORD *bits;
@@ -2672,7 +2672,7 @@ void Fl_WinAPI_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int cou
       best_big = (Fl_RGB_Image *)best_big->copy();
       need_delete = true;
     }
-    default_big_icon = image_to_icon(best_big, true, 0, 0);
+    default_big_icon = fl_image_to_HICON(best_big, true, 0, 0);
     if (need_delete) delete best_big;
   }
 
@@ -2683,7 +2683,7 @@ void Fl_WinAPI_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int cou
       best_small = (Fl_RGB_Image *)best_small->copy();
       need_delete = true;
     }
-    default_small_icon = image_to_icon(best_small, true, 0, 0);
+    default_small_icon = fl_image_to_HICON(best_small, true, 0, 0);
     if (need_delete) delete best_small;
   }
 }
@@ -2740,9 +2740,9 @@ void Fl_WinAPI_Window_Driver::set_icons() {
                                 icon_->count);
 
     if (best_big != NULL)
-      big_icon = image_to_icon(best_big, true, 0, 0);
+      big_icon = fl_image_to_HICON(best_big, true, 0, 0);
     if (best_small != NULL)
-      small_icon = image_to_icon(best_small, true, 0, 0);
+      small_icon = fl_image_to_HICON(best_small, true, 0, 0);
   } else {
     if ((icon_->big_icon != NULL) || (icon_->small_icon != NULL)) {
       big_icon = icon_->big_icon;
@@ -2841,7 +2841,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
   HCURSOR new_cursor;
   Fl_RGB_Image *scaled_image = (Fl_RGB_Image*)image->copy();
   scaled_image->normalize();
-  new_cursor = image_to_icon(scaled_image, false, hotx, hoty);
+  new_cursor = fl_image_to_HICON(scaled_image, false, hotx, hoty);
   delete scaled_image;
   if (new_cursor == NULL)
     return 0;
