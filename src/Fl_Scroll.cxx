@@ -472,6 +472,23 @@ void Fl_Scroll::resize(int X, int Y, int W, int H) {
     scrollbar.position(al?X:X+W-scrollbar.w(), (at&&pad)?Y+hscrollbar.h():Y);
     hscrollbar.position((al&&pad)?X+scrollbar.w():X, at?Y:Y+H-hscrollbar.h());
   } else {
+    // The widget's size changed: if the scroll position is now past the
+    // (possibly smaller, since we may have grown) valid maximum, clamp it
+    // back. Without this, growing an Fl_Scroll while scrolled all the way
+    // to the right/bottom leaves it scrolled past the new maximum instead
+    // of revealing more of the content, since the children don't move on
+    // their own when only the Fl_Scroll's size (not position) changes.
+    ScrollInfo si;
+    recalc_scrollbars(si);
+    int min_x = si.hscroll.first;
+    int max_x = si.hscroll.first + si.hscroll.total - si.hscroll.size;
+    if (max_x < min_x) max_x = min_x;
+    int min_y = si.vscroll.first;
+    int max_y = si.vscroll.first + si.vscroll.total - si.vscroll.size;
+    if (max_y < min_y) max_y = min_y;
+    int new_x = xposition_ < min_x ? min_x : (xposition_ > max_x ? max_x : xposition_);
+    int new_y = yposition_ < min_y ? min_y : (yposition_ > max_y ? max_y : yposition_);
+    if (new_x != xposition_ || new_y != yposition_) scroll_to(new_x, new_y);
     // FIXME recalculation of scrollbars needs to be moved out of "draw()" (STR #1895)
     redraw(); // need full recalculation of scrollbars
   }
