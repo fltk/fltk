@@ -1,7 +1,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -287,6 +287,16 @@ public:
       \see Fl_Event
    */
   virtual int handle(int event);
+
+  /**
+   Sends the specified event to the widget.
+   This is a wrapper for handle(), used by groups to send events to child
+   widgets. If the target is a subwindow, `send` updates mouse coordinates
+   and does some additional event processing before calling handle().
+   \param[in] event the kind of event to send
+   \return the return value of handle(event)
+   */
+  int send(int event);
 
   /** Returns whether the current label was assigned with copy_label().
 

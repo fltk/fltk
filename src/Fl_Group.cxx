@@ -1,7 +1,7 @@
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2024 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -95,18 +95,18 @@ extern Fl_Widget* fl_oldfocus; // set by Fl::focus
 // For back-compatibility, we must adjust all events sent to child
 // windows so they are relative to that window.
 
-static int send(Fl_Widget* o, int event) {
-  if (!o->as_window()) return o->handle(event);
+int Fl_Widget::send(int event) {
+  if (!as_window()) return handle(event);
   switch ( event )
   {
   case FL_DND_ENTER: /* FALLTHROUGH */
   case FL_DND_DRAG:
     // figure out correct type of event:
-    event = (o->contains(Fl::belowmouse())) ? FL_DND_DRAG : FL_DND_ENTER;
+    event = (contains(Fl::belowmouse())) ? FL_DND_DRAG : FL_DND_ENTER;
   }
-  int save_x = Fl::e_x; Fl::e_x -= o->x();
-  int save_y = Fl::e_y; Fl::e_y -= o->y();
-  int ret = o->handle(event);
+  int save_x = Fl::e_x; Fl::e_x -= x();
+  int save_y = Fl::e_y; Fl::e_y -= y();
+  int ret = handle(event);
   Fl::e_y = save_y;
   Fl::e_x = save_x;
   switch ( event )
@@ -116,7 +116,7 @@ static int send(Fl_Widget* o, int event) {
     // Successful completion of FL_ENTER means the widget is now the
     // belowmouse widget, but only call Fl::belowmouse if the child
     // widget did not do so:
-    if (!o->contains(Fl::belowmouse())) Fl::belowmouse(o);
+    if (!contains(Fl::belowmouse())) Fl::belowmouse(this);
     break;
   }
   return ret;
@@ -178,12 +178,12 @@ int Fl_Group::handle(int event) {
   case FL_SHORTCUT:
     for (i = children(); i--;) {
       o = a[i];
-      if (o->takesevents() && Fl::event_inside(o) && send(o,FL_SHORTCUT))
+      if (o->takesevents() && Fl::event_inside(o) && o->send(FL_SHORTCUT))
         return 1;
     }
     for (i = children(); i--;) {
       o = a[i];
-      if (o->takesevents() && !Fl::event_inside(o) && send(o,FL_SHORTCUT))
+      if (o->takesevents() && !Fl::event_inside(o) && o->send(FL_SHORTCUT))
         return 1;
     }
     if ((Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter)) return navigation(FL_Down);
@@ -195,10 +195,10 @@ int Fl_Group::handle(int event) {
       o = a[i];
       if (o->visible() && Fl::event_inside(o)) {
         if (o->contains(Fl::belowmouse())) {
-          return send(o,FL_MOVE);
+          return o->send(FL_MOVE);
         } else {
           Fl::belowmouse(o);
-          if (send(o,FL_ENTER)) return 1;
+          if (o->send(FL_ENTER)) return 1;
         }
       }
     }
@@ -211,8 +211,8 @@ int Fl_Group::handle(int event) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o)) {
         if (o->contains(Fl::belowmouse())) {
-          return send(o,FL_DND_DRAG);
-        } else if (send(o,FL_DND_ENTER)) {
+          return o->send(FL_DND_DRAG);
+        } else if (o->send(FL_DND_ENTER)) {
           if (!o->contains(Fl::belowmouse())) Fl::belowmouse(o);
           return 1;
         }
@@ -226,7 +226,7 @@ int Fl_Group::handle(int event) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o)) {
         Fl_Widget_Tracker wp(o);
-        if (send(o,FL_PUSH)) {
+        if (o->send(FL_PUSH)) {
           if (Fl::pushed() && wp.exists() && !o->contains(Fl::pushed())) Fl::pushed(o);
           return 1;
         }
@@ -238,12 +238,12 @@ int Fl_Group::handle(int event) {
   case FL_DRAG:
     o = Fl::pushed();
     if (o == this) return 0;
-    else if (o) send(o,event);
+    else if (o) o->send(event);
     else {
       for (i = children(); i--;) {
         o = a[i];
         if (o->takesevents() && Fl::event_inside(o)) {
-          if (send(o,event)) return 1;
+          if (o->send(event)) return 1;
         }
       }
     }
@@ -252,12 +252,12 @@ int Fl_Group::handle(int event) {
   case FL_MOUSEWHEEL:
     for (i = children(); i--;) {
       o = a[i];
-      if (o->takesevents() && Fl::event_inside(o) && send(o,FL_MOUSEWHEEL))
+      if (o->takesevents() && Fl::event_inside(o) && o->send(FL_MOUSEWHEEL))
         return 1;
     }
     for (i = children(); i--;) {
       o = a[i];
-      if (o->takesevents() && !Fl::event_inside(o) && send(o,FL_MOUSEWHEEL))
+      if (o->takesevents() && !Fl::event_inside(o) && o->send(FL_MOUSEWHEEL))
         return 1;
     }
     return 0;
@@ -294,7 +294,7 @@ int Fl_Group::handle(int event) {
 
     if (children()) {
       for (int j = i;;) {
-        if (a[j]->takesevents()) if (send(a[j], event)) return 1;
+        if (a[j]->takesevents()) if (a[j]->send(event)) return 1;
         j++;
         if (j >= children()) j = 0;
         if (j == i) break;
