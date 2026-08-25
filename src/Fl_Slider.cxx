@@ -118,7 +118,7 @@ void Fl_Slider::draw(int X, int Y, int W, int H) {
     val = 0.5;
   else
     val = value_to_position(value());
-  
+
   int ww = (horizontal() ? W : H);
   int xx, S;
   if (type()==FL_HOR_FILL_SLIDER || type() == FL_VERT_FILL_SLIDER) {
@@ -215,36 +215,158 @@ void Fl_Slider::draw() {
        h()-Fl::box_dh(box()));
 }
 
-/** Draw tick marks.
- \param[in] r motion range of the slider
- \param[in] S size of the slider, horizontal or vertical
- */
-void Fl_Slider::draw_ticks(const Fl_Rect& r, int /*S*/ /*, int min_spacing*/)
-{
-  if ((ticks() == TICKS_NONE) || (num_ticks() == 0)) return;
+// Format a tick value as a short label: "%g" for |v|>=1, "%.3g" with the
+// leading "0" stripped for |v|<1 (so ".5" instead of "0.5"). Ported from
+// fltk2's Slider::draw_ticks() helper of the same purpose.
+static char *fl_slider_printtick(char *buffer, size_t bufsize, double v) {
+  if (fabs(v) >= 1) {
+    snprintf(buffer, bufsize, "%g", v);
+    return buffer;
+  } else {
+    snprintf(buffer, bufsize, "%.3g", v);
+    char *p = buffer;
+    if (v < 0) p++;
+    while (p[0]=='0' && p[1]) p++;
+    if (v < 0) *--p = '-';
+    return p;
+  }
+}
 
-  Fl_Color black = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
-  fl_color(black);
-  int n = num_ticks();
-  double nd = (double)(n-1);
-  for (int i=0; i<n; i++) {
-    double v = i / nd;
-    if (scale() == LOG_SCALE) {
-      v = position_to_value(1.0-v);
-      v = (v - minimum()) / (maximum()-minimum());
-    }
+/** Draw tick marks.
+
+ Ported from fltk2's Slider::draw_ticks(): tick marks are placed at "nice"
+ round-number intervals (multiples of 1, 2, or 5 times a power of ten) that
+ are never closer together on screen than about half the slider size, and
+ every few ticks is drawn longer and labeled with its value.
+
+ \param[in] r motion range of the slider
+ \param[in] S size of the slider, horizontal or vertical, in pixels
+ */
+void Fl_Slider::draw_ticks(const Fl_Rect& r, int S)
+{
+  if (ticks() == TICKS_NONE) return;
+
+  double A = minimum();
+  double B = maximum();
+  if (A > B) { double t = A; A = B; B = t; }
+  if (A == B) return;
+
+  int w = horizontal() ? r.w() : r.h();
+  if (w <= 0) return;
+
+  int min_spacing = S > 0 ? (S+1)/2 : 10;
+
+  // Find a "nice" value-spacing (mul/div) between minor tick marks so they
+  // land on round numbers and are never closer than min_spacing pixels.
+  // smallmod: minor ticks per longer tick. nummod: minor ticks per labeled
+  // tick. powincr: how many major ticks before the spacing grows tenfold
+  // (only relevant for the log-scale branch).
+  double mul = 1;
+  double div = 1;
+  int smallmod = 5;
+  int nummod = 10;
+  int powincr = 10000;
+
+  bool log_scale = (scale() == LOG_SCALE) && (A > 0);
+  if (!log_scale) {
+    // linear scale (also used as a fallback when a log scale was
+    // requested but the range isn't strictly positive, matching
+    // value_to_position()'s own fallback to linear in that case)
+    double derivative = (B-A)*min_spacing/w;
+    if (derivative < step()) derivative = step();
+    if (derivative <= 0) return;
+    while (mul*5 <= derivative) mul *= 10;
+    while (mul > derivative*2*div) div *= 10;
+    if (derivative*div > mul*2) { mul *= 5; smallmod = 2; }
+    else if (derivative*div > mul) { mul *= 2; nummod = 5; }
+  } else {
+    // log scale
+    while (mul*5 <= A) mul *= 10;
+    while (mul > A*2*div) div *= 10;
+    powincr = 10;
+    double d = exp(min_spacing*::log(B/A)/w*3);
+    if (d >= 5) { mul *= 10; smallmod = nummod = 1; powincr = 1; }
+    else if (d >= 2) { mul *= 5; smallmod = powincr = nummod = 2; }
+  }
+
+  // maps a value to a pixel offset from r.x() (horizontal) or r.y()
+  // (vertical), using the same value_to_position() mapping the slider
+  // knob itself is positioned with, so ticks line up with the knob.
+  auto tick_offset = [this, w](double v) -> int {
+    return int(value_to_position(v)*w + .5);
+  };
+
+  // the long, labeled tick marks span major1..major2; minor ticks span
+  // only the middle half of that range so they read as visibly shorter
+  int major1, major2;
+  if (horizontal()) {
+    major1 = (ticks() & TICKS_ABOVE) ? r.y()   : r.y() + r.h()/2;
+    major2 = (ticks() & TICKS_BELOW) ? r.b()-1 : r.y() + r.h()/2;
+  } else {
+    major1 = (ticks() & TICKS_LEFT)  ? r.x()   : r.x() + r.w()/2;
+    major2 = (ticks() & TICKS_RIGHT) ? r.r()-1 : r.x() + r.w()/2;
+  }
+  int mid = (major1+major2)/2;
+  int minor1 = (major1+mid)/2;
+  int minor2 = (major2+mid)/2;
+
+  Fl_Color full_color = active_r() ? FL_FOREGROUND_COLOR : FL_INACTIVE_COLOR;
+  Fl_Color line_color = fl_color_average(full_color, color(), .667f);
+  fl_font(labelfont(), labelsize());
+  bool label_below = horizontal() ? (ticks() & TICKS_BELOW) != 0
+                                   : (ticks() & TICKS_RIGHT) != 0;
+
+  auto draw_tick = [&](double v, bool major) {
+    int t = tick_offset(v);
     if (horizontal()) {
-      int y1, y2;
-      if (ticks() & TICKS_ABOVE) y1 = r.y();   else y1 = r.y() + r.h()/2;
-      if (ticks() & TICKS_BELOW) y2 = r.b()-1; else y2 = r.y() + r.h()/2;
-      fl_yxline(r.r()-v*(r.w()-1)-1, y1, y2);
+      int x = r.x()+t;
+      fl_yxline(x, major ? major1 : minor1, major ? major2 : minor2);
     } else {
-      int x1, x2;
-      if (ticks() & TICKS_LEFT)  x1 = r.x();   else x1 = r.x() + r.w()/2;
-      if (ticks() & TICKS_RIGHT) x2 = r.r()-1; else x2 = r.x() + r.w()/2;
-      fl_xyline(x1, r.b()-v*(r.h()-1)-1, x2);
+      int y = r.y()+t;
+      fl_xyline(major ? major1 : minor1, y, major ? major2 : minor2);
+    }
+  };
+  auto draw_label = [&](double v) {
+    char buffer[24];
+    char *p = fl_slider_printtick(buffer, sizeof(buffer), v);
+    int t = tick_offset(v);
+    float x, y;
+    if (horizontal()) {
+      x = r.x()+t+1;
+      if (x+fl_width(p) > r.r()) x = r.x()+t-1-fl_width(p); // keep on screen
+      y = label_below ? major2+fl_height()-fl_descent() : major1-fl_descent()-1;
+    } else {
+      x = label_below ? major2+2 : major1-2-fl_width(p);
+      y = r.y()+t+fl_height()/2-fl_descent();
+    }
+    fl_color(full_color);
+    fl_draw(p, int(x), int(y));
+  };
+
+  for (int n = 0; ; n++) {
+    // every powincr major ticks, the spacing grows tenfold (log scale)
+    if (n > powincr) { mul *= 10; n = (n-1)/10+1; }
+    double v = mul*n/div;
+    if (v >= fabs(A) && v >= fabs(B)) break;
+    bool major = (n%smallmod) == 0;
+    fl_color(major ? full_color : line_color);
+    if (v > A && v < B) {
+      draw_tick(v, major);
+      if (major && n%nummod == 0) draw_label(v);
+    }
+    if (v && -v > A && -v < B) {
+      draw_tick(-v, major);
+      if (major && n%nummod == 0) draw_label(-v);
     }
   }
+
+  // always mark and label the two ends of the range, even if they don't
+  // fall on a "nice" tick value
+  fl_color(full_color);
+  draw_tick(A, true);
+  draw_label(A);
+  draw_tick(B, true);
+  draw_label(B);
 }
 
 /**
