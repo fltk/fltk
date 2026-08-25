@@ -431,22 +431,6 @@ static NSMenu *getWindowMenu()
 }
 
 /*
- * Set the on/off state of every open-window entry of the Window submenu to
- * match the FL_MENU_VALUE flag of its corresponding Fl_Menu_Item, without
- * touching anything else in the system menu bar.
- */
-static void syncWindowMenuStates(NSMenu *submenu, Fl_Menu_Item *window_menu_items,
-                                  int first_window_menu_item, int native_offset)
-{
-  int i = first_window_menu_item;
-  while (window_menu_items[i].label()) {
-    int ni = native_offset + (i - first_window_menu_item);
-    if (ni < [submenu numberOfItems]) setMenuFlags(submenu, ni, window_menu_items + i);
-    i++;
-  }
-}
-
-/*
  * Rebuild the entire Window submenu (fixed items *and* open-window entries)
  * from the current window_menu_items array, in place, without touching the
  * "Window" item itself or any other part of the system menu bar. This is
@@ -462,6 +446,31 @@ static void rebuildWholeWindowMenu(NSMenu *submenu, Fl_Menu_Item *window_menu_it
   }
   pFl_Menu_Item mm = window_menu_items;
   createSubMenu(submenu, mm, NULL, @selector(doCallback));
+}
+
+/*
+ * Rebuild only the open-window entries of the Window submenu (from
+ * native_offset onward), leaving the fixed items (Minimize, tab controls,
+ * ...) untouched. This is enough to reflect any combination of window
+ * additions/removals/renames coalesced since the last sync, and is safe
+ * to call here because window_menu_items is only ever reallocated inside
+ * new_window(), which rebuilds the whole submenu immediately (see
+ * rebuildWholeWindowMenu()) in that case rather than deferring - so by the
+ * time this runs, window_menu_items is guaranteed to still be the array
+ * the fixed items' native items were built from.
+ */
+static void rebuildWindowMenuList(NSMenu *submenu, Fl_Menu_Item *window_menu_items,
+                                   int first_window_menu_item, int native_offset)
+{
+  while ((int)[submenu numberOfItems] > native_offset) {
+    [submenu removeItemAtIndex:[submenu numberOfItems] - 1];
+  }
+  int i = first_window_menu_item;
+  while (window_menu_items[i].label()) {
+    int miCnt = [FLMenuItem addNewItem:(window_menu_items + i) menu:submenu action:@selector(doCallback)];
+    setMenuFlags(submenu, miCnt, window_menu_items + i);
+    i++;
+  }
 }
 
 
@@ -669,6 +678,39 @@ static void merge_all_windows_cb(Fl_Widget *, void *)
 static bool window_menu_installed = false;
 static int window_menu_items_count = 0;
 static int window_menu_native_offset = -1; // index of the first open-window entry in the native Window submenu
+static bool window_menu_dirty = false;
+
+/*
+ * Rebuild the Window submenu from the current window_menu_items array, but
+ * only if new_window()/remove_window()/rename_window() marked it dirty
+ * since the last time. Registered once as an Fl::add_check() callback,
+ * which FLTK calls just before it flushes the display and blocks for the
+ * next event: if several of those functions run back-to-back in the same
+ * burst of code (e.g. several windows opening or closing at once, as
+ * happens when Fluid restores several panels at startup or tears them all
+ * down on quit), this coalesces them into a single native-menu rebuild
+ * instead of one per window. That matters because doing several native
+ * menu mutations without letting the run loop turn in between is what was
+ * racing with AppKit's own menu-bar tracking and producing spurious
+ * "Menu_Tracking" console warnings.
+ */
+static void sync_window_menu_check(void*)
+{
+  if (!window_menu_dirty) return;
+  window_menu_dirty = false;
+  if (window_menu_native_offset < 0) return;
+  NSMenu *submenu = getWindowMenu();
+  if (!submenu) return;
+  Fl_MacOS_Sys_Menu_Bar_Driver *drv = Fl_MacOS_Sys_Menu_Bar_Driver::driver();
+  rebuildWindowMenuList(submenu, drv->window_menu_items, drv->first_window_menu_item,
+                        window_menu_native_offset);
+}
+
+static void mark_window_menu_dirty()
+{
+  window_menu_dirty = true;
+  if (!Fl::has_check(sync_window_menu_check)) Fl::add_check(sync_window_menu_check);
+}
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
 {
@@ -747,20 +789,20 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
   window_menu_items[index].flags = FL_MENU_RADIO;
   window_menu_items[index+1].label(NULL);
   window_menu_items[index].setonly();
-  // Update only the Window submenu in place instead of rebuilding the whole
-  // system menu bar: a full rebuild here races with AppKit's own menu bar
-  // tracking while the window is being activated, which produces spurious
-  // "Menu_Tracking" console warnings.
-  NSMenu *submenu = getWindowMenu();
-  if (!submenu || window_menu_native_offset < 0) { fl_sys_menu_bar->update(); return; }
   if (reallocated) {
     // window_menu_items moved: every native item of this submenu (fixed
     // items included, since they live in the same array) now holds a
-    // dangling representedObject pointer and must be recreated
-    rebuildWholeWindowMenu(submenu, window_menu_items);
+    // dangling representedObject pointer. Rebuild right away rather than
+    // deferring, so no stale pointer is ever reachable from a click.
+    NSMenu *submenu = getWindowMenu();
+    if (submenu && window_menu_native_offset >= 0) rebuildWholeWindowMenu(submenu, window_menu_items);
+    window_menu_dirty = false; // just rebuilt, nothing left to coalesce
   } else {
-    [FLMenuItem addNewItem:(window_menu_items + index) menu:submenu action:@selector(doCallback)];
-    syncWindowMenuStates(submenu, window_menu_items, first_window_menu_item, window_menu_native_offset);
+    // Defer the native update rather than doing it here: see
+    // sync_window_menu_check() for why (coalescing bursts of window
+    // creation/removal avoids racing with AppKit's own menu bar tracking,
+    // which produced spurious "Menu_Tracking" console warnings).
+    mark_window_menu_dirty();
   }
 }
 
@@ -785,22 +827,11 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
           item->setonly();
         }
       }
-      // Update only the Window submenu in place (see new_window() for why).
-      NSMenu *submenu = getWindowMenu();
-      if (!submenu || window_menu_native_offset < 0) { bar->update(); break; }
-      // relabel the entries that shifted down over the removed one, then
-      // drop the now-superfluous trailing native item
-      for (int i = index; i < count - 2; i++) {
-        int ni = window_menu_native_offset + (i - first_window_menu_item);
-        if (ni < (int)[submenu numberOfItems]) {
-          char *ts = remove_ampersand(window_menu_items[i].label());
-          [[submenu itemAtIndex:ni] setTitle:NSLocalizedString([NSString stringWithUTF8String:ts], nil)];
-          free(ts);
-        }
-      }
-      int lastNative = window_menu_native_offset + (count - 2 - first_window_menu_item);
-      if (lastNative >= 0 && lastNative < (int)[submenu numberOfItems]) [submenu removeItemAtIndex:lastNative];
-      syncWindowMenuStates(submenu, window_menu_items, first_window_menu_item, window_menu_native_offset);
+      // Defer the native update (see new_window() / sync_window_menu_check()
+      // for why): this matters most right here, since quitting an app that
+      // tears down several auxiliary windows back-to-back is exactly the
+      // burst this coalescing is meant to collapse into one rebuild.
+      mark_window_menu_dirty();
       break;
     }
     index++;
@@ -818,16 +849,8 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
     if (item->user_data() == win) {
       item->label(win->iconlabel() ? win->iconlabel() : win->label());
       if (!item->label()) item->label("");
-      // Update only the Window submenu in place (see new_window() for why).
-      NSMenu *submenu = getWindowMenu();
-      int ni = window_menu_native_offset + (index - first_window_menu_item);
-      if (submenu && window_menu_native_offset >= 0 && ni < (int)[submenu numberOfItems]) {
-        char *ts = remove_ampersand(item->label());
-        [[submenu itemAtIndex:ni] setTitle:NSLocalizedString([NSString stringWithUTF8String:ts], nil)];
-        free(ts);
-      } else {
-        bar->update();
-      }
+      // Defer the native update (see new_window() for why).
+      mark_window_menu_dirty();
       return;
     }
     index++;
