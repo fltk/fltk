@@ -1322,7 +1322,7 @@ void Fl_Terminal::update_scrollbar(void) {
   if (vchanged || hchanged) {
     init_sizes();         // tell Fl_Group child changed size..
     update_screen_xywh(); // ensure scrn_ is aware of sw change
-    display_modified();   // redraw Fl_Terminal since scroller changed size
+    redraw();             // redraw Fl_Terminal since scroller changed size
   }
   scrollbar->redraw();     // redraw scroll always
 }
@@ -1480,7 +1480,7 @@ void Fl_Terminal::history_rows(int hrows) {
   if (hrows == history_rows()) return;        // no change? done
   ring_.resize(disp_rows(), disp_cols(), hrows, *current_style_);
   update_screen(false);                       // false: no font change
-  display_modified();
+  redraw();
 }
 
 /**
@@ -1615,7 +1615,7 @@ void Fl_Terminal::margin_bottom(int val) {
 void Fl_Terminal::textfont(Fl_Font val) {
   current_style_->fontface(val);
   update_screen(true);
-  display_modified();
+  redraw();
 }
 
 /**
@@ -1631,7 +1631,7 @@ void Fl_Terminal::textsize(Fl_Fontsize val) {
   update_screen(true);
   // Changing font size affects #lines in display, so resize it
   refit_disp_to_screen();
-  display_modified();
+  redraw();
 }
 
 /**
@@ -3770,7 +3770,10 @@ void Fl_Terminal::draw(void) {
     //
     fl_color(Fl_Group::color());
     // Draw flat field (inside border drawn by Fl_Group::draw() above)
-    fl_rectf(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
+    fl_rectf(scrn_.x() - margin_.left(),
+             scrn_.y() - margin_.top(),
+             scrn_.w() + margin_.left() + margin_.right(),
+             scrn_.h() + margin_.top() + margin_.bottom());
   }
 
   //DEBUG  fl_color(0x80000000);     // dark red box inside margins
