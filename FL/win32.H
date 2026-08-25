@@ -50,7 +50,7 @@ typedef struct HGLRC__ *HGLRC;
 extern FL_EXPORT HGLRC fl_win32_glcontext(GLContext rc);
 extern FL_EXPORT HWND fl_win32_xid(const Fl_Window *win);
 extern FL_EXPORT Fl_Window *fl_win32_find(HWND);
-extern FL_EXPORT HICON fl_image_to_HICON(const Fl_RGB_Image *image, bool is_icon, int hotx, int hoty);
+extern FL_EXPORT HICON fl_image_to_HICON(const class Fl_RGB_Image *image, bool is_icon, int hotx, int hoty);
 
 // this part is included only when compiling the FLTK library or if requested explicitly
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS)
