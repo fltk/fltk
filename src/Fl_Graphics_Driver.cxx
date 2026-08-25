@@ -49,7 +49,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   font_ = 0;
   size_ = 0;
   color_ = FL_BLACK;
-  sptr=0; rstackptr=0;
+  rstackptr=0;
   rstack[0] = NULL;
   fl_clip_state_number=0;
   m = m0;

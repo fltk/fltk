@@ -43,18 +43,17 @@
 
 /** see fl_push_matrix() */
 void Fl_Graphics_Driver::push_matrix() {
-  if (sptr==matrix_stack_size)
-    Fl::error("fl_push_matrix(): matrix stack overflow.");
-  else
-    stack[sptr++] = m;
+  matrix_stack.push(m);
 }
 
 /** see fl_pop_matrix() */
 void Fl_Graphics_Driver::pop_matrix() {
-  if (sptr==0)
+  if (matrix_stack.empty())
     Fl::error("fl_pop_matrix(): matrix stack underflow.");
-  else
-    m = stack[--sptr];
+  else {
+    m = matrix_stack.top();
+    matrix_stack.pop();
+  }
 }
 
 /** see fl_load_identity() */

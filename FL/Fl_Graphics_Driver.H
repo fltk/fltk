@@ -33,6 +33,8 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
 
+#include <stack>
+
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
 class Fl_Image_Surface;
@@ -51,14 +53,13 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 struct Fl_Fontdesc;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-// FIXME: The following constants are deprecated and will be removed in FLTK 1.5.0
+// FIXME: The following constant is deprecated and will be removed in FLTK 1.5.0
 // in favor of dynamic clipping stack allocation. This needs C++11 features.
-// See issue #1139: "FL_REGION_STACK_SIZE could be increased"
-// and issue #1140: "Fix static array allocation".
+// See issue #1139: "FL_REGION_STACK_SIZE could be increased".
+// (Issue #1140, "Fix static array allocation", covered the matrix stack;
+// that one is now a std::stack<matrix> with no fixed size.)
 
 #define FL_REGION_STACK_SIZE 64
-
-#define FL_MATRIX_STACK_SIZE 32
 
 /**
  An abstract class subclassed for each graphics driver FLTK uses.
@@ -163,9 +164,7 @@ protected:
   Fl_Font font_; ///< current font
   Fl_Fontsize size_; ///< current font size
   Fl_Color color_; ///< current color
-  int sptr;///< For internal use by FLTK
-  static const int matrix_stack_size = FL_MATRIX_STACK_SIZE; ///< For internal use by FLTK
-  matrix stack[FL_MATRIX_STACK_SIZE]; ///< For internal use by FLTK
+  std::stack<matrix> matrix_stack; ///< For internal use by FLTK
   matrix m; ///< current transformation matrix
   int n; ///< For internal use by FLTK
   int gap_; ///< For internal use by FLTK
