@@ -44,16 +44,16 @@ void Fl_Graphics_Driver::restore_clip() {
 
 /** see fl_clip_region(Fl_Region) */
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
-  Fl_Region oldr = rstack[rstackptr];
+  Fl_Region oldr = rstack.top();
   if (oldr) XDestroyRegion(oldr);
-  rstack[rstackptr] = r;
+  rstack.top() = r;
   restore_clip();
 }
 
 
 /** see fl_clip_region(void) */
 Fl_Region Fl_Graphics_Driver::clip_region() {
-  return rstack[rstackptr];
+  return rstack.top();
 }
 
 /**

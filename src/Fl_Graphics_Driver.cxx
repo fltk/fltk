@@ -49,8 +49,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   font_ = 0;
   size_ = 0;
   color_ = FL_BLACK;
-  rstackptr=0;
-  rstack[0] = NULL;
+  rstack.push(NULL);
   fl_clip_state_number=0;
   m = m0;
   font_descriptor_ = NULL;
@@ -396,14 +395,14 @@ void Fl_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2,
 }
 
 void Fl_Graphics_Driver::push_no_clip() {
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
-  else Fl::warning("Fl_Graphics_Driver::push_no_clip: clip stack overflow!\n");
+  rstack.push(0);
   restore_clip();
 }
 
 void Fl_Graphics_Driver::pop_clip() {
-  if (rstackptr > 0) {
-    Fl_Region oldr = rstack[rstackptr--];
+  if (rstack.size() > 1) {
+    Fl_Region oldr = rstack.top();
+    rstack.pop();
     if (oldr) XDestroyRegion(oldr);
   } else Fl::warning("Fl_Graphics_Driver::pop_clip: clip stack underflow!\n");
   restore_clip();
@@ -1172,8 +1171,8 @@ void Fl_Scalable_Graphics_Driver::vertex(double x,double y) {
 
 void Fl_Scalable_Graphics_Driver::unscale_clip(Fl_Region r) {
   if (r) {
-    if (rstack[rstackptr]) XDestroyRegion(rstack[rstackptr]);
-    rstack[rstackptr] = r;
+    if (rstack.top()) XDestroyRegion(rstack.top());
+    rstack.top() = r;
   }
 }
 

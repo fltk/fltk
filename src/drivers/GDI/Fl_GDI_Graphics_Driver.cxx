@@ -304,9 +304,9 @@ HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Drive
 
 
 Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
-  HRGN r = (HRGN)rstack[rstackptr];
+  HRGN r = (HRGN)rstack.top();
   HRGN r2 = scale_region(r, f, this);
-  return (r == r2 ? NULL : (rstack[rstackptr] = r2, r));
+  return (r == r2 ? NULL : (rstack.top() = r2, r));
 }
 
 void Fl_GDI_Graphics_Driver::set_current_() {

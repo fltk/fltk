@@ -334,7 +334,7 @@ void Fl_Xlib_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   Region r;
   if (w > 0 && h > 0) {
     r = (Region)XRectangleRegion(x, y, w, h); // does X coordinate clipping
-    Region current = (Region)rstack[rstackptr];
+    Region current = (Region)rstack.top();
     if (current) {
       Region temp = XCreateRegion();
       XIntersectRegion(current, r, temp);
@@ -344,8 +344,7 @@ void Fl_Xlib_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   } else { // make empty clip region:
     r = XCreateRegion();
   }
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
-  else Fl::warning("Fl_Xlib_Graphics_Driver::push_clip: clip stack overflow!\n");
+  rstack.push(r);
   restore_clip();
 }
 
@@ -356,7 +355,7 @@ int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y
     W = H = 0;
     return 2;
   }
-  Region r = (Region)rstack[rstackptr];
+  Region r = (Region)rstack.top();
   if (!r) { // no clipping region
     if (X != x || Y != y || W != w || H != h) // pre-clipped
       return 1; // partially outside, region differs
@@ -384,7 +383,7 @@ int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y
 
 int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
-  Region r = (Region)rstack[rstackptr];
+  Region r = (Region)rstack.top();
   if (!r) return 1;
   // get rid of coordinates outside the 16-bit range the X calls take.
   if (clip_rect(x,y,w,h)) return 0;     // clipped
@@ -394,10 +393,10 @@ int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 void Fl_Xlib_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   if (gc_) {
-    Region r = (Region)rstack[rstackptr];
+    Region r = (Region)rstack.top();
     if (r) {
       Region r2 = (Region)scale_clip(scale());
-      XSetRegion(fl_display, gc_, (Region)rstack[rstackptr]);
+      XSetRegion(fl_display, gc_, (Region)rstack.top());
       unscale_clip(r2);
     }
     else XSetClipMask(fl_display, gc_, 0);

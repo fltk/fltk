@@ -53,11 +53,11 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 struct Fl_Fontdesc;
 typedef struct _PangoFontDescription PangoFontDescription;
 
-// FIXME: The following constant is deprecated and will be removed in FLTK 1.5.0
-// in favor of dynamic clipping stack allocation. This needs C++11 features.
-// See issue #1139: "FL_REGION_STACK_SIZE could be increased".
-// (Issue #1140, "Fix static array allocation", covered the matrix stack;
-// that one is now a std::stack<matrix> with no fixed size.)
+// Issues #1139 ("FL_REGION_STACK_SIZE could be increased") and #1140
+// ("Fix static array allocation") asked for the matrix and clip-region
+// stacks to no longer be fixed-size arrays. Both are now std::stack's with
+// no fixed depth. FL_REGION_STACK_SIZE is kept only because
+// Fl_OpenGL_Graphics_Driver still sizes its own, separate region stack with it.
 
 #define FL_REGION_STACK_SIZE 64
 
@@ -177,9 +177,7 @@ protected:
   /** For internal use by FLTK */
   static void draw_image_cb(void *data, int x, int y, int w, uchar *buf);
   enum SHAPE {NONE=0, LINE, LOOP, POLYGON, POINTS, COMPLEX_POLYGON} what;
-  int rstackptr; ///< For internal use by FLTK
-  static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
-  Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
+  std::stack<Fl_Region> rstack; ///< For internal use by FLTK
   Fl_Font_Descriptor *font_descriptor_; ///< For internal use by FLTK
   int p_size;
   typedef struct { float x; float y; } XPOINT;

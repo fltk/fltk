@@ -156,21 +156,20 @@ void Fl_GDI_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   HRGN r;
   if (w > 0 && h > 0) {
     r = (HRGN)XRectangleRegion(x,y,w,h);
-    HRGN current = (HRGN)rstack[rstackptr];
+    HRGN current = (HRGN)rstack.top();
     if (current) {
       CombineRgn(r,r,current,RGN_AND);
     }
   } else { // make empty clip region:
     r = CreateRectRgn(0,0,0,0);
   }
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
-  else Fl::warning("Fl_GDI_Graphics_Driver::push_clip: clip stack overflow!\n");
+  rstack.push(r);
   fl_restore_clip();
 }
 
 int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
-  HRGN r = (HRGN)rstack[rstackptr];
+  HRGN r = (HRGN)rstack.top();
   if (!r) return 0;
   // The win32 API makes no distinction between partial and complete
   // intersection, so we have to check for partial intersection ourselves.
@@ -204,7 +203,7 @@ int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y,
 
 int Fl_GDI_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
-  HRGN r = (HRGN)rstack[rstackptr];
+  HRGN r = (HRGN)rstack.top();
   if (!r) return 1;
   RECT rect;
   if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // in case of print context, convert coords from logical to device
@@ -221,8 +220,8 @@ void Fl_GDI_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   if (gc_) {
     HRGN r = NULL;
-    if (rstack[rstackptr]) r = (HRGN)scale_clip(scale());
-    SelectClipRgn(gc_, (HRGN)rstack[rstackptr]); // if region is NULL, clip is automatically cleared
+    if (rstack.top()) r = (HRGN)scale_clip(scale());
+    SelectClipRgn(gc_, (HRGN)rstack.top()); // if region is NULL, clip is automatically cleared
     if (r) unscale_clip(r);
   }
 }

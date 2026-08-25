@@ -143,7 +143,7 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
 
 
 Fl_Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
-  Region r = (Region)rstack[rstackptr];
+  Region r = (Region)rstack.top();
   if (r == 0 || (f == 1 && offset_x_ == 0 && offset_y_ == 0) ) return 0;
   Region r2 = XCreateRegion();
   for (int i = 0; i < r->numRects; i++) {
@@ -155,7 +155,7 @@ Fl_Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
     XUnionRegion(R, r2, r2);
     ::XDestroyRegion(R);
   }
-  rstack[rstackptr] = r2;
+  rstack.top() = r2;
   return r;
 }
 

@@ -246,7 +246,7 @@ void Fl_Quartz_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   Fl_Region r;
   if (w > 0 && h > 0) {
     r = XRectangleRegion(x,y,w,h);
-    Fl_Region current = rstack[rstackptr];
+    Fl_Region current = rstack.top();
     if (current) {
       XDestroyRegion(r);
       r = intersect_region_and_rect(current, x,y,w,h);
@@ -254,14 +254,13 @@ void Fl_Quartz_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   } else { // make empty clip region:
     r = XRectangleRegion(0,0,0,0);
   }
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
-  else Fl::warning("Fl_Quartz_Graphics_Driver::push_clip: clip stack overflow!\n");
+  rstack.push(r);
   restore_clip();
 }
 
 int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
-  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack.top();
   if (!r) return 0;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   CGRect u = CGRectMake(0,0,0,0);
@@ -283,7 +282,7 @@ int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int&
 
 int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
-  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack.top();
   if (!r) return 1;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   for (int i = 0; i < r->count; i++) {
@@ -295,7 +294,7 @@ int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 
 void Fl_Quartz_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
-  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack[rstackptr];
+  struct flCocoaRegion* r = (struct flCocoaRegion*)rstack.top();
   if ( fl_window || gc_ ) { // clipping for a true window or an offscreen buffer
     if (gc_) {
       CGContextRestoreGState(gc_);

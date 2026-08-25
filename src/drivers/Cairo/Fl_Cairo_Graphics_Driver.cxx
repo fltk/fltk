@@ -1419,7 +1419,7 @@ void Fl_Cairo_Graphics_Driver::restore_clip() {
   if (cairo_) {
     cairo_reset_clip(cairo_);
     // apply what's in rstack
-    cairo_region_t *r = (cairo_region_t*)rstack[rstackptr];
+    cairo_region_t *r = (cairo_region_t*)rstack.top();
     if (r) {
       if (!clip_) {
         clip_ = new Clip();
