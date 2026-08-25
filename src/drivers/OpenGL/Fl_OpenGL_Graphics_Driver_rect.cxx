@@ -27,6 +27,7 @@
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl.H>
 #include <FL/math.h>
+#include <stack>
 
 // --- line and polygon drawing with integer coordinates
 
@@ -247,38 +248,33 @@ typedef struct Fl_Gl_Region {
   }
 } Fl_Gl_Region;
 
-static int gl_rstackptr = 0;
-static const int gl_region_stack_max = FL_REGION_STACK_SIZE - 1;
-static Fl_Gl_Region gl_rstack[FL_REGION_STACK_SIZE];
+static std::stack<Fl_Gl_Region> gl_rstack;
 
 /*
  Intersect the given rect with the current rect, push the result on the stack,
  and apply the new clipping area.
  */
 void Fl_OpenGL_Graphics_Driver::push_clip(int x, int y, int w, int h) {
-  if (gl_rstackptr==gl_region_stack_max) {
-    Fl::warning("Fl_OpenGL_Graphics_Driver::push_clip: clip stack overflow!\n");
-    return;
-  }
-  if (gl_rstackptr==0) {
-    gl_rstack[gl_rstackptr].set(x, y, w, h);
+  Fl_Gl_Region g;
+  if (gl_rstack.empty()) {
+    g.set(x, y, w, h);
   } else {
-    gl_rstack[gl_rstackptr].set_intersect(x, y, w, h, gl_rstack[gl_rstackptr-1]);
+    g.set_intersect(x, y, w, h, gl_rstack.top());
   }
-  gl_rstack[gl_rstackptr].apply();
-  gl_rstackptr++;
+  gl_rstack.push(g);
+  gl_rstack.top().apply();
 }
 
 /*
  Remove the current clipping area and apply the previous one on the stack.
  */
 void Fl_OpenGL_Graphics_Driver::pop_clip() {
-  if (gl_rstackptr==0) {
+  if (gl_rstack.empty()) {
     glDisable(GL_SCISSOR_TEST);
     Fl::warning("Fl_OpenGL_Graphics_Driver::pop_clip: clip stack underflow!\n");
     return;
   }
-  gl_rstackptr--;
+  gl_rstack.pop();
   restore_clip();
 }
 
@@ -286,13 +282,10 @@ void Fl_OpenGL_Graphics_Driver::pop_clip() {
  Push a full area onton the stack, so no clipping will take place.
  */
 void Fl_OpenGL_Graphics_Driver::push_no_clip() {
-  if (gl_rstackptr==gl_region_stack_max) {
-    Fl::warning("Fl_OpenGL_Graphics_Driver::push_no_clip: clip stack overflow!\n");
-    return;
-  }
-  gl_rstack[gl_rstackptr].set_full();
-  gl_rstack[gl_rstackptr].apply();
-  gl_rstackptr++;
+  Fl_Gl_Region g;
+  g.set_full();
+  gl_rstack.push(g);
+  gl_rstack.top().apply();
 }
 
 /*
@@ -318,10 +311,10 @@ void Fl_OpenGL_Graphics_Driver::clip_region(Fl_Region r) {
  Apply the current clipping rect.
  */
 void Fl_OpenGL_Graphics_Driver::restore_clip() {
-  if (gl_rstackptr==0) {
+  if (gl_rstack.empty()) {
     glDisable(GL_SCISSOR_TEST);
   } else {
-    gl_rstack[gl_rstackptr-1].apply();
+    gl_rstack.top().apply();
   }
 }
 
@@ -332,9 +325,9 @@ void Fl_OpenGL_Graphics_Driver::restore_clip() {
  2 = region is partially inside current clipping region
  */
 int Fl_OpenGL_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
-  if (gl_rstackptr==0)
+  if (gl_rstack.empty())
     return 1;
-  Fl_Gl_Region &g = gl_rstack[gl_rstackptr-1];
+  Fl_Gl_Region &g = gl_rstack.top();
   if (g.state==kStateFull)
     return 1;
   if (g.state==kStateEmpty)
@@ -352,9 +345,9 @@ int Fl_OpenGL_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
  */
 int Fl_OpenGL_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
   X = x; Y = y; W = w; H = h;
-  if (gl_rstackptr==0)
+  if (gl_rstack.empty())
     return 0;
-  Fl_Gl_Region &g = gl_rstack[gl_rstackptr-1];
+  Fl_Gl_Region &g = gl_rstack.top();
   if (g.state==kStateFull)
     return 0;
   int r = x+w, b = y + h;

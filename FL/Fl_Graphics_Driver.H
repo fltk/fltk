@@ -55,11 +55,8 @@ typedef struct _PangoFontDescription PangoFontDescription;
 
 // Issues #1139 ("FL_REGION_STACK_SIZE could be increased") and #1140
 // ("Fix static array allocation") asked for the matrix and clip-region
-// stacks to no longer be fixed-size arrays. Both are now std::stack's with
-// no fixed depth. FL_REGION_STACK_SIZE is kept only because
-// Fl_OpenGL_Graphics_Driver still sizes its own, separate region stack with it.
-
-#define FL_REGION_STACK_SIZE 64
+// stacks (including Fl_OpenGL_Graphics_Driver's own, separate one) to no
+// longer be fixed-size arrays. All are now std::stack's with no fixed depth.
 
 /**
  An abstract class subclassed for each graphics driver FLTK uses.
