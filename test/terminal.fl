@@ -1456,7 +1456,9 @@ return -1;} {}
   Function {update_inputs()} {
     comment {Resync the inputs with widget's values} open return_type void
   } {
-    code {// Scroll History
+    code {// Update UI settings from actual Fl_Terminal settings
+
+// Scroll History
 scrollhistory_input->value( G_tty->history_rows() );
 display_columns_input->value( G_tty->display_columns() );
 
@@ -1495,6 +1497,14 @@ switch ( G_tty->box() ) {
   case FL_BORDER_BOX:      box_choice->value(12); break;
   case FL_NO_BOX:          box_choice->value(13); break;
   default:                 box_choice->value(1);  break;
+}
+
+// redraw_style()
+switch ( G_tty->redraw_style() ) {
+  case    Fl_Terminal::RedrawStyle::NO_REDRAW: redraw_style_choice->value(0); break;
+  case Fl_Terminal::RedrawStyle::RATE_LIMITED: redraw_style_choice->value(1); break;
+  case    Fl_Terminal::RedrawStyle::PER_WRITE: redraw_style_choice->value(2); break;
+  default:                                     redraw_style_choice->value(1); break;
 }
 
 // color()
@@ -1575,7 +1585,7 @@ G_tty->output_translate(Fl_Terminal::OutFlags(out));} {}
     Fl_Window win {
       label {Fl_Terminal Test}
       callback {exit(0);} open
-      xywh {610 66 897 838} type Double size_range {897 330 0 0} visible
+      xywh {592 66 897 838} type Double size_range {897 330 0 0} visible
     } {
       Fl_Spinner scrollhistory_input {
         label {Scroll History}
@@ -1588,19 +1598,19 @@ G_tty->history_rows(val);}
         label {display_columns()}
         callback {int val = int(display_columns_input->value() + .5);
 G_tty->display_columns(val);}
-        tooltip {Display width in columns of text characters.} xywh {109 33 115 20} labelsize 10 minimum 0 maximum 10000 textsize 10
+        tooltip {Display width in columns of text characters.} xywh {109 31 115 20} labelsize 10 minimum 0 maximum 10000 textsize 10
       }
       Fl_Spinner fontsize_input {
         label {Font Size}
         callback {int val = int(fontsize_input->value() + .5);
 G_tty->textsize(val);}
-        xywh {109 56 115 20} labelsize 10 textsize 10
+        xywh {109 52 115 20} labelsize 10 textsize 10
       }
       Fl_Spinner scrollbarsize_input {
         label {Scrollbar Size}
         callback {int val = int(scrollbarsize_input->value() + .5);
 G_tty->scrollbar_size(val); G_tty->redraw();}
-        tooltip {Size of scrollbar width in pixels} xywh {109 79 115 20} labelsize 10 textsize 10
+        tooltip {Size of scrollbar width in pixels} xywh {109 73 115 20} labelsize 10 textsize 10
       }
       Fl_Spinner redraw_rate_spinner {
         label {Min Redraw Time}
@@ -1608,16 +1618,16 @@ G_tty->scrollbar_size(val); G_tty->redraw();}
 //printf("Setting redraw rate to %.2f\\n", rate);
 G_tty->redraw_rate(rate);}
         tooltip {Minimum time between redraws
-Default is 0.10 secs.} xywh {109 103 115 20} type Float labelsize 10 minimum 0.05 maximum 5 step 0.1 textsize 10
+Default is 0.10 secs.} xywh {109 95 115 20} type Float labelsize 10 minimum 0.05 maximum 5 step 0.1 textsize 10
       }
       Fl_Choice scheme_widget {
         label scheme open
-        tooltip Scheme xywh {109 126 115 20} down_box BORDER_BOX labelsize 10 textsize 10
+        tooltip Scheme xywh {109 116 117 20} down_box BORDER_BOX labelsize 10 textsize 10
         class Fl_Scheme_Choice
       } {}
       Fl_Choice box_choice {
         label {box()} open
-        tooltip {The border box for the Fl_Terminal} xywh {109 149 115 20} down_box BORDER_BOX labelsize 10 textsize 10
+        tooltip {The border box for the Fl_Terminal} xywh {109 137 117 20} down_box BORDER_BOX labelsize 10 textsize 10
       } {
         MenuItem {} {
           label FL_UP_FRAME
@@ -1652,7 +1662,7 @@ Default is 0.10 secs.} xywh {109 103 115 20} type Float labelsize 10 minimum 0.0
         MenuItem {} {
           label FL_EMBOSSED_FRAME
           user_data FL_EMBOSSED_FRAME user_data_type long
-          callback {G_tty->box(FL_EMBOSSED_FRAME); G_tty->redraw();}
+          callback {G_tty->box(FL_EMBOSSED_FRAME); G_tty->redraw();} selected
           xywh {10 10 100 20} labelsize 8
         }
         MenuItem {} {
@@ -1699,9 +1709,29 @@ G_tty->redraw();}
           xywh {10 10 100 20} labelsize 8
         }
       }
+      Fl_Choice redraw_style_choice {
+        label {redraw_style()} open
+        tooltip {Redraw style for terminal} xywh {109 158 117 20} down_box BORDER_BOX labelsize 10 textsize 10
+      } {
+        MenuItem {} {
+          label NO_REDRAW user_data_type long
+          callback {G_tty->redraw_style(Fl_Terminal::RedrawStyle::NO_REDRAW);}
+          xywh {20 20 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label RATE_LIMITED user_data_type long
+          callback {G_tty->redraw_style(Fl_Terminal::RedrawStyle::RATE_LIMITED);}
+          xywh {20 20 100 20} labelsize 8
+        }
+        MenuItem {} {
+          label PER_WRITE user_data_type long
+          callback {G_tty->redraw_style(Fl_Terminal::RedrawStyle::PER_WRITE);}
+          xywh {20 20 100 20} labelsize 8
+        }
+      }
       Fl_Box {} {
         label {Lt, Rt, Top, Bot}
-        xywh {110 176 114 15} labelsize 10
+        xywh {110 194 114 15} labelsize 10
       }
       Fl_Input margins_input {
         label Margins
@@ -1716,7 +1746,7 @@ G_tty->margin_right(rt);
 G_tty->margin_top(top);
 G_tty->margin_bottom(bot);
 G_tty->redraw();}
-        xywh {110 191 114 20} labelsize 10 when 28 textsize 10
+        xywh {110 211 114 20} labelsize 10 when 28 textsize 10
       }
       Fl_Check_Button outflags_lf_to_crlf {
         label LF_TO_CRLF
@@ -1814,7 +1844,7 @@ Can be decimal (e.g. 12) or hex (e.g. \#0c, \#0000000c, etc)} xywh {333 161 77 2
       Fl_Input error_char_input {
         label {error_char()}
         callback {G_tty->error_char(error_char_input->value());
-G_tty->redraw();} selected
+G_tty->redraw();}
         tooltip {The error character shown for bad UTF-8/ANSI sequences if show_unknown() is enabled.} xywh {333 184 77 20} labelsize 9 when 28 textfont 4 textsize 9
       }
       Fl_Input color_input {
