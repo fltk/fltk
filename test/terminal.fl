@@ -1488,10 +1488,10 @@ switch ( G_tty->box() ) {
 
 // redraw_style()
 switch ( G_tty->redraw_style() ) {
-  case    Fl_Terminal::RedrawStyle::NO_REDRAW: redraw_style_choice->value(0); break;
-  case Fl_Terminal::RedrawStyle::RATE_LIMITED: redraw_style_choice->value(1); break;
-  case    Fl_Terminal::RedrawStyle::PER_WRITE: redraw_style_choice->value(2); break;
-  default:                                     redraw_style_choice->value(1); break;
+  case    Fl_Terminal::NO_REDRAW: redraw_style_choice->value(0); break;
+  case Fl_Terminal::RATE_LIMITED: redraw_style_choice->value(1); break;
+  case    Fl_Terminal::PER_WRITE: redraw_style_choice->value(2); break;
+  default:                        redraw_style_choice->value(1); break;
 }
 
 // color()
@@ -1702,17 +1702,17 @@ G_tty->redraw();}
       } {
         MenuItem {} {
           label NO_REDRAW user_data_type long
-          callback {G_tty->redraw_style(Fl_Terminal::RedrawStyle::NO_REDRAW);}
+          callback {G_tty->redraw_style(Fl_Terminal::NO_REDRAW);}
           xywh {20 20 100 20} labelsize 8
         }
         MenuItem {} {
           label RATE_LIMITED user_data_type long
-          callback {G_tty->redraw_style(Fl_Terminal::RedrawStyle::RATE_LIMITED);}
+          callback {G_tty->redraw_style(Fl_Terminal::RATE_LIMITED);}
           xywh {20 20 100 20} labelsize 8
         }
         MenuItem {} {
           label PER_WRITE user_data_type long
-          callback {G_tty->redraw_style(Fl_Terminal::RedrawStyle::PER_WRITE);}
+          callback {G_tty->redraw_style(Fl_Terminal::PER_WRITE);}
           xywh {20 20 100 20} labelsize 8
         }
       }
