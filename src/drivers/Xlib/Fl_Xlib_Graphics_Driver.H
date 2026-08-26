@@ -209,7 +209,7 @@ protected:
   void color(uchar r, uchar g, uchar b) FL_OVERRIDE;
   float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) FL_OVERRIDE;
   const char* get_font_name(Fl_Font fnum, int* ap) FL_OVERRIDE;
-  const char* get_font_name2(Fl_Font fnum, int* weight, int* style) FL_OVERRIDE;
+  const char* get_font_family(Fl_Font fnum, int* weight, int* style) FL_OVERRIDE;
   int get_font_sizes(Fl_Font fnum, int*& sizep) FL_OVERRIDE;
 #if !USE_XFT
   unsigned font_desc_size() FL_OVERRIDE;

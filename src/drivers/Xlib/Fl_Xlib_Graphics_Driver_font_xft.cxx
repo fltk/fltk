@@ -964,7 +964,7 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   return f->fontname;
 }
 
-const char* Fl_Xlib_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {
+const char* Fl_Xlib_Graphics_Driver::get_font_family(Fl_Font fnum, int* weight, int* style) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   const char* p = f->name;
   if (!p || !*p) {
@@ -1212,7 +1212,7 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   }
   if (!pfd_array[fnum]) {
     int style, weight;
-    const char* name = Fl::get_font_name2(fnum, &weight, &style);
+    const char* name = Fl::get_font_family(fnum, &weight, &style);
     pfd_array[fnum] = pango_font_description_from_string(name);
     pango_font_description_set_weight(pfd_array[fnum], (PangoWeight)weight);
     pango_font_description_set_style(pfd_array[fnum], (PangoStyle)style);

@@ -2472,8 +2472,8 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   return Fl_Graphics_Driver::default_driver().get_font_name(fnum, ap);
 }
 
-const char* Fl::get_font_name2(Fl_Font fnum, int* weight, int* style) {
-  return Fl_Graphics_Driver::default_driver().get_font_name2(fnum, weight, style);
+const char* Fl::get_font_family(Fl_Font fnum, int* weight, int* style) {
+  return Fl_Graphics_Driver::default_driver().get_font_family(fnum, weight, style);
 }
 
 int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {

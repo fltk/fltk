@@ -740,8 +740,8 @@ float Fl_Graphics_Driver::scale_bitmap_for_PostScript() { return 2; }
 /** Support for Fl::get_font_name() */
 const char* Fl_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {return NULL;}
 
-/** Support for Fl::get_font_name2() */
-const char* Fl_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {return NULL;}
+/** Support for Fl::get_font_family() */
+const char* Fl_Graphics_Driver::get_font_family(Fl_Font fnum, int* weight, int* style) {return NULL;}
 
 /** Support for Fl::get_font_sizes() */
 int Fl_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {return 0;}

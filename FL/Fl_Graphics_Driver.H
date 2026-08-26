@@ -358,7 +358,7 @@ public:
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
   virtual void XDestroyRegion(Fl_Region r);
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
-  virtual const char* get_font_name2(Fl_Font fnum, int* weight, int* style);
+  virtual const char* get_font_family(Fl_Font fnum, int* weight, int* style);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual Fl_Font set_fonts(const char *name);
   virtual Fl_Fontdesc* calc_fl_fonts(void);

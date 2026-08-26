@@ -75,7 +75,7 @@ const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   return f->fontname;
 }
 
-const char* Fl_Quartz_Graphics_Driver::get_font_name2(Fl_Font fnum, int* weight, int* style) {
+const char* Fl_Quartz_Graphics_Driver::get_font_family(Fl_Font fnum, int* weight, int* style) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   const char* p = f->name;
   if (!p || !*p) {
