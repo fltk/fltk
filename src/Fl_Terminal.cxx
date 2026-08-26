@@ -1320,7 +1320,7 @@ void Fl_Terminal::update_scrollbar(void) {
   if (vchanged || hchanged) {
     init_sizes();         // tell Fl_Group child changed size..
     update_screen_xywh(); // ensure scrn_ is aware of sw change
-    display_modified();   // redraw Fl_Terminal since scroller changed size
+    redraw();             // redraw Fl_Terminal since scroller changed size
   }
   scrollbar->redraw();     // redraw scroll always
 }
@@ -1478,7 +1478,7 @@ void Fl_Terminal::history_rows(int hrows) {
   if (hrows == history_rows()) return;        // no change? done
   ring_.resize(disp_rows(), disp_cols(), hrows, *current_style_);
   update_screen(false);                       // false: no font change
-  display_modified();
+  redraw();
 }
 
 /**
@@ -1613,7 +1613,7 @@ void Fl_Terminal::margin_bottom(int val) {
 void Fl_Terminal::textfont(Fl_Font val) {
   current_style_->fontface(val);
   update_screen(true);
-  display_modified();
+  redraw();
 }
 
 /**
@@ -1629,7 +1629,7 @@ void Fl_Terminal::textsize(Fl_Fontsize val) {
   update_screen(true);
   // Changing font size affects #lines in display, so resize it
   refit_disp_to_screen();
-  display_modified();
+  redraw();
 }
 
 /**
@@ -2960,17 +2960,26 @@ void Fl_Terminal::display_modified_clear(void) {
 }
 
 /**
-  Flag that the display has been modified, triggering redraws.
-  Sets the internal redraw_modified_ flag to true.
+  Flag that the display buffer has been modified, triggering redraws
+  while honoring redraw_style() rate-limiter. Sets internal redraw_modified_
+  flag to true.
+
+  DEVELOPER NOTE: The use of display_modified() enforces the RedrawStyle
+  rate-limiting to prevent excessive redraws during high volume terminal output.
+  Some operations making global changes to the widget (like changing the font)
+  must force a redraw(). The general redraw rule is:
+
+  - Terminal output methods (append(), printf()..) should honor RedrawStyle by
+    calling internal display_modified().
+  - Methods that visually change the widget (textfont(), textsize()..) should
+    simply call redraw().
 */
 void Fl_Terminal::display_modified(void) {
   if (is_redraw_style(RATE_LIMITED)) {
-    if (!redraw_modified_) {                         // wasn't before but now is?
-      if (!redraw_timer_) {
-        Fl::add_timeout(.01, redraw_timer_cb, this); // turn on timer
-        redraw_timer_ = true;
-      }
-      redraw_modified_ = true;
+    redraw_modified_ = true;
+    if (!redraw_timer_) {                            // no timer already?
+      Fl::add_timeout(.01, redraw_timer_cb, this);   // turn on timer
+      redraw_timer_ = true;
     }
   } else if (is_redraw_style(PER_WRITE)) {
     if (!redraw_modified_) {
@@ -3764,20 +3773,25 @@ void Fl_Terminal::draw(void) {
     //
     fl_color(Fl_Group::color());
     // Draw flat field (inside border drawn by Fl_Group::draw() above)
-    fl_rectf(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
+    fl_rectf(scrn_.x() - margin_.left(),
+             scrn_.y() - margin_.top(),
+             scrn_.w() + margin_.left() + margin_.right(),
+             scrn_.h() + margin_.top() + margin_.bottom());
   }
 
   //DEBUG  fl_color(0x80000000);     // dark red box inside margins
   //DEBUG  fl_rect(scrn_);
-  fl_push_clip(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
-  {
-    int Y = scrn_.y();
-    draw_buff(Y);
-  }
-  fl_pop_clip();
+  if (damage() & ~FL_DAMAGE_CHILD) {  // redraw entire screen
+    fl_push_clip(scrn_.x(), scrn_.y(), scrn_.w(), scrn_.h());
+    {
+      int Y = scrn_.y();
+      draw_buff(Y);
+    }
+    fl_pop_clip();
 
-  // Clear modified flag after drawing
-  display_modified_clear();
+    // Clear modified flag only after drawing the terminal buffer (not child scrollbars)
+    display_modified_clear();
+  }
 }
 
 /**
@@ -4062,9 +4076,9 @@ Fl_Terminal::RedrawStyle Fl_Terminal::redraw_style() const {
 void  Fl_Terminal::redraw_style(RedrawStyle val) {
   redraw_style_ = val;
   // Disable rate limit timer if it's being turned off
-  if (redraw_style_ != RATE_LIMITED && redraw_timer_) {
-    Fl::remove_timeout(redraw_timer_cb, this);
-    redraw_timer_ = false;
+  if (redraw_style_ != RATE_LIMITED) {
+    if (redraw_timer_)
+      { Fl::remove_timeout(redraw_timer_cb, this); redraw_timer_ = false; }
     redraw_modified_ = false;
   }
 }
