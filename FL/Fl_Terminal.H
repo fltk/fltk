@@ -2,7 +2,7 @@
 // Fl_Terminal - A terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 2022 by Greg Ercolano.
-// Copyright 2024-2025 by Bill Spitzak and others.
+// Copyright 2024-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
 
   \brief Terminal widget supporting Unicode/utf-8, ANSI/xterm escape codes with full RGB color control.
 
-  \section Fl_Terminal
+  \section Fl_Terminal The Fl_Terminal Widget
 
   \image html Fl_Terminal-demo.png "Fl_Terminal widget showing a linux manual page"
   \image latex Fl_Terminal-demo.png "Fl_Terminal widget showing a linux manual page" width=6cm
@@ -52,10 +52,10 @@
   clear_screen_home()     | ESC [ H ESC [ 2 J        | Clear screen, home cursor   |
   cursor_home()           | ESC [ H                  | Home the cursor             |
   clear_history()         | ESC [ 3 J                | Clear scrollback history    |
-  reset_terminal()        | ESC [ c                  | Reset terminal              |
+  reset_terminal()        | ESC c                    | Reset terminal              |
 
   To access more advanced API calls, one can derive a class from Fl_Terminal to
-  access protected methods manipulate the terminal more directly, e.g.
+  access protected methods and manipulate the terminal more directly, e.g.
   \par
   Protected API                | ESC code equiv.  | Description                             |
   -----------------------------|------------------|-----------------------------------------|
@@ -69,8 +69,8 @@
   scroll(int) // <0 for down   | ESC [ 1 T        | Scroll down one line                    |
   cursor_left()                | ESC [ 1 D        | Move cursor left (no wrap)              |
   cursor_right()               | ESC [ 1 C        | Move cursor right (no wrap)             |
-  cursor_up()                  | ESC [ 1 B        | Move cursor up (no scroll or wrap)      |
-  cursor_down()                | ESC [ 1 A        | Move cursor down (no scroll or wrap)    |
+  cursor_up()                  | ESC [ 1 A        | Move cursor up (no scroll or wrap)      |
+  cursor_down()                | ESC [ 1 B        | Move cursor down (no scroll or wrap)    |
   cursor_row() cursor_col()    | ESC [ # ; # H    | Move cursor to row# / column#           |
   insert_char()                | ESC [ # @        | Insert a char at cursor position        |
   delete_chars()               | ESC [ # P        | Delete chars at cursor position         |
@@ -88,7 +88,7 @@
   - Printing text to the terminal, see Fl_Terminal::printf() and Fl_Terminal::append()
   - Clearing the screen, see clear()
   - Getting the terminal's buffer contents, see text()
-  - Getting single utf8 characters by row/col from the terminal display, see utf8_char_at_disp()
+  - Getting single UTF-8 characters by row/col from the terminal display, see utf8_char_at_disp()
   - Getting the text from a text selection, see get_selection()
 
   For applications that need input support, the widget can be subclassed to provide
@@ -115,7 +115,7 @@
   or clear the screen via application control, e.g.
   \par
   \code
-     tty->home();                  // home the cursor
+     tty->cursor_home();           // home the cursor
      tty->clear_screen();          // clear the screen
      tty->textfgcolor(0xff000000); // change the text color to RED
      tty->textbgcolor(0x0000ff00); // change the background color to BLUE
@@ -167,14 +167,14 @@
   \par
   There's at least two ways to specify colors for text and background colors:
   \par
-  - 3 bit / 8 Color Values
-  - Full 24 bit R/G/B colors
+  - 3-bit / 8-color values
+  - Full 24-bit R/G/B colors
   \par
-  Example of 3 bit colors:
-  \image html  Fl_Terminal-3bit-colors.png "Fl_Terminal 3 bit colors"
-  \image latex Fl_Terminal-3bit-colors.png "Fl_Terminal 3 bit colors" width=6cm
+  Example of 3-bit colors:
+  \image html  Fl_Terminal-3bit-colors.png "Fl_Terminal 3-bit colors"
+  \image latex Fl_Terminal-3bit-colors.png "Fl_Terminal 3-bit colors" width=6cm
   \par
-  Example application source code using 3 bit colors:
+  Example application source code using 3-bit colors:
   \code
     //
     // Text colors
@@ -194,20 +194,20 @@
     tty->append("\033[47m White Background.\033[0m\n");
   \endcode
   \par
-  Example of 24 bit colors:
-  \image html  Fl_Terminal-24bit-colors.png "Fl_Terminal 24 bit colors"
-  \image latex Fl_Terminal-24bit-colors.png "Fl_Terminal 24 bit colors" width=6cm
+  Example of 24-bit colors:
+  \image html  Fl_Terminal-24bit-colors.png "Fl_Terminal 24-bit colors"
+  \image latex Fl_Terminal-24bit-colors.png "Fl_Terminal 24-bit colors" width=6cm
   \par
-  Example application source code using 24 bit colors:
+  Example application source code using 24-bit colors:
   \code
     //
-    // 24 bit Text Color
+    // 24-bit Text Color
     //
     tty->append("\033[38;2;0;0;255m Text is BLUE.\033[0m\n");                // RGB: R=0,   G=0,  B=255
     tty->append("\033[38;2;255;0;0m Text is RED.\033[0m\n");                 // RGB: R=255, G=0,  B=0
     tty->append("\033[38;2;127;64;0m Text is DARK ORANGE.\033[0m\n");        // RGB: R=127, G=64, B=0
     //
-    // 24 bit Background Color
+    // 24-bit Background Color
     //
     tty->append("\033[48;2;0;0;255m Background is BLUE.\033[0m\n");          // RGB: R=0,   G=0,  B=255
     tty->append("\033[48;2;255;0;0m Background is RED.\033[0m\n");           // RGB: R=255, G=0,  B=0
@@ -486,7 +486,7 @@ protected:
     void sgr_bold(bool val)      { attrib_ = onoff(val, Fl_Terminal::BOLD);      } // e.g. ESC[1m
     void sgr_dim(bool val)       { attrib_ = onoff(val, Fl_Terminal::DIM);       } // e.g. ESC[2m
     void sgr_italic(bool val)    { attrib_ = onoff(val, Fl_Terminal::ITALIC);    } // e.g. ESC[3m
-    void sgr_underline(bool val) { attrib_ = onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[3m
+    void sgr_underline(bool val) { attrib_ = onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[4m
     void sgr_dbl_under(bool val) { attrib_ = onoff(val, Fl_Terminal::UNDERLINE); } // e.g. ESC[21m (TODO!)
     void sgr_blink(bool val)     { (void)val; /* NOT IMPLEMENTED */              } // e.g. ESC[5m
     void sgr_inverse(bool val)   { attrib_ = onoff(val, Fl_Terminal::INVERSE);   } // e.g. ESC[7m
@@ -542,8 +542,8 @@ protected:
     uchar    len_;                  // length of bytes in text_[] buffer; 1 for ASCII, >1 for UTF-8
     uchar    attrib_;               // attribute bits for this char (bold, underline..)
     uchar    charflags_;            // CharFlags (xterm colors management)
-    Fl_Color fgcolor_;              // fltk fg color (supports 8color or 24bit color set w/ESC[37;<r>;<g>;<b>m)
-    Fl_Color bgcolor_;              // fltk bg color (supports 8color or 24bit color set w/ESC[47;<r>;<g>;<b>m)
+    Fl_Color fgcolor_;              // fltk fg color (supports 8color or 24bit color set w/ESC[38;2;<r>;<g>;<b>m)
+    Fl_Color bgcolor_;              // fltk bg color (supports 8color or 24bit color set w/ESC[48;2;<r>;<g>;<b>m)
     // Private methods
     void text_utf8_(const char *text, int len);
     Fl_Color attr_color_(Fl_Color col, const Fl_Widget *grp) const;
@@ -613,10 +613,10 @@ private:
     //
     //    The 'offset' concept allows the 'history' and 'display'
     //    to be scrolled indefinitely. The 'offset' is applied
-    //    to all the row accesses, and are clamped to within their bounds.
+    //    to all row accesses, and is wrapped within the buffer.
     //
     //    For 'raw' access to the ring (without the offset concept),
-    //    use the ring_chars() method, and walk from 0 - ring_rows().
+    //    use the ring_chars() method, and walk from 0 - ring_rows()-1.
     //
     //          _____________
     //         |             | <- hist_srow()  <- ring_srow()
@@ -834,12 +834,12 @@ public:
     - \ref Fl_Scrollbar::value(int)   "scrollbar->value(int)" similarly sets the row
       offset, which should be in the range [0 .. Fl_Scrollbar::maximum()].
     - \ref Fl_Scrollbar::step(double) "scrollbar->step(double)" sets the smoothness
-      of scrolling, default is 0.25 for 4 steps of motion per column.
+      of scrolling, default is 0.25 for 4 steps of motion per row.
 
     \todo Support scrollbar_left/right() - See Fl_Browser_::scrollbar docs
     \todo Support new ScrollbarStyle
    */
-  Fl_Scrollbar  *scrollbar;         // vertical scrollbar (value: rows above disp_chars[])
+  Fl_Scrollbar  *scrollbar;         // vertical scrollbar (value: rows above the display)
   /**
     Horizontal scrollbar. This is public so it can be accessed directly, e.g.
 
@@ -877,8 +877,8 @@ private:
   int            autoscroll_dir_;   // 0=autoscroll timer off, 3=scrolling up, 4=scrolling down
   int            autoscroll_amt_;   // #pixels above or below edge, used for autoscroll speed
   RedrawStyle    redraw_style_;     // NO_REDRAW, RATE_LIMITED, PER_WRITE
-  float          redraw_rate_;      // maximum redraw rate in seconds, default=0.10
-  bool           redraw_modified_;  // display modified; used by update_cb() to rate limit redraws
+  float          redraw_rate_;      // maximum redraw rate in seconds, default=0.10 (10 per sec)
+  bool           redraw_modified_;  // display modified; used by redraw_timer_cb() to rate limit redraws
   bool           redraw_timer_;     // if true, redraw timer is running
   PartialUtf8Buf pub_;              // handles Partial Utf8 Buffer (pub)
 
@@ -1175,11 +1175,11 @@ public:
   // API: Show unknown/invalid utf8/ANSI sequences with an error character (¿).
   bool  show_unknown(void) const;
   void  show_unknown(bool val);
-  /// Sets the "error character" utf8 string shown for invalid utf8
+  /// Sets the "error character" UTF-8 string shown for invalid UTF-8
   /// or bad ANSI sequences if show_unknown() is true. Default: "¿".
   /// \see show_unknown(bool)
   void error_char(const char* val) { error_char_ = val; }
-  /// Returns the "error character" utf8 string, which is shown for invalid utf8
+  /// Returns the "error character" UTF-8 string, which is shown for invalid UTF-8
   /// or bad ANSI sequences if show_unknown() is true. \see show_unknown(bool)
   const char* error_char(void) const { return error_char_; }
   // API: ANSI sequences

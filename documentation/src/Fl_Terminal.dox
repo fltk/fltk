@@ -131,10 +131,11 @@ Features will be added as the widget matures.
 │      │
 │      │    *** Special RGB Color ***
 │      │
-│      └──  ESC [ 38 ; Red ; Grn ; Blue m   - where Red,Grn,Blu are decimal (0-255)
+│      ├──  ESC [ 38 ; 2; Red ; Grn ; Blue m   - Foreground 8-bit Red,Grn,Blu values (in decimal 0-255)
+│      └──  ESC [ 48 ; 2; Red ; Grn ; Blue m   - Background 8-bit Red,Grn,Blu values (in decimal 0-255)
 │
 │    ESC[s     - save cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
-│    ESC[u     - rest cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
+│    ESC[u     - restore cursor pos (ansi.sys+xterm+gnome, but NOT vt100)
 │
 │    ESC[>#q   - (DECSCA)  Set Cursor style (block/line/blink..) (NOT IMPLEMENTED)
 │    ESC[#;#r  - (DECSTBM) Set scroll Region top;bot             (NOT IMPLEMENTED)
@@ -150,7 +151,7 @@ Features will be added as the widget matures.
 │    <ESC>H    - (HTS) Horizontal Tab Set: set a tabstop
 │    <ESC>M    - (RI)  Reverse Index (up w/scroll)
 │
-│ NOTE: Acronyms in parens are Digital Equipment Corporation's names these VT features.
+│ NOTE: Acronyms in parens are Digital Equipment Corporation's names for these VT features.
 │
 \endcode
 
@@ -177,7 +178,7 @@ implement Fl_Terminal:
 - Escape code management to implement VT100 style / ANSI escape codes.
 
 A class was created for each character, since characters can be either ASCII
-or Utf8 encoded byte sequences. This class is called Utf8Char, and handles
+or UTF-8 encoded byte sequences. This class is called Utf8Char, and handles
 the character, its fg and bg color, and any attributes like dim, bold, italic, etc.
 
 For managing the screen, after various experiments, I decided a ring buffer
@@ -237,7 +238,7 @@ array of Utf8Chars called "ring_chars" whose width is ring_cols()
 and whose height is ring_rows().
 
 The "top" part of the ring is the history, whose width is hist_cols()
-and whose height is hist_rows(). hist_use_rows() is used to define
+and whose height is hist_rows(). hist_use() is used to define
 what part of the history is currently in use.
 
 The "bottom" part of the ring is the display, whose width is disp_cols()
@@ -286,9 +287,9 @@ Methods are used to allow direct access to the characters
 in the buffer that automatically handle the offset and modulus
 formulas, namely:
 
-        u8c_ring_row(row,col)   // access the entire ring by row/col
-        u8c_hist_row(row,col)   // access just the history buffer
-        u8c_disp_row(row,col)   // access just the display buffer
+        u8c_ring_row(row)+col   // access the entire ring by row/col
+        u8c_hist_row(row)+col   // access just the history buffer
+        u8c_disp_row(row)+col   // access just the display buffer
 
 A key concept is the use of the simple 'offset' index integer
 to allow the starting point of the history and display to be
@@ -362,8 +363,8 @@ into the ring:
 
        act_ring_index = (histrows      // the display exists AFTER the history, so offset the hist_rows
                          + offset      // include the scroll 'offset'
-                         + disp_row    // add the desired row relative to the top of the display (0..disp_rows)
-                        ) % ring_rows; // make sure the resulting index is within the ring buffer (0..ring_rows)
+                         + disp_row    // add the desired row relative to the top of the display (0..disp_rows-1)
+                        ) % ring_rows; // make sure the resulting index is within the ring buffer (0..ring_rows-1)
 
 An additional bit of math makes sure if a negative result occurs, that
 negative value works relative to the end of the ring, e.g.
@@ -396,7 +397,7 @@ in the row is just a simple integer offset:
 So to recap, the concepts here are:
 
 - The ring buffer itself, a linear array that is conceptually
-  split into a 2 dimensional array of rows and columns whose
+  split into a two-dimensional array of rows and columns whose
   height and width are:
 
           ring_rows -- how many rows in the entire ring buffer
@@ -434,8 +435,8 @@ So to recap, the concepts here are:
           disp_erow()  -- end row index of the display
 
   The values returned by these are as described above.
-  For the hist_xxx() and disp_xxx() methods the 'offset' included into
-  the forumula. (For this reason hist_srow() won't always be zero
+  For the hist_xxx() and disp_xxx() methods, the 'offset' is included into
+  the formula. (For this reason hist_srow() won't always be zero
   the way ring_srow() is, due to the 'offset')
 
   The values returned by these methods can all be passed to the
@@ -490,14 +491,14 @@ slowly, the user won't see new information appear in a timely manner.
 
 To solve this, a rate timer is used to prevent too many redraws:
 
-- When new data comes in, a 1/10 sec timer is started and a modify flag is set.
+- When new data arrives, a short .01-sec initial timer is started, and a modified flag is set.
 
 - redraw() is NOT called yet, allowing more data to continue to arrive quickly
 
 - When the 1/10th second timer fires, the callback checks the modify flag:
 
-     - if set, calls redraw(), resets the modify to 0, and calls
-       Fl::repeat_timeout() to repeat the callback in another 1/10th sec.
+     - if set, calls redraw(), resets the modify to 0, and calls Fl::repeat_timeout()
+       to repeat the callback after the configured redraw_rate() interval.
 
      - if clear, no new data came in, so DISABLE the timer, done.
 
