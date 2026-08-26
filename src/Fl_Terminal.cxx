@@ -221,7 +221,7 @@ bool Fl_Terminal::Selection::extend(int row, int col, bool char_right) {
   bool changed = (   (osrow != srow_) || (oerow != erow_)
                   || (oscol != scol_) || (oecol != ecol_)
                   || (oselection != is_selection_) );
-  return !changed;
+  return changed;
 }
 
 // End selection (turn dragging() off)
@@ -606,7 +606,7 @@ void Fl_Terminal::Utf8Char::text_utf8(const char *text,
 //
 void Fl_Terminal::Utf8Char::text_ascii(char c, const CharStyle& style) {
   // Signed char vals above 0x7f are /negative/, so <0x20 check covers those
-  if (c < 0x20 || c >= 0x7e) return;           // ASCII non-printable?
+  if (c < 0x20 || c > 0x7e) return;           // ASCII non-printable?
   text_utf8(&c, 1, style);
 }
 
@@ -1361,7 +1361,7 @@ void Fl_Terminal::refit_disp_to_screen(void) {
         if (below_cur) {                        // CASE 3: shrinking below cursor? drop lines below
           ring_.disp_rows(display_rows() - 1);  // effectively "deletes" lines below cursor
         } else {                                // CASE 4: need to move cursor + lines up into hist
-          cursor_up(-1, false);                 // move cursor down to follow ring_.resize()
+          cursor_up(1, false);                  // move cursor up to follow ring_.resize()
           // Handle shrinking ring's display up into history
           ring_.resize(display_rows()-1, dcols, hist_rows(), *current_style_);
         }
@@ -2274,8 +2274,11 @@ void Fl_Terminal::delete_rows(int count) {
 // Repeat plotting char 'c' for 'rep' times, not to exceed end of line.
 // Does not process control sequences or move the cursor.
 void Fl_Terminal::repeat_char(char c, int rep) {
-  rep = clamp(rep, 1, disp_cols());
-  while ( rep-- > 0 && cursor_.col() < disp_cols() ) print_char(c);
+  const int row = cursor_.row();
+  const int col = cursor_.col();
+  rep = clamp(rep, 1, disp_cols() - col);
+  for (int n = 0; n < rep; n++)
+    plot_char(c, row, col + n);
 }
 
 /// Insert char 'c' for 'rep' times at display row \p 'drow' and column \p 'dcol'.
@@ -2847,7 +2850,7 @@ cup:
         break;
       case 'J':                                  // <ESC>[#J - (ED) erase in display
         switch (clamp(tot,0,1)) {                //   │
-          case 0: clear_eol(); break;            //   ├── <ESC>[J  -- no vals: default <ESC>[0J
+          case 0: clear_eod(); break;            //   ├── <ESC>[J  -- no vals: default <ESC>[0J
           case 1:                                //   │
             switch (clamp(val0,0,3)) {           //   │
               case 0: clear_eod();     break;    //   ├── <ESC>[0J -- clear to end of display
@@ -3085,7 +3088,7 @@ void Fl_Terminal::plot_char(char c, int drow, int dcol) {
   Handles control codes and can be used to construct ANSI/XTERM
   escape sequences.
 
-  - If optional \p len isn't specified or <0, strlen(text) is used.
+  - If optional \p len isn't specified or <0, fl_utf8len1(*text) is used.
   - \p text must not be NULL.
   - \p len must not be 0.
   - \p text must be a single char only (whether UTF-8 or ASCII)
@@ -3096,7 +3099,7 @@ void Fl_Terminal::plot_char(char c, int drow, int dcol) {
   \see show_unknown(bool), handle_unknown_char()
 */
 void Fl_Terminal::print_char(const char *text, int len/*=-1*/) {
-  len = len<0 ? fl_utf8len(*text) : len;       // int(strlen(text)) : len;
+  len = len<0 ? fl_utf8len1(*text) : len;
   const bool do_scroll = true;
   if (is_ctrl(text[0])) {                      // Handle ctrl character
     handle_ctrl(*text);
@@ -3257,7 +3260,7 @@ void Fl_Terminal::append_ascii(const char *s) {
       Fl::wait(0.05);                                  // give fltk .05 secs of cpu to manage UI
       ssize_t bytes = read(fd, s, sizeof(s));          // read block from pipe
       if (bytes == -1 && errno == EAGAIN) continue;    // no data yet? continue
-      if (bytes > 0) G_tty->append(s);                 // append output to terminal
+      if (bytes > 0) G_tty->append(s, bytes);          // append output to terminal
       else break;                                      // end of pipe?
     }
 

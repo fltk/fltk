@@ -563,7 +563,7 @@ protected:
     //
     const char* text_utf8(void) const { return text_; }
     // Return the attribute for this char
-    uchar attrib(void)    const { return attrib_; }
+    uchar attrib(void) const { return attrib_; }
     uchar charflags(void) const { return charflags_; }
     Fl_Color fgcolor(void) const;
     Fl_Color bgcolor(void) const;
@@ -651,7 +651,7 @@ private:
     void disp_rows(int val) { disp_rows_ = val; }
 
     // History use
-    inline int  hist_use(void)  const       { return hist_use_; }
+    inline int  hist_use(void) const        { return hist_use_; }
     inline void hist_use(int val)           { hist_use_ = val; }
     inline int  hist_use_srow(void) const   { return((offset_ + hist_rows_ - hist_use_) % ring_rows_); }
     inline Utf8Char *ring_chars(void)       { return ring_chars_; }  // access ring buffer directly
@@ -713,7 +713,7 @@ private:
     Fl_Color selectionfgcolor(void) const { return selectionfgcolor_; }
     Fl_Color selectionbgcolor(void) const { return selectionbgcolor_; }
     bool is_selection(void) const { return is_selection_; }
-    bool get_selection(int &srow,int &scol,int &erow,int &ecol) const; // guarantees return (start < end)
+    bool get_selection(int &srow,int &scol,int &erow,int &ecol) const;
     bool start(int row, int col, bool char_right);
     bool extend(int row, int col, bool char_right);
     void end(void);
