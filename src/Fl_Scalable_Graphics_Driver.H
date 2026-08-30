@@ -139,7 +139,7 @@ public:
   /** linked list for this Fl_Fontdesc */
   Fl_Font_Descriptor *next;
   Fl_Fontsize size; /**< font size */
-  Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size, int weight, int style);
   virtual FL_EXPORT ~Fl_Font_Descriptor() {}
   int ascent, descent;
   unsigned int listbase;// base of display list, 0 = none
@@ -149,7 +149,10 @@ public:
 struct Fl_Fontdesc {
   const char *name;
   char fontname[128];  // "Pretty" font name
+  int weight;
+  int style;
   Fl_Font_Descriptor *first;  // linked list of sizes of this style
+  bool legacy;
 };
 
 #endif // FL_DOXYGEN

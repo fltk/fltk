@@ -607,6 +607,8 @@ FL_EXPORT extern void   free_color(Fl_Color i, int overlay = 0); // platform dep
 FL_EXPORT extern const char* get_font(Fl_Font);
 
 /**
+  This function should be used if \ref set_font was used to set the font.
+
   Get a human-readable string describing the family of this face.  This
   is useful if you are presenting a choice to the user.  There is no
   guarantee that each face has a different name.  The return value points
@@ -619,6 +621,19 @@ FL_EXPORT extern const char* get_font(Fl_Font);
   with the face with a zero attribute before them constitute a family.
 */
 FL_EXPORT extern const char* get_font_name(Fl_Font, int* attributes = 0);
+
+/**
+  This function should be used if \ref set_font_by_family was used to set the font.
+
+  Get a human-readable string describing the family of this face.  This
+  is useful if you are presenting a choice to the user.  There is no
+  guarantee that each face has a different name.  The return value points
+  to a buffer that the user passed in set_font_by_family().
+
+  The integer pointed to by \p weight (if not null) is set to a OpenType font weight from 100 to 900.
+  The integer pointed to by \p style (if not null) is set to 0, if no style, 1 if italic, and 2 if oblique.
+*/
+FL_EXPORT extern const char* get_font_family(Fl_Font, int* weight = 0, int* style = 0);
 
 /**
   Return an array of sizes in \p sizep.  The return value is the
@@ -634,6 +649,7 @@ FL_EXPORT extern const char* get_font_name(Fl_Font, int* attributes = 0);
 FL_EXPORT extern int get_font_sizes(Fl_Font, int*& sizep);
 FL_EXPORT extern void set_font(Fl_Font, const char*);
 FL_EXPORT extern void set_font(Fl_Font, Fl_Font);
+FL_EXPORT extern void set_font_by_family(Fl_Font, const char*, int weight, int style);
 
 /**
   FLTK will open the display, and add every fonts on the server to the
