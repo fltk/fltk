@@ -98,6 +98,11 @@ float fl_scaling_factor = 1.0f;
   <br>
   Sets the window class using Fl_Window::xclass().
 
+  \li -scaling_factor f
+  <br>
+  Sets the user selected application scaling factor.
+  The valid range for f is 0.25 to 4.0, and the default is 1.0.
+
   \li -scheme string
   <br>
   Sets the widget scheme using Fl::scheme().
