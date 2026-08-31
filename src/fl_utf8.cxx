@@ -1785,10 +1785,10 @@ const char *fl_utf8_previous_composed_char(const char *from, const char *begin) 
 
   \note The output string (buffer address and size) is only valid until this
         function is subsequently called or the input string buffer is modified,
-        whichever is returned by this function. See description.
+        whichever is returned by this function. See above.
 
   \param[in]    str   UTF-8 input sequence (may contain invalid encodings)
-  \param[inout] len   length of UTF-8 input sequence
+  \param[inout] len   length of the input and output UTF-8 sequences, resp.
 
   \return clean UTF-8 string (may not be nul-terminated) and its \p len
 */
