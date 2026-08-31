@@ -107,6 +107,8 @@ jobs:
         libxfixes-dev \
         libxcursor-dev \
         libxinerama-dev \
+        libx11-xcb-dev \
+        libxkbcommon-x11-dev \
         ninja-build
 
     - name: Create Build Environment
@@ -161,6 +163,8 @@ jobs:
         libxfixes-dev \
         libxcursor-dev \
         libxinerama-dev \
+        libx11-xcb-dev \
+        libxkbcommon-x11-dev \
         ninja-build
 
     - name: Create Build Environment

@@ -363,3 +363,10 @@
  */
 
 #cmakedefine01 HAVE_XDG_ACTIVATION
+
+
+/*
+ * Do we have the X11-xkb headers and libraries?
+ */
+
+#cmakedefine01 HAVE_X11_XKB
