@@ -40,8 +40,11 @@
  */
 class FL_EXPORT Fl_Callback_User_Data {
 protected:
-  Fl_Callback_User_Data() {} ///< Protected constructor
+  Fl_Callback_User_Data() {} ///< Protected constructor forces user to derive from this class
 public:
+  static void default_dtor_callback(Fl_Callback_User_Data* self) {
+    delete self;
+  }
   virtual ~Fl_Callback_User_Data() { } ///< Destructor
 };
 
@@ -63,20 +66,27 @@ class Fl_Callback_Interface
   typedef void (Callback_long)(T*, long);
   typedef void (Callback_empty)(T*);
   typedef void (Callback_flud)(T*, Fl_Callback_User_Data*);
+  typedef void (Callback_flud_dtor)(Fl_Callback_User_Data*);
 
   // -- implementation calls to avoid naming conflicts
   class Callback_Interface {
   public:
-    Callback_voidp* callback_;
-    void* user_data_;
-    unsigned int auto_delete_:1;
+    Callback_voidp* callback_ = nullptr;
+    Callback_flud_dtor* dtor_callback_ = nullptr;
+    void* user_data_ = nullptr;
 
-    Callback_Interface()
-    : auto_delete_(0) {
-    }
+    Callback_Interface() = default;
     ~Callback_Interface() {
-      if (auto_delete_ && user_data_)
-        delete (Fl_Callback_User_Data*)user_data_;
+      clear_user_data();
+    }
+    void do_dtor_callback() {
+      if (dtor_callback_)
+        dtor_callback_((Fl_Callback_User_Data*)user_data_);
+    }
+    void clear_user_data() {
+      do_dtor_callback();
+      dtor_callback_ = nullptr;
+      user_data_ = nullptr;
     }
   };
   Callback_Interface callback_interface_;
@@ -98,28 +108,27 @@ public:
   }
   void callback(Callback_voidp* cb){
     callback_interface_.callback_ = cb;
+    user_data(nullptr); // original does not clear user_data!
   }
   void callback(Callback_empty* cb) {
     callback_interface_.callback_ = (Callback_voidp*)(fl_intptr_t)(cb);
+    user_data(nullptr); // original does not clear user_data!
   }
   void callback(Callback_long* cb, long p = 0) {
     callback_interface_.callback_ = (Callback_voidp*)(fl_intptr_t)(cb);
-    user_data((void*)(fl_intptr_t)p);
-
+    user_data(fl_voidptr(p));
   }
   void user_data(void* v) {
-    if (callback_interface_.auto_delete_ && callback_interface_.user_data_)
-    delete (Fl_Callback_User_Data*)callback_interface_.user_data_;
-    callback_interface_.auto_delete_ = 0;
+    callback_interface_.clear_user_data();
     callback_interface_.user_data_ = v;
   }
   void user_data(Fl_Callback_User_Data* v, bool auto_free) {
     user_data((void*)v);
     if (auto_free)
-      callback_interface_.auto_delete_ = 1;
+      callback_interface_.dtor_callback_ = Fl_Callback_User_Data::default_dtor_callback;
   }
   void argument(long v) {
-    user_data((void*)(fl_intptr_t)v);
+    user_data(fl_voidptr(v));
   }
   // -- Callback getters
   Callback_voidp* callback() const {
@@ -129,14 +138,14 @@ public:
     return callback_interface_.user_data_;
   }
   long argument() const {
-    return (long)(fl_intptr_t)callback_interface_.user_data_;
+    return fl_long(callback_interface_.user_data_);
   }
   // -- callback actions
   void do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
     static_cast<T*>(this)->do_callback(static_cast<T*>(this), callback_interface_.user_data_, reason);
   }
   void do_callback(T *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
-    static_cast<T*>(this)->do_callback(widget, (void*)(fl_intptr_t)arg, reason);
+    static_cast<T*>(this)->do_callback(widget, fl_voidptr(arg), reason);
   }
   void do_callback(T *widget, void *arg = 0, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
     // default implementation, specialisation in Fl_Widget
