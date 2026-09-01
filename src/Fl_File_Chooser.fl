@@ -28,7 +28,7 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <FL/Fl_Callback_Interface.H>} {selected public global
+decl {\#include <FL/Fl_Callback_Interface.H>} {public global
 }
 
 decl {\#include <FL/fl_draw.H>} {private local
@@ -75,6 +75,8 @@ Determines the type of file chooser presented to the user.
   decl {void update_favorites();} {private local
   }
   decl {void update_preview();} {private local
+  }
+  decl {bool callback_is_stdf_ = false;} {private local
   }
   Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open
   } {
@@ -258,6 +260,12 @@ if(ext_group)window->remove(ext_group);
 delete window;
 delete favWindow;} {}
   }
+  Function {callback_is_stdf() const { return callback_is_stdf_; }} {open selected return_type bool
+  } {}
+  Function {set_callback_stdf() { callback_is_stdf_ = true; }} {open
+  } {}
+  Function {clear_callback_stdf() { callback_is_stdf_ = false; }} {open
+  } {}
   Function {color(Fl_Color c)} {} {
     code {fileList->color(c);} {}
   }

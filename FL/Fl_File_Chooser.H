@@ -70,6 +70,7 @@ private:
   void showChoiceCB();
   void update_favorites();
   void update_preview();
+  bool callback_is_stdf_ = false;
 public:
   Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title);
 private:
@@ -134,6 +135,9 @@ private:
   static void cb_favOkButton(Fl_Return_Button*, void*);
 public:
   ~Fl_File_Chooser();
+  bool callback_is_stdf() const { return callback_is_stdf_; }
+  void set_callback_stdf() { callback_is_stdf_ = true; }
+  void clear_callback_stdf() { callback_is_stdf_ = false; }
   void color(Fl_Color c);
   Fl_Color color();
   int count();

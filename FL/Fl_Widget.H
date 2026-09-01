@@ -165,7 +165,7 @@ protected:
         NEEDS_KEYBOARD  = 1<<20,  ///< set on touch screen devices if a widget needs a keyboard when it gets the focus. Reserved, not yet used in 1.4.0. \see Fl_Widget::needs_keyboard()
         IMAGE_BOUND     = 1<<21,  ///< binding the image to the widget will transfer ownership, so that the widget will delete the image when it is no longer needed
         DEIMAGE_BOUND   = 1<<22,  ///< bind the inactive image to the widget, so the widget deletes the image when it is no longer needed
-        AUTO_DELETE_USER_DATA = 1<<23, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
+        CALLBACK_IS_STDF= 1<<23, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
         MAXIMIZED       = 1<<24,  ///< a maximized Fl_Window
         POPUP           = 1<<25,  ///< popup window (i.e., positioned relatively to another mapped window)
         // Note to devs: add new FLTK core flags above this line (up to 1<<28).
@@ -176,6 +176,17 @@ protected:
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
         USERFLAG1       = 1<<31   ///< reserved for 3rd party extensions
   };
+public:
+  /** Returns whether the callback is a std::ffunction */
+  bool callback_is_stdf() const { return flags() & CALLBACK_IS_STDF; }
+
+  /** The callback entry is a std::function. */
+  void set_callback_stdf() { set_flag(CALLBACK_IS_STDF); }
+
+  /** The callback entry is a "C" style function pointer. */
+  void clear_callback_stdf() { clear_flag(CALLBACK_IS_STDF); }
+protected:
+
   void draw_box() const;
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
   void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;

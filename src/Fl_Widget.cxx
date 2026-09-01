@@ -469,8 +469,22 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
 void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason reason) {
   Fl::callback_reason_ = reason;
   if (!callback()) return;
+
+    // if (static_cast<T*>(this)->callback_is_stdf()) {
+    //   if (!callback_interface_.stdf_callback_) return;
+    //   callback_interface_.stdf_callback_();
+    // } else {
+    //   if (!callback_interface_.callback_) return;
+    //   callback_interface_.callback_(widget, arg);
+    // }
+
+
   Fl_Widget_Tracker wp(this);
-  callback()(widget, arg);
+  if (callback_is_stdf()) {
+    callback_interface_.stdf_callback_();
+  } else {
+    callback()(widget, arg);
+  }
   if (wp.deleted()) return;
   if (callback() != default_callback)
     clear_changed();
