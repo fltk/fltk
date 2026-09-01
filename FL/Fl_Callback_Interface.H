@@ -91,7 +91,12 @@ class Fl_Callback_Interface
     };
     static void dummy_callback(T*, void*) {}
 
-    Callback_Interface() = default;
+    Callback_Interface() {
+      callback_ = nullptr;
+      dtor_callback_ = nullptr; // union: also clears free_callback_
+      user_data_ = nullptr;
+      dtor_type_ = 0;
+    }
     ~Callback_Interface() {};
     void do_dtor_callback(T* t) {
       if (!t->callback_is_stdf()) {
