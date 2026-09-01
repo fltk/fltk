@@ -26,6 +26,7 @@
 #ifndef Fl_File_Chooser_H
 #define Fl_File_Chooser_H
 #include <FL/Fl.H>
+#include <FL/Fl_Callback_Interface.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Choice.H>
@@ -40,7 +41,7 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/fl_ask.H>
 
-class FL_EXPORT Fl_File_Chooser {
+class FL_EXPORT Fl_File_Chooser : public Fl_Callback_Interface<Fl_File_Chooser> {
 public:
   /**
    \enum Type
@@ -56,8 +57,6 @@ public:
   };
 private:
   static Fl_Preferences *prefs_;
-  void (*callback_)(Fl_File_Chooser*, void *);
-  void *data_;
   char directory_[FL_PATH_MAX];
   char pattern_[FL_PATH_MAX];
   char preview_text_[2048];
@@ -135,7 +134,6 @@ private:
   static void cb_favOkButton(Fl_Return_Button*, void*);
 public:
   ~Fl_File_Chooser();
-  void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
   void color(Fl_Color c);
   Fl_Color color();
   int count();
@@ -170,8 +168,6 @@ public:
   Fl_Fontsize textsize();
   void type(int t);
   int type();
-  void * user_data() const;
-  void user_data(void *d);
   const char *value(int f = 1);
   void value(const char *filename);
   int visible();
@@ -254,4 +250,4 @@ FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relativ
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);
 FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));
 FL_EXPORT void fl_file_chooser_ok_label(const char*l);
-#endif
+#endif // Fl_File_Chooser_H
