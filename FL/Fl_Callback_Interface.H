@@ -142,11 +142,11 @@ public:
     // default implementation, specialisation in Fl_Widget
     Fl::callback_reason_ = reason;
     if (!callback_interface_.callback_) return;
-    Fl_Widget_Tracker wp(this);
+    // Fl_Widget_Tracker wp(this);
     callback_interface_.callback_(widget, arg);
-    if (wp.deleted()) return;
-    if (callback_interface_.callback_ != T::default_callback)
-      static_cast<T*>(this)->clear_changed();
+    // if (wp.deleted()) return;
+    // if (callback_interface_.callback_ != T::default_callback)
+    //   static_cast<T*>(this)->clear_changed();
   }
 };
 
