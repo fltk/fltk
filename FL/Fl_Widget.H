@@ -23,6 +23,7 @@
 #define Fl_Widget_H
 
 #include "Fl.H"
+#include "Fl_Callback_Interface.H"
 
 class Fl_Widget;
 class Fl_Window;
@@ -76,27 +77,6 @@ struct FL_EXPORT Fl_Label {
 };
 
 
-/** A class prototype that allows for additional data in callbacks.
-
- Users can derive this class and pass objects of such derived classes to widget callbacks.
- Widgets can take ownership of the callback data, deleting the data when the widget
- itself is deleted.
-
- The destructor of this class is virtual, allowing for additional code to
- deallocate resources when the user data is deleted.
-
- \see FL_FUNCTION_CALLBACK_3, FL_METHOD_CALLBACK_1, FL_INLINE_CALLBACK_2
- \see Fl_Widget::callback(Fl_Callback*, Fl_Callback_User_Data*, bool)
- \see Fl_Widget::user_data(Fl_Callback_User_Data*, bool)
- */
-class FL_EXPORT Fl_Callback_User_Data {
-protected:
-  Fl_Callback_User_Data() {} ///< Protected constructor
-public:
-  virtual ~Fl_Callback_User_Data() { } ///< Destructor
-};
-
-
 /** Fl_Widget is the base class for all widgets in FLTK.
 
     You can't create one of these because the constructor is not public.
@@ -109,12 +89,10 @@ public:
     functions, even if they change the widget's appearance. It is up to the
     user code to call redraw() after these.
  */
-class FL_EXPORT Fl_Widget {
+class FL_EXPORT Fl_Widget : public Fl_Callback_Interface<Fl_Widget> {
   friend class Fl_Group;
 
   Fl_Group* parent_;
-  Fl_Callback* callback_;
-  void* user_data_;
   int x_,y_,w_,h_;
   Fl_Label label_;
   unsigned int flags_;
@@ -745,88 +723,35 @@ public:
   void tooltip(const char *text);               // see Fl_Tooltip
   void copy_tooltip(const char *text);          // see Fl_Tooltip
 
-  /** Gets the current callback function for the widget.
-      Each widget has a single callback.
-      \return current callback
-   */
-  Fl_Callback_p callback() const {return callback_;}
-
-  /** Sets the current callback function and data for the widget.
-      Each widget has a single callback.
-      \param[in] cb new callback
-      \param[in] p user data
-   */
-  void callback(Fl_Callback* cb, void* p) {
-    callback_ = cb;
-    user_data(p);
-  }
-
-  /** Sets the current callback function and managed user data for the widget.
-   Setting auto_free will transfer ownership of the callback user data to the
-   widget. Deleting the widget will then also delete the user data.
-   \param[in] cb new callback
-   \param[in] p user data
-   \param[in] auto_free if set, the widget will free user data when destroyed
-   */
-  void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free) {
-    callback_ = cb;
-    user_data(p, auto_free);
-  }
-
-  /** Sets the current callback function for the widget.
-      Each widget has a single callback.
-      \param[in] cb new callback
-   */
-  void callback(Fl_Callback* cb) {callback_ = cb;}
-
-  /** Sets the current callback function for the widget.
-      Each widget has a single callback.
-      \param[in] cb new callback
-   */
-  void callback(Fl_Callback0* cb) {
-    callback_ = (Fl_Callback*)(fl_intptr_t)(cb);
-  }
-
-  /** Sets the current callback function for the widget.
-      Each widget has a single callback.
-      \param[in] cb new callback
-      \param[in] p user data
-   */
-  void callback(Fl_Callback1* cb, long p = 0) {
-    callback_ = (Fl_Callback*)(fl_intptr_t)(cb);
-    user_data((void*)(fl_intptr_t)p);
-  }
-
-  /** Gets the user data for this widget.
-      Gets the current user data (void *) argument that is passed to the callback function.
-      \return user data as a pointer
-   */
-  void* user_data() const {return user_data_;}
-
-  /** \brief Sets the user data for this widget. */
+#ifdef FL_DOXYGEN
+  // These stubs are used to create Doxygen documentation.
+  // The documentation itself is at the end of Fl_Widget.cxx.
+  // -- Callback setters
+  void callback(Fl_Callback* cb, void* p);
+  void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free);
+  void callback(Fl_Callback* cb);
+  void callback(Fl_Callback0* cb);
+  void callback(Fl_Callback1* cb, long p = 0);
   void user_data(void* v);
-
-  /** \brief Sets the user data for this widget. */
   void user_data(Fl_Callback_User_Data* v, bool auto_free);
+  void argument(long v);
+  // -- Callback getters
+  Fl_Callback_p callback() const;
+  void* user_data() const;
+  long argument() const;
+  // -- callback actions
+  void do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN);
+  void do_callback(Fl_Widget *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN);
+  void do_callback(Fl_Widget *widget, void *arg = 0, Fl_Callback_Reason reason=FL_REASON_UNKNOWN);
+#else // FL_DOXYGEN
+  // These are function declarations in addition to the actual implementations
+  // in the Fl_Callback_Interface class.
 
-  /** Gets the current user data (long) argument that is passed to the callback function.
-
-    \note On platforms with <tt>sizeof(long) \< sizeof(void*)</tt>, particularly
-          on Windows 64-bit platforms, this method can truncate stored addresses
-          \p (void*) to the size of a \p long value. Use with care and only
-          if you are sure that the stored user_data value fits in a \p long
-          value because it was stored with argument(long) or another method
-          using only \p long values. You may want to use user_data() instead.
-
-    \see user_data()
-  */
-  long argument() const {return (long)(fl_intptr_t)user_data_;}
-
-  /** Sets the current user data (long) argument that is passed to the callback function.
-
-    \see argument()
-   */
-  void argument(long v) {user_data((void*)(fl_intptr_t)v);}
+  // Make sure that other versions of Fl_Callback_Interface<Fl_Widget>::do_callback() are visible in Fl_Widget
+  using Fl_Callback_Interface<Fl_Widget>::do_callback;
+  // Specialisation of Fl_Callback_Interface<Fl_Widget>::do_callback() for Fl_Widget
+  void do_callback(Fl_Widget *widget, void *arg = 0, Fl_Callback_Reason reason=FL_REASON_UNKNOWN);
+#endif // FL_DOXYGEN
 
   /** Returns the conditions under which the callback is called.
 
@@ -1085,33 +1010,6 @@ public:
     \see do_callback(Fl_Widget *widget, void *data)
    */
   static void default_callback(Fl_Widget *widget, void *data);
-
-  /** Calls the widget callback function with default arguments.
-
-    This is the same as calling
-    \code
-      do_callback(this, user_data(), reason);
-    \endcode
-
-    \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
-
-    \see callback()
-    \see do_callback(Fl_Widget *widget, void *data, Fl_Callback_Reason reason), Fl_Callback_Reason
-  */
-  void do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {do_callback(this, user_data_, reason);}
-
-  /** Calls the widget callback function with arbitrary arguments.
-    \param[in] widget call the callback with \p widget as the first argument
-    \param[in] arg call the callback with \p arg as the user data (second) argument
-    \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
-    \see callback()
-    \see do_callback(Fl_Widget *widget, void *data), Fl_Callback_Reason
-  */
-  void do_callback(Fl_Widget *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
-    do_callback(widget, (void*)(fl_intptr_t)arg, reason);
-  }
-
-  void do_callback(Fl_Widget *widget, void *arg = 0, Fl_Callback_Reason reason=FL_REASON_UNKNOWN);
 
   /* Internal use only. */
   int test_shortcut();

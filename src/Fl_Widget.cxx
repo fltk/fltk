@@ -212,8 +212,6 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   label_.h_margin_ = label_.v_margin_ = 0;
   label_.spacing   = 0;
   tooltip_         = 0;
-  callback_        = default_callback;
-  user_data_       = 0;
   type_            = 0;
   flags_           = VISIBLE_FOCUS;
   damage_          = 0;
@@ -223,6 +221,7 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   when_            = FL_WHEN_RELEASE;
 
   parent_ = nullptr;
+  callback(default_callback);
   if (Fl_Group::current()) Fl_Group::current()->add(this);
 }
 
@@ -271,9 +270,8 @@ Fl_Widget::~Fl_Widget() {
   parent_ = 0; // Don't throw focus to a parent widget.
   fl_throw_focus(this);
   // remove stale entries from default callback queue (Fl::readqueue())
-  if (callback_ == default_callback) cleanup_readqueue(this);
-  if ( (flags_ & AUTO_DELETE_USER_DATA) && user_data_)
-    delete (Fl_Callback_User_Data*)user_data_;
+  if (callback() == default_callback) cleanup_readqueue(this);
+  // Fl_Callback_Interface will clean up user_data if necessary.
 }
 
 /**
@@ -470,35 +468,128 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
  */
 void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason reason) {
   Fl::callback_reason_ = reason;
-  if (!callback_) return;
+  if (!callback()) return;
   Fl_Widget_Tracker wp(this);
-  callback_(widget, arg);
+  callback()(widget, arg);
   if (wp.deleted()) return;
-  if (callback_ != default_callback)
+  if (callback() != default_callback)
     clear_changed();
 }
 
-/*
- \brief Sets the user data for this widget.
- Sets the new user data (void *) argument that is passed to the callback function.
- \param[in] v new user data
- */
-void Fl_Widget::user_data(void* v) {
-  if ((flags_ & AUTO_DELETE_USER_DATA) && user_data_)
-    delete (Fl_Callback_User_Data*)user_data_;
-  clear_flag(AUTO_DELETE_USER_DATA);
-  user_data_ = v;
-}
+#ifdef FL_DOXYGEN
 
-/*
- \brief Sets the user data for this widget.
- Sets the new user data (void *) argument that is passed to the callback function.
- \param[in] v new user data
- \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
- */
-void Fl_Widget::user_data(Fl_Callback_User_Data* v, bool auto_free) {
-  user_data((void*)v);
-  if (auto_free)
-    set_flag(AUTO_DELETE_USER_DATA);
-}
+/**
+  \fn Fl_Callback_p Fl_Widget::callback() const
+  Gets the current callback function for the widget.
+  Each widget has a single callback.
+  \return current callback
+*/
 
+/**
+  \fn void Fl_Widget::callback(Fl_Callback* cb, void* p)
+  Sets the current callback function and data for the widget.
+  Each widget has a single callback.
+  \param[in] cb new callback
+  \param[in] p user data
+*/
+
+/**
+  \fn void Fl_Widget::callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free)
+  Sets the current callback function and managed user data for the widget.
+  Setting auto_free will transfer ownership of the callback user data to the
+  widget. Deleting the widget will then also delete the user data.
+  \param[in] cb new callback
+  \param[in] p user data
+  \param[in] auto_free if set, the widget will free user data when destroyed
+*/
+
+/**
+  \fn void Fl_Widget::callback(Fl_Callback* cb)
+  Sets the current callback function for the widget.
+  Each widget has a single callback.
+  \param[in] cb new callback
+*/
+
+/**
+  \fn void Fl_Widget::callback(Fl_Callback0* cb)
+  Sets the current callback function for the widget.
+  Each widget has a single callback.
+  \param[in] cb new callback
+*/
+
+/**
+  \fn void Fl_Widget::callback(Fl_Callback1* cb, long p = 0)
+  Sets the current callback function for the widget.
+  Each widget has a single callback.
+  \param[in] cb new callback
+  \param[in] p user data
+*/
+
+/**
+  \fn void* Fl_Widget::user_data() const
+  Gets the user data for this widget.
+  Gets the current user data (void *) argument that is passed to the callback function.
+  \return user data as a pointer
+*/
+
+/**
+  \fn void Fl_Widget::user_data(void* v)
+  \brief Sets the user data for this widget.
+  Sets the new user data (void *) argument that is passed to the callback function.
+  \param[in] v new user data
+*/
+
+/**
+  \fn void Fl_Widget::user_data(Fl_Callback_User_Data* v, bool auto_free)
+  \brief Sets the user data for this widget.
+  Sets the new user data (void *) argument that is passed to the callback function.
+  \param[in] v new user data
+  \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+*/
+
+/**
+  \fn long Fl_Widget::argument() const
+  Gets the current user data (long) argument that is passed to the callback function.
+
+  \note On platforms with <tt>sizeof(long) \< sizeof(void*)</tt>, particularly
+        on Windows 64-bit platforms, this method can truncate stored addresses
+        \p (void*) to the size of a \p long value. Use with care and only
+        if you are sure that the stored user_data value fits in a \p long
+        value because it was stored with argument(long) or another method
+        using only \p long values. You may want to use user_data() instead.
+
+  \see user_data()
+*/
+
+/**
+  \fn void Fl_Widget::argument(long v)
+  Sets the current user data (long) argument that is passed to the callback function.
+  \see argument()
+*/
+
+/**
+   \fn void Fl_Widget::do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN)
+  Calls the widget callback function with default arguments.
+
+  This is the same as calling
+  \code
+  do_callback(this, user_data(), reason);
+  \endcode
+
+  \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
+
+  \see callback()
+  \see do_callback(Fl_Widget *widget, void *data, Fl_Callback_Reason reason), Fl_Callback_Reason
+*/
+
+/**
+  \fn void Fl_Widget::do_callback(Fl_Widget *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN)
+  Calls the widget callback function with arbitrary arguments.
+  \param[in] widget call the callback with \p widget as the first argument
+  \param[in] arg call the callback with \p arg as the user data (second) argument
+  \param[in] reason give a reason to why this callback was called, defaults to \ref FL_REASON_UNKNOWN
+  \see callback()
+  \see do_callback(Fl_Widget *widget, void *data), Fl_Callback_Reason
+*/
+
+#endif // FL_DOXYGEN
