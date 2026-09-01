@@ -25,6 +25,9 @@
 #ifndef Fl_Callback_User_Data_H
 #define Fl_Callback_User_Data_H
 
+/** Callback function type that takes a Fl_Callback_User_Data pointer as its argument. */
+typedef void (Fl_Callback_User_Data_Dtor)(class Fl_Callback_User_Data*);
+
 /** A class prototype that allows for additional data in callbacks.
 
  Users can derive this class and pass objects of such derived classes to widget callbacks.
@@ -66,13 +69,12 @@ class Fl_Callback_Interface
   typedef void (Callback_long)(T*, long);
   typedef void (Callback_empty)(T*);
   typedef void (Callback_flud)(T*, Fl_Callback_User_Data*);
-  typedef void (Callback_flud_dtor)(Fl_Callback_User_Data*);
 
   // -- implementation calls to avoid naming conflicts
   class Callback_Interface {
   public:
     Callback_voidp* callback_ = nullptr;
-    Callback_flud_dtor* dtor_callback_ = nullptr;
+    Fl_Callback_User_Data_Dtor* dtor_callback_ = nullptr;
     void* user_data_ = nullptr;
 
     Callback_Interface() = default;
@@ -106,6 +108,10 @@ public:
     callback_interface_.callback_ = cb;
     user_data(p, auto_free);
   }
+  void callback(Callback_voidp* cb, Fl_Callback_User_Data* p, Fl_Callback_User_Data_Dtor* dtor) {
+    callback_interface_.callback_ = cb;
+    user_data(p, dtor);
+  }
   void callback(Callback_voidp* cb){
     callback_interface_.callback_ = cb;
     user_data(nullptr); // original does not clear user_data!
@@ -126,6 +132,10 @@ public:
     user_data((void*)v);
     if (auto_free)
       callback_interface_.dtor_callback_ = Fl_Callback_User_Data::default_dtor_callback;
+  }
+  void user_data(Fl_Callback_User_Data* v, Fl_Callback_User_Data_Dtor* dtor) {
+    user_data((void*)v);
+    callback_interface_.dtor_callback_ = dtor;
   }
   void argument(long v) {
     user_data(fl_voidptr(v));

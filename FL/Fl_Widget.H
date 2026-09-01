@@ -729,11 +729,13 @@ public:
   // -- Callback setters
   void callback(Fl_Callback* cb, void* p);
   void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, bool auto_free);
+  void callback(Fl_Callback* cb, Fl_Callback_User_Data* p, Fl_Callback_User_Data_Dtor* dtor);
   void callback(Fl_Callback* cb);
   void callback(Fl_Callback0* cb);
   void callback(Fl_Callback1* cb, long p = 0);
   void user_data(void* v);
   void user_data(Fl_Callback_User_Data* v, bool auto_free);
+  void user_data(Fl_Callback_User_Data* v, Fl_Callback_User_Data_Dtor* dtor);
   void argument(long v);
   // -- Callback getters
   Fl_Callback_p callback() const;

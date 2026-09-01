@@ -504,6 +504,15 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
 */
 
 /**
+  \fn void Fl_Widget::callback(Fl_Callback* cb, Fl_Callback_User_Data* p, Fl_Callback_User_Data_Dtor* dtor)
+  Sets the current callback function and managed user data for the widget.
+  The destructor callback is used to free the user data when the widget is deleted.
+  \param[in] cb new callback
+  \param[in] p user data
+  \param[in] dtor destructor callback for the user data
+*/
+
+/**
   \fn void Fl_Widget::callback(Fl_Callback* cb)
   Sets the current callback function for the widget.
   Each widget has a single callback.
@@ -545,6 +554,15 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
   Sets the new user data (void *) argument that is passed to the callback function.
   \param[in] v new user data
   \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+*/
+
+/**
+  \fn void Fl_Widget::user_data(Fl_Callback_User_Data* v, Fl_Callback_User_Data_Dtor* dtor)
+  \brief Sets the user data for this widget.
+  Sets the new user data to an object derived of the Fl_Callback_User_Data class.
+  The destructor callback is used to free the user data when the widget is deleted.
+  \param[in] v new user data
+  \param[in] dtor destructor callback for the user data
 */
 
 /**
