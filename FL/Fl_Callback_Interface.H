@@ -25,8 +25,10 @@
 #ifndef Fl_Callback_User_Data_H
 #define Fl_Callback_User_Data_H
 
-/** Callback function type that takes a Fl_Callback_User_Data pointer as its argument. */
+/** Callback function type for a user defined Fl_Callback_User_Data destructor. */
 typedef void (Fl_Callback_User_Data_Dtor)(class Fl_Callback_User_Data*);
+/** Callback function type to free `void*` based user data. */
+typedef void (Fl_Callback_Free)(void*);
 
 /** A class prototype that allows for additional data in callbacks.
 
@@ -74,21 +76,31 @@ class Fl_Callback_Interface
   class Callback_Interface {
   public:
     Callback_voidp* callback_ = nullptr;
-    Fl_Callback_User_Data_Dtor* dtor_callback_ = nullptr;
+    union {
+      Fl_Callback_User_Data_Dtor* dtor_callback_ = nullptr;
+      Fl_Callback_Free* free_callback_;
+    };
     void* user_data_ = nullptr;
+    uint8_t dtor_type_ = 0; // 0 = none, 1 = dtor_callback_, 2 = free_callback_
 
     Callback_Interface() = default;
     ~Callback_Interface() {
       clear_user_data();
     }
     void do_dtor_callback() {
-      if (dtor_callback_)
-        dtor_callback_((Fl_Callback_User_Data*)user_data_);
+      if (dtor_type_ == 1) { // dtor_callback_
+        if (dtor_callback_)
+          dtor_callback_((Fl_Callback_User_Data*)user_data_);
+      } else if (dtor_type_ == 2) { // free_callback_
+        if (free_callback_)
+          free_callback_(user_data_);
+      }
     }
     void clear_user_data() {
       do_dtor_callback();
-      dtor_callback_ = nullptr;
+      dtor_callback_ = nullptr; // union: also clears free_callback_
       user_data_ = nullptr;
+      dtor_type_ = 0;
     }
   };
   Callback_Interface callback_interface_;
@@ -100,9 +112,9 @@ protected:
 
 public:
   // -- public interface
-  void callback(Callback_voidp* cb, void* p) {
+  void callback(Callback_voidp* cb, void* p, Fl_Callback_Free* free_cb = nullptr) {
     callback_interface_.callback_ = cb;
-    user_data(p);
+    user_data(p, free_cb);
   }
   void callback(Callback_voidp* cb, Fl_Callback_User_Data* p, bool auto_free) {
     callback_interface_.callback_ = cb;
@@ -124,18 +136,27 @@ public:
     callback_interface_.callback_ = (Callback_voidp*)(fl_intptr_t)(cb);
     user_data(fl_voidptr(p));
   }
-  void user_data(void* v) {
+  void user_data(void* v, Fl_Callback_Free* free_cb = nullptr) {
     callback_interface_.clear_user_data();
     callback_interface_.user_data_ = v;
+    if (free_cb) {
+      callback_interface_.free_callback_ = free_cb;
+      callback_interface_.dtor_type_ = 2;
+    }
   }
   void user_data(Fl_Callback_User_Data* v, bool auto_free) {
     user_data((void*)v);
-    if (auto_free)
+    if (auto_free) {
       callback_interface_.dtor_callback_ = Fl_Callback_User_Data::default_dtor_callback;
+      callback_interface_.dtor_type_ = 1;
+    }
   }
   void user_data(Fl_Callback_User_Data* v, Fl_Callback_User_Data_Dtor* dtor) {
     user_data((void*)v);
-    callback_interface_.dtor_callback_ = dtor;
+    if (dtor) {
+      callback_interface_.dtor_callback_ = dtor;
+      callback_interface_.dtor_type_ = 1;
+    }
   }
   void argument(long v) {
     user_data(fl_voidptr(v));

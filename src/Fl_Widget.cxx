@@ -486,11 +486,12 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
 */
 
 /**
-  \fn void Fl_Widget::callback(Fl_Callback* cb, void* p)
+  \fn void Fl_Widget::callback(Fl_Callback* cb, void* p, Fl_Callback_Free* free_cb = nullptr)
   Sets the current callback function and data for the widget.
   Each widget has a single callback.
   \param[in] cb new callback
   \param[in] p user data
+  \param[in] free_cb optional free callback for the user data
 */
 
 /**
@@ -542,10 +543,11 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
 */
 
 /**
-  \fn void Fl_Widget::user_data(void* v)
+  \fn void Fl_Widget::user_data(void* v, Fl_Callback_Free* free_cb = nullptr)
   \brief Sets the user data for this widget.
   Sets the new user data (void *) argument that is passed to the callback function.
   \param[in] v new user data
+  \param[in] free_cb optional free callback for the user data
 */
 
 /**
