@@ -79,13 +79,13 @@ class Fl_Callback_Interface
   public:
     union {
       struct {
-        Callback_voidp* callback_ = nullptr;
+        Callback_voidp* callback_;
         union {
-          Fl_Callback_User_Data_Dtor* dtor_callback_ = nullptr;
+          Fl_Callback_User_Data_Dtor* dtor_callback_;
           Fl_Callback_Free* free_callback_;
         };
-        void* user_data_ = nullptr;
-        uint8_t dtor_type_ = 0; // 0 = none, 1 = dtor_callback_, 2 = free_callback_
+        void* user_data_;
+        uint8_t dtor_type_; // 0 = none, 1 = dtor_callback_, 2 = free_callback_
       };
       std::function<void()> stdf_callback_;
     };
