@@ -466,19 +466,10 @@ void Fl_Widget::bind_deimage(Fl_Image* img) {
  \see class Fl_Widget_Tracker
  \see Fl::callback_reason()
  */
-void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason reason) {
-  Fl::callback_reason_ = reason;
+void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason reason)
+{
   if (!callback()) return;
-
-    // if (static_cast<T*>(this)->callback_is_stdf()) {
-    //   if (!callback_interface_.stdf_callback_) return;
-    //   callback_interface_.stdf_callback_();
-    // } else {
-    //   if (!callback_interface_.callback_) return;
-    //   callback_interface_.callback_(widget, arg);
-    // }
-
-
+  Fl::callback_reason_ = reason;
   Fl_Widget_Tracker wp(this);
   if (callback_is_stdf()) {
     callback_interface_.stdf_callback_();
@@ -547,6 +538,13 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
   Each widget has a single callback.
   \param[in] cb new callback
   \param[in] p user data
+*/
+
+/**
+  \fn void Fl_Widget::callback(std::function<void()> cb)
+  Sets the current callback function for the widget using a std::function.
+  Each widget has a single callback.
+  \param[in] cb new callback
 */
 
 /**

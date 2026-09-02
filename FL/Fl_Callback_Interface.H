@@ -20,6 +20,7 @@
 #include "Fl.H"
 
 #include <functional>
+#include <new>
 
 
 #ifndef Fl_Callback_User_Data_H
@@ -91,11 +92,12 @@ class Fl_Callback_Interface
     };
     static void dummy_callback(T*, void*) {}
 
-    Callback_Interface() {
-      callback_ = nullptr;
-      dtor_callback_ = nullptr; // union: also clears free_callback_
-      user_data_ = nullptr;
-      dtor_type_ = 0;
+    Callback_Interface()
+      : callback_(nullptr)
+      , dtor_callback_(nullptr) // union: also clears free_callback_
+      , user_data_(nullptr)
+      , dtor_type_(0)
+    {
     }
     ~Callback_Interface() {};
     void do_dtor_callback(T* t) {
@@ -118,11 +120,18 @@ class Fl_Callback_Interface
       }
     }
     void clear(T* t) {
-      if (!t->callback_is_stdf()) {
+      if (t->callback_is_stdf()) {
+        // stdf_callback_ is the active union member: end its lifetime
+        // explicitly before the struct alternative below is reactivated.
+        stdf_callback_.~function();
+        t->clear_callback_stdf();
+        callback_ = nullptr;
+        dtor_callback_ = nullptr; // union: also clears free_callback_
+        user_data_ = nullptr;
+        dtor_type_ = 0;
+      } else {
         clear_user_data(t);
         callback_ = nullptr;
-      } else {
-        stdf_callback_ = nullptr;
       }
     }
   };
@@ -168,11 +177,16 @@ public:
     user_data(fl_voidptr(p));
   }
   void callback(std::function<void()> cb) {
+    // clear() always leaves the struct alternative active (and stdf false),
+    // so the union storage here is raw and safe to placement-new into.
     callback_interface_.clear(static_cast<T*>(this));
     static_cast<T*>(this)->set_callback_stdf();
-    callback_interface_.stdf_callback_ = cb;
+    new (&callback_interface_.stdf_callback_) std::function<void()>(std::move(cb));
   }
   void user_data(void* v, Fl_Callback_Free* free_cb = nullptr) {
+    // user data has no meaning while the union's active member is
+    // stdf_callback_; skip so we don't write over the live std::function.
+    if (static_cast<T*>(this)->callback_is_stdf()) return;
     callback_interface_.clear_user_data(static_cast<T*>(this));
     callback_interface_.user_data_ = v;
     if (free_cb) {
@@ -181,6 +195,7 @@ public:
     }
   }
   void user_data(Fl_Callback_User_Data* v, bool auto_free) {
+    if (static_cast<T*>(this)->callback_is_stdf()) return;
     callback_interface_.clear_user_data(static_cast<T*>(this));
     callback_interface_.user_data_ = v;
     if (auto_free) {
@@ -189,6 +204,7 @@ public:
     }
   }
   void user_data(Fl_Callback_User_Data* v, Fl_Callback_User_Data_Dtor* dtor) {
+    if (static_cast<T*>(this)->callback_is_stdf()) return;
     callback_interface_.clear_user_data(static_cast<T*>(this));
     callback_interface_.user_data_ = v;
     if (dtor) {
@@ -202,7 +218,7 @@ public:
   // -- Callback getters
   Callback_voidp* callback() const {
     if (static_cast<const T*>(this)->callback_is_stdf()) {
-      if (callback_interface_.callback_ == nullptr) {
+      if (!callback_interface_.stdf_callback_) {
         return nullptr;
       } else {
         return callback_interface_.dummy_callback;
@@ -223,15 +239,18 @@ public:
   }
   // -- callback actions
   void do_callback(Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
-    static_cast<T*>(this)->do_callback(static_cast<T*>(this), callback_interface_.user_data_, reason);
+    T* self = static_cast<T*>(this);
+    self->do_callback(self, user_data(), reason);
   }
   void do_callback(T *widget, long arg, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
-    static_cast<T*>(this)->do_callback(widget, fl_voidptr(arg), reason);
+    T* self = static_cast<T*>(this);
+    self->do_callback(widget, fl_voidptr(arg), reason);
   }
   void do_callback(T *widget, void *arg = 0, Fl_Callback_Reason reason=FL_REASON_UNKNOWN) {
     // default implementation, specialisation in Fl_Widget
+    T* self = static_cast<T*>(this);
     Fl::callback_reason_ = reason;
-    if (static_cast<T*>(this)->callback_is_stdf()) {
+    if (self->callback_is_stdf()) {
       if (!callback_interface_.stdf_callback_) return;
       callback_interface_.stdf_callback_();
     } else {

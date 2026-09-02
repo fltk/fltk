@@ -744,6 +744,7 @@ public:
   void callback(Fl_Callback* cb);
   void callback(Fl_Callback0* cb);
   void callback(Fl_Callback1* cb, long p = 0);
+  void callback(std::function<void()> cb);
   void user_data(void* v, Fl_Callback_Free* free_cb = nullptr);
   void user_data(Fl_Callback_User_Data* v, bool auto_free);
   void user_data(Fl_Callback_User_Data* v, Fl_Callback_User_Data_Dtor* dtor);
