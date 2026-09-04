@@ -770,6 +770,8 @@ int Fl_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
 
   // read the x offset first, which must be preceded by a '+' or '-' sign
   if ((*strind == '+') || (*strind == '-')) {
+    if (*strind == '-')
+      mask |= fl_XNegative;
     tempX = ReadInteger(strind, &nextCharacter);
     if (strind == nextCharacter)
       return(0);
@@ -781,6 +783,8 @@ int Fl_Screen_Driver::XParseGeometry(const char* string, int* x, int* y,
 
   // read the y offset next, which must be preceded by a '+' or '-' sign
   if ((*strind == '+') || (*strind == '-')) {
+    if (*strind == '-')
+      mask |= fl_YNegative;
     tempY = ReadInteger(strind, &nextCharacter);
     if (strind == nextCharacter)
       return(0);
