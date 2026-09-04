@@ -910,7 +910,7 @@ void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
                         || (!strncmp(c,"enum",4) && fl_ascii_isspace(c[4]))
                         ) ) {
     f.write_public(public_);
-    write_comment_h(f, f.indent(1).c_str());
+    write_comment_h(f, f.indent(1));
     f.write_h(f.indent(1) + c + "\n");
     return;
   }
@@ -940,7 +940,7 @@ void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
   while (e>c && e[-1]==' ') e--;
   if (is_in_class()) {
     f.write_public(public_);
-    write_comment_h(f, f.indent(1).c_str());
+    write_comment_h(f, f.indent(1));
     f.write_hc(f.indent(1), std::string(c, e-c), std::string(csc));
   } else {
     if (public_) {

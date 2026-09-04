@@ -552,8 +552,8 @@ Node* Widget_Node::make(Strategy strategy) {
  Call the required function to set the label of the widget.
  \param[in] n New label text.
  */
-void Widget_Node::setlabel(const char* n) {
-  o->label(n);
+void Widget_Node::setlabel(const std::string& n) {
+  o->copy_label(n.c_str());
   redraw();
 }
 
@@ -851,22 +851,22 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
               + "(" + std::to_string(o->x()) + ", " + std::to_string(o->y())
               + ", " + std::to_string(o->w()) + ", " + std::to_string(o->h()) );
   }
-  if (label() && *label()) {
+  if (!label().empty()) {
     f.write_c(", ");
     switch (Fluid.proj.i18n.type) {
     case fluid::I18n_Type::NONE : /* None */
-        f.write_cstring(label());
+        f.write_cstring(label().c_str());
         break;
     case fluid::I18n_Type::GNU : /* GNU gettext */
         f.write_c(Fluid.proj.i18n.gnu_function + "(");
-        f.write_cstring(label());
+        f.write_cstring(label().c_str());
         f.write_c(")");
         break;
     case fluid::I18n_Type::POSIX : /* POSIX catgets */
         f.write_c("catgets("
                   + (Fluid.proj.i18n.posix_file.empty() ? std::string("_catalog") : Fluid.proj.i18n.posix_file)
                   + ", " + Fluid.proj.i18n.posix_set + ", " + std::to_string(msgnum()) + ",");
-        f.write_cstring(label());
+        f.write_cstring(label().c_str());
         f.write_c(")");
         break;
     }
@@ -1406,7 +1406,7 @@ void Widget_Node::read_property(fluid::io::Project_Reader &f, const char* c)
     c = f.read_word();
     if (!strcmp(c,"image")) {
       if (!Fluid.proj.image_assets.find_or_create(label()))
-        f.read_error("Image file '%s' not found", label());
+        f.read_error("Image file '%s' not found", label().c_str());
       active_image.set(label(), dynamic_cast<Window_Node*>(this) ? nullptr : o, false);
       if (!dynamic_cast<Window_Node*>(this)) redraw();
       label("");

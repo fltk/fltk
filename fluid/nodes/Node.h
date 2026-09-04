@@ -138,7 +138,7 @@ protected:
   const char* name_ { nullptr };
 
   /// Label text of a widget
-  const char* label_ { nullptr };
+  std::string label_ { };
 
   /// Callback function name, lambda, or function code
   const char* callback_ { nullptr };
@@ -150,7 +150,7 @@ protected:
   std::string user_data_type_ { };
 
   /// Optional comment, visible in browser and in the source code
-  const char* comment_ { nullptr };
+  std::string comment_ { };
 
 
   // ---- Properties that should probably not be public
@@ -282,11 +282,11 @@ public:
   void name(const char*);
 
   // Label text of the node, used for widgets and windows.
-  const char* label() const { return label_; }
-  void label(const char*);
+  const std::string& label() const { return label_; }
+  void label(const std::string&);
 
   // Copy the label text to Widgets and Windows, does nothing in base Node.
-  virtual void setlabel(const char *) { } // virtual part of label(char*)
+  virtual void setlabel(const std::string&) { } // virtual part of label(char*)
 
   // Callback name, callback code, or lambda function for the node, used for widgets and windows.
   const char* callback() const { return callback_; }
@@ -303,8 +303,8 @@ public:
   void user_data_type(const std::string&);
 
   // Optional comment for the node, used for documentation and code generation.
-  const char* comment() { return comment_; }
-  void comment(const char*);
+  const std::string& comment() { return comment_; }
+  void comment(const std::string&);
 
   // Find the window node that contains this node, or nullptr if not in a window.
   Window_Node* window();
@@ -343,13 +343,13 @@ public:
   virtual void write_code2(fluid::io::Code_Writer& f); // code and .h after children
 
   // Write the commentary text into the header file
-  void write_comment_h(fluid::io::Code_Writer& f, const char *ind="");
+  void write_comment_h(fluid::io::Code_Writer& f, const std::string& ind="");
 
   // Write the commentary text into the source file
-  void write_comment_c(fluid::io::Code_Writer& f, const char *ind="");
+  void write_comment_c(fluid::io::Code_Writer& f, const std::string& ind="");
 
   // Write the commentary text
-  void write_comment_inline_c(fluid::io::Code_Writer& f, const char *ind=nullptr);
+  void write_comment_inline_c(fluid::io::Code_Writer& f, const std::string& ind="");
 
 
   // ---- Read and write project files

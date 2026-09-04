@@ -275,7 +275,7 @@ void Node_Browser::item_select(void *l,int v) {
 int Node_Browser::item_height(void *l) const {
   Node *t = (Node*)l;
   if (t->visible) {
-    if (Fluid.show_comments && t->comment())
+    if (Fluid.show_comments && !t->comment().empty())
       return textsize()*2+4;
     else
       return textsize()+5;
@@ -332,9 +332,9 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // items can contain a comment. If they do, the comment gets a second text
   // line inside this browser line
   int comment_incr = 0;
-  if (Fluid.show_comments && l->comment()) {
+  if (Fluid.show_comments && !l->comment().empty()) {
     // -- comment
-    copy_trunc(buf, l->comment(), 80, 0, 1);
+    copy_trunc(buf, l->comment().c_str(), 80, 0, 1);
     comment_incr = textsize()-1;
     if (l->selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
     else fl_color(comment_color);
@@ -409,7 +409,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
       if (l->selected) fl_color(fl_contrast(name_color, FL_SELECTION_COLOR));
       else fl_color(name_color);
       fl_draw(c.c_str(), X, Y+13);
-    } else if (l->label()) {
+    } else if (!l->label().empty()) {
       // -- label
       c = l->label();
       fl_font(label_font, textsize());
@@ -475,8 +475,8 @@ int Node_Browser::item_width(void *v) const {
     if (c) {
       fl_font(textfont()|FL_BOLD, textsize());
       W += int(fl_width(c));
-    } else if (l->label()) {
-      copy_trunc(buf, l->label(), 32, 1, 0); // quoted string
+    } else if (!l->label().empty()) {
+      copy_trunc(buf, l->label().c_str(), 32, 1, 0); // quoted string
       W += int(fl_width(buf));
     }
   } else {

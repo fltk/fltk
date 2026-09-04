@@ -228,8 +228,7 @@ if (cv_project->visible_r()) {
 }
 
 Function {update_codeview_timer(void*)} {
-  comment {This is called by the timer itself
-} open return_type void
+  comment {This is called by the timer itself} open return_type void
 } {
   code {update_codeview_cb(0,0);} {}
 }
@@ -245,8 +244,7 @@ Function {codeview_defer_update()} {open return_type void
 
 Function {codeview_toggle_visibility()} {
   comment {Show or hide the source code preview.
-The state is stored in the app preferences.
-} open return_type void
+The state is stored in the app preferences.} open return_type void
 } {
   code {if (!codeview_panel) {
     make_codeview();

@@ -403,8 +403,8 @@ void Window_Node::ideal_size(int &w, int &h) {
 
 Window_Node Window_Node::prototype;
 
-void Window_Node::setlabel(const char *n) {
-  if (o) ((Fl_Window *)o)->label(n);
+void Window_Node::setlabel(const std::string& n) {
+  if (o) ((Fl_Window *)o)->copy_label(n.c_str());
 }
 
 // Resize from window manager...
@@ -1464,9 +1464,11 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
     // a constructor that takes size and label from the Fluid database
     f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "() :\n");
     f.write_c(f.indent(1) + c + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()) + ", ");
-    const char *cstr = label();
-    if (cstr) f.write_cstring(cstr);
-    else f.write_c("nullptr");
+    if (!label().empty()) {
+      f.write_cstring(label().c_str());
+    } else {
+      f.write_c("nullptr");
+    }
     f.write_c(")\n{\n");
     f.write_c(f.indent(1) + "clear_flag(16);\n");
     f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");

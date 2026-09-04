@@ -68,7 +68,7 @@ protected:
   void newdx();
   void newposition(Widget_Node *,int &x,int &y,int &w,int &h);
   int handle(int);
-  void setlabel(const char *) override;
+  void setlabel(const std::string&) override;
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   Widget_Node *_make() override {return nullptr;} // we don't call this

@@ -2426,19 +2426,18 @@ static void cb_wComment(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback --~==-=-~=~=~~-~=~--~- ▼ ﬂ//
   bool has_text = false;
   if (v == LOAD) {
-    const char *cmttext = current_widget->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
-    has_text = (cmttext && *cmttext);
+    const std::string& cmttext = current_widget->comment();
+    o->buffer()->text( cmttext.c_str() );
+    has_text = !cmttext.empty();
   } else {
     int mod = 0;
-    char *c = o->buffer()->text();
-    has_text = (c && *c);
+    std::string c = o->buffer()->text();
+    has_text = !c.empty();
     for (Node *n: Fluid.proj.tree.all_selected_nodes()) {
       n->comment(c);
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
-    free(c);
   }
   if (has_text) {
     code_choice[0]->labelfont(FL_HELVETICA_BOLD_ITALIC);
@@ -2446,7 +2445,7 @@ static void cb_wComment(Fl_Text_Editor* o, void* v) {
     code_choice[0]->labelfont(FL_HELVETICA);
   }
   code_choice[0]->redraw();
-//ﬂ ▲ ----------~=--=~--~~=~----------~--~-~=-~~=--==~-----= ▲ ﬂ//
+//ﬂ ▲ ----------~=--=~--~~=~------------=-=-~-~~-~--=~~~-~=- ▲ ﬂ//
 }
 
 static void cb_v_code_input(fluid::widget::Code_Editor* o, void* v) {
@@ -2789,23 +2788,19 @@ static void cb_Comment(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~---~~--~=-=~=-~-~~=- ▼ ﬂ//
   if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
   Data_Node* nd = (Data_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------=~-~=--~~~=~----------~-~~----=~=~----~~=-=~ ▲ ﬂ//
+//ﬂ ▲ ----------=~-~=--~~~=~-----------~~=-=~~~=--~--=~-=~=~ ▲ ﬂ//
 }
 
 Fl_Tabs* comment_tabs = (Fl_Tabs*)nullptr;
@@ -3128,23 +3123,19 @@ static void cb_Comment1(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~-=~-~--=-------~~-=-= ▼ ﬂ//
   if (!current_node || !dynamic_cast<Class_Node*>(current_node)) return;
   Class_Node* nd = (Class_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------~==-=-~--~~=-----------~-=---~-==-=~--~=-~-- ▲ ﬂ//
+//ﬂ ▲ ----------~==-=-~--~~=----------~~=~-~=~-~=~-~-==--==- ▲ ﬂ//
 }
 
 Fl_Tabs* declblock_tabs = (Fl_Tabs*)nullptr;
@@ -3278,23 +3269,19 @@ static void cb_Comment2(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback -~~=----~-~=---=-~~~~~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
   DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------~=-=~~~~~--------------~=--==~~~--=--=---~=~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-=~~~~~----------------=--~--=--~=-----~=~ ▲ ﬂ//
 }
 
 Fl_Tabs* preprocessor_tabs = (Fl_Tabs*)nullptr;
@@ -3359,23 +3346,19 @@ static void cb_Comment3(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~----~~=-=~---~==~~=-~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
   Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------~=-~-~=~~=--------------~-~-~~=-~=~-~~-=~~-~ ▲ ﬂ//
+//ﬂ ▲ ----------~=-~-~=~~=-------------~-=~~-~=~~---~~-=~=~= ▲ ﬂ//
 }
 
 Fl_Tabs* decl_tabs = (Fl_Tabs*)nullptr;
@@ -3486,23 +3469,19 @@ static void cb_Comment4(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback --=~-~~--~---~=~=--=-= ▼ ﬂ//
   if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
   Decl_Node* nd = (Decl_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------~==~~=-==~~~----------~~~~~--=~-=~=-~=~=--~- ▲ ﬂ//
+//ﬂ ▲ ----------~==~~=-==~~~----------~--~~-~==~~--=~-=-=--= ▲ ﬂ//
 }
 
 Fl_Tabs* codeblock_tabs = (Fl_Tabs*)nullptr;
@@ -3552,23 +3531,19 @@ static void cb_Comment5(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~~-~---==~-=-~=-~~-~~= ▼ ﬂ//
   if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
   CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------~=-==----~~-----------~~~--=-~-=-~=~-~-~~~-= ▲ ﬂ//
+//ﬂ ▲ ----------~=-==----~~------------~-=~-~~--~~~=-~=~~~~~ ▲ ﬂ//
 }
 
 Fl_Tabs* code_tabs = (Fl_Tabs*)nullptr;
@@ -3744,23 +3719,19 @@ static void cb_Comment6(Fl_Text_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback -----~-=--~--~-~-~~=-~ ▼ ﬂ//
   if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
   Function_Node* nd = (Function_Node*)current_node;
-
-  if (v == LOAD) {
-    const char *cmttext = nd->comment();
-    o->buffer()->text( cmttext ? cmttext : "" );
+   if (v == LOAD) {
+    const std::string& cmttext = nd->comment();
+    o->buffer()->text( cmttext.c_str() );
   } else {
-    char *c = o->buffer()->text();
-    const char *nn = nd->comment();
-    if (   ( nn && (strcmp(nn, c) != 0))
-        || (!nn && (strcmp("", c) != 0)) )
-    {
+    std::string c = o->buffer()->text();
+    const std::string& nn = nd->comment();
+    if (c != nn) {
       nd->comment(c);
       Fluid.proj.set_modflag(1);
       redraw_browser();
     }
-    free(c);
   }
-//ﬂ ▲ ----------~=~~--=~~--~-----------~-~-~=~~--~--~-~=~=~= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~--=~~--~-----------~=---=--~=~=~~-=~~=-- ▲ ﬂ//
 }
 
 Fl_Tabs* widget_tabs_repo = (Fl_Tabs*)nullptr;

@@ -111,7 +111,7 @@ void name_public_cb(Fl_Choice* i, void* v) {
 void label_cb(Fl_Input* i, void* v) {
   static int first_change = 1;
   if (v == LOAD) {
-    i->value(current_widget->label());
+    i->value(current_widget->label().c_str());
     first_change = 1;
   } else {
     if (i->changed()) {

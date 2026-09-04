@@ -399,11 +399,11 @@ std::string Menu_Item_Node::menu_name(fluid::io::Code_Writer& f, int& i) {
     i++;
   }
   if (!t) return "\n#error Menu_Item_Node::menu_name, invalid f\n";
-  return f.unique_id(t, "menu", (t->name()?t->name():""), (t->label()?t->label():""));
+  return f.unique_id(t, "menu", (t->name()?t->name():""), t->label());
 }
 
 void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
-  if (active_image.asset && label() && label()[0]) {
+  if (active_image.asset && !label().empty()) {
     f.write_h_once("#include <FL/Fl.H>");
     f.write_h_once("#include <FL/Fl_Multi_Label.H>");
   }
@@ -584,7 +584,7 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
   f.write_c(" {");
 
   // Label, can not be nullptr which has a special meaning here
-  if (label() && label()[0])
+  if (!label().empty())
     switch (Fluid.proj.i18n.type) {
       case fluid::I18n_Type::GNU:
         // we will call i18n when the menu is instantiated for the first time
@@ -708,7 +708,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
   }
   if (active_image.asset) {
     start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
-    if (label() && label()[0]) {
+    if (!label().empty()) {
       f.write_c(f.indent() + "Fl_Multi_Label* ml = new Fl_Multi_Label;\n");
       f.write_c(f.indent() + "ml->labela = (char*)");
       active_image.asset->write_inline(f);
@@ -729,7 +729,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
       active_image.asset->write_code(f, 0, "o");
     }
   }
-  if ((Fluid.proj.i18n.type != fluid::I18n_Type::NONE) && label() && label()[0]) {
+  if ((Fluid.proj.i18n.type != fluid::I18n_Type::NONE) && !label().empty()) {
     Fl_Labeltype t = o->labeltype();
     if (active_image.asset) {
       // label was already copied a few lines up
@@ -854,7 +854,7 @@ Node* Menu_Base_Node::click_test(int, int) {
 void Menu_Manager_Node::write_code2(fluid::io::Code_Writer& f) {
   if (next && dynamic_cast<Menu_Item_Node*>(next)) {
     f.write_c(f.indent() + (name() ? name() : "o") + "->menu(" +
-            f.unique_id(this, "menu", (name()?name():""), (label()?label():"")) + ");\n");
+            f.unique_id(this, "menu", (name()?name():""), label()) + ");\n");
   }
   Widget_Node::write_code2(f);
 }

@@ -101,7 +101,7 @@ private: // Methods
   virtual Widget_Node* _make() = 0; // virtual constructor
 
   // Override to call `label()` for the right subclass of the widget in `o`.
-  void setlabel(const char*) override;
+  void setlabel(const std::string&) override;
 
 protected:
 
