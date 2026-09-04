@@ -20,10 +20,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-#include <sys/types.h>
-#include <string.h>             // memcpy
 #include <stdio.h>              // fprintf
-#include <stdlib.h>             // realloc/free
 
 
 /** Sets the vertical scroll position so 'row' is at the top,
@@ -1255,7 +1252,7 @@ void Fl_Table::set_selection(int row_top, int col_left, int row_bot, int col_rig
   via calls to draw_cell().
 */
 void Fl_Table::draw() {
-    int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+  int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
   // Check if scrollbar size changed
   if ( ( vscrollbar && (scrollsize != vscrollbar->w()) ) ||
        ( hscrollbar && (scrollsize != hscrollbar->h()) ) ) {
