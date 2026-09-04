@@ -2480,14 +2480,14 @@ static void cb_wCallback(fluid::widget::Code_Editor* o, void* v) {
 //ﬂ ▼ ---------------------- callback ~---~~----~~=--=--=~-- ▼ ﬂ//
   bool has_text = false;
   if (v == LOAD) {
-    const char *cbtext = current_widget->callback();
-    has_text = (cbtext && *cbtext);
-    o->buffer()->text( cbtext ? cbtext : "" );
+    const std::string& cbtext = current_widget->callback();
+    has_text = !cbtext.empty();
+    o->buffer()->text( cbtext.c_str() );
   } else {
     int mod = 0;
-    char *c = o->buffer()->text();
-    has_text = (c && *c);
-    const char *d = c_check(c);
+    std::string c = o->buffer()->text();
+    has_text = !c.empty();
+    const char *d = c_check(c.c_str());
     if (d) {
       fluid_message("Error in callback: %s",d);
       if (o->window()) o->window()->make_current();
@@ -2498,7 +2498,6 @@ static void cb_wCallback(fluid::widget::Code_Editor* o, void* v) {
       mod = 1;
     }
     if (mod) Fluid.proj.set_modflag(1);
-    free(c);
   }
   if (has_text) {
     code_choice[5]->labelfont(FL_HELVETICA_BOLD_ITALIC);
@@ -2506,7 +2505,7 @@ static void cb_wCallback(fluid::widget::Code_Editor* o, void* v) {
     code_choice[5]->labelfont(FL_HELVETICA);
   }
   code_choice[5]->redraw();
-//ﬂ ▲ ----------~=-==~~~=-~~----------~~--=~=~-=--~==-~=-=-= ▲ ﬂ//
+//ﬂ ▲ ----------~=-==~~~=-~~-------------~~=~--~-=-~-=----=~ ▲ ﬂ//
 }
 
 Fl_Group* wp_cpp_callback = (Fl_Group*)nullptr;

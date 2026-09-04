@@ -73,6 +73,7 @@ private:
   static void cb_6(Fl_Button*, void*);
   inline void cb_7_i(Fl_Button*, void*);
   static void cb_7(Fl_Button*, void*);
+public:
   void grid_child_cb(fluid::widget::Formula_Input* i, void* v, int what);
 };
 #endif // Grid_Child_Tab_h

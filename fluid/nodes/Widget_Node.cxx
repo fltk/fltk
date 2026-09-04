@@ -734,15 +734,15 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     f.write_h(extra_code(1));
     f.write_h("\n");
   }
-  if (callback() && is_function_name(callback())) {
-    std::string callback_name_pattern = std::string(callback()) + "(*)";
+  if (is_function_name(callback())) {
+    std::string callback_name_pattern = callback() + "(*)";
     Node* pClass = find_parent_class_node();
     if (pClass && pClass->has_function("static void", callback_name_pattern)) {
       // nothing to do, method already exists
     } else if (has_toplevel_function("*void", callback_name_pattern)) {
       // nothing to do, function already exists
     } else {
-      f.write_h_once("extern void " + std::string(callback()) + "(" + t + "*, " + user_data_type_or_voidp() + ");");
+      f.write_h_once("extern void " + callback() + "(" + t + "*, " + user_data_type_or_voidp() + ");");
     }
   }
   std::string k = full_class_name();
@@ -756,12 +756,12 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     else
       f.write_c(t + "* " + c + " = {(" + t + "*)nullptr};\n");
   }
-  if (callback() && !is_function_name(callback()) && !is_lambda(callback())) {
+  if (!callback().empty() && !is_function_name(callback()) && !is_lambda(callback())) {
     // see if 'o' or 'v' used, to prevent unused argument warnings:
     int use_o = 0;
     int use_v = 0;
     const char* d;
-    for (d = callback(); *d;) {
+    for (d = callback().c_str(); *d;) {
       if (*d == 'o' && !is_id(d[1])) use_o = 1;
       if (*d == 'v' && !is_id(d[1])) use_v = 1;
       do d++; while (is_id(*d));
@@ -781,12 +781,12 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);
     f.write_c_indented(callback(), 1, 0);
     if (*(d-1) != ';' && *(d-1) != '}') {
-      const char* p = strrchr(callback(), '\n');
-      if (p) p ++;
-      else p = callback();
+      const std::string& cb = callback();
+      size_t nl = cb.find_last_of('\n');
+      std::string last_line = (nl == std::string::npos) ? cb : cb.substr(nl + 1);
       // Only add trailing semicolon if the last line is not a preprocessor
       // statement...
-      if (*p != '#' && *p) f.write_c(";");
+      if (!last_line.empty() && last_line.front() != '#') f.write_c(";");
     }
     f.write_c("\n");
     f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
@@ -819,7 +819,7 @@ void Widget_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_h(f.indent(1) + t + "* " + c + ";\n");
     }
   }
-  if (is_in_class() && callback() && !is_function_name(callback())) {
+  if (is_in_class() && !callback().empty() && !is_function_name(callback()) && !is_lambda(callback())) {
     std::string cn = callback_name(f);
     std::string ut = user_data_type_or_voidp();
     f.write_public(0);
@@ -1079,7 +1079,7 @@ void Widget_Node::write_widget_code(fluid::io::Code_Writer& f) {
   }}
   std::string ud = user_data();
   if (is_in_class() && !parent->is_widget()) ud = "this";
-  if (callback()) {
+  if (!callback().empty()) {
     if (is_lambda(callback())) { // lambda callback function
       f.write_c(f.indent() + var + "->callback(\n");
       f.tag(Mergeback::Tag::GENERIC, Mergeback::Tag::WIDGET_CALLBACK, 0);

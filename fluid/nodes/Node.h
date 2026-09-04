@@ -141,7 +141,7 @@ protected:
   std::string label_ { };
 
   /// Callback function name, lambda, or function code
-  const char* callback_ { nullptr };
+  std::string callback_ { };
 
   /// Widget user data field as C++ text.
   std::string user_data_ { };
@@ -289,8 +289,8 @@ public:
   virtual void setlabel(const std::string&) { } // virtual part of label(char*)
 
   // Callback name, callback code, or lambda function for the node, used for widgets and windows.
-  const char* callback() const { return callback_; }
-  void callback(const char*);
+  const std::string& callback() const { return callback_; }
+  void callback(const std::string&);
   std::string callback_name(fluid::io::Code_Writer& f);
 
   // User data associated with the node.

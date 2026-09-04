@@ -535,7 +535,7 @@ int Mergeback::apply_callback(long block_end, long block_start, unsigned long co
     std::string cb = tp->callback(); cb += "\n";
     uint32_t project_crc = fluid::CRC32::block(cb);
     if (project_crc!=code_crc) {
-      tp->callback(read_and_unindent_block(block_start, block_end).c_str());
+      tp->callback(read_and_unindent_block(block_start, block_end));
       return 1;
     }
   }

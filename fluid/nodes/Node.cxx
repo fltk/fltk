@@ -331,7 +331,6 @@ Node::~Node() {
   if (current_node == this) current_node = nullptr;
   if (parent) parent->remove_child(this);
   if (name_) free((void*)name_);
-  if (callback_) free((void*)callback_);
 }
 
 // Return the previous sibling in the tree structure or nullptr.
@@ -626,7 +625,7 @@ void Node::label(const std::string& n) {
 /**
  Update the callback text of the node.
  */
-void Node::callback(const char *n) {
+void Node::callback(const std::string&n) {
   storestring(n,callback_);
 }
 
@@ -742,7 +741,7 @@ void Node::write_properties(fluid::io::Project_Writer &f) {
     f.write_word("user_data_type");
     f.write_word(user_data_type());
   }
-  if (callback()) {
+  if (!callback().empty()) {
     f.write_indent(level+1);
     f.write_word("callback");
     f.write_word(callback());
