@@ -93,13 +93,18 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(std::string& command) 
       option = "--getopenfilename";
   }
 
-  // Build preset
-  char preset[FL_PATH_MAX] = "";
+  // Build preset_str
+  std::string preset_str = "";
   if (_preset_file) {
-    if (_directory) strcpy(preset, _directory);
-    else Fl::system_driver()->getcwd(preset, FL_PATH_MAX);
-    strcat(preset, "/");
-    strcat(preset, _preset_file);
+    if (_directory) preset_str = _directory;
+    else {
+      char preset[FL_PATH_MAX];
+      Fl::system_driver()->getcwd(preset, FL_PATH_MAX);
+      preset_str = preset;
+    }
+    preset_str += "/";
+    preset_str += _preset_file;
+    shell_quote(preset_str);
   }
 
   // Build command
@@ -112,7 +117,7 @@ void Fl_Kdialog_Native_File_Chooser_Driver::build_command(std::string& command) 
   command += " ";
   command += option;
   command += " ";
-  command += preset;
+  command += preset_str;
   if (_parsedfilt) {
     std::string quoted_filt = _parsedfilt; shell_quote(quoted_filt);     // NOTE: orig code used double quoting -erco 1/10/24
     command += " ";
