@@ -98,6 +98,7 @@ public:
   Node *make(Strategy strategy) override;
   const char *type_name() override {return "Fl_Window";}
   const char *alt_type_name() override {return "fltk::Window";}
+  bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
 
   void open() override;
   void ideal_size(int &w, int &h) override;

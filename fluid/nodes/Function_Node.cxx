@@ -26,6 +26,7 @@
 #include "nodes/Window_Node.h"
 #include "nodes/Group_Node.h"
 #include "nodes/Menu_Node.h"
+#include "nodes/factory.h"
 #include "panels/function_panel.h"
 #include "rsrcs/comments.h"
 #include "widgets/Node_Browser.h"
@@ -490,6 +491,43 @@ bool Function_Node::has_signature(const std::string& return_type_regex, const st
 /// Prototype for code to be used by the factory.
 Code_Node Code_Node::prototype;
 
+
+bool Code_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
+{
+  Node *klass = nullptr;
+  int ret = fluid::big_choice(
+    "Fluid: Code Node requires a Container",
+    "A Code Node can only be created inside a Function, a Class method, "
+    "or as a child of a Group widget.\n\n"
+    "Would you like to create a new container, or cancel and select an existing one?\n\n",
+    {
+      {"Create a &Function and add the code node", 'f'},
+      {"Create a Class &Method and add the code node", 'm'},
+      {"&Cancel and select an existing container", 'c'}
+    } );
+  switch (ret) {
+    case 0:
+      // Walk up above the topmost class node before adding the function.
+      while (Fluid.proj.tree.current && (klass = Fluid.proj.tree.current->find_parent_class_node()))
+        Fluid.proj.tree.current = klass->parent;
+      anchor = add_new_widget_from_user("function", Strategy::AFTER_CURRENT, false);
+      Fluid.proj.tree.current = anchor;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    case 1:
+      if (!Fluid.proj.tree.current || !(klass = Fluid.proj.tree.current->find_parent_class_node()))
+        klass = add_new_widget_from_user("class", Strategy::AFTER_CURRENT, true);
+      Fluid.proj.tree.current = klass;
+      anchor = add_new_widget_from_user("function", Strategy::AS_LAST_CHILD, false);
+      Fluid.proj.tree.current = anchor;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
 /**
  Make a new code node.
  If the parent node is not a function, a message box will pop up and
@@ -507,8 +545,12 @@ Node *Code_Node::make(Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fluid_message("Please select a function");
-    return nullptr;
+    if (strategy.source() == Strategy::FROM_FILE) {
+      fluid_message("Please select a function");
+      return nullptr;
+    } else if (node_creation_assistant(strategy, anchor) == false) {
+      return nullptr; // user canceled the placement guide
+    }
   }
   Code_Node *o = new Code_Node();
   o->name("printf(\"Hello, World!\\n\");");
@@ -611,6 +653,41 @@ int Code_Node::handle_editor_changes() {
 /// Prototype for a block of code to be used by the factory.
 CodeBlock_Node CodeBlock_Node::prototype;
 
+bool CodeBlock_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
+{
+  Node *klass = nullptr;
+  int ret = fluid::big_choice(
+    "Fluid: Code Block requires a Container Node",
+    "A Code Node can only be created inside a Function or a Method.\n\n"
+    "Would you like to create a new container, or cancel and select an existing one?\n\n",
+    {
+      {"Create a &Function and add the code block", 'f'},
+      {"Create a &Method in a Class and add the code block", 'm'},
+      {"&Cancel and select an existing container", 'c'}
+    } );
+  switch (ret) {
+    case 0:
+      // Walk up above the topmost class node before adding the function.
+      while (Fluid.proj.tree.current && (klass = Fluid.proj.tree.current->find_parent_class_node()))
+        Fluid.proj.tree.current = klass->parent;
+      anchor = add_new_widget_from_user("function", Strategy::AFTER_CURRENT, false);
+      Fluid.proj.tree.current = anchor;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    case 1:
+      if (!Fluid.proj.tree.current || !(klass = Fluid.proj.tree.current->find_parent_class_node()))
+        klass = add_new_widget_from_user("class", Strategy::AFTER_CURRENT, true);
+      Fluid.proj.tree.current = klass;
+      anchor = add_new_widget_from_user("function", Strategy::AS_LAST_CHILD, false);
+      Fluid.proj.tree.current = anchor;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
 /**
  Make a new code block.
  If the parent node is not a function or another codeblock, a message box will
@@ -628,8 +705,12 @@ Node *CodeBlock_Node::make(Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fluid_message("Please select a function");
-    return nullptr;
+    if (strategy.source() == Strategy::FROM_FILE) {
+      fluid_message("Please select a function");
+      return nullptr;
+    } else if (node_creation_assistant(strategy, anchor) == false) {
+      return nullptr; // user canceled the placement guide
+    }
   }
   CodeBlock_Node *o = new CodeBlock_Node();
   o->name("if (test())");

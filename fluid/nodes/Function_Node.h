@@ -100,6 +100,7 @@ public:
   ~Code_Node() override = default;
 
   Node *make(Strategy strategy) override;
+  bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
   void write(fluid::io::Project_Writer &f) override;
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override { }
@@ -134,6 +135,7 @@ public:
   ~CodeBlock_Node() override = default;
 
   Node *make(Strategy strategy) override;
+  bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;

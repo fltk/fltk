@@ -27,7 +27,7 @@ namespace fluid {
 namespace widget {
 
 /**
- A text viewer with an additional highlighting color scheme.
+ Undocumented.
  */
 class App_Menu_Bar : public Fl_Menu_Bar {
 public:

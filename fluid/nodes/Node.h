@@ -272,6 +272,8 @@ public:
   // Handle mouse clicks on widget nodes
   virtual Node* click_test(int,int) { return nullptr; }
 
+  // Open a multiple choice dialog to help the user place the node correctly in the tree.
+  virtual bool node_creation_assistant(Strategy& strategy, Node*& anchor) { return false; }
 
   // ---- Getter and setter for various properties
 public:

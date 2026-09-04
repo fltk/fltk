@@ -225,6 +225,42 @@ int Overlay_Window::handle(int e) {
   return ret;
 }
 
+bool Window_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
+{
+  Node *klass = nullptr;
+  int ret = fluid::big_choice(
+    "Fluid: Window Node requires a Container",
+    "A Window can only be created inside a Function or a Class method.\n\n"
+    "Would you like to create a new container, or cancel and select an existing one?\n\n",
+    {
+      {"Create a &Function and add the window", 'f'},
+      {"Create a &Method in a Class and add the window", 'm'},
+      {"&Cancel and select an existing container", 'c'}
+    } );
+  switch (ret) {
+    case 0:
+      // Walk up above the topmost class node before adding the function.
+      while (Fluid.proj.tree.current && (klass = Fluid.proj.tree.current->find_parent_class_node()))
+        Fluid.proj.tree.current = klass->parent;
+      anchor = add_new_widget_from_user("function", Strategy::AFTER_CURRENT, false);
+      Fluid.proj.tree.current = anchor;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    case 1:
+      if (!Fluid.proj.tree.current || !(klass = Fluid.proj.tree.current->find_parent_class_node()))
+        klass = add_new_widget_from_user("class", Strategy::AFTER_CURRENT, true);
+      Fluid.proj.tree.current = klass;
+      anchor = add_new_widget_from_user("function", Strategy::AS_LAST_CHILD, false);
+      Fluid.proj.tree.current = anchor;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
+
 /**
  Make and add a new Window node.
  \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
@@ -241,29 +277,8 @@ Node *Window_Node::make(Strategy strategy) {
   if (!p) {
     if (strategy.source() == Strategy::FROM_FILE) {
       return nullptr; // trigger a file read error
-    }
-    int ret = fluid::big_choice(
-      "Fluid: Window Container Required",
-      "A Window can only be created inside a Function or a Widget Class container.\n\n"
-      "Would you like to create a new container or select an existing one?",
-      {
-        {"Create a &Function and add the window", 'f'},
-        {"Create a &Widget Class and add the window", 'w'},
-        {"&Cancel and let me select an existing container", 'c'}
-      } );
-    switch (ret) {
-      case 0:
-        p = add_new_widget_from_user("function", Strategy::AFTER_CURRENT, false);
-        Fluid.proj.tree.current = anchor = p;
-        strategy.placement(Strategy::AS_LAST_CHILD);
-        break;
-      case 1:
-        p = add_new_widget_from_user("widget_class", Strategy::AFTER_CURRENT, true);
-        Fluid.proj.tree.current = anchor = p;
-        strategy.placement(Strategy::AS_LAST_CHILD);
-        break;
-      default:
-        return nullptr;
+    } else if (node_creation_assistant(strategy, anchor) == false) {
+      return nullptr; // user canceled the placement guide
     }
   }
   Window_Node *myo = new Window_Node();
