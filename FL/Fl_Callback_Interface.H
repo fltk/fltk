@@ -294,6 +294,13 @@ public:
       return callback_data_.callback_t_voidp_;
     }
   }
+  Callback_voidp* callback_voidp() const {
+    if (static_cast<const T*>(this)->callback_is_stdf() || callback_data_.cb_type_ != 4) {
+      return nullptr;
+    } else {
+      return callback_data_.callback_voidp_;
+    }
+  }
   void* user_data() const {
     if (static_cast<const T*>(this)->callback_is_stdf()) {
       return nullptr;
@@ -338,5 +345,20 @@ public:
   }
 };
 
+
+template <typename T>
+class Fl_Simple_Callback_Interface : public Fl_Callback_Interface<T>
+{
+private:
+  bool callback_is_stdf_;
+public:
+  Fl_Simple_Callback_Interface()
+  : Fl_Callback_Interface<T>()
+  , callback_is_stdf_(true)
+  { }
+  bool callback_is_stdf() const { return callback_is_stdf_; }
+  void set_callback_stdf() { callback_is_stdf_ = true; }
+  void clear_callback_stdf() { callback_is_stdf_ = false; }
+};
 
 #endif // Fl_Callback_Interface_H
