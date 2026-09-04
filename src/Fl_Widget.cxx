@@ -472,7 +472,7 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg, Fl_Callback_Reason rea
   Fl::callback_reason_ = reason;
   Fl_Widget_Tracker wp(this);
   if (callback_is_stdf()) {
-    callback_interface_.stdf_callback_();
+    callback_data_.stdf_callback_();
   } else {
     callback()(widget, arg);
   }
