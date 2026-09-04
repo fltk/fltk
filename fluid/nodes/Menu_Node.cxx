@@ -147,7 +147,7 @@ void Input_Choice_Node::build_menu() {
 }
 
 /**
- Ask the user to create a missing Menu container for this Menu Item.
+ Help the user to create a missing Menu container for this Menu Item.
 
  A Menu Item can only be created inside a Menu node or a Submenu Item. If
  none is found, this opens a dialog offering to create one, building any

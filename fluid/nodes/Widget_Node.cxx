@@ -396,7 +396,7 @@ void Widget_Node::ideal_size(int &w, int &h) {
 }
 
 /**
- Ask the user to create a missing Window or Group container for this Widget.
+ Offer to the user to create a missing Window or Group container for this Widget.
 
  A Widget can only be created inside a Window or Group node. If none is
  found, this opens a dialog offering to create a Window (creating any

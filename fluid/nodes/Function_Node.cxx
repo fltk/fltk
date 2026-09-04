@@ -493,7 +493,7 @@ Code_Node Code_Node::prototype;
 
 
 /**
- Ask the user to create a missing Function or Class method for this Code node.
+ Help the user to create a missing Function or Class method for this Code node.
 
  A Code node can only be created inside a Function, a Class method, or as
  a child of a Group widget. If none is found, this opens a dialog offering
@@ -667,6 +667,20 @@ int Code_Node::handle_editor_changes() {
 /// Prototype for a block of code to be used by the factory.
 CodeBlock_Node CodeBlock_Node::prototype;
 
+/**
+ Help the user to create a missing Function or Class method for this Code Block.
+
+ A Code Block can only be created inside a Function or a Class method.
+ If none is found, this opens a dialog offering
+ to create a new Function, or a new method inside an existing or new Class,
+ or to cancel so the user can pick an existing container instead.
+
+ \param[in,out] strategy placement strategy, updated to place the code block
+    inside the newly created container
+ \param[out] anchor updated to the newly created container node
+ \return true if a container was created and \p anchor and \p strategy
+    were updated, false if the user canceled (code block not created)
+ */
 bool CodeBlock_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
 {
   Node *klass = nullptr;

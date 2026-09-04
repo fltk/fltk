@@ -226,7 +226,7 @@ int Overlay_Window::handle(int e) {
 }
 
 /**
- Ask the user to create a missing Function or Class method for this Window.
+ Help the user to create a missing Function or Class method for this Window.
 
  A Window can only be created inside a Function or a Class method. If
  none is found, this opens a dialog offering to create a new Function, or
