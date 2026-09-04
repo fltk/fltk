@@ -21,6 +21,7 @@
 
 #include <functional>
 #include <new>
+#include <cstddef>
 
 
 #ifndef Fl_Callback_User_Data_H
