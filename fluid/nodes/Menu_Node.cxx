@@ -25,6 +25,7 @@
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/Code_Writer.h"
+#include "nodes/factory.h"
 #include "nodes/Window_Node.h"
 #include "nodes/Function_Node.h"
 #include "widgets/Formula_Input.h"
@@ -146,6 +147,84 @@ void Input_Choice_Node::build_menu() {
 }
 
 /**
+ Ask the user to create a missing Menu container for this Menu Item.
+
+ A Menu Item can only be created inside a Menu node or a Submenu Item. If
+ none is found, this opens a dialog offering to create one, building any
+ missing Function, Class method, Window, and Menu Bar or Menu Button along
+ the way as needed, based on the tree position of \p anchor, or to cancel
+ so the user can pick an existing container instead.
+
+ \param[in,out] strategy placement strategy, updated to place the menu item
+    inside the newly created container
+ \param[in,out] anchor node to insert relative to; updated to the new
+    container if one was created
+ \return true if a container was created and \p anchor and \p strategy
+    were updated, false if the user canceled
+ */
+bool Menu_Item_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
+{
+  enum Job { CREATE_MENUITEM, CREATE_MENUBAR, CREATE_WINDOW, CREATE_FUNCTION, CREATE_METHOD } job = CREATE_FUNCTION;
+  Node* old_anchor = anchor;
+  int ret = fluid::big_choice(
+    "Fluid: Menu Items require a Container",
+    "A Menu Item can only be created inside a Menu Node or a Submenu Item.\n\n"
+    "Would you like to create a new container, or cancel and select an existing one?\n\n",
+    {
+      {"Create a &Menu Container and add the Menu Item", 'm'},
+      {"&Cancel and select an existing container", 'c'}
+    } );
+  switch (ret) {
+    case 0:
+      // Walk up the tree to find a compatible container for the widget.
+      while (anchor) {
+        if (dynamic_cast<Class_Node*>(anchor)) {
+          job = CREATE_METHOD;
+          break;
+        }
+        if (dynamic_cast<Function_Node*>(anchor)) {
+          job = CREATE_WINDOW;
+          break;
+        }
+        if (dynamic_cast<Window_Node*>(anchor)) {
+          job = CREATE_MENUBAR;
+          break;
+        }
+        old_anchor = anchor;
+        anchor = anchor->parent;
+      }
+      Fluid.proj.tree.current = old_anchor;
+      if (job == CREATE_METHOD) {
+        Fluid.proj.tree.current = add_new_widget_from_user("function", Strategy::AS_LAST_CHILD, false);
+        job = CREATE_WINDOW;
+      }
+      if (job == CREATE_FUNCTION) {
+        Fluid.proj.tree.current = add_new_widget_from_user("function", Strategy::AFTER_CURRENT, false);
+        job = CREATE_WINDOW;
+      }
+      if (!Fluid.proj.tree.current) return false;
+      if (job == CREATE_WINDOW) {
+        Fluid.proj.tree.current = add_new_widget_from_user("Fl_Window", Strategy::AS_FIRST_CHILD, true);
+        job = CREATE_MENUBAR;
+      }
+      if (!Fluid.proj.tree.current) return false;
+      if (job == CREATE_MENUBAR) {
+        const char* type = "Fl_Menu_Button";
+        if (dynamic_cast<Submenu_Node*>(this)) type = "Fl_Menu_Bar";
+        Fluid.proj.tree.current = add_new_widget_from_user(type, Strategy::AS_FIRST_CHILD, true);
+        job = CREATE_MENUITEM;
+      }
+      anchor = Fluid.proj.tree.current;
+      if (!anchor) return false;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
+/**
  Create and add a new Menu Item node.
  \param[in] strategy add after current or as last child
  \return new Menu Item node
@@ -171,8 +250,12 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
     p = p->parent;
   }
   if (!p) {
-    fluid_message("Please select a menu widget or a menu item");
-    return nullptr;
+    if (strategy.source() == Strategy::FROM_FILE) {
+      fluid_message("Please select a menu widget or a menu item");
+      return nullptr;
+    } else if (node_creation_assistant(strategy, anchor) == false) {
+      return nullptr; // user canceled the creation assitant
+    }
   }
   if (!o) {
     o = new Fl_Button(0,0,100,20); // create template widget

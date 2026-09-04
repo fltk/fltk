@@ -492,6 +492,20 @@ bool Function_Node::has_signature(const std::string& return_type_regex, const st
 Code_Node Code_Node::prototype;
 
 
+/**
+ Ask the user to create a missing Function or Class method for this Code node.
+
+ A Code node can only be created inside a Function, a Class method, or as
+ a child of a Group widget. If none is found, this opens a dialog offering
+ to create a new Function, or a new method inside an existing or new Class,
+ or to cancel so the user can pick an existing container instead.
+
+ \param[in,out] strategy placement strategy, updated to place the code node
+    inside the newly created container
+ \param[out] anchor updated to the newly created container node
+ \return true if a container was created and \p anchor and \p strategy
+    were updated, false if the user canceled
+ */
 bool Code_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
 {
   Node *klass = nullptr;
@@ -549,7 +563,7 @@ Node *Code_Node::make(Strategy strategy) {
       fluid_message("Please select a function");
       return nullptr;
     } else if (node_creation_assistant(strategy, anchor) == false) {
-      return nullptr; // user canceled the placement guide
+      return nullptr; // user canceled the creation assitant
     }
   }
   Code_Node *o = new Code_Node();
@@ -709,7 +723,7 @@ Node *CodeBlock_Node::make(Strategy strategy) {
       fluid_message("Please select a function");
       return nullptr;
     } else if (node_creation_assistant(strategy, anchor) == false) {
-      return nullptr; // user canceled the placement guide
+      return nullptr; // user canceled the creation assitant
     }
   }
   CodeBlock_Node *o = new CodeBlock_Node();

@@ -98,6 +98,7 @@ public:
   Node *make(Strategy strategy) override;
   const char *type_name() override {return "Fl_Window";}
   const char *alt_type_name() override {return "fltk::Window";}
+  // Help the user create the required hierarchy for this widget
   bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
 
   void open() override;

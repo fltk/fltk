@@ -225,6 +225,20 @@ int Overlay_Window::handle(int e) {
   return ret;
 }
 
+/**
+ Ask the user to create a missing Function or Class method for this Window.
+
+ A Window can only be created inside a Function or a Class method. If
+ none is found, this opens a dialog offering to create a new Function, or
+ a new method inside an existing or new Class, or to cancel so the user
+ can pick an existing container instead.
+
+ \param[in,out] strategy placement strategy, updated to place the window
+    inside the newly created container
+ \param[out] anchor updated to the newly created container node
+ \return true if a container was created and \p anchor and \p strategy
+    were updated, false if the user canceled
+ */
 bool Window_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
 {
   Node *klass = nullptr;
@@ -278,7 +292,7 @@ Node *Window_Node::make(Strategy strategy) {
     if (strategy.source() == Strategy::FROM_FILE) {
       return nullptr; // trigger a file read error
     } else if (node_creation_assistant(strategy, anchor) == false) {
-      return nullptr; // user canceled the placement guide
+      return nullptr; // user canceled the creation assitant
     }
   }
   Window_Node *myo = new Window_Node();

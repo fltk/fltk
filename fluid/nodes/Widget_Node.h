@@ -149,6 +149,9 @@ public:
   // Make a new Node and add it to the tree
   Node* make(Strategy strategy) override;
 
+  // Help the user create the required hierarchy for this widget
+  bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
+
   // Open the Node editor panel
   void open() override;
 

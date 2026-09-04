@@ -396,6 +396,73 @@ void Widget_Node::ideal_size(int &w, int &h) {
 }
 
 /**
+ Ask the user to create a missing Window or Group container for this Widget.
+
+ A Widget can only be created inside a Window or Group node. If none is
+ found, this opens a dialog offering to create a Window (creating any
+ missing Function or Class method needed to hold it, based on the tree
+ position of \p anchor), or to cancel so the user can pick an existing
+ container instead.
+
+ \param[in,out] strategy placement strategy, updated to place the widget
+    inside the newly created container
+ \param[in,out] anchor node to insert relative to; updated to the new
+    container if one was created
+ \return true if a container was created and \p anchor and \p strategy
+    were updated, false if the user canceled
+ */
+bool Widget_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
+{
+  enum Job { CREATE_WIDGET, CREATE_WINDOW, CREATE_FUNCTION, CREATE_METHOD } job = CREATE_FUNCTION;
+  Node* old_anchor = anchor;
+  int ret = fluid::big_choice(
+    "Fluid: Widgets require a Container",
+    "A Widget can only be created inside a Window or Group Node.\n\n"
+    "Would you like to create a new container, or cancel and select an existing one?\n\n",
+    {
+      {"Create a &Window and add the Widget", 'w'},
+      {"&Cancel and select an existing container", 'c'}
+    } );
+  switch (ret) {
+    case 0:
+      // Walk up the tree to find a compatible container for the widget.
+      while (anchor) {
+        if (dynamic_cast<Class_Node*>(anchor)) {
+          job = CREATE_METHOD;
+          break;
+        }
+        if (dynamic_cast<Function_Node*>(anchor)) {
+          job = CREATE_WINDOW;
+          break;
+        }
+        old_anchor = anchor;
+        anchor = anchor->parent;
+      }
+      Fluid.proj.tree.current = old_anchor;
+      if (job == CREATE_METHOD) {
+        Fluid.proj.tree.current = add_new_widget_from_user("function", Strategy::AS_LAST_CHILD, false);
+        job = CREATE_WINDOW;
+      }
+      if (job == CREATE_FUNCTION) {
+        Fluid.proj.tree.current = add_new_widget_from_user("function", Strategy::AFTER_CURRENT, false);
+        job = CREATE_WINDOW;
+      }
+      if (!Fluid.proj.tree.current) return false;
+      if (job == CREATE_WINDOW) {
+        Fluid.proj.tree.current = add_new_widget_from_user("Fl_Window", Strategy::AS_FIRST_CHILD, true);
+        job = CREATE_WIDGET;
+      }
+      anchor = Fluid.proj.tree.current;
+      if (!anchor) return false;
+      strategy.placement(Strategy::AS_LAST_CHILD);
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
+/**
  Make a new Widget node and add it to the tree.
  \param[in] strategy is Strategy::AS_LAST_CHILD or Strategy::AFTER_CURRENT
  \return new node
@@ -410,8 +477,13 @@ Node* Widget_Node::make(Strategy strategy) {
     pp = pp->parent;
   }
   if (!pp || !pp->is_true_widget() || !anchor->is_true_widget()) {
-    fluid_message("Please select a group widget or window");
-    return nullptr;
+    if (strategy.source() == Strategy::FROM_FILE) {
+      fluid_message("Please select a group widget or window");
+      return nullptr;
+    } else if (node_creation_assistant(strategy, anchor) == false) {
+      return nullptr; // user canceled the creation assitant
+    }
+    pp = anchor;
   }
 
   Widget_Node* p = (Widget_Node*)pp;

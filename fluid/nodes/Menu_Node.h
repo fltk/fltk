@@ -62,6 +62,7 @@ public:
   const char* alt_type_name() override {return "fltk::Item";}
   Node* make(Strategy strategy) override;
   Node* make(int flags, Strategy strategy);
+  bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
   int is_button() const override {return 1;} // this gets shortcut to work
   Fl_Widget* widget(int,int,int,int) override {return nullptr;}
   Widget_Node* _make() override {return nullptr;}
