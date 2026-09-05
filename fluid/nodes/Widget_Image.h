@@ -60,7 +60,7 @@ public:
   void write_static(fluid::io::Code_Writer& f) const;
 
   /// Write widget image setup code (e.g., widget->image(img); image->scale(...)).
-  void write_code(fluid::io::Code_Writer& f, const char* var, bool deimage) const;
+  void write_code(fluid::io::Code_Writer& f, const std::string& var, bool deimage) const;
 
   /// Write image properties into a .fl project file.
   void write_properties(fluid::io::Project_Writer& f, bool deimage) const;
