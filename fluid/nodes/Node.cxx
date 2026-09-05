@@ -359,9 +359,9 @@ Node *Node::first_child() {
 }
 
 // Generate a descriptive text for this item, to put in browser & window titles
-const char* Node::title() {
+const std::string& Node::title() {
   if (!name().empty())
-    return name().c_str();
+    return name();
   return type_name();
 }
 
@@ -654,7 +654,7 @@ void Node::comment(const std::string& n) {
  Open the dialog box that allows editing of the node.
  */
 void Node::open() {
-  fluid_alert("Opening node type '%s' is not yet implemented\n",type_name());
+  fluid_alert("Opening node type '%s' is not yet implemented\n",type_name().c_str());
 }
 
 /**
@@ -1067,8 +1067,8 @@ void Node::write_static_after(fluid::io::Code_Writer&) {
   Write instantiation code for this node.
  */
 void Node::write_code1(fluid::io::Code_Writer& f) {
-  f.write_h("// Header for " + std::string(title()) + "\n");
-  f.write_c("// Code for " + std::string(title()) + "\n");
+  f.write_h("// Header for " + title() + "\n");
+  f.write_c("// Code for " + title() + "\n");
 }
 
 /**

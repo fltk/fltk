@@ -56,8 +56,8 @@ public:
   typedef Widget_Node super;
   static Valuator_Node prototype;
 public:
-  const char *type_name() override { return "Fl_Valuator"; }
-  const char *alt_type_name() override { return "fltk::Valuator"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Valuator"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Valuator"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Slider(x, y, w, h, "Valuator");
   }
@@ -83,8 +83,8 @@ public:
     h = 4 * w;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Slider"; }
-  const char *alt_type_name() override { return "fltk::Slider"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Slider"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Slider"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Slider(x, y, w, h, "slider:");
   }
@@ -102,8 +102,8 @@ public:
 private:
   Fl_Menu_Item *subtypes() override { return scrollbar_type_menu; }
 public:
-  const char *type_name() override { return "Fl_Scrollbar"; }
-  const char *alt_type_name() override { return "fltk::Scrollbar"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Scrollbar"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Scrollbar"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Scrollbar(x, y, w, h);
   }
@@ -137,8 +137,8 @@ public:
     w = layout->textsize_not_null() * 4 + 8;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Value_Input"; }
-  const char *alt_type_name() override { return "fltk::ValueInput"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Value_Input"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ValueInput"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Value_Input *myo = new Fl_Value_Input(x, y, w, h, "value:");
     return myo;
@@ -176,8 +176,8 @@ public:
     w = layout->textsize_not_null() * 6 + 8;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Input"; }
-  const char *alt_type_name() override { return "fltk::Input"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Input"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Input"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Input *myo = new Fl_Input(x, y, w, h, "input:");
     myo->value("Text Input");
@@ -223,8 +223,8 @@ public:
     w = layout->textsize_not_null() * 10 + 8;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Text_Display"; }
-  const char *alt_type_name() override { return "fltk::TextDisplay"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Text_Display"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::TextDisplay"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Text_Display *myo = new Fl_Text_Display(x, y, w, h);
     if (!Fluid.batch_mode) {
@@ -267,8 +267,8 @@ public:
     w = layout->textsize_not_null() * 4 + 8;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Spinner"; }
-  const char *alt_type_name() override { return "fltk::Spinner"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Spinner"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Spinner"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Spinner(x, y, w, h, "spinner:");
   }

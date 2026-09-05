@@ -58,8 +58,8 @@ private:
 
 public:
   Fl_Menu_Item* subtypes() override {return menu_item_type_menu;}
-  const char* type_name() override {return "MenuItem";}
-  const char* alt_type_name() override {return "fltk::Item";}
+  const std::string& type_name() override { static const std::string s = "MenuItem"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Item"; return s; }
   Node* make(Strategy strategy) override;
   Node* make(int flags, Strategy strategy);
   // Help the user create the required hierarchy for this widget
@@ -88,7 +88,7 @@ public:
   typedef Menu_Item_Node super;
   static Radio_Menu_Item_Node prototype;
 public:
-  const char* type_name() override {return "RadioMenuItem";}
+  const std::string& type_name() override { static const std::string s = "RadioMenuItem"; return s; }
   Node* make(Strategy strategy) override;
 };
 
@@ -101,7 +101,7 @@ public:
   typedef Menu_Item_Node super;
   static Checkbox_Menu_Item_Node prototype;
 public:
-  const char* type_name() override {return "CheckMenuItem";}
+  const std::string& type_name() override { static const std::string s = "CheckMenuItem"; return s; }
   Node* make(Strategy strategy) override;
 };
 
@@ -119,8 +119,8 @@ public:
   static Submenu_Node prototype;
 public:
   Fl_Menu_Item* subtypes() override {return nullptr;}
-  const char* type_name() override {return "Submenu";}
-  const char* alt_type_name() override {return "fltk::ItemGroup";}
+  const std::string& type_name() override { static const std::string s = "Submenu"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ItemGroup"; return s; }
   int can_have_children() const override {return 1;}
   int is_button() const override {return 0;} // disable shortcut
   Node* make(Strategy strategy) override;
@@ -187,8 +187,8 @@ public:
   ~Input_Choice_Node() {
     if (menusize) delete[] (Fl_Menu_Item*)(((Fl_Input_Choice*)o)->menu());
   }
-  const char *type_name() override {return "Fl_Input_Choice";}
-  const char *alt_type_name() override {return "fltk::ComboBox";}
+  const std::string& type_name() override { static const std::string s = "Fl_Input_Choice"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ComboBox"; return s; }
   Node* click_test(int,int) override;
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Input_Choice *myo = new Fl_Input_Choice(X,Y,W,H,"input choice:");
@@ -241,8 +241,8 @@ public:
 private:
   Fl_Menu_Item *subtypes() override {return button_type_menu;}
 public:
-  const char *type_name() override {return "Fl_Menu_Button";}
-  const char *alt_type_name() override {return "fltk::MenuButton";}
+  const std::string& type_name() override { static const std::string s = "Fl_Menu_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::MenuButton"; return s; }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     return new Fl_Menu_Button(X,Y,W,H,"menu");}
   Widget_Node *_make() override {return new Menu_Button_Node();}
@@ -258,8 +258,8 @@ public:
   typedef Menu_Base_Node super;
   static Choice_Node prototype;
 public:
-  const char *type_name() override {return "Fl_Choice";}
-  const char *alt_type_name() override {return "fltk::Choice";}
+  const std::string& type_name() override { static const std::string s = "Fl_Choice"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Choice"; return s; }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Choice *myo = new Fl_Choice(X,Y,W,H,"choice:");
     myo->menu(dummymenu);
@@ -282,8 +282,8 @@ private:
 public:
   Menu_Bar_Node();
   ~Menu_Bar_Node() override;
-  const char *type_name() override {return "Fl_Menu_Bar";}
-  const char *alt_type_name() override {return "fltk::MenuBar";}
+  const std::string& type_name() override { static const std::string s = "Fl_Menu_Bar"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::MenuBar"; return s; }
   Fl_Widget *widget(int X,int Y,int W,int H) override {return new Fl_Menu_Bar(X,Y,W,H);}
   Widget_Node *_make() override {return new Menu_Bar_Node();}
   void write_static(fluid::io::Code_Writer& f) override;

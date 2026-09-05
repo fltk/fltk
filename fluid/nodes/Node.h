@@ -319,13 +319,13 @@ public:
   bool has_function(const std::string& return_type_regex, const std::string& function_sig_regex) const;
 
   // The node name, or something else human readable if there is no name
-  virtual const char* title(); // string for browser
+  virtual const std::string& title(); // string for browser
 
   // FLTK 1 name of the underlying type
-  virtual const char* type_name() = 0; // type for code output
+  virtual const std::string& type_name() = 0; // type for code output
 
   // fltk 2 name for back compatibility
-  virtual const char* alt_type_name() { return type_name(); }
+  virtual const std::string& alt_type_name() { return type_name(); }
 
 
   // ---- Code Writer functions for generating source code for this widget

@@ -371,7 +371,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
   }
 
   // Width=18: Draw the icon associated with the type.
-  Fl_Pixmap *pm = pixmap_for(l->type_name());
+  Fl_Pixmap *pm = pixmap_for(l->type_name().c_str());
   if (pm) pm->draw(X-18, Y);
 
   // Add tags on top of the icon for locked and protected types.
@@ -424,20 +424,20 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
       fl_font(func_font, textsize());
       if (l->selected) fl_color(fl_contrast(func_color, FL_SELECTION_COLOR));
       else fl_color(func_color);
-      copy_trunc(buf, l->title(), 55, 0, 0);
+      copy_trunc(buf, l->title().c_str(), 55, 0, 0);
     } else {
       if (dynamic_cast<Comment_Node*>(l)) {
         // -- comment (in main line, not above entry)
         fl_font(comment_font, textsize());
         if (l->selected) fl_color(fl_contrast(comment_color, FL_SELECTION_COLOR));
         else fl_color(comment_color);
-        copy_trunc(buf, l->title(), 55, 0, 0);
+        copy_trunc(buf, l->title().c_str(), 55, 0, 0);
       } else {
         // -- code
         fl_font(code_font, textsize());
         if (l->selected) fl_color(fl_contrast(code_color, FL_SELECTION_COLOR));
         else fl_color(code_color);
-        copy_trunc(buf, l->title(), 55, 0, 1);
+        copy_trunc(buf, l->title().c_str(), 55, 0, 1);
       }
     }
     fl_draw(buf, X, Y+13);
@@ -467,7 +467,7 @@ int Node_Browser::item_width(void *v) const {
   int W = 3 + 13 + 18 + l->level * 12;
 
   if (l->is_widget() || l->is_class()) {
-    const char* c = l->type_name();
+    const char* c = l->type_name().c_str();
     if (!strncmp(c,"Fl_",3)) c += 3;
     fl_font(textfont(), textsize());
     W += int(fl_width(c) + fl_width('n'));
@@ -480,7 +480,7 @@ int Node_Browser::item_width(void *v) const {
       W += int(fl_width(buf));
     }
   } else {
-    copy_trunc(buf, l->title(), 55, 0, 0);
+    copy_trunc(buf, l->title().c_str(), 55, 0, 0);
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     W += int(fl_width(buf));
   }

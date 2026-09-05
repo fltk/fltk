@@ -263,8 +263,6 @@ void Group_Node::copy_properties() {
 
 Pack_Node Pack_Node::prototype;      // the "factory"
 
-const char pack_type_name[] = "Fl_Pack";
-
 Fl_Menu_Item pack_type_menu[] = {
   {"HORIZONTAL", 0, nullptr, (void*)Fl_Pack::HORIZONTAL},
   {"VERTICAL", 0, nullptr, (void*)Fl_Pack::VERTICAL},
@@ -284,8 +282,6 @@ void Pack_Node::copy_properties()
 }
 
 // ---- Flex_Node --------------------------------------------------- MARK: -
-
-const char flex_type_name[] = "Fl_Flex";
 
 Fl_Menu_Item flex_type_menu[] = {
   {"HORIZONTAL", 0, nullptr, (void*)Fl_Flex::HORIZONTAL},
@@ -725,8 +721,6 @@ void Table_Node::ideal_size(int &w, int &h) {
 
 Tabs_Node Tabs_Node::prototype;
 
-const char tabs_type_name[] = "Fl_Tabs";
-
 // Override group's resize behavior to do nothing to children:
 void Fl_Tabs_Proxy::resize(int X, int Y, int W, int H) {
   if (Fluid.proj.tree.allow_layout > 0) {
@@ -793,8 +787,6 @@ Fl_Widget *Tabs_Node::enter_live_mode() {
 
 Scroll_Node Scroll_Node::prototype;  // the "factory"
 
-const char scroll_type_name[] = "Fl_Scroll";
-
 Fl_Menu_Item scroll_type_menu[] = {
   {"BOTH", 0, nullptr, nullptr/*(void*)Fl_Scroll::BOTH*/},
   {"HORIZONTAL", 0, nullptr, (void*)Fl_Scroll::HORIZONTAL},
@@ -829,8 +821,6 @@ void Scroll_Node::copy_properties() {
 
 Tile_Node Tile_Node::prototype;      // the "factory"
 
-const char tile_type_name[] = "Fl_Tile";
-
 // live mode support
 Fl_Widget* Tile_Node::enter_live_mode() {
   Fl_Group *grp = new Fl_Tile(o->x(), o->y(), o->w(), o->h());
@@ -845,8 +835,6 @@ void Tile_Node::copy_properties() {
 // ---- Wizard_Node ------------------------------------------------ MARK: -
 
 Wizard_Node Wizard_Node::prototype;  // the "factory"
-
-const char wizard_type_name[] = "Fl_Wizard";
 
 // Override group's resize behavior to do nothing to children:
 void Fl_Wizard_Proxy::resize(int X, int Y, int W, int H) {

@@ -65,8 +65,8 @@ public:
   void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
   int ismain() { return name().empty(); }
-  const char *type_name() override {return "Function";}
-  const char *title() override { return !name().empty() ? name().c_str() : "main()"; }
+  const std::string& type_name() override { static const std::string s = "Function"; return s; }
+  const std::string& title() override; // { return !name().empty() ? name() : "main()"; }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_public() const override;
@@ -106,7 +106,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override { }
   void open() override;
-  const char *type_name() override {return "code";}
+  const std::string& type_name() override { static const std::string s = "code"; return s; }
   int is_code_block() const override {return 0;}
   int is_public() const override { return -1; }
   int is_editing();
@@ -141,7 +141,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
-  const char *type_name() override {return "codeblock";}
+  const std::string& type_name() override { static const std::string s = "codeblock"; return s; }
   int is_code_block() const override {return 1;}
   int can_have_children() const override {return 1;}
   int is_public() const override { return -1; }
@@ -171,7 +171,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override { }
   void open() override;
-  const char *type_name() override {return "decl";}
+  const std::string& type_name() override { static const std::string s = "decl"; return s; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int is_public() const override;
@@ -201,7 +201,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override {}
   void open() override;
-  const char *type_name() override {return "data";}
+  const std::string& type_name() override { static const std::string s = "data"; return s; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   void filename(const std::string& fn) { storestring(fn, filename_); }
@@ -238,7 +238,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
-  const char *type_name() override {return "declblock";}
+  const std::string& type_name() override { static const std::string s = "declblock"; return s; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int can_have_children() const override {return 1;}
@@ -277,7 +277,7 @@ public:
   void write_static(fluid::io::Code_Writer& f) override;
   void write_code1(fluid::io::Code_Writer& f) override;
   void open() override;
-  const char *type_name() override {return "preprocessor";}
+  const std::string& type_name() override { static const std::string s = "preprocessor"; return s; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int is_public() const override { return (use_ != Use::VERBATIM_CXX); }
@@ -304,7 +304,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override { }
   void open() override;
-  const char *type_name() override {return "comment";}
+  const std::string& type_name() override { static const std::string s = "comment"; return s; }
   void write_properties(fluid::io::Project_Writer &f) override;
   void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int is_public() const override { return 1; }
@@ -339,7 +339,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
-  const char *type_name() override {return "class";}
+  const std::string& type_name() override { static const std::string s = "class"; return s; }
   int can_have_children() const override {return 1;}
   int is_decl_block() const override {return 1;}
   int is_class() const override {return 1;}

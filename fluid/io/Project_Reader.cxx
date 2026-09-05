@@ -342,7 +342,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
     }
 
     if (strcmp(c,"{")) {
-      read_error("Missing property list for '%.32s' in line %d",t->title(), lineno);
+      read_error("Missing property list for '%.32s' in line %d",t->title().c_str(), lineno);
       goto REUSE_C;
     }
 
@@ -356,7 +356,7 @@ Node *Project_Reader::read_children(Node *p, int merge, Strategy strategy, char 
     if (t->can_have_children()) {
       c = read_word(1);
       if (strcmp(c,"{")) {
-        read_error("Missing child list for '%.32s' in line %d",t->title(), lineno);
+        read_error("Missing child list for '%.32s' in line %d",t->title().c_str(), lineno);
         goto REUSE_C;
       }
       read_children(t, 0, Strategy::FROM_FILE_AS_LAST_CHILD, skip_options);

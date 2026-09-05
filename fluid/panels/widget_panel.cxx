@@ -1634,7 +1634,7 @@ static void cb_Visible(Fl_Light_Button* o, void* v) {
       }
       n ? q->o->show() : q->o->hide();
       q->redraw();
-      if (n && q->parent && q->parent->type_name()) {
+      if (n && q->parent) {
         if (dynamic_cast<Tabs_Node*>(q->parent)) {
           ((Fl_Tabs *)q->o->parent())->value(q->o);
         } else if (dynamic_cast<Wizard_Node*>(q->parent)) {
@@ -1647,7 +1647,7 @@ static void cb_Visible(Fl_Light_Button* o, void* v) {
       redraw_browser();
     }
   }
-//ﬂ ▲ ----------~=~~=-~-=~~~-----------~~-~~=~-~--=~-=~=~=-= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~=-~-=~~~-----------~--=-~~~~=----=--~==~ ▲ ﬂ//
 }
 
 static void cb_Active(Fl_Light_Button* o, void* v) {
@@ -2303,7 +2303,7 @@ static void cb_10(Fl_Input* o, void* v) {
       } else {
         o->value(current_widget->name().c_str());
         o->show();
-        snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
+        snprintf(buf, sizeof(buf), "%s Properties", current_widget->title().c_str());
       }
        the_panel->label(buf);
     } else {
@@ -2312,10 +2312,10 @@ static void cb_10(Fl_Input* o, void* v) {
         // I don't update window title, as it probably is being closed
         // and wm2 (a window manager) barfs if you retitle and then
         // hide a window:
-        // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title());
+        // ((Fl_Window*)(o->parent()->parent()->parent()))->label(current_widget->title().c_str());
       }
     }
-//ﬂ ▲ ----------~=~~~~-~=-~------------~=~~=~==~~-~~-=~=~=~= ▲ ﬂ//
+//ﬂ ▲ ----------~=~~~~-~=-~-----------~~~--==-~==~-~~=~---~- ▲ ﬂ//
 }
 
 static void cb_11(Fl_Choice* o, void* v) {

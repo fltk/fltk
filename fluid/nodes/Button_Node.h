@@ -31,8 +31,8 @@ private:
   Fl_Menu_Item *subtypes() override;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override { return "Fl_Button"; }
-  const char *alt_type_name() override { return "fltk::Button"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Button"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Button_Node(); }
   int is_button() const override { return 1; }
@@ -53,8 +53,8 @@ public:
   static Return_Button_Node prototype;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override { return "Fl_Return_Button"; }
-  const char *alt_type_name() override { return "fltk::ReturnButton"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Return_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ReturnButton"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Return_Button_Node(); }
 };
@@ -73,8 +73,8 @@ public:
   typedef Button_Node super;
   static Repeat_Button_Node prototype;
 public:
-  const char *type_name() override { return "Fl_Repeat_Button"; }
-  const char *alt_type_name() override { return "fltk::RepeatButton"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Repeat_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::RepeatButton"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Repeat_Button_Node(); }
 };
@@ -91,8 +91,8 @@ public:
   static Light_Button_Node prototype;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override { return "Fl_Light_Button"; }
-  const char *alt_type_name() override { return "fltk::LightButton"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Light_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::LightButton"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Light_Button_Node(); }
 };
@@ -109,8 +109,8 @@ public:
   static Check_Button_Node prototype;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override { return "Fl_Check_Button"; }
-  const char *alt_type_name() override { return "fltk::CheckButton"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Check_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::CheckButton"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Check_Button_Node(); }
 };
@@ -127,8 +127,8 @@ public:
   static Round_Button_Node prototype;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override { return "Fl_Round_Button"; }
-  const char *alt_type_name() override { return "fltk::RadioButton"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Round_Button"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::RadioButton"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override;
   Widget_Node *_make() override { return new Round_Button_Node(); }
 };

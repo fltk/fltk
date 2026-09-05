@@ -51,8 +51,8 @@ public:
   static Grid_Node prototype;
 public:
   Grid_Node();
-  const char *type_name() override {return "Fl_Grid";}
-  const char *alt_type_name() override {return "fltk::GridGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Grid"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::GridGroup"; return s; }
   Widget_Node *_make() override { return new Grid_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) override;
   void write_properties(fluid::io::Project_Writer &f) override;

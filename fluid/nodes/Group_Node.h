@@ -51,8 +51,8 @@ public:
   static Group_Node prototype;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override {return "Fl_Group";}
-  const char *alt_type_name() override {return "fltk::Group";}
+  const std::string& type_name() override { static const std::string s = "Fl_Group"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Group"; return s; }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Group_Proxy *g = new Fl_Group_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Widget_Node *_make() override {return new Group_Node();}
@@ -68,7 +68,6 @@ public:
 
 // ---- Pack_Node --------------------------------------------------- MARK: -
 
-extern const char pack_type_name[];
 extern Fl_Menu_Item pack_type_menu[];
 
 class Pack_Node : public Group_Node
@@ -79,8 +78,8 @@ public:
 private:
   Fl_Menu_Item *subtypes() override {return pack_type_menu;}
 public:
-  const char *type_name() override {return pack_type_name;}
-  const char *alt_type_name() override {return "fltk::PackedGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Pack"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::PackedGroup"; return s; }
   Widget_Node *_make() override {return new Pack_Node();}
   Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
@@ -88,7 +87,6 @@ public:
 
 // ---- Flex_Node --------------------------------------------------- MARK: -
 
-extern const char flex_type_name[];
 extern Fl_Menu_Item flex_type_menu[];
 
 class Fl_Flex_Proxy : public Fl_Flex {
@@ -110,8 +108,8 @@ private:
   int suspend_auto_layout;
 public:
   Flex_Node() : fixedSizeTupleSize(0), fixedSizeTuple(nullptr), suspend_auto_layout(0) { }
-  const char *type_name() override {return flex_type_name;}
-  const char *alt_type_name() override {return "fltk::FlexGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Flex"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::FlexGroup"; return s; }
   Widget_Node *_make() override { return new Flex_Node(); }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
@@ -143,8 +141,8 @@ public:
   static Table_Node prototype;
 public:
   void ideal_size(int &w, int &h) override;
-  const char *type_name() override { return "Fl_Table"; }
-  const char *alt_type_name() override { return "fltk::TableGroup"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Table"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::TableGroup"; return s; }
   Widget_Node *_make() override { return new Table_Node(); }
   Fl_Widget *widget(int X, int Y, int W, int H) override;
   Fl_Widget *enter_live_mode() override;
@@ -154,8 +152,6 @@ public:
 };
 
 // ---- Tabs_Node --------------------------------------------------- MARK: -
-
-extern const char tabs_type_name[];
 
 class Fl_Tabs_Proxy : public Fl_Tabs {
 public:
@@ -170,8 +166,8 @@ public:
   typedef Group_Node super;
   static Tabs_Node prototype;
 public:
-  const char *type_name() override {return tabs_type_name;}
-  const char *alt_type_name() override {return "fltk::TabGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Tabs"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::TabGroup"; return s; }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Tabs_Proxy *g = new Fl_Tabs_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Widget_Node *_make() override {return new Tabs_Node();}
@@ -183,7 +179,6 @@ public:
 
 // ---- Scroll_Node ------------------------------------------------- MARK: -
 
-extern const char scroll_type_name[];
 extern Fl_Menu_Item scroll_type_menu[];
 
 class Scroll_Node : public Group_Node
@@ -194,8 +189,8 @@ public:
 private:
   Fl_Menu_Item *subtypes() override {return scroll_type_menu;}
 public:
-  const char *type_name() override {return scroll_type_name;}
-  const char *alt_type_name() override {return "fltk::ScrollGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Scroll"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ScrollGroup"; return s; }
   Widget_Node *_make() override {return new Scroll_Node();}
   Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
@@ -203,16 +198,14 @@ public:
 
 // ---- Tile_Node --------------------------------------------------- MARK: -
 
-extern const char tile_type_name[];
-
 class Tile_Node : public Group_Node
 {
 public:
   typedef Group_Node super;
   static Tile_Node prototype;
 public:
-  const char *type_name() override {return tile_type_name;}
-  const char *alt_type_name() override {return "fltk::TileGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Tile"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::TileGroup"; return s; }
   Widget_Node *_make() override {return new Tile_Node();}
   Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
@@ -227,16 +220,14 @@ public:
   void draw() override;
 };
 
-extern const char wizard_type_name[];
-
 class Wizard_Node : public Group_Node
 {
 public:
   typedef Group_Node super;
   static Wizard_Node prototype;
 public:
-  const char *type_name() override {return wizard_type_name;}
-  const char *alt_type_name() override {return "fltk::WizardGroup";}
+  const std::string& type_name() override { static const std::string s = "Fl_Wizard"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::WizardGroup"; return s; }
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Wizard_Proxy *g = new Fl_Wizard_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   Widget_Node *_make() override {return new Wizard_Node();}

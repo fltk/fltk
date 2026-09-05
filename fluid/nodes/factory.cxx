@@ -116,8 +116,8 @@ public:
     h = 160;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Browser_"; }
-  const char *alt_type_name() override { return "fltk::Browser_"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Browser_"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Browser_"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Browser* b = new Fl_Browser(x, y, w, h);
     return b;
@@ -140,8 +140,8 @@ public:
   typedef Browser_Base_Node super;
   static Browser_Node prototype;
 public:
-  const char *type_name() override { return "Fl_Browser"; }
-  const char *alt_type_name() override { return "fltk::Browser"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Browser"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Browser"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Browser* b = new Fl_Browser(x, y, w, h);
     // Fl_Browser::add calls fl_height(), which requires the X display open.
@@ -173,8 +173,8 @@ public:
   typedef Browser_Base_Node super;
   static Check_Browser_Node prototype;
 public:
-  const char *type_name() override { return "Fl_Check_Browser"; }
-  const char *alt_type_name() override { return "fltk::CheckBrowser"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Check_Browser"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::CheckBrowser"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Check_Browser* b = new Fl_Check_Browser(x, y, w, h);
     // Fl_Check_Browser::add calls fl_height(), which requires the X display open.
@@ -207,8 +207,8 @@ public:
   typedef Browser_Node super;
   static File_Browser_Node prototype;
 public:
-  const char *type_name() override { return "Fl_File_Browser"; }
-  const char *alt_type_name() override { return "fltk::FileBrowser"; }
+  const std::string& type_name() override { static const std::string s = "Fl_File_Browser"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::FileBrowser"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_File_Browser* b = new Fl_File_Browser(x, y, w, h);
     if (!Fluid.batch_mode) b->load(".");
@@ -241,8 +241,8 @@ public:
     h = 160;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Tree"; }
-  const char *alt_type_name() override { return "fltk::TreeBrowser"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Tree"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::TreeBrowser"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Tree* b = new Fl_Tree(x, y, w, h);
     if (!Fluid.batch_mode) {
@@ -294,8 +294,8 @@ public:
     h = 120;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Help_View"; }
-  const char *alt_type_name() override { return "fltk::HelpView"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Help_View"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::HelpView"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Help_View *myo = new Fl_Help_View(x, y, w, h);
     if (!Fluid.batch_mode) {
@@ -358,8 +358,8 @@ public:
     w = layout->textsize_not_null() * 4 + 4 * h; // make room for the arrows
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Counter"; }
-  const char *alt_type_name() override { return "fltk::Counter"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Counter"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Counter"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Counter(x, y, w, h, "counter:");
   }
@@ -386,8 +386,8 @@ public:
     w = 3 * h;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Adjuster"; }
-  const char *alt_type_name() override { return "fltk::Adjuster"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Adjuster"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Adjuster"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Adjuster(x, y, w, h);
   }
@@ -421,8 +421,8 @@ public:
     w = 60; h = 60;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Dial"; }
-  const char *alt_type_name() override { return "fltk::Dial"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Dial"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Dial"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Dial(x, y, w, h);
   }
@@ -457,8 +457,8 @@ public:
     h = 4 * w;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Roller"; }
-  const char *alt_type_name() override { return "fltk::Roller"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Roller"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Roller"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Roller(x, y, w, h);
   }
@@ -520,8 +520,8 @@ private:
     return 1;
   }
 public:
-  const char *type_name() override { return "Fl_Value_Slider"; }
-  const char *alt_type_name() override { return "fltk::ValueSlider"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Value_Slider"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ValueSlider"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Value_Slider(x, y, w, h, "slider:");
   }
@@ -568,8 +568,8 @@ public:
     w = layout->textsize_not_null() * 4 + 8;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Value_Output"; }
-  const char *alt_type_name() override { return "fltk::ValueOutput"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Value_Output"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ValueOutput"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Value_Output *myo = new Fl_Value_Output(x, y, w, h, "value:");
     return myo;
@@ -620,8 +620,8 @@ public:
     w = layout->textsize_not_null() * 10 + 8;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_File_Input"; }
-  const char *alt_type_name() override { return "fltk::FileInput"; }
+  const std::string& type_name() override { static const std::string s = "Fl_File_Input"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::FileInput"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_File_Input *myo = new Fl_File_Input(x, y, w, h, "file:");
     myo->value("/usr/include/FL/Fl.H");
@@ -652,8 +652,8 @@ public:
 private:
   Fl_Menu_Item *subtypes() override { return output_type_menu; }
 public:
-  const char *type_name() override { return "Fl_Output"; }
-  const char *alt_type_name() override { return "fltk::Output"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Output"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Output"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Output *myo = new Fl_Output(x, y, w, h, "output:");
     myo->value("Text Output");
@@ -687,8 +687,8 @@ public:
   typedef Text_Display_Node super;
   static Text_Editor_Node prototype;
 public:
-  const char *type_name() override {return "Fl_Text_Editor";}
-  const char *alt_type_name() override {return "fltk::TextEditor";}
+  const std::string& type_name() override { static const std::string s = "Fl_Text_Editor"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::TextEditor"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Text_Editor *myo = new Fl_Text_Editor(x, y, w, h);
     if (!Fluid.batch_mode) {
@@ -756,9 +756,9 @@ public:
   typedef Widget_Node super;
   static Terminal_Node prototype;
 public:
-  const char *type_name() override { return "Fl_Terminal"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Terminal"; return s; }
   // Older .fl files with Fl_Simple_Terminal will create a Fl_Terminal instead.
-  const char *alt_type_name() override { return "Fl_Simple_Terminal"; }
+  const std::string& alt_type_name() override { static const std::string s = "Fl_Simple_Terminal"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Widget *ret = nullptr;
     if (Fluid.batch_mode) {
@@ -816,8 +816,8 @@ public:
     w = 100; h = 100;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Box"; }
-  const char *alt_type_name() override { return "fltk::Widget"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Box"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Widget"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Box(x, y, w, h, "label");
   }
@@ -843,8 +843,8 @@ public:
     w = 80; h = 80;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Clock"; }
-  const char *alt_type_name() override { return "fltk::Clock"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Clock"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Clock"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     return new Fl_Clock(x, y, w, h);
   }
@@ -873,8 +873,8 @@ public:
     w = layout->labelsize * 12;
     fluid::app::Snap_Action::better_size(w, h);
   }
-  const char *type_name() override { return "Fl_Progress"; }
-  const char *alt_type_name() override { return "fltk::ProgressBar"; }
+  const std::string& type_name() override { static const std::string s = "Fl_Progress"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::ProgressBar"; return s; }
   Fl_Widget *widget(int x, int y, int w, int h) override {
     Fl_Progress *myo = new Fl_Progress(x, y, w, h, "label");
     myo->value(50);
@@ -1294,12 +1294,12 @@ void fill_in_New_Menu() {
     if (m->user_data()) {
       Node *t = (Node*)m->user_data();
       if (m->text) {
-        make_iconlabel( m, pixmap_for(t->type_name()), m->label() );
+        make_iconlabel( m, pixmap_for(t->type_name().c_str()), m->label() );
       } else {
-        const char *n = t->type_name();
+        const char *n = t->type_name().c_str();
         if (!strncmp(n,"Fl_",3)) n += 3;
         if (!strncmp(n,"fltk::",6)) n += 6;
-        make_iconlabel( m, pixmap_for(t->type_name()), n );
+        make_iconlabel( m, pixmap_for(t->type_name().c_str()), n );
       }
     }
   }
@@ -1317,9 +1317,9 @@ Node *typename_to_prototype(const char *inName)
     return nullptr;
   for (unsigned i = 0; i < sizeof(known_types)/sizeof(*known_types); i++) {
     Node *prototype = known_types[i];
-    if (fl_ascii_strcasecmp(inName, prototype->type_name())==0)
+    if (fl_ascii_strcasecmp(inName, prototype->type_name().c_str())==0)
       return prototype;
-    if (fl_ascii_strcasecmp(inName, prototype->alt_type_name())==0)
+    if (fl_ascii_strcasecmp(inName, prototype->alt_type_name().c_str())==0)
       return prototype;
   }
   return nullptr;

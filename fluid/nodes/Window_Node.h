@@ -96,8 +96,8 @@ public:
   const char *xclass; // junk string, used for shortcut
 
   Node *make(Strategy strategy) override;
-  const char *type_name() override {return "Fl_Window";}
-  const char *alt_type_name() override {return "fltk::Window";}
+  const std::string& type_name() override { static const std::string s = "Fl_Window"; return s; }
+  const std::string& alt_type_name() override { static const std::string s = "fltk::Window"; return s; }
   // Help the user create the required hierarchy for this widget
   bool node_creation_assistant(Strategy& strategy, Node*& anchor) override;
 
@@ -149,7 +149,7 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   Node *make(Strategy strategy) override;
-  const char *type_name() override {return "widget_class";}
+  const std::string& type_name() override { static const std::string s = "widget_class"; return s; }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_decl_block() const override {return 1;}

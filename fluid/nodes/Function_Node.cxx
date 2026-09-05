@@ -251,6 +251,11 @@ void Function_Node::open() {
   open_panel();
 }
 
+const std::string& Function_Node::title() {
+  static std::string main { "main()" };
+  return !name().empty() ? name() : main;
+}
+
 /**
  Return 1 if the function is global.
  \return 1 if public, 0 if local.
