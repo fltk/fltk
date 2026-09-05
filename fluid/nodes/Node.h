@@ -135,7 +135,7 @@ class Node
   // ---- Node Properties
 protected:
   /// Name of a widget, or code some non-widget Types
-  const char* name_ { nullptr };
+  std::string namestr_ { };
 
   /// Label text of a widget
   std::string label_ { };
@@ -278,8 +278,8 @@ public:
   // ---- Getter and setter for various properties
 public:
   // Name of the node, used for code generation and as a unique identifier in the project.
-  const char* name() const { return name_; }
-  void name(const char*);
+  const std::string& name() const { return namestr_; }
+  void name(const std::string&);
 
   // Label text of the node, used for widgets and windows.
   const std::string& label() const { return label_; }
@@ -364,10 +364,10 @@ public:
   virtual void write_parent_properties(fluid::io::Project_Writer& f, Node *child, bool encapsulate);
 
   // Read one property of this node, or call the parent if not recognized
-  virtual void read_property(fluid::io::Project_Reader& f, const char *);
+  virtual void read_property(fluid::io::Project_Reader& f, const std::string&);
 
   // Read properties that the parent stores for this node
-  virtual void read_parent_property(fluid::io::Project_Reader& f, Node *child, const char *property);
+  virtual void read_parent_property(fluid::io::Project_Reader& f, Node *child, const std::string& property);
 
   // Fixup nodes after all children are read
   virtual void postprocess_read() { }

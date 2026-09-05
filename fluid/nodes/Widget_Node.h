@@ -216,7 +216,7 @@ public:
   void write_properties(fluid::io::Project_Writer& f) override;
 
   // Read a property of this node, calls super class if property is not recognized
-  void read_property(fluid::io::Project_Reader& f, const char*) override;
+  void read_property(fluid::io::Project_Reader& f, const std::string&) override;
 
   // Back compatibility to Forms FDesign project files
   int read_fdesign(const char*, const char*) override;

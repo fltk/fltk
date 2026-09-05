@@ -402,7 +402,7 @@ void Node_Browser::item_draw(void *v, int X, int Y, int, int) const {
     else fl_color(class_color);
     fl_draw(c.c_str(), X, Y+13);
     X += int(fl_width(c.c_str())+fl_width('n'));
-    c = l->name() ? l->name() : "";
+    c = l->name();
     if (!c.empty()) {
       // -- name
       fl_font(name_font, textsize());
@@ -471,8 +471,8 @@ int Node_Browser::item_width(void *v) const {
     if (!strncmp(c,"Fl_",3)) c += 3;
     fl_font(textfont(), textsize());
     W += int(fl_width(c) + fl_width('n'));
-    c = l->name();
-    if (c) {
+    c = l->name().c_str();
+    if (c && *c) {
       fl_font(textfont()|FL_BOLD, textsize());
       W += int(fl_width(c));
     } else if (!l->label().empty()) {

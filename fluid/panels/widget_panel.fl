@@ -2386,12 +2386,11 @@ if (v == LOAD) {
       snprintf(buf, sizeof(buf), "Widget Properties (%d widgets)", numselected);
       o->hide();
     } else {
-      o->value(current_widget->name());
+      o->value(current_widget->name().c_str());
       o->show();
       snprintf(buf, sizeof(buf), "%s Properties", current_widget->title());
     }
-
-    the_panel->label(buf);
+     the_panel->label(buf);
   } else {
     if (numselected == 1) {
       current_widget->name(o->value());
@@ -2937,16 +2936,14 @@ if (v == LOAD) {
             label {Name:}
             callback {if (!current_node || !dynamic_cast<Data_Node*>(current_node)) return;
 Data_Node* nd = (Data_Node*)current_node;
-
-if (v == LOAD) {
-  o->value( nd->name() );
+ if (v == LOAD) {
+  o->value( nd->name().c_str() );
   the_panel->label("Inline Data Properties");
 } else {
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
-  {
-    nd->name( o->value() );
+  const std::string& nn = nd->name();
+  std::string ov = o->value();
+  if (nn != ov) {
+    nd->name(ov);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
@@ -3028,22 +3025,17 @@ o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
             label {Comment:}
             callback {if (!current_node || !dynamic_cast<Comment_Node*>(current_node)) return;
 Comment_Node* nd = (Comment_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Comment Properties");
-  const char *cmttext = nd->name();
-  o->buffer()->text( cmttext ? cmttext : "" );
+  o->buffer()->text( nd->name().c_str() );
 } else {
-  char *c = o->buffer()->text();
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, c) != 0))
-      || (!nn && (strcmp("", c) != 0)) )
-  {
+  std::string c = o->buffer()->text();
+  const std::string& nn = nd->name();
+  if (c != nn) {
     nd->name(c);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);
 }}
             xywh {95 45 310 235} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 6 textsize 11 textcolor 58 resizable
             code3 {o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
@@ -3290,39 +3282,26 @@ if (v == LOAD) {
 Class_Node* nd = (Class_Node*)current_node;
  if (v == LOAD) {
   the_panel->label("Class Properties");
-  o->value( nd->name() );
+  o->value( nd->name().c_str() );
 } else {
-  const char *nn = nd->name();
-  char *nv = strdup( o->value() );
+  const std::string& nn = nd->name();
+  std::string nv = o->value();
   // There is an inconsistency in the project file reader, so this string
-  // must not coantain anything but alphanumeric and underscore characters.
-  char *s = (char*)nv;
-  char *d = (char*)nv;
-  while (*s) {
-    if (fl_ascii_isalnum((unsigned char)*s) || *s == '_') {
-      *d++ = *s;
+  // must not contain anything but alphanumeric and underscore characters.
+  std::string filtered;
+  for (char c : nv) {
+    if (fl_ascii_isalnum((unsigned char)c) || c == '_') {
+      filtered += c;
     }
-    s++;
   }
-  *d = 0;
-  // The class name must not be empty either
-  if (*nv == 0) {
-    free((void*)nv);
-    nv = strdup("MyClass");
+  if (filtered.empty()) {
+    filtered = "MyClass";
   }
-  // The class name may have changed, so update the widget
-  o->value( nv );
-  // Now copy the new name into the node if it changed
-  if (   ( nn && (strcmp(nn, nv) != 0))
-      || (!nn && (strcmp("", nv) != 0)) )
-  {
-    nd->name( nv );
+  o->value(filtered.c_str());
+  if (nn != filtered) {
+    nd->name(filtered);
     Fluid.proj.set_modflag(1);
     redraw_browser();
-  }
-  // Don't forget to clean up
-  if (nv) {
-    free((void*)nv);
   }
 }}
             tooltip {class name, must be a single C++ keyword} xywh {95 75 305 20} labelfont 1 labelsize 11 textfont 4 textsize 11
@@ -3380,16 +3359,14 @@ o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
             label {Start Code:}
             callback {if (!current_node || !dynamic_cast<DeclBlock_Node*>(current_node)) return;
 DeclBlock_Node* nd = (DeclBlock_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Declaration Block Properties");
-  o->value( nd->name() );
+  o->value( nd->name().c_str() );
 } else {
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
-  {
-    nd->name( o->value() );
+  const std::string& nn = nd->name();
+  std::string ov = o->value();
+  if (nn != ov) {
+    nd->name(ov);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
@@ -3580,16 +3557,14 @@ if (v == LOAD) {
             label {Directive:}
             callback {if (!current_node || !dynamic_cast<Preprocessor_Node*>(current_node)) return;
 Preprocessor_Node* nd = (Preprocessor_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Preprocessor Directive Properties");
-  o->value( nd->name() );
+  o->value( nd->name().c_str() );
 } else {
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
-  {
-    nd->name( o->value() );
+  const std::string& nn = nd->name();
+  std::string ov = o->value();
+  if (nn != ov) {
+    nd->name(ov);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
@@ -3728,22 +3703,17 @@ o->size_range(1, 25, 55);}
                 label {Declaration:}
                 callback {if (!current_node || !dynamic_cast<Decl_Node*>(current_node)) return;
 Decl_Node* nd = (Decl_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Declaration Properties");
-  const char *cmttext = nd->name();
-  o->buffer()->text( cmttext ? cmttext : "" );
+  o->buffer()->text( nd->name().c_str() );
 } else {
-  char *c = o->buffer()->text();
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, c) != 0))
-      || (!nn && (strcmp("", c) != 0)) )
-  {
+  std::string c = o->buffer()->text();
+  const std::string& nn = nd->name();
+  if (nn != c) {
     nd->name(c);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);
 }}
                 tooltip {a declaration: `int x;`, an external symbol: `extern int foo();`,
 a `\#` directive: `\#include <foo.h>`, a typedef `typedef char byte;`,
@@ -3795,16 +3765,14 @@ o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
             label {Start Code:}
             callback {if (!current_node || !dynamic_cast<CodeBlock_Node*>(current_node)) return;
 CodeBlock_Node* nd = (CodeBlock_Node*)current_node;
-
-if (v == LOAD) {
-  o->value( nd->name() );
+ if (v == LOAD) {
+  o->value( nd->name().c_str() );
   the_panel->label("Code Block Properties");
 } else {
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, o->value()) != 0))
-      || (!nn && (strcmp("", o->value()) != 0)) )
-  {
-    nd->name( o->value() );
+  const std::string& nn = nd->name();
+  std::string ov = o->value();
+  if (nn != ov) {
+    nd->name(ov);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
@@ -3858,16 +3826,13 @@ o->add_key_binding(FL_Tab, 0, use_tab_navigation);}
 Code_Node* nd = (Code_Node*)current_node;
  if (v == LOAD) {
   the_panel->label("Code Editor");
-  const char *cmttext = nd->name();
-  o->buffer()->text( cmttext ? cmttext : "" );
+  o->buffer()->text( nd->name().c_str() );
   o->insert_position(nd->cursor_position());
   o->scroll(nd->code_input_scroll_row(), nd->code_input_scroll_col());
 } else {
-  char *c = o->buffer()->text();
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, c) != 0))
-      || (!nn && (strcmp("", c) != 0)) )
-  {
+  std::string c = o->buffer()->text();
+  const std::string& nn = nd->name();
+  if (c != nn) {
     nd->name(c);
     Fluid.proj.set_modflag(1);
     redraw_browser();
@@ -3875,7 +3840,6 @@ Code_Node* nd = (Code_Node*)current_node;
   nd->save_editor_state(o->insert_position(),
                         o->scroll_row(),
                         o->scroll_col());
-  free(c);
 }}
             xywh {15 40 390 315} box DOWN_BOX labelsize 11 when 15 textfont 4 textsize 11 resizable
             code0 {\#include "widgets/Code_Editor.h"}
@@ -4009,22 +3973,17 @@ Name and
 Args:}
                 callback {if (!current_node || !dynamic_cast<Function_Node*>(current_node)) return;
 Function_Node* nd = (Function_Node*)current_node;
-
-if (v == LOAD) {
+ if (v == LOAD) {
   the_panel->label("Function Properties");
-  const char *cmttext = nd->name();
-  o->buffer()->text( cmttext ? cmttext : "" );
+  o->buffer()->text( nd->name().c_str() );
 } else {
-  char *c = o->buffer()->text();
-  const char *nn = nd->name();
-  if (   ( nn && (strcmp(nn, c) != 0))
-      || (!nn && (strcmp("", c) != 0)) )
-  {
+  std::string c = o->buffer()->text();
+  const std::string& nn = nd->name();
+  if (c != nn) {
     nd->name(c);
     Fluid.proj.set_modflag(1);
     redraw_browser();
   }
-  free(c);
 }}
                 tooltip {function name and args, or blank for `main(..)`} xywh {95 100 310 50} labelfont 1 labelsize 11 align 132 textfont 4 textsize 11 resizable
                 code0 {\#include "widgets/Code_Editor.h"}

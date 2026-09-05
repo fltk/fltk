@@ -37,7 +37,7 @@ public:
   Widget_Node *_make() override { return new Button_Node(); }
   int is_button() const override { return 1; }
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   void copy_properties() override;
 };
 

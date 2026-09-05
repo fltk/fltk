@@ -108,7 +108,7 @@ public:
   uchar *read_image(int &ww, int &hh);  // Read an image of the window
 
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int read_fdesign(const char*, const char*) override;
 
   void add_child(Node*, Node*) override;
@@ -144,7 +144,7 @@ public:
   char wc_relative; // if 1, reposition all children, if 2, reposition and resize
 
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
 
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;

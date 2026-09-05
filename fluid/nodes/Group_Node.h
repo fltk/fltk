@@ -116,7 +116,7 @@ public:
   Fl_Widget *widget(int X,int Y,int W,int H) override {
     Fl_Flex *g = new Fl_Flex_Proxy(X,Y,W,H); Fl_Group::current(nullptr); return g;}
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   Fl_Widget *enter_live_mode() override;
   void copy_properties() override;
   void copy_properties_for_children() override;

@@ -551,7 +551,7 @@ int Mergeback::apply_code(long block_end, long block_start, unsigned long code_c
     std::string cb = tp->name(); cb += "\n";
     uint32_t project_crc = fluid::CRC32::block(cb);
     if (project_crc!=code_crc) {
-      tp->name(read_and_unindent_block(block_start, block_end).c_str());
+      tp->name(read_and_unindent_block(block_start, block_end));
       return 1;
     }
   }

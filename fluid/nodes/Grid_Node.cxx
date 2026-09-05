@@ -405,47 +405,47 @@ void Grid_Node::write_properties(fluid::io::Project_Writer &f)
   }
 }
 
-void Grid_Node::read_property(fluid::io::Project_Reader &f, const char *c)
+void Grid_Node::read_property(fluid::io::Project_Reader &f, const std::string& c)
 {
   Fl_Grid* grid = (Fl_Grid*)o;
-  if (!strcmp(c,"dimensions")) {
+  if (c == "dimensions") {
     int rows = 3, cols = 3;
     if (sscanf(f.read_word(),"%d %d", &rows, &cols) == 2)
       grid->layout(rows, cols);
-  } else if (!strcmp(c,"margin")) {
+  } else if (c == "margin") {
     int lm, tm, rm, bm;
     if (sscanf(f.read_word(),"%d %d %d %d", &lm, &tm, &rm, &bm) == 4)
       grid->margin(lm, tm, rm, bm);
-  } else if (!strcmp(c,"gap")) {
+  } else if (c == "gap") {
     int rg, cg;
     if (sscanf(f.read_word(),"%d %d", &rg, &cg) == 2)
       grid->gap(rg, cg);
-  } else if (!strcmp(c,"rowheights")) {
+  } else if (c == "rowheights") {
     int rows = grid->rows();
     f.read_word(1); // "{"
     for (int i=0; i<rows; i++) grid->row_height(i, f.read_int());
     f.read_word(1); // "}"
-  } else if (!strcmp(c,"rowweights")) {
+  } else if (c == "rowweights") {
     int rows = grid->rows();
     f.read_word(1); // "{"
     for (int i=0; i<rows; i++) grid->row_weight(i, f.read_int());
     f.read_word(1); // "}"
-  } else if (!strcmp(c,"rowgaps")) {
+  } else if (c == "rowgaps") {
     int rows = grid->rows();
     f.read_word(1); // "{"
     for (int i=0; i<rows; i++) grid->row_gap(i, f.read_int());
     f.read_word(1); // "}"
-  } else if (!strcmp(c,"colwidths")) {
+  } else if (c == "colwidths") {
     int cols = grid->cols();
     f.read_word(1); // "{"
     for (int i=0; i<cols; i++) grid->col_width(i, f.read_int());
     f.read_word(1); // "}"
-  } else if (!strcmp(c,"colweights")) {
+  } else if (c == "colweights") {
     int cols = grid->cols();
     f.read_word(1); // "{"
     for (int i=0; i<cols; i++) grid->col_weight(i, f.read_int());
     f.read_word(1); // "}"
-  } else if (!strcmp(c,"colgaps")) {
+  } else if (c == "colgaps") {
     int cols = grid->cols();
     f.read_word(1); // "{"
     for (int i=0; i<cols; i++) grid->col_gap(i, f.read_int());
@@ -502,14 +502,14 @@ void Grid_Node::write_parent_properties(fluid::io::Project_Writer &f, Node *chil
 // NOTE: we have to do this in a loop just as ::read_property() in case a new
 //    property is added. In the current setup, all the remaining properties
 //    will be skipped
-void Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property) {
+void Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const std::string& property) {
   if (!child->is_true_widget()) {
     super::read_parent_property(f, child, property);
     return;
   }
   Fl_Grid *grid = (Fl_Grid*)o;
   Fl_Widget *child_widget = ((Widget_Node*)child)->o;
-  if (!strcmp(property, "location")) {
+  if (property == "location") {
     int row = -1, col = -1;
     const char *value = f.read_word();
     sscanf(value, "%d %d", &row, &col);
@@ -518,19 +518,19 @@ void Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, 
       int min_w = 20, min_h = 20;
       cell->minimum_size(min_w, min_h);
     }
-  } else if (!strcmp(property, "colspan")) {
+  } else if (property == "colspan") {
     int colspan = atoi(f.read_word());
     Fl_Grid::Cell *cell = grid->cell(child_widget);
     if (cell) cell->colspan(colspan);
-  } else if (!strcmp(property, "rowspan")) {
+  } else if (property == "rowspan") {
     int rowspan = atoi(f.read_word());
     Fl_Grid::Cell *cell = grid->cell(child_widget);
     if (cell) cell->rowspan(rowspan);
-  } else if (!strcmp(property, "align")) {
+  } else if (property == "align") {
     int align = atoi(f.read_word());
     Fl_Grid::Cell *cell = grid->cell(child_widget);
     if (cell) cell->align((Fl_Grid_Align)align);
-  } else if (!strcmp(property, "minsize")) {
+  } else if (property == "minsize") {
     int min_w = 20, min_h = 20;
     const char *value = f.read_word();
     sscanf(value, "%d %d", &min_w, &min_h);
@@ -542,7 +542,7 @@ void Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, 
 }
 
 void Grid_Node::write_code1(fluid::io::Code_Writer& f) {
-  const char *var = name() ? name() : "o";
+  const char *var = !name().empty() ? name().c_str() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
   Widget_Node::write_code1(f);
   int i, rows = grid->rows(), cols = grid->cols();
@@ -606,7 +606,7 @@ void Grid_Node::write_code1(fluid::io::Code_Writer& f) {
 }
 
 void Grid_Node::write_code2(fluid::io::Code_Writer& f) {
-  const char *var = name() ? name() : "o";
+  const char *var = !name().empty() ? name().c_str() : "o";
   Fl_Grid* grid = (Fl_Grid*)o;
   bool first_cell = true;
   for (int i=0; i<grid->children(); i++) {

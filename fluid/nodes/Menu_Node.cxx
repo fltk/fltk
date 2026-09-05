@@ -382,7 +382,7 @@ Submenu_Node Submenu_Node::prototype;
 // test functions in Widget_Node.C:
 bool is_function_name(const std::string& name);
 bool is_lambda(const std::string& name);
-const char *array_name(Widget_Node *o);
+std::string array_name(Widget_Node *o);
 
 // Search backwards to find the parent menu button and return it's name.
 // Also put in i the index into the button's menu item array belonging
@@ -399,7 +399,7 @@ std::string Menu_Item_Node::menu_name(fluid::io::Code_Writer& f, int& i) {
     i++;
   }
   if (!t) return "\n#error Menu_Item_Node::menu_name, invalid f\n";
-  return f.unique_id(t, "menu", (t->name()?t->name():""), t->label());
+  return f.unique_id(t, "menu", t->name(), t->label());
 }
 
 void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
@@ -534,17 +534,17 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     t = prev; while (t && dynamic_cast<Menu_Item_Node*>(t)) t = t->prev;
     for (Node* q = t->next; q && dynamic_cast<Menu_Item_Node*>(q); q = q->next) {
       Menu_Item_Node *m = (Menu_Item_Node*)q;
-      const char *c = array_name(m);
-      if (c) {
+      std::string c = array_name(m);
+      if (!c.empty()) {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
           int i;
           std::string n = ((Menu_Item_Node *)q)->menu_name(f, i);
-          f.write_c("Fl_Menu_Item* " + k + "::" + std::string(c) + " = " + k + "::" + n + " + " + std::to_string(i) + ";\n");
+          f.write_c("Fl_Menu_Item* " + k + "::" + c + " = " + k + "::" + n + " + " + std::to_string(i) + ";\n");
         } else {
           // if the name is an array, only define the array.
           // The actual assignment is in write_code1(fluid::io::Code_Writer& f)
-          f.write_c("Fl_Menu_Item* " + k + "::" + std::string(c) + ";\n");
+          f.write_c("Fl_Menu_Item* " + k + "::" + c + ";\n");
         }
       }
     }
@@ -678,16 +678,16 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
     }
   }
 
-  const char *c = array_name(this);
-  if (c) {
+  std::string c = array_name(this);
+  if (!c.empty()) {
     if (is_in_class()) {
       f.write_public(public_);
-      f.write_h(f.indent(1) + "static Fl_Menu_Item* " + std::string(c) + ";\n");
+      f.write_h(f.indent(1) + "static Fl_Menu_Item* " + c + ";\n");
     } else {
       if (c==name())
-        f.write_h("#define " + std::string(c) + " (" + mname + "+" + std::to_string(i) + ")\n");
+        f.write_h("#define " + c + " (" + mname + "+" + std::to_string(i) + ")\n");
       else
-        f.write_h("extern Fl_Menu_Item* " + std::string(c) + ";\n");
+        f.write_h("extern Fl_Menu_Item* " + c + ";\n");
     }
   }
 
@@ -703,8 +703,8 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
 
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
-  if (name() && strchr(name(), '[')) {
-    f.write_c(f.indent_plus(1) + std::string(name()) + " = &" + mname + "[" + std::to_string(i) + "];\n");
+  if (name().find('[') != std::string::npos) {
+    f.write_c(f.indent_plus(1) + name() + " = &" + mname + "[" + std::to_string(i) + "];\n");
   }
   if (active_image.asset) {
     start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
@@ -853,8 +853,8 @@ Node* Menu_Base_Node::click_test(int, int) {
 
 void Menu_Manager_Node::write_code2(fluid::io::Code_Writer& f) {
   if (next && dynamic_cast<Menu_Item_Node*>(next)) {
-    f.write_c(f.indent() + (name() ? name() : "o") + "->menu(" +
-            f.unique_id(this, "menu", (name()?name():""), label()) + ");\n");
+    f.write_c(f.indent() + (!name().empty() ? name() : "o") + "->menu(" +
+            f.unique_id(this, "menu", name(), label()) + ");\n");
   }
   Widget_Node::write_code2(f);
 }
@@ -980,7 +980,7 @@ void Menu_Bar_Node::write_static(fluid::io::Code_Writer& f) {
 void Menu_Bar_Node::write_code1(fluid::io::Code_Writer& f) {
   super::write_code1(f);
   if (is_sys_menu_bar() && is_in_class()) {
-    f.write_c(f.indent() + "((" + sys_menubar_proxy_name() + "*)" + (name() ? name() : "o") + ")->_parent_class = (void*)this;\n");
+    f.write_c(f.indent() + "((" + sys_menubar_proxy_name() + "*)" + (!name().empty() ? name() : "o") + ")->_parent_class = (void*)this;\n");
   }
 }
 

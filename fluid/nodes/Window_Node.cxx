@@ -1261,7 +1261,7 @@ void Window_Node::write_code1(fluid::io::Code_Writer& f) {
  \param f the source code output stream
  */
 void Window_Node::write_code2(fluid::io::Code_Writer& f) {
-  const char *var = is_class() ? "this" : name() ? name() : "o";
+  const char *var = is_class() ? "this" : !name().empty() ? name().c_str() : "o";
   // make the window modal or non-modal
   if (modal) {
     f.write_c(f.indent() + var + "->set_modal();\n");
@@ -1310,27 +1310,27 @@ void Window_Node::write_properties(fluid::io::Project_Writer &f) {
   if (o->visible() || override_visible_) f.write_string("visible");
 }
 
-void Window_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"modal")) {
+void Window_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "modal") {
     modal = 1;
-  } else if (!strcmp(c,"non_modal")) {
+  } else if (c == "non_modal") {
     non_modal = 1;
-  } else if (!strcmp(c, "visible")) {
+  } else if (c == "visible") {
     if (Fluid.batch_mode) // don't actually open any windows in batch mode
       override_visible_ = 1;
     else // in interactive mode, we simply show the window
       open_();
-  } else if (!strcmp(c,"noborder")) {
+  } else if (c == "noborder") {
     ((Fl_Window*)o)->border(0);
-  } else if (!strcmp(c,"xclass")) {
+  } else if (c == "xclass") {
     storestring(f.read_word(),xclass);
     ((Fl_Window*)o)->xclass(xclass);
-  } else if (!strcmp(c,"size_range")) {
+  } else if (c == "size_range") {
     int mw, mh, MW, MH;
     if (sscanf(f.read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
       sr_min_w = mw; sr_min_h = mh; sr_max_w = MW; sr_max_h = MH;
     }
-  } else if (!strcmp(c,"xywh")) {
+  } else if (c == "xywh") {
     Widget_Node::read_property(f, c);
     Fluid.pasteoffset = 0; // make it not apply to contents
   } else {
@@ -1404,10 +1404,10 @@ void Widget_Class_Node::write_properties(fluid::io::Project_Writer &f) {
     f.write_string("position_relative_rescale");
 }
 
-void Widget_Class_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"position_relative")) {
+void Widget_Class_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "position_relative") {
     wc_relative = 1;
-  } else if (!strcmp(c,"position_relative_rescale")) {
+  } else if (c == "position_relative_rescale") {
       wc_relative = 2;
   } else {
     Window_Node::read_property(f, c);
@@ -1416,14 +1416,9 @@ void Widget_Class_Node::read_property(fluid::io::Project_Reader &f, const char *
 
 // Convert A::B::C::D to D (i.e. keep only innermost name)
 // This is useful for classes that contain a namespace component
-static const char *trimclassname(const char *n) {
-  if (!n)
-    return nullptr;
-  const char *nn;
-  while((nn = strstr(n, "::"))) {
-    n = nn + 2;
-  }
-  return(n);
+static std::string trimclassname(const std::string& n) {
+  size_t pos = n.rfind("::");
+  return (pos == std::string::npos) ? n : n.substr(pos + 2);
 }
 
 
@@ -1440,29 +1435,29 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
   f.write_c("\n");
   f.write_h("\n");
   write_comment_h(f);
-  f.write_h("class " + std::string(name()) + " : public " + c + " {\n");
+  f.write_h("class " + name() + " : public " + c + " {\n");
   if (c.find("Window")!=c.npos) {
-    f.write_h(f.indent(1) + "void _" + std::string(trimclassname(name())) + "();\n");
+    f.write_h(f.indent(1) + "void _" + trimclassname(name()) + "();\n");
     f.write_h("public:\n");
-    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
-    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int W, int H, const char* L=nullptr);\n");
-    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "();\n");
+    f.write_h(f.indent(1) + trimclassname(name()) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
+    f.write_h(f.indent(1) + trimclassname(name()) + "(int W, int H, const char* L=nullptr);\n");
+    f.write_h(f.indent(1) + trimclassname(name()) + "();\n");
 
     // a constructor with all four dimensions plus label
-    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L) :\n");
+    f.write_c(name() + "::" + trimclassname(name()) + "(int X, int Y, int W, int H, const char* L) :\n");
     f.write_c(f.indent(1) + c + "(X, Y, W, H, L)\n{\n");
-    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
+    f.write_c(f.indent(1) + "_" + trimclassname(name()) + "();\n");
     f.write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
-    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int W, int H, const char* L) :\n");
+    f.write_c(name() + "::" + trimclassname(name()) + "(int W, int H, const char* L) :\n");
     f.write_c(f.indent(1) + c + "(0, 0, W, H, L)\n{\n");
     f.write_c(f.indent(1) + "clear_flag(16);\n");
-    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
+    f.write_c(f.indent(1) + "_" + trimclassname(name()) + "();\n");
     f.write_c("}\n\n");
 
     // a constructor that takes size and label from the Fluid database
-    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "() :\n");
+    f.write_c(name() + "::" + trimclassname(name()) + "() :\n");
     f.write_c(f.indent(1) + c + "(0, 0, " + std::to_string(o->w()) + ", " + std::to_string(o->h()) + ", ");
     if (!label().empty()) {
       f.write_cstring(label().c_str());
@@ -1471,15 +1466,15 @@ void Widget_Class_Node::write_code1(fluid::io::Code_Writer& f) {
     }
     f.write_c(")\n{\n");
     f.write_c(f.indent(1) + "clear_flag(16);\n");
-    f.write_c(f.indent(1) + "_" + std::string(trimclassname(name())) + "();\n");
+    f.write_c(f.indent(1) + "_" + trimclassname(name()) + "();\n");
     f.write_c("}\n\n");
 
-    f.write_c("void " + std::string(name()) + "::_" + std::string(trimclassname(name())) + "() {\n");
+    f.write_c("void " + name() + "::_" + trimclassname(name()) + "() {\n");
 //    f.write_c("%s%s* w = this;\n", f.indent(1), name());
   } else {
     f.write_h("public:\n");
-    f.write_h(f.indent(1) + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
-    f.write_c(std::string(name()) + "::" + std::string(trimclassname(name())) + "(int X, int Y, int W, int H, const char* L) :\n");
+    f.write_h(f.indent(1) + trimclassname(name()) + "(int X, int Y, int W, int H, const char* L=nullptr);\n");
+    f.write_c(name() + "::" + trimclassname(name()) + "(int X, int Y, int W, int H, const char* L) :\n");
     if (wc_relative==1)
       f.write_c(f.indent(1) + c + "(0, 0, W, H, L)\n{\n");
     else if (wc_relative==2)

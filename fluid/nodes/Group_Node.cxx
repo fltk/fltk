@@ -204,7 +204,7 @@ void Group_Node::write_code1(fluid::io::Code_Writer& f) {
 }
 
 void Group_Node::write_code2(fluid::io::Code_Writer& f) {
-  const char *var = name() ? name() : "o";
+  const std::string& var = !name().empty() ? name() : "o";
   if (!extra_code(3).empty()) {
     f.write_c_indented(extra_code(3), 0, '\n');
   }
@@ -382,19 +382,19 @@ void Flex_Node::write_properties(fluid::io::Project_Writer &f)
   }
 }
 
-void Flex_Node::read_property(fluid::io::Project_Reader &f, const char *c)
+void Flex_Node::read_property(fluid::io::Project_Reader &f, const std::string& c)
 {
   Fl_Flex* flex = (Fl_Flex*)o;
   suspend_auto_layout = 1;
-  if (!strcmp(c,"margin")) {
+  if (c == "margin") {
     int lm, tm, rm, bm;
     if (sscanf(f.read_word(),"%d %d %d %d",&lm,&tm,&rm,&bm) == 4)
       flex->margin(lm, tm, rm, bm);
-  } else if (!strcmp(c,"gap")) {
+  } else if (c == "gap") {
     int g;
     if (sscanf(f.read_word(),"%d",&g))
       flex->gap(g);
-  } else if (!strcmp(c,"fixed_size_tuples")) {
+  } else if (c == "fixed_size_tuples") {
     f.read_word(1); // must be '{'
     const char *nStr = f.read_word(1); // number of indices in table
     fixedSizeTupleSize = atoi(nStr);
@@ -431,7 +431,7 @@ void Flex_Node::postprocess_read()
 }
 
 void Flex_Node::write_code2(fluid::io::Code_Writer& f) {
-  const char *var = name() ? name() : "o";
+  const std::string& var = !name().empty() ? name() : "o";
   Fl_Flex* flex = (Fl_Flex*)o;
   int lm, tm, rm, bm;
   flex->margin(&lm, &tm, &rm, &bm);

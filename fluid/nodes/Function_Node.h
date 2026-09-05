@@ -64,14 +64,14 @@ public:
   void write_code1(fluid::io::Code_Writer& f) override;
   void write_code2(fluid::io::Code_Writer& f) override;
   void open() override;
-  int ismain() {return name_ == nullptr;}
+  int ismain() { return name().empty(); }
   const char *type_name() override {return "Function";}
-  const char *title() override { return name() ? name() : "main()"; }
+  const char *title() override { return !name().empty() ? name().c_str() : "main()"; }
   int can_have_children() const override {return 1;}
   int is_code_block() const override {return 1;}
   int is_public() const override;
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   bool has_signature(const std::string& return_type_regex, const std::string& function_sig_regex) const;
   std::string return_type() const { return return_type_; }
   void return_type(const std::string& t) { storestring(t, return_type_); }
@@ -146,7 +146,7 @@ public:
   int can_have_children() const override {return 1;}
   int is_public() const override { return -1; }
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   std::string end_code() const { return end_code_; }
   void end_code(const std::string& c) { storestring(c, end_code_); }
 };
@@ -173,7 +173,7 @@ public:
   void open() override;
   const char *type_name() override {return "decl";}
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int is_public() const override;
   char visibility() { return public_; }
   void visibility(char v) { public_ = v; }
@@ -203,7 +203,7 @@ public:
   void open() override;
   const char *type_name() override {return "data";}
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   void filename(const std::string& fn) { storestring(fn, filename_); }
   std::string filename() const { return filename_; }
   int output_format() { return output_format_; }
@@ -240,7 +240,7 @@ public:
   void open() override;
   const char *type_name() override {return "declblock";}
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int can_have_children() const override {return 1;}
   int is_decl_block() const override {return 1;}
   int is_public() const override;
@@ -279,7 +279,7 @@ public:
   void open() override;
   const char *type_name() override {return "preprocessor";}
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int is_public() const override { return (use_ != Use::VERBATIM_CXX); }
 };
 
@@ -306,7 +306,7 @@ public:
   void open() override;
   const char *type_name() override {return "comment";}
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
   int is_public() const override { return 1; }
   bool in_h() { return in_h_; }
   void in_h(bool v) { in_h_ = v; }
@@ -345,7 +345,7 @@ public:
   int is_class() const override {return 1;}
   int is_public() const override;
   void write_properties(fluid::io::Project_Writer &f) override;
-  void read_property(fluid::io::Project_Reader &f, const char *) override;
+  void read_property(fluid::io::Project_Reader &f, const std::string&) override;
 
   /** Get base class access and name. */
   std::string base_class() const { return base_class_; }

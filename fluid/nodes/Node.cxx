@@ -330,7 +330,6 @@ Node::~Node() {
   if (current_widget == this) current_widget = nullptr;
   if (current_node == this) current_node = nullptr;
   if (parent) parent->remove_child(this);
-  if (name_) free((void*)name_);
 }
 
 // Return the previous sibling in the tree structure or nullptr.
@@ -361,9 +360,8 @@ Node *Node::first_child() {
 
 // Generate a descriptive text for this item, to put in browser & window titles
 const char* Node::title() {
-  const char* c = name();
-  if (c)
-    return c;
+  if (!name().empty())
+    return name().c_str();
   return type_name();
 }
 
@@ -605,9 +603,9 @@ Node *Node::remove() {
 /**
  Update the name of the node.
  */
-void Node::name(const char *n) {
+void Node::name(const std::string& n) {
   int nostrip = dynamic_cast<Comment_Node*>(this) != nullptr;
-  if (storestring(n,name_,nostrip)) {
+  if (storestring(n,namestr_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
 }
@@ -618,7 +616,7 @@ void Node::name(const char *n) {
 void Node::label(const std::string& n) {
   if (storestring(n, label_, 1)) {
     setlabel(label_);
-    if (visible && !name_) widget_browser->redraw();
+    if (visible && name().empty()) widget_browser->redraw();
   }
 }
 
@@ -758,28 +756,28 @@ void Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read one property of the node from the project file.
  */
-void Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"uid")) {
+void Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "uid") {
     const char *hex = f.read_word();
     int x = 0;
     if (hex)
       sscanf(hex, "%04x", &x); // defaults x to 0 if format fails
     set_uid(x);
-  } else if (!strcmp(c,"label"))
+  } else if (c == "label")
     label(f.read_word());
-  else if (!strcmp(c,"user_data"))
+  else if (c == "user_data")
     user_data(f.read_word());
-  else if (!strcmp(c,"user_data_type"))
+  else if (c == "user_data_type")
     user_data_type(f.read_word());
-  else if (!strcmp(c,"callback"))
+  else if (c == "callback")
     callback(f.read_word());
-  else if (!strcmp(c,"comment"))
+  else if (c == "comment")
     comment(f.read_word());
-  else if (!strcmp(c,"open"))
+  else if (c == "open")
     folded_ = 0;
-  else if (!strcmp(c,"selected"))
+  else if (c == "selected")
     select(this,1);
-  else if (!strcmp(c,"parent_properties"))
+  else if (c == "parent_properties")
     if (parent) {
       const char *cc = f.read_word(1);
       if (strcmp(cc, "{")==0) {
@@ -796,7 +794,7 @@ void Node::read_property(fluid::io::Project_Reader &f, const char *c) {
       f.read_word();  // skip the entire block (this should generate a warning)
     }
   else
-    f.read_error("Unknown property \"%.32s\" in line %d", c, f.current_line_number());
+    f.read_error("Unknown property \"%.32s\" in line %d", c.c_str(), f.current_line_number());
 }
 
 /** Write parent properties into the child property list.
@@ -857,15 +855,15 @@ void Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bo
  does not support a property, it will propagate to its super class.
 
  \see Node::write_parent_properties(fluid::io::Project_Writer &f, Node *child, bool encapsulate)
- \see Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property)
+ \see Grid_Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const std::string& property)
 
- \param[in] f the project file writer
+ \param[in] f the project file reader
  \param[in] child read properties for this child
  \param[in] property the name of a property, or "}" when we reach the end of the list
  */
-void Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const char *property) {
+void Node::read_parent_property(fluid::io::Project_Reader &f, Node *child, const std::string& property) {
   (void)child;
-  f.read_error("Unknown parent property \"%s\" in line %d", property, f.current_line_number());
+  f.read_error("Unknown parent property \"%s\" in line %d", property.c_str(), f.current_line_number());
 }
 
 /**
@@ -977,7 +975,7 @@ void Node::copy_properties() {
  */
 std::string Node::callback_name(fluid::io::Code_Writer& f) {
   if (is_function_name(callback())) return callback();
-  return f.unique_id(this, "cb", (name()?name():""), label());
+  return f.unique_id(this, "cb", name(), label());
 }
 
 /**
@@ -993,7 +991,7 @@ std::string Node::class_name() const {
   Node* p = parent;
   while (p) {
     if (p->is_class()) {
-      return p->name() ? p->name() : "";
+      return p->name();
     }
     p = p->parent;
   }
@@ -1014,9 +1012,9 @@ std::string Node::full_class_name() const {
   Node* p = parent;
   std::string qualified_name;
   while (p) {
-    if (p->is_class() && p->name()) {
+    if (p->is_class() && !p->name().empty()) {
       if (!qualified_name.empty()) {
-        qualified_name = std::string(p->name()) + "::" + qualified_name;
+        qualified_name = p->name() + "::" + qualified_name;
       } else {
         qualified_name = p->name();
       }

@@ -230,14 +230,14 @@ void Function_Node::write_properties(fluid::io::Project_Writer &f) {
  Read function specific properties fron an .fl file.
  \param[in] c read from this string
  */
-void Function_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"private")) {
+void Function_Node::read_property(fluid::io::Project_Reader &f, const std::string&c) {
+  if (c == "private") {
     public_ = 0;
-  } else if (!strcmp(c,"protected")) {
+  } else if (c == "protected") {
     public_ = 2;
-  } else if (!strcmp(c,"C")) {
+  } else if (c == "C") {
     declare_c_ = 1;
-  } else if (!strcmp(c,"return_type")) {
+  } else if (c == "return_type") {
     return_type(f.read_word());
   } else {
     Node::read_property(f, c);
@@ -368,7 +368,7 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
         constructor = 1;
       else {
         auto n = k.size();
-        if (!strncmp(name(), k.c_str(), n) && name()[n] == '(') constructor = 1;
+        if (!strncmp(name().c_str(), k.c_str(), n) && name()[n] == '(') constructor = 1;
       }
       f.write_h(f.indent(1));
       if (is_static) f.write_h("static ");
@@ -381,7 +381,7 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
 
       // if this is a subclass, only f.write_h() the part before the ':'
       char s[1024], *sptr = s;
-      char *nptr = (char *)name();
+      const char *nptr = name().c_str();
 
       while (*nptr) {
         if (*nptr == ':') {
@@ -399,7 +399,7 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
         f.write_h(std::string(s) + ";\n");
       }
       if (havechildren) {
-        clean_function_for_implementation(s, name());
+        clean_function_for_implementation(s, name().c_str());
         f.write_c(k + "::" + std::string(s) + " {\n");
       }
     } else {
@@ -420,13 +420,13 @@ void Function_Node::write_code1(fluid::io::Code_Writer& f) {
       // write everything but the default parameters (if any)
       char s[1024];
       if (havechildren) {
-        clean_function_for_implementation(s, name());
+        clean_function_for_implementation(s, name().c_str());
         f.write_c(rtype + star + " " + s + " {\n");
       }
     }
   }
 
-  if (havewidgets && child && !child->name())
+  if (havewidgets && child && child->name().empty())
     f.write_c(f.indent(1) + subclassname(child) + "* w;\n");
   f.indent_more();
 }
@@ -442,7 +442,8 @@ void Function_Node::write_code2(fluid::io::Code_Writer& f) {
   char havechildren = 0;
   for (child = next; child && child->level > level; child = child->next) {
     havechildren = 1;
-    if (dynamic_cast<Window_Node*>(child) && child->name()) var = child->name();
+    if (dynamic_cast<Window_Node*>(child) && !child->name().empty())
+      var = child->name().c_str();
   }
 
   if (ismain()) {
@@ -468,10 +469,10 @@ void Function_Node::write_code2(fluid::io::Code_Writer& f) {
 bool Function_Node::has_signature(const std::string& return_type_regex, const std::string& function_sig_regex) const {
   if (!return_type_regex.empty() && return_type().empty())
     return false;
-  if (!name())
+  if (name().empty())
     return false;
   bool return_type_matches = return_type_regex.empty() || fl_filename_match(return_type().c_str(), return_type_regex.c_str());
-  bool signature_matches = fl_filename_match(name(), function_sig_regex.c_str());
+  bool signature_matches = fl_filename_match(name().c_str(), function_sig_regex.c_str());
   if (return_type_matches && signature_matches) {
     return true;
   }
@@ -580,8 +581,7 @@ void Code_Node::open() {
   // Using an external code editor? Open it..
   if ( Fluid.use_external_editor && !Fluid.external_editor_command.empty() ) {
     const char *cmd = Fluid.external_editor_command.c_str();
-    const char *code = name();
-    if (!code) code = "";
+    const char *code = name().c_str();
     if ( editor_.open_editor(cmd, code) == 0 )
       return;   // return if editor opened ok, fall thru to built-in if not
   }
@@ -642,7 +642,7 @@ int Code_Node::reap_editor() {
 int Code_Node::handle_editor_changes() {
   const char *newcode = nullptr;
   switch ( editor_.handle_changes(&newcode) ) {
-    case 1: {            // (1)=changed
+    case 1: {            // (1)=changed, newcode is set to a string (not nullptr)
       name(newcode);     // update value in ram
       free((void*)newcode);
       return 1;
@@ -764,8 +764,8 @@ void CodeBlock_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read the node specific properties.
  */
-void CodeBlock_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"after")) {
+void CodeBlock_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "after") {
     end_code(f.read_word());
   } else {
     Node::read_property(f, c);
@@ -783,8 +783,7 @@ void CodeBlock_Node::open() {
  Write the "before" code.
  */
 void CodeBlock_Node::write_code1(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  f.write_c(f.indent() + (c ? c : "") + " {\n");
+  f.write_c(f.indent() + name() + " {\n");
   f.indent_more();
 }
 
@@ -871,16 +870,16 @@ void Decl_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void Decl_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"public")) {
+void Decl_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "public") {
     public_ = 1;
-  } else if (!strcmp(c,"private")) {
+  } else if (c == "private") {
     public_ = 0;
-  } else if (!strcmp(c,"protected")) {
+  } else if (c == "protected") {
     public_ = 2;
-  } else if (!strcmp(c,"local")) {
+  } else if (c == "local") {
     static_ = 1;
-  } else if (!strcmp(c,"global")) {
+  } else if (c == "global") {
     static_ = 0;
   } else {
     Node::read_property(f, c);
@@ -900,8 +899,8 @@ void Decl_Node::open() {
     and the parent node. They need to be understood and documented.
  */
 void Decl_Node::write_code1(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  if (!c) return;
+  const char* c = name().c_str();
+  if (name().empty()) return;
   // handle a few keywords differently if inside a class
   if (is_in_class() && (   (!strncmp(c,"class",5) && fl_ascii_isspace(c[5]))
                         || (!strncmp(c,"typedef",7) && fl_ascii_isspace(c[7]))
@@ -1023,18 +1022,18 @@ void Data_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read specific properties.
  */
-void Data_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"filename")) {
+void Data_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "filename") {
     storestring(f.read_word(), filename_, 1);
-  } else if (!strcmp(c,"textmode")) {
+  } else if (c == "textmode") {
     output_format_ = 1;
-  } else if (!strcmp(c,"compressed")) {
+  } else if (c == "compressed") {
     output_format_ = 2;
-  } else if (!strcmp(c,"std_binary")) {
+  } else if (c == "std_binary") {
     output_format_ = 3;
-  } else if (!strcmp(c,"std_textmode")) {
+  } else if (c == "std_textmode") {
     output_format_ = 4;
-  } else if (!strcmp(c,"std_compressed")) {
+  } else if (c == "std_compressed") {
     output_format_ = 5;
   } else {
     Decl_Node::read_property(f, c);
@@ -1053,8 +1052,8 @@ void Data_Node::open() {
  */
 void Data_Node::write_code1(fluid::io::Code_Writer& f) {
   const char *message = nullptr;
-  const char *c = name();
-  if (!c) return;
+  const char *c = name().c_str();
+  if (name().empty()) return;
   std::string fn = filename();
   char *data = nullptr;
   int nData = 0;
@@ -1306,14 +1305,14 @@ void DeclBlock_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void DeclBlock_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if(!strcmp(c,"public")) {
+void DeclBlock_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if(c == "public") {
     write_map_ |= CODE_IN_HEADER;
-  } else if(!strcmp(c,"protected")) {
+  } else if(c == "protected") {
     //
-  } else if(!strcmp(c,"map")) {
+  } else if(c == "map") {
     write_map_ = (int)atol(f.read_word());
-  } else  if (!strcmp(c,"after")) {
+  } else  if (c == "after") {
     end_code(f.read_word());
   } else {
     Node::read_property(f, c);
@@ -1332,12 +1331,11 @@ void DeclBlock_Node::open() {
  The before code is stored in the name() field.
  */
 void DeclBlock_Node::write_static(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  if (c && *c) {
+  if (!name().empty()) {
     if (write_map_ & STATIC_IN_HEADER)
-      f.write_h(std::string(c) + "\n");
+      f.write_h(name() + "\n");
     if (write_map_ & STATIC_IN_SOURCE)
-      f.write_c(std::string(c) + "\n");
+      f.write_c(name() + "\n");
   }
 }
 
@@ -1358,12 +1356,11 @@ void DeclBlock_Node::write_static_after(fluid::io::Code_Writer& f) {
  The before code is stored in the name() field.
  */
 void DeclBlock_Node::write_code1(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  if (c && *c) {
+  if (!name().empty()) {
     if (write_map_ & CODE_IN_HEADER)
-      f.write_h(std::string(c) + "\n");
+      f.write_h(name() + "\n");
     if (write_map_ & CODE_IN_SOURCE)
-      f.write_c(std::string(c) + "\n");
+      f.write_c(name() + "\n");
   }
 }
 
@@ -1429,8 +1426,8 @@ void Preprocessor_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read the specific properties.
  */
-void Preprocessor_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"use")) {
+void Preprocessor_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "use") {
     use_ = static_cast<Use>(atoi(f.read_word()));
   } else {
     Node::read_property(f, c);
@@ -1449,25 +1446,24 @@ void Preprocessor_Node::open() {
  The before code is stored in the name() field.
  */
 void Preprocessor_Node::write_static(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  if (c && *c) {
+  if (!name().empty()) {
     // The first level is output static, inst, static, inst
     // All other levels output static, static, static, inst, inst, inst
     if (parent == nullptr) {
       if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_CXX) {
         write_comment_c(f, "// ");
-        f.write_c(std::string(c) + "\n");
+        f.write_c(name() + "\n");
       }
       if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_H) {
         write_comment_h(f, "// ");
-        f.write_h(std::string(c) + "\n");
+        f.write_h(name() + "\n");
       }
     } else {
       if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF || use_ == Use::VERBATIM_CXX) {
         if (use_ == Use::IFDEF)
           f.write_c("\n");
         write_comment_c(f, "// ");
-        f.write_c(std::string(c) + "\n");
+        f.write_c(name() + "\n");
         if (use_ == Use::ENDIF)
           f.write_c("\n");
       }
@@ -1475,7 +1471,7 @@ void Preprocessor_Node::write_static(fluid::io::Code_Writer& f) {
         if (use_ == Use::IFDEF)
           f.write_h("\n");
         write_comment_h(f, "// ");
-        f.write_h(std::string(c) + "\n");
+        f.write_h(name() + "\n");
         if (use_ == Use::ENDIF)
           f.write_h("\n");
       }
@@ -1488,8 +1484,7 @@ void Preprocessor_Node::write_static(fluid::io::Code_Writer& f) {
  The before code is stored in the name() field.
  */
 void Preprocessor_Node::write_code1(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  if (c && *c) {
+  if (!name().empty()) {
     // The first level is output static, inst, static, inst
     // All other levels output static, static, static, inst, inst, inst
     if (parent == nullptr) {
@@ -1498,14 +1493,14 @@ void Preprocessor_Node::write_code1(fluid::io::Code_Writer& f) {
       if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF) {
         if (use_ == Use::IFDEF)
           f.write_c("\n");
-        f.write_c(std::string(c) + "\n");
+        f.write_c(name() + "\n");
         if (use_ == Use::ENDIF)
           f.write_c("\n");
       }
       if (use_ == Use::IFDEF || use_ == Use::ELSE || use_ == Use::ENDIF) {
         if (use_ == Use::IFDEF)
           f.write_h("\n");
-        f.write_h(std::string(c) + "\n");
+        f.write_h(name() + "\n");
         if (use_ == Use::ENDIF)
           f.write_h("\n");
       }
@@ -1564,14 +1559,14 @@ void Comment_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read extra properties.
  */
-void Comment_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"in_source")) {
+void Comment_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "in_source") {
     in_c_ = 1;
-  } else if (!strcmp(c,"not_in_source")) {
+  } else if (c == "not_in_source") {
     in_c_ = 0;
-  } else if (!strcmp(c,"in_header")) {
+  } else if (c == "in_header") {
     in_h_ = 1;
-  } else if (!strcmp(c,"not_in_header")) {
+  } else if (c == "not_in_header") {
     in_h_ = 0;
   } else {
     Node::read_property(f, c);
@@ -1611,21 +1606,20 @@ void Comment_Node::open() {
  Write the comment to the files.
  */
 void Comment_Node::write_code1(fluid::io::Code_Writer& f) {
-  const char* c = name();
-  if (!c) return;
+  if (name().empty()) return;
   if (!in_c_ && !in_h_) return;
   // find out if there is already a valid comment:
-  const char *s = c;
+  const char *s = name().c_str();
   while (fl_ascii_isspace(*s)) s++;
   // if this seems to be a C style comment, copy the block as is
   // (it's up to the user to correctly close the comment)
   if (s[0]=='/' && s[1]=='*') {
-    if (in_h_) f.write_h(std::string(c) + "\n");
-    if (in_c_) f.write_c(std::string(c) + "\n");
+    if (in_h_) f.write_h(name() + "\n");
+    if (in_c_) f.write_c(name() + "\n");
     return;
   }
   // copy the comment line by line, add the double slash if needed
-  char *txt = fl_strdup(c);
+  char *txt = fl_strdup(name().c_str());
   char *b = txt, *e = txt;
   for (;;) {
     // find the end of the line and set it to NUL
@@ -1710,12 +1704,12 @@ void Class_Node::write_properties(fluid::io::Project_Writer &f) {
 /**
  Read additional properties.
  */
-void Class_Node::read_property(fluid::io::Project_Reader &f, const char *c) {
-  if (!strcmp(c,"private")) {
+void Class_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
+  if (c == "private") {
     public_ = 0;
-  } else if (!strcmp(c,"protected")) {
+  } else if (c == "protected") {
     public_ = 2;
-  } else if (!strcmp(c,":")) {
+  } else if (c == ":") {
     base_class(f.read_word());
   } else {
     Node::read_property(f, c);
@@ -1738,11 +1732,11 @@ void Class_Node::write_code1(fluid::io::Code_Writer& f) {
   f.write_h("\n");
   write_comment_h(f);
   if (!prefix().empty())
-    f.write_h("class " + std::string(prefix()) + " " + std::string(name()) + " ");
+    f.write_h("class " + prefix() + " " + name() + " ");
   else
-    f.write_h("class " + std::string(name()) + " ");
+    f.write_h("class " + name() + " ");
   if (!base_class().empty()) {
-    f.write_h(": " + std::string(base_class()) + " ");
+    f.write_h(": " + base_class() + " ");
   }
   f.write_h("{\n");
 }
