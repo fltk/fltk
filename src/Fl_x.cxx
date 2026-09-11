@@ -60,6 +60,16 @@
 #  include <X11/keysym.h>
 #  include "Xutf8.h"
 
+#if HAVE_X11_XKB
+# include <X11/Xlib-xcb.h>   // XGetXCBConnection() package libx11-xcb-dev, pkg-config name=x11-xcb
+# include <xkbcommon/xkbcommon-x11.h> // package libxkbcommon-x11-dev, pkg-config name=xkbcommon-x11
+# include <X11/XKBlib.h> // package libX11-dev
+  static int xkbEventType;
+  static struct xkb_keymap *xkb_keymap = NULL;
+  static struct xkb_context *xkb_context = NULL;
+  static struct xkb_state *xkb_state = NULL;
+#endif // HAVE_X11_XKB
+
 #if FLTK_USE_CAIRO
 #  include <cairo-xlib.h>
 #  include <cairo/cairo.h>
@@ -561,6 +571,24 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
   Fl::add_check(delayed_create_print_window);
+
+#if HAVE_X11_XKB
+  if (XkbQueryExtension(fl_display, NULL, &xkbEventType, NULL, NULL, NULL)) {
+    // Open an xcb connection to the X11 display; initialize use of libxkb with this connection
+    xcb_connection_t *xcb_conn = XGetXCBConnection(fl_display);
+    int32_t device_id = xkb_x11_get_core_keyboard_device_id(xcb_conn);
+    if (device_id != -1) {
+      // create an xkb_keymap and xkb_state reflecting currently active keyboard layout
+      xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+      xkb_keymap = xkb_x11_keymap_new_from_device(xkb_context, xcb_conn, device_id,
+                                                  XKB_KEYMAP_COMPILE_NO_FLAGS);
+      xkb_state = xkb_x11_state_new_from_device(xkb_keymap, xcb_conn, device_id);
+      // ask that the X event loop sends 3 kinds of xkb events
+      unsigned int events_wanted = XkbNewKeyboardNotifyMask | XkbMapNotifyMask | XkbStateNotifyMask;
+      XkbSelectEvents(fl_display, XkbUseCoreKbd, events_wanted, events_wanted);
+    }
+  }
+#endif
 }
 
 
@@ -1199,6 +1227,9 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, size_t lo
 #endif
 
 static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
+#if HAVE_X11_XKB
+  if (xkb_state) return xkb_state_key_get_one_sym(xkb_state, k);
+#endif
   return XKeycodeToKeysym(d, k, i);
 }
 
@@ -1300,11 +1331,33 @@ static bool remove_xid_vector(Window xid) {
   return false;
 }
 
+
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
   fl_xevent = &thisevent;
   Window xid = xevent.xany.window;
+
+#if HAVE_X11_XKB
+  if (xevent.type == xkbEventType) { // an xkb event has arrived
+    XkbEvent *xkb = (XkbEvent *)&xevent;
+    if (xkb->any.xkb_type == XkbMapNotifyMask || xkb->any.xkb_type == XkbNewKeyboardNotifyMask ||
+        xkb->any.xkb_type == 0) { // Some changes (e.g. Greek, Japanese) send xkb_type=0. Why?
+      // This event indicates the keyboard layout just changed: create new xkb_keymap and xkb_state
+      xcb_connection_t *xcb_conn = XGetXCBConnection(fl_display);
+      if (xkb_keymap) xkb_keymap_unref(xkb_keymap);
+      xkb_keymap = xkb_x11_keymap_new_from_device(xkb_context, xcb_conn, xkb->any.device,
+                                                  XKB_KEYMAP_COMPILE_NO_FLAGS);
+      if (xkb_state) xkb_state_unref(xkb_state);
+      xkb_state = xkb_x11_state_new_from_device(xkb_keymap, xcb_conn, xkb->any.device);
+      /*/ Code to obtain the name of the selected keyboard layout
+      //Examples "French (Macintosh)" "Greek (simple)" "English (US)"
+      xkb_layout_index_t layout = xkb_state_key_get_layout(xkb_state, 38); // rank in layout list
+      const char *layout_name = xkb_keymap_layout_get_name(xkb_keymap, layout); puts(layout_name);*/
+    }
+    return 1;
+  }
+#endif
 
   // For each DestroyNotify event, determine whether an FLTK-created window
   // is being destroyed (see issue #935).
@@ -1830,6 +1883,19 @@ int fl_handle(const XEvent& thisevent)
 
       int len;
       if (Fl_X11_Screen_Driver::xim_ic) {
+#if HAVE_X11_XKB
+        if (xkb_state) { // ask libxkb for the keysym and associated UTF8 text
+          keysym = xkb_state_key_get_one_sym(xkb_state, keycode);
+          int required = xkb_state_key_get_utf8(xkb_state, keycode, kp_buffer, kp_buffer_len);
+          if (required >= kp_buffer_len && kp_buffer_len < 50000) {
+            kp_buffer_len = kp_buffer_len * 5;
+            kp_buffer = (char*)realloc(kp_buffer, kp_buffer_len);
+            xkb_state_key_get_utf8(xkb_state, keycode, kp_buffer, kp_buffer_len);
+          }
+          len = (int)strlen(kp_buffer);
+        } else
+#endif
+        {
         Status status;
         len = XUtf8LookupString(Fl_X11_Screen_Driver::xim_ic, (XKeyPressedEvent *)&xevent.xkey,
                              kp_buffer, kp_buffer_len, &keysym, &status);
@@ -1841,6 +1907,7 @@ int fl_handle(const XEvent& thisevent)
                              kp_buffer, kp_buffer_len, &keysym, &status);
         }
         keysym = fl_KeycodeToKeysym(fl_display, keycode, 0);
+        }
       } else {
         //static XComposeStatus compose;
         len = XLookupString((XKeyEvent*)&(xevent.xkey),
@@ -1990,6 +2057,21 @@ int fl_handle(const XEvent& thisevent)
     } else if (keycode == 19) {
       keysym = '0';
     }
+    // Make sure the keysym is lowercase when it's a Latin letter
+    if (keysym >= 'A' && keysym <= 'Z') keysym += 32;
+
+#if HAVE_X11_XKB
+    // Detect whether we are using a non-Latin keyboard layout.
+    // Based on the assumption that the 'A' key of the keyboard
+    // having a non-ASCII keysym indicates a non-Latin layout.
+    // If so, use the US keyboard layout to report keysyms to the app
+    if (xkb_state && xkb_state_key_get_one_sym(xkb_state, 38/* 'A' key on US keyboard */) > 'z') {
+      int asciiSym = Fl_Unix_System_Driver::keycode_to_ascii(keycode);
+      if (asciiSym != 0) {
+        keysym = asciiSym;
+      }
+    }
+#endif
 
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
