@@ -699,6 +699,7 @@ int Fl_Input::handle(int event) {
       return 1;
 
     case FL_DND_ENTER:
+      if ( !Fl::clipboard_contains(Fl::clipboard_plain_text) ) return 0;
       Fl::belowmouse(this); // send the leave events first
       if (dnd_save_focus != this) {
         dnd_save_position = insert_position();

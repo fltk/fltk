@@ -89,6 +89,9 @@ public:
   // next length of marked text after current marked text will have been replaced
   static int next_marked_length;
   static compositor_name compositor; // identifies the used Wayland compositor
+  static const struct wl_data_source_listener *p_data_source_listener;
+  static struct wl_surface **fl_dnd_icon;
+  static const char * const xdg_toplevel_drag_pseudo_mime;
 
 // static member functions
   static void insertion_point_location(int x, int y, int height);
@@ -117,6 +120,7 @@ public:
   struct wp_cursor_shape_manager_v1 *wp_cursor_shape_manager;
   struct wp_cursor_shape_device_v1 *wp_cursor_shape_device;
 #endif
+  struct xdg_toplevel_drag_manager_v1 *xdg_toplevel_drag;
 
 // constructor
   Fl_Wayland_Screen_Driver();
