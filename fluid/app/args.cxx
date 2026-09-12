@@ -68,6 +68,7 @@ int Args::load(int argc,char **argv) {
     "  -mb=ask       ask before applying MergeBack changes\n"
     "  -mb=apply     apply MergeBack changes automatically\n"
     "  -d            enable internal debugging\n"
+    "\n"
     "FLTK Options:\n"
     " -bg color\n"
     " -fg color\n"
