@@ -44,15 +44,15 @@ void History::load() {
       // Make a shortened version of the filename for the menu...
       std::string fn = fl_filename_shortened(abspath[i], 48);
       strncpy(relpath[i], fn.c_str(), sizeof(relpath[i]) - 1);
-      if (i == 9) Fluid.history_item[i].flags = FL_MENU_DIVIDER;
-      else Fluid.history_item[i].flags = 0;
+      if (i == 9) Fluid.gui.menu_item_history[i].flags = FL_MENU_DIVIDER;
+      else Fluid.gui.menu_item_history[i].flags = 0;
     } else break;
   }
   Fluid.preferences.get("latest_project_path", latest_project_path_, "");
 
   for (; i < 10; i ++) {
-    if (i) Fluid.history_item[i-1].flags |= FL_MENU_DIVIDER;
-    Fluid.history_item[i].hide();
+    if (i) Fluid.gui.menu_item_history[i-1].flags |= FL_MENU_DIVIDER;
+    Fluid.gui.menu_item_history[i].hide();
   }
 }
 
@@ -107,15 +107,15 @@ void History::update(std::string project_file) {
   for (i = 0; i < max_files; i ++) {
     Fluid.preferences.set( Fl_Preferences::Name("file%d", i), abspath[i]);
     if (abspath[i][0]) {
-      if (i == 9) Fluid.history_item[i].flags = FL_MENU_DIVIDER;
-      else Fluid.history_item[i].flags = 0;
+      if (i == 9) Fluid.gui.menu_item_history[i].flags = FL_MENU_DIVIDER;
+      else Fluid.gui.menu_item_history[i].flags = 0;
     } else break;
   }
 
   for (; i < 10; i ++) {
     Fluid.preferences.set( Fl_Preferences::Name("file%d", i), "");
-    if (i) Fluid.history_item[i-1].flags |= FL_MENU_DIVIDER;
-    Fluid.history_item[i].hide();
+    if (i) Fluid.gui.menu_item_history[i-1].flags |= FL_MENU_DIVIDER;
+    Fluid.gui.menu_item_history[i].hide();
   }
   Fluid.preferences.flush();
 }

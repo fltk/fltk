@@ -62,7 +62,6 @@ extern Fl_Input* editor_command_input;
 extern Fl_Check_Button* use_external_editor_button;
 extern void toggle_guides_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button* guides_button;
-extern void toggle_restricted_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button* restricted_button;
 extern void toggle_ghosted_outline_cb(Fl_Check_Button*, void*);
 extern Fl_Check_Button* ghosted_outline_button;
@@ -120,18 +119,18 @@ extern Fl_Menu_Item fontmenu[];
 extern Fl_Menu_Item colormenu[];
 extern Fl_Choice* w_settings_user_commenttext;
 Fl_Double_Window* make_settings_window();
-extern Fl_Menu_Item menu_layout_choice[];
-extern Fl_Menu_Item menu_w_layout_menu[];
-#define w_layout_menu_rename (menu_w_layout_menu+0)
+extern Fl_Menu_Item menu_layout_choice[3];
+extern Fl_Menu_Item menu_w_layout_menu[9];
+constexpr Fl_Menu_Item* w_layout_menu_rename = menu_w_layout_menu+0;
 extern Fl_Menu_Item* w_layout_menu_storage[4];
-#define w_layout_menu_load (menu_w_layout_menu+5)
-#define w_layout_menu_save (menu_w_layout_menu+6)
-#define w_layout_menu_delete (menu_w_layout_menu+7)
-extern Fl_Menu_Item menu_w_settings_shell_menu[];
-extern Fl_Menu_Item menu_Store[];
-extern Fl_Menu_Item menu_Condition[];
-extern Fl_Menu_Item menu_w_settings_shell_text_macros[];
-extern Fl_Menu_Item menu_i18n_type_chooser[];
+constexpr Fl_Menu_Item* w_layout_menu_load = menu_w_layout_menu+5;
+constexpr Fl_Menu_Item* w_layout_menu_save = menu_w_layout_menu+6;
+constexpr Fl_Menu_Item* w_layout_menu_delete = menu_w_layout_menu+7;
+extern Fl_Menu_Item menu_w_settings_shell_menu[8];
+extern Fl_Menu_Item menu_Store[3];
+extern Fl_Menu_Item menu_Condition[10];
+extern Fl_Menu_Item menu_w_settings_shell_text_macros[12];
+extern Fl_Menu_Item menu_i18n_type_chooser[4];
 extern Fl_Double_Window* shell_run_window;
 #include <FL/Fl_Terminal.H>
 extern Fl_Terminal* shell_run_terminal;

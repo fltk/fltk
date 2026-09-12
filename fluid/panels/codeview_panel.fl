@@ -248,7 +248,6 @@ The state is stored in the app preferences.} open return_type void
 } {
   code {if (!codeview_panel) {
     make_codeview();
-    codeview_panel->callback((Fl_Callback*)toggle_codeview_cb);
     Fl_Preferences svp(Fluid.preferences, "codeview");
     int autorefresh;
     svp.get("autorefresh", autorefresh, 1);
@@ -266,19 +265,20 @@ The state is stored in the app preferences.} open return_type void
 
   if (codeview_panel->visible()) {
     codeview_panel->hide();
-    Fluid.codeview_item->label("Show Code View");
+    Fluid.gui.menu_item_codeview->label("Show Code View");
   } else {
     codeview_panel->show();
-    Fluid.codeview_item->label("Hide Code View");
+    Fluid.gui.menu_item_codeview->label("Hide Code View");
     update_codeview_cb(0,0);
-  }} {}
+  }} {selected
+  }
 }
 
 Function {make_codeview()} {open
 } {
   Fl_Window codeview_panel {
     label {Code View}
-    callback toggle_codeview_cb open selected
+    callback {[](Fl_Widget*,void*) { codeview_toggle_visibility(); }} open
     xywh {518 271 520 515} type Double align 80 resizable size_range {384 120 0 0} visible
   } {
     Fl_Tabs cv_tab {
@@ -491,7 +491,7 @@ update_codeview_position();} open
       }
       Fl_Button {} {
         label Close
-        callback toggle_codeview_b_cb
+        callback {[](Fl_Widget*,void*) { codeview_toggle_visibility(); }}
         xywh {460 485 50 20} labelsize 11
       }
     }

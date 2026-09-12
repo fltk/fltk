@@ -648,10 +648,9 @@ void ok_cb(Fl_Return_Button* o, void* v) {
     the_panel->hide();
 }
 
-void toggle_overlays(Fl_Widget*, void*); // in Window_Node.cxx
 
 void overlay_cb(Fl_Button* o,void* v) {
-  toggle_overlays(o,v);
+  Fluid.toggle_overlays();
 }
 
 void leave_live_mode_cb(Fl_Widget*, void*);

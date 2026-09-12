@@ -1,7 +1,7 @@
 //
 // Menu Node code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -281,65 +281,6 @@ Node* Menu_Item_Node::make(int flags, Strategy strategy) {
   return t;
 }
 
-void group_selected_menuitems() {
-  // The group will be created in the parent group of the current menuitem
-  if (!dynamic_cast<Menu_Item_Node*>(Fluid.proj.tree.current)) {
-    return;
-  }
-  Menu_Item_Node *q = static_cast<Menu_Item_Node*>(Fluid.proj.tree.current);
-  Node *qq = Fluid.proj.tree.current->parent;
-  if (!qq || !(dynamic_cast<Menu_Manager_Node*>(qq) || dynamic_cast<Submenu_Node*>(qq))) {
-    fluid_message("Can't create a new submenu here.");
-    return;
-  }
-  Fluid.proj.undo.checkpoint();
-  Fluid.proj.undo.suspend();
-  Widget_Node *n = (Widget_Node*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
-  for (Node *t = qq->next; t && (t->level > qq->level);) {
-    if (t->level != n->level || t == n || !t->selected) {
-      t = t->next;
-      continue;
-    }
-    Node *nxt = t->remove();
-    t->add(n, Strategy::AS_LAST_CHILD);
-    t = nxt;
-  }
-  widget_browser->rebuild();
-  Fluid.proj.undo.resume();
-  Fluid.proj.set_modflag(1);
-}
-
-void ungroup_selected_menuitems() {
-  // Find the submenu
-  Node *qq = Fluid.proj.tree.current->parent;
-  Widget_Node *q = static_cast<Widget_Node*>(Fluid.proj.tree.current);
-  int q_level = q->level;
-  if (!qq || !dynamic_cast<Submenu_Node*>(qq)) {
-    fluid_message("Only menu items inside a submenu can be ungrouped.");
-    return;
-  }
-  Fluid.proj.undo.checkpoint();
-  Fluid.proj.undo.suspend();
-  Fluid.proj.tree.current = qq;
-  for (Node *t = qq->next; t && (t->level > qq->level);) {
-    if (t->level != q_level || !t->selected) {
-      t = t->next;
-      continue;
-    }
-    Node *nxt = t->remove();
-    t->insert(qq);
-    t = nxt;
-  }
-  if (!qq->next || (qq->next->level <= qq->level)) {
-    qq->remove();
-    delete qq;   // qq has no children that need to be delete
-  }
-  Fluid.proj.tree.current = q;
-  widget_browser->rebuild();
-  Fluid.proj.undo.resume();
-  Fluid.proj.set_modflag(1);
-}
-
 
 /**
  Create and add a new Checkbox Menu Item node.
@@ -508,16 +449,20 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
   // okay, when we hit last item in the menu we have to write the
   // entire array out:
   std::string k = full_class_name();
+  // find the first item in the list, so we can count all items from the beginning
+  Node* t = prev;
+  while (t && dynamic_cast<Menu_Item_Node*>(t)) t = t->prev;
+  int n = static_cast<Menu_Item_Node*>(t->next)->count_items();
+  // Write the array declarator for the menu items
   if (!k.empty()) {
     int i;
-    f.write_c("\nFl_Menu_Item " + k + "::" + menu_name(f, i) + "[] = {\n");
+    f.write_c("\nFl_Menu_Item " + k + "::" + menu_name(f, i) + "[" + std::to_string(n) + "] = {\n");
   } else {
     int i;
-    f.write_c("\nFl_Menu_Item " + menu_name(f, i) + "[] = {\n");
+    f.write_c("\nFl_Menu_Item " + menu_name(f, i) + "[" + std::to_string(n) + "] = {\n");
   }
   f.indent_reset();
   f.indent_more();
-  Node* t = prev; while (t && dynamic_cast<Menu_Item_Node*>(t)) t = t->prev;
   for (Node* q = t->next; q && dynamic_cast<Menu_Item_Node*>(q); q = q->next) {
     ((Menu_Item_Node*)q)->write_item(f);
     int thislevel = q->level;
@@ -623,6 +568,12 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
     if (s & FL_ALT) { f.write_c("FL_ALT|"); s &= ~FL_ALT; }
     if ((s < 127) && fl_ascii_isprint(s))
       f.write_c("'" + std::string(1, (char)s) + "', ");
+    else if ((s > FL_F) && (s <= FL_F_Last))
+      f.write_c("FL_F+" + std::to_string(s - FL_F) + ", ");
+    else if (s == FL_Delete)
+      f.write_c("FL_Delete, ");
+    else if (s == FL_BackSpace)
+      f.write_c("FL_BackSpace, ");
     else
       f.write_c("0x" + fluid::io::to_string_8x(s) + ", ");
   } else {
@@ -669,6 +620,26 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
     + " },\n");
 }
 
+/**
+ \brief Count the number of menu items in this menu, including submenus and the null terminator at the end.
+
+ Must be called form the first menu item in the menu. It counts all items until
+ the end of the menu. The count includes submenus and the null terminator at
+ the end of the menu.
+
+ \return number of menu items, sub menu items, and null terminators
+ */
+int Menu_Item_Node::count_items() const {
+  int count = 0;
+  const Node* q;
+  for (q = this; q && q->level >= level; q = q->next) {
+    if (q->can_have_children()) count++; // space for null at end of submenu
+    count++;
+  }
+  count++; // account for the null at the end of this menu
+  return count;
+}
+
 void start_menu_initialiser(fluid::io::Code_Writer& f, int &initialized, const std::string& name, int index) {
   if (!initialized) {
     initialized = 1;
@@ -683,10 +654,11 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
 
   if (!dynamic_cast<Menu_Item_Node*>(prev)) {
     // for first menu item, declare the array
+    int n = count_items();
     if (is_in_class()) {
-      f.write_h(f.indent(1) + "static Fl_Menu_Item " + mname + "[];\n");
+      f.write_h(f.indent(1) + "static Fl_Menu_Item " + mname + "[" + std::to_string(n) + "];\n");
     } else {
-      f.write_h("extern Fl_Menu_Item " + mname + "[];\n");
+      f.write_h("extern Fl_Menu_Item " + mname + "[" + std::to_string(n) + "];\n");
     }
   }
 
@@ -697,7 +669,8 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
       f.write_h(f.indent(1) + "static Fl_Menu_Item* " + c + ";\n");
     } else {
       if (c==name())
-        f.write_h("#define " + c + " (" + mname + "+" + std::to_string(i) + ")\n");
+        f.write_h("constexpr Fl_Menu_Item* " + c + " = " + mname + "+" + std::to_string(i) + ";\n");
+        // f.write_h("#define " + c + " (" + mname + "+" + std::to_string(i) + ")\n");
       else
         f.write_h("extern Fl_Menu_Item* " + c + ";\n");
     }
@@ -716,7 +689,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
   int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name().find('[') != std::string::npos) {
-    f.write_c(f.indent_plus(1) + name() + " = &" + mname + "[" + std::to_string(i) + "];\n");
+    f.write_c(f.indent() + name() + " = &" + mname + "[" + std::to_string(i) + "];\n");
   }
   if (active_image.asset) {
     start_menu_initialiser(f, menuItemInitialized, mname, i);

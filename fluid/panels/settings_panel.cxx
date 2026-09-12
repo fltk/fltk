@@ -599,14 +599,14 @@ static void cb_layout_choice(Fl_Choice* o, void* v) {
 //ﬂ ▲ ----------~=-=~=~--=-~----------~-~~-=-~-=~~-~=~~-~~~- ▲ ﬂ//
 }
 
-Fl_Menu_Item menu_layout_choice[] = {
+Fl_Menu_Item menu_layout_choice[3] = {
   { "FLTK", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0 },
   { "Grid", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0 },
   { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
 static void cb_2(Fl_Button*, void* v) {
-//ﬂ ▼ ---------------------- callback ~~~~=-~-=-~-~-~~-~=~=~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback ~~=-=~-=-~--~=~~-~---= ▼ ﬂ//
   // Clone the current layout suite
 
   if (v == LOAD) return;
@@ -745,7 +745,7 @@ static void cb_w_layout_menu_delete(Fl_Menu_*, void*) {
 //ﬂ ▲ -----------==-~--~=--=----------~~-~-=~=~~~=--~~=--~=~ ▲ ﬂ//
 }
 
-Fl_Menu_Item menu_w_layout_menu[] = {
+Fl_Menu_Item menu_w_layout_menu[9] = {
   { "Rename...", 0, (Fl_Callback*)cb_w_layout_menu_rename, nullptr, 128, (uchar)FL_NORMAL_LABEL, 0, 14, 0 },
   { "@fd_beaker  FLUID Built-In", 0, (Fl_Callback*)cb_w_layout_menu_storage, nullptr, 9, (uchar)FL_NORMAL_LABEL, 0, 14, 0 },
   { "@fd_user  User Preference", 0, (Fl_Callback*)cb_w_layout_menu_storage1, nullptr, 8, (uchar)FL_NORMAL_LABEL, 0, 14, 0 },
@@ -760,7 +760,7 @@ Fl_Menu_Item menu_w_layout_menu[] = {
 Fl_Button* preset_choice[3] = {(Fl_Button*)nullptr};
 
 static void cb_Left(Fl_Value_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~~---~~=~~--~~=-~-~=~~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback --~=~~-==~-~=~-~~==~-~ ▼ ﬂ//
   if (v == LOAD) {
     o->value((double)Fluid.proj.layout->left_window_margin);
   } else {
@@ -1189,7 +1189,7 @@ static void cb_Export(Fl_Menu_*, void* v) {
 //ﬂ ▲ ----------=-~---=--=-~----------~~=-~~=~-~--~=-~-~=-~~ ▲ ﬂ//
 }
 
-Fl_Menu_Item menu_w_settings_shell_menu[] = {
+Fl_Menu_Item menu_w_settings_shell_menu[8] = {
   { "Import...", 0, (Fl_Callback*)cb_Import, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "Export selected...", 0, (Fl_Callback*)cb_Export, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "Example Scripts:", 0, nullptr, nullptr, 17, (uchar)FL_NORMAL_LABEL, 1, 12, 0 },
@@ -1201,7 +1201,7 @@ Fl_Menu_Item menu_w_settings_shell_menu[] = {
 };
 
 static void cb_T(Fl_Button*, void* v) {
-//ﬂ ▼ ---------------------- callback -~-~~=-~~==~~-~--=-=~- ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback -~~-~=~=~~-~-~-~~----= ▼ ﬂ//
   if (v!=LOAD) show_terminal_window();
 //ﬂ ▲ ----------~==-=---~=-=-------------~~~-=~~~=-=-==-=--- ▲ ﬂ//
 }
@@ -1335,14 +1335,14 @@ static void cb_Store(Fl_Choice* o, void* v) {
 //ﬂ ▲ ----------~=-=-=-~~~------------~~-~-~-=~=~--=-=---~-- ▲ ﬂ//
 }
 
-Fl_Menu_Item menu_Store[] = {
+Fl_Menu_Item menu_Store[3] = {
   { "@fd_user User Setting", 0, nullptr, (void*)(fluid::Tool_Store::USER), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "@fd_project Project File", 0, nullptr, (void*)(fluid::Tool_Store::PROJECT), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { nullptr, 0, nullptr, nullptr, 0, 0, 0, 0, 0 }
 };
 
 static void cb_Condition(Fl_Choice* o, void* v) {
-//ﬂ ▼ ---------------------- callback --~=-~~---=-=~-==~~~=~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback ~--=--=~=~~=~=~--~--~~ ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   int cond = Fd_Shell_Command::ALWAYS;
   if (v == LOAD) {
@@ -1370,7 +1370,7 @@ static void cb_Condition(Fl_Choice* o, void* v) {
 //ﬂ ▲ ----------~=-=~~=-~~~~------------=~~---~~~-~~-=~~=~~= ▲ ﬂ//
 }
 
-Fl_Menu_Item menu_Condition[] = {
+Fl_Menu_Item menu_Condition[10] = {
   { "all platforms", 0, nullptr, (void*)(Fd_Shell_Command::ALWAYS), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "Windows only", 0, nullptr, (void*)(Fd_Shell_Command::WIN_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "Linux only", 0, nullptr, (void*)(Fd_Shell_Command::UX_ONLY), 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
@@ -1386,7 +1386,7 @@ Fl_Menu_Item menu_Condition[] = {
 Fl_Input* w_shell_cond_text = (Fl_Input*)nullptr;
 
 static void cb_w_shell_cond_text(Fl_Input* o, void* v) {
-//ﬂ ▼ ---------------------- callback ~-~-=-=~--=-=~~~-==~=~ ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback -----~=~-~-~~==-~-~--- ▼ ﬂ//
   int selected = w_settings_shell_list_selected;
   if (v == LOAD) {
     if (selected)
@@ -1451,7 +1451,7 @@ static void cb_w_settings_shell_text_macros(Fl_Menu_Button* o, void*) {
 //ﬂ ▲ ----------~==--=-~~=~~----------~~---==-~~~~~~=---=~~~ ▲ ﬂ//
 }
 
-Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
+Fl_Menu_Item menu_w_settings_shell_text_macros[12] = {
   { "@@BASENAME@@", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 12, 0 },
   { "@@PROJECTFILE_PATH@@", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 12, 0 },
   { "@@PROJECTFILE_NAME@@", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 4, 12, 0 },
@@ -1468,7 +1468,7 @@ Fl_Menu_Item menu_w_settings_shell_text_macros[] = {
 };
 
 static void cb_1fd_zoom(Fl_Button*, void*) {
-//ﬂ ▼ ---------------------- callback ~~--~-=~=--=~~=---=-~= ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback ~-~-~-~-=~~----~=~~-~= ▼ ﬂ//
   if (!script_panel) make_script_panel();
   script_input->buffer()->text(w_settings_shell_command->buffer()->text());
   script_panel->show();
@@ -2368,7 +2368,7 @@ static Fl_Image* image_language_64() {
 
 Fl_Choice* i18n_type_chooser = (Fl_Choice*)nullptr;
 
-Fl_Menu_Item menu_i18n_type_chooser[] = {
+Fl_Menu_Item menu_i18n_type_chooser[4] = {
   { "None", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "GNU gettext", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
   { "POSIX catgets", 0, nullptr, nullptr, 0, (uchar)FL_NORMAL_LABEL, 0, 12, 0 },
@@ -2378,7 +2378,7 @@ Fl_Menu_Item menu_i18n_type_chooser[] = {
 Fl_Group* i18n_gnu_group = (Fl_Group*)nullptr;
 
 static void cb_i18n_gnu_group(Fl_Group* o, void* v) {
-//ﬂ ▼ ---------------------- callback -~=~-~=~~-~==--~-~~=-= ▼ ﬂ//
+//ﬂ ▼ ---------------------- callback ~~=--~=~=~~~-=~~=-~~-- ▼ ﬂ//
   propagate_load(o, v);
 //ﬂ ▲ ----------~=-=~--~=~-=----------~--~~~-~~=-~=~=-=~~-~- ▲ ﬂ//
 }
@@ -2903,8 +2903,8 @@ Fl_Double_Window* make_settings_window() {
           guides_button->labelsize(12);
           guides_button->callback((Fl_Callback*)toggle_guides_cb);
 //ﬂ ▼ ---------------------- finalize -~-==~~~~==---~=~--=-= ▼ ﬂ//
-          o->value(Fluid.show_guides);
-//ﬂ ▲ ---------~~=~=~~~-~=-=----------~--=-~~==-=~~=~==~=~-= ▲ ﬂ//
+          o->value(Fluid.show_guides_);
+//ﬂ ▲ ---------~~=~=~~~-~=-=----------~--==----~=-~=~-=-~~~~ ▲ ﬂ//
         } // Fl_Check_Button* guides_button
         { auto* o = restricted_button = new Fl_Check_Button(130, 326, 210, 20, "Show Restricted Areas");
           (void)o;
@@ -2912,8 +2912,12 @@ Fl_Double_Window* make_settings_window() {
 "ps");
           restricted_button->down_box(FL_DOWN_BOX);
           restricted_button->labelsize(12);
-          restricted_button->callback((Fl_Callback*)toggle_restricted_cb);
-//ﬂ ▼ ---------------------- finalize ~~--~=--~-=~~=-==~-=~- ▼ ﬂ//
+          restricted_button->callback(
+//ﬂ ▼ ---------------------- callback -~--~~~~-~=-=--==~~--~ ▼ ﬂ//
+            [](Fl_Widget*, void*) { Fluid.toggle_restricted_areas(); }
+//ﬂ ▲ ----------=~~==~-~~~~-----------~~-~~~=--=--=-~~~~~==~ ▲ ﬂ//
+          );
+//ﬂ ▼ ---------------------- finalize ~~-~=~----~-~==-~=-~=- ▼ ﬂ//
           o->value(Fluid.show_restricted);
 //ﬂ ▲ ---------~=~~==~-~~~~-----------~~--~---~=~~--~-=~-=~~ ▲ ﬂ//
         } // Fl_Check_Button* restricted_button
@@ -3089,10 +3093,10 @@ Fl_Double_Window* make_settings_window() {
         { auto* o = w_layout_menu = new Fl_Menu_Button(316, 78, 24, 24);
           (void)o;
           w_layout_menu->callback((Fl_Callback*)cb_w_layout_menu);
-            w_layout_menu_storage[0] = &menu_w_layout_menu[1];
-            w_layout_menu_storage[1] = &menu_w_layout_menu[2];
-            w_layout_menu_storage[2] = &menu_w_layout_menu[3];
-            w_layout_menu_storage[3] = &menu_w_layout_menu[4];
+          w_layout_menu_storage[0] = &menu_w_layout_menu[1];
+          w_layout_menu_storage[1] = &menu_w_layout_menu[2];
+          w_layout_menu_storage[2] = &menu_w_layout_menu[3];
+          w_layout_menu_storage[3] = &menu_w_layout_menu[4];
           w_layout_menu->menu(menu_w_layout_menu);
         } // Fl_Menu_Button* w_layout_menu
         { auto* o = new Fl_Box(20, 107, 75, 20, "Preset:");

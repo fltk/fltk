@@ -863,10 +863,9 @@ void menu_shell_customize_cb(Fl_Widget*, void*) {
 /**
  Rebuild the entire shell submenu from scratch and replace the old menu.
  */
-void Fd_Shell_Command_List::rebuild_shell_menu() {
-  static Fl_Menu_Item *shell_submenu = nullptr;
-  if (!shell_submenu)
-    shell_submenu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(menu_marker);
+void Fd_Shell_Command_List::rebuild_shell_menu()
+{
+  Fl_Menu_Item *shell_submenu = Fluid.gui.submenu_shell;
 
   int i, j, num_active_items = 0;
   // count the active commands
@@ -920,13 +919,6 @@ Fl_Menu_Item Fd_Shell_Command_List::default_menu[] = {
   {   "Customize...", FL_ALT+'x', menu_shell_customize_cb },
   { nullptr }
 };
-
-/**
- Used to find the shell submenu within the main menu tree.
- */
-void Fd_Shell_Command_List::menu_marker(Fl_Widget*, void*) {
-  // intentionally left empty
-}
 
 /**
  Export all selected shell commands to an external file.

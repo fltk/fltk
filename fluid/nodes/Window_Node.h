@@ -28,12 +28,7 @@ class Widget_Class_Node;
 
 extern Fl_Menu_Item window_type_menu[];
 
-void toggle_overlays(Fl_Widget *,void *);
-void toggle_guides(Fl_Widget *,void *);
-void toggle_restricted(Fl_Widget *,void *);
 void show_project_cb(Fl_Widget *, void *);
-void show_grid_cb(Fl_Widget *, void *);
-void show_settings_cb(Fl_Widget *, void *);
 
 enum {
   FD_LEFT   = 1,  // user drags the left side of the selection box
@@ -93,6 +88,8 @@ public:
   { }
   uchar modal, non_modal;
   std::string xclass { };
+
+  void redraw();
 
   Node *make(Strategy strategy) override;
   const std::string& type_name() override { static const std::string s = "Fl_Window"; return s; }

@@ -16,29 +16,32 @@
 
 #include "Fluid.h"
 
-#include "main.h"
 #include "Project.h"
+#include "fluid_icon.h"
 #include "message.h"
-#include "proj/mergeback.h"
-#include "app/Menu.h"
+
 #include "app/shell_command.h"
-#include "proj/mergeback.h"
-#include "proj/undo.h"
+
+#include "io/Code_Writer.h"
 #include "io/Project_Reader.h"
 #include "io/Project_Writer.h"
 #include "io/file_chooser.h"
-#include "io/Code_Writer.h"
-#include "nodes/Node.h"
+
 #include "nodes/Function_Node.h"
 #include "nodes/Group_Node.h"
+#include "nodes/Node.h"
 #include "nodes/Window_Node.h"
 #include "nodes/factory.h"
-#include "panels/settings_panel.h"
-#include "panels/function_panel.h"
-#include "panels/codeview_panel.h"
-#include "panels/template_panel.h"
+
 #include "panels/about_panel.h"
-#include "fluid_icon.h"
+#include "panels/codeview_panel.h"
+#include "panels/function_panel.h"
+#include "panels/template_panel.h"
+#include "panels/settings_panel.h"
+
+#include "proj/mergeback.h"
+#include "proj/undo.h"
+
 #include "rsrcs/pixmaps.h"
 #include "tools/autodoc.h"
 #include "widgets/App_Menu_Bar.h"
@@ -189,9 +192,9 @@ void Application::run_interactive(int argc, char **argv, const std::string& file
 #endif // __APPLE__
   Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
   Fl_File_Icon::load_system_icons();
-  main_window->callback(exit_cb);
+  main_window->callback([](Fl_Widget*, void*) { Fluid.quit(); });
   make_fluid_icon(main_window); // assign icon to main window
-  position_window(main_window,"main_window_pos", 1, 10, 30, WINWIDTH, WINHEIGHT );
+  position_window(main_window,"main_window_pos", 1, 10, 30, 330, 450);
   if (g_shell_config) {
     g_shell_config->read(preferences, fluid::Tool_Store::USER);
     g_shell_config->update_settings_dialog();
@@ -204,7 +207,7 @@ void Application::run_interactive(int argc, char **argv, const std::string& file
     // Open previous file when no file specified...
     open_project_file(history.abspath[0]);
   }
-  toggle_codeview_cb(nullptr,nullptr);
+  codeview_toggle_visibility();
 
   proj.undo.suspend();
   if (!filename.empty() && !fluid::io::read_file(proj, filename, 0)) {
@@ -529,6 +532,17 @@ void Application::new_project() {
   proj.set_modflag(0, 0);
   widget_browser->rebuild();
   proj.update_settings_dialog();
+}
+
+/**
+ Clear the current project and create a new, empty one.
+ If the current project is dirty, verify that the user wants to
+ discard unsaved changes.
+ */
+void Application::user_new_project() {
+  if (proj.confirm_clear()) {
+    new_project();
+  }
 }
 
 
@@ -990,10 +1004,10 @@ void Application::toggle_widget_bin() {
 
   if (widgetbin_panel->visible()) {
     widgetbin_panel->hide();
-    widgetbin_item->label("Show Widget &Bin...");
+    gui.menu_item_widgetbin->label("Show Widget &Bin...");
   } else {
     widgetbin_panel->show();
-    widgetbin_item->label("Hide Widget &Bin");
+    gui.menu_item_widgetbin->label("Hide Widget &Bin");
   }
 }
 
@@ -1085,7 +1099,7 @@ void Application::about() {
  */
 void Application::make_main_window() {
   if (!batch_mode) {
-    preferences.get("show_guides", show_guides, 1);
+    preferences.get("show_guides", show_guides_, 1);
     preferences.get("show_restricted", show_restricted, 1);
     preferences.get("show_ghosted_outline", show_ghosted_outline, 0);
     preferences.get("show_comments", show_comments, 1);
@@ -1093,29 +1107,12 @@ void Application::make_main_window() {
   }
 
   if (!main_window) {
-    Fl_Widget *o;
     loadPixmaps();
-    main_window = new Fl_Double_Window(WINWIDTH,WINHEIGHT,"fluid");
-    main_window->box(FL_NO_BOX);
-    o = make_widget_browser(0,MENUHEIGHT,BROWSERWIDTH,BROWSERHEIGHT);
-    o->box(FL_FLAT_BOX);
-    o->tooltip("Double-click to view or change an item.");
-    main_window->resizable(o);
-    main_menubar = new fluid::widget::App_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
-    main_menubar->menu(main_menu);
-    // quick access to all dynamic menu items
-    save_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_save_cb);
-    history_item = (Fl_Menu_Item*)main_menubar->find_item(menu_file_open_history_cb);
-    widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
-    codeview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_codeview_cb);
-    overlay_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_overlays);
-    guides_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_guides);
-    restricted_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_restricted);
-
-    main_menubar->global();
+    gui.build();
+    gui.app_menu_bar->global();
     fill_in_New_Menu();
-    main_window->end();
   }
+  gui.show();
 
   if (!batch_mode) {
     history.load();
@@ -1290,6 +1287,94 @@ bool Application::console_mode() const {
 #else
   return batch_mode;
 #endif
+}
+
+void Application::show_restricted_areas()
+{
+  show_restricted = true;
+  preferences.set("show_restricted", show_restricted);
+  gui.menu_item_restricted->label("Hide Restricted");
+
+  if (restricted_button)
+    restricted_button->value(show_restricted);
+
+  proj.redraw_all();
+}
+
+void Application::hide_restricted_areas() {
+  show_restricted = false;
+  preferences.set("show_restricted", show_restricted);
+  gui.menu_item_restricted->label("Show Restricted");
+
+  if (restricted_button)
+    restricted_button->value(show_restricted);
+
+  proj.redraw_all();
+}
+
+void Application::toggle_restricted_areas() {
+  if (show_restricted)
+    hide_restricted_areas();
+  else
+    show_restricted_areas();
+}
+
+void Application::show_guides() {
+  show_guides_ = true;
+  preferences.set("show_guides", show_guides_);
+  gui.menu_item_guides->label("Hide Guides");
+
+  if (guides_button)
+    guides_button->value(show_guides_);
+
+  proj.redraw_all();
+}
+
+void Application::hide_guides() {
+  show_guides_ = false;
+  preferences.set("show_guides", show_guides_);
+  gui.menu_item_guides->label("Show Guides");
+
+  if (guides_button)
+    guides_button->value(show_guides_);
+
+  proj.redraw_all();
+}
+
+void Application::toggle_guides() {
+  if (show_guides_)
+    hide_guides();
+  else
+    show_guides();
+}
+
+void Application::show_overlays() {
+  overlays_invisible_ = false;
+  preferences.set("overlays_invisible", overlays_invisible_);
+  gui.menu_item_overlay->label("Hide O&verlays");
+
+  if (overlay_button)
+    overlay_button->label("Hide &Overlays");
+
+  proj.redraw_all();
+}
+
+void Application::hide_overlays() {
+  overlays_invisible_ = true;
+  preferences.set("overlays_invisible", overlays_invisible_);
+  gui.menu_item_overlay->label("Show O&verlays");
+
+  if (overlay_button)
+    overlay_button->label("Show &Overlays");
+
+  proj.redraw_all();
+}
+
+void Application::toggle_overlays() {
+  if (overlays_invisible_)
+    show_overlays();
+  else
+    hide_overlays();
 }
 
 

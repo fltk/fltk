@@ -23,7 +23,9 @@
 #include "io/Project_Writer.h"
 #include "io/String_Writer.h"
 #include "nodes/Node.h"
+#include "nodes/Menu_Node.h"
 #include "nodes/Widget_Node.h"
+#include "nodes/Window_Node.h"
 #include "panels/settings_panel.h"
 #include "panels/codeview_panel.h"
 #include "widgets/Node_Browser.h"
@@ -440,6 +442,257 @@ void Project::set_modflag(int mf, int mfc) {
     codeview_defer_update();
 }
 
+void Project::select_all() {
+  Node *p = tree.current ? tree.current->parent : nullptr;
+  for (;;) {
+    if (p) {
+      int foundany = 0;
+      for (auto *t : p->descendants()) {
+        if (!t->selected) {
+          widget_browser->select(t,1,0);
+          foundany = 1;
+        }
+      }
+      if (foundany)
+        break;
+      p = p->parent;
+    } else {
+      for (auto *t : tree.all_nodes())
+        widget_browser->select(t,1,0);
+      break;
+    }
+  }
+  selection_changed(p);
+}
+
+void Project::select_none() {
+  Node *p = tree.current ? tree.current->parent : nullptr;
+  for (;;) {
+    if (p) {
+      int foundany = 0;
+      for (auto *t : p->descendants()) {
+        if (t->selected) {
+          widget_browser->select(t,0,0);
+          foundany = 1;
+        }
+      }
+      if (foundany) break;
+      p = p->parent;
+    } else {
+      for (auto *t : tree.all_nodes())
+        widget_browser->select(t,0,0);
+      break;
+    }
+  }
+  selection_changed(p);
+}
+
+
+/**
+ Move all selected items before their previous unselected sibling.
+ */
+void Project::move_selected_earlier() {
+  Node *f;
+  int mod = 0;
+  for (f = tree.first; f; ) {
+    Node* nxt = f->next;
+    if (f->selected) {
+      Node* g = f->prev_sibling();
+      if (g && !g->selected) {
+        if (!mod) undo.checkpoint();
+        f->move_before(g);
+        if (f->parent) f->parent->layout_widget();
+        mod = 1;
+      }
+    }
+    f = nxt;
+  }
+  if (mod) set_modflag(1);
+  widget_browser->display(tree.current);
+  widget_browser->rebuild();
+}
+
+/**
+ Move all selected items after their next unselected sibling.
+ */
+void Project::move_selected_later() {
+  Node *f;
+  int mod = 0;
+  for (f = tree.last; f; ) {
+    Node* prv = f->prev;
+    if (f->selected) {
+      Node* g = f->next_sibling();
+      if (g && !g->selected) {
+        if (!mod) undo.checkpoint();
+        g->move_before(f);
+        if (f->parent) f->parent->layout_widget();
+        mod = 1;
+      }
+    }
+    f = prv;
+  }
+  if (mod) set_modflag(1);
+  widget_browser->display(tree.current);
+  widget_browser->rebuild();
+}
+
+
+void Project::group_selected_nodes() {
+  if (!tree.current) {
+    fluid_message("No widgets selected.");
+    return;
+  }
+  if (!tree.current->is_widget()) {
+    fluid_message("Only widgets and menu items can be grouped.");
+    return;
+  }
+  if (dynamic_cast<Menu_Item_Node*>(tree.current)) {
+    group_selected_menu_items();
+  } else {
+    group_selected_widgets();
+  }
+}
+
+void Project::group_selected_widgets() {
+  // The group will be created in the parent group of the current widget
+  Node *qq = tree.current->parent;
+  Widget_Node *q = static_cast<Widget_Node*>(tree.current);
+  while (qq && !dynamic_cast<Group_Node*>(qq)) {
+    qq = qq->parent;
+  }
+  if (!qq) {
+    fluid_message("Can't create a new group here.");
+    return;
+  }
+  undo.checkpoint();
+  undo.suspend();
+  tree.current = qq;
+  Group_Node *n = (Group_Node*)(Group_Node::prototype.make(Strategy::AS_LAST_CHILD));
+  n->move_before(q);
+  n->o->resize(q->o->x(),q->o->y(),q->o->w(),q->o->h());
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != n->level || t == n || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Node *nxt = t->remove();
+    t->add(n, Strategy::AS_LAST_CHILD);
+    t = nxt;
+  }
+  fix_group_size(n);
+  tree.current = q;
+  n->layout_widget();
+  widget_browser->rebuild();
+  undo.resume();
+  set_modflag(1);
+}
+
+void Project::group_selected_menu_items() {
+  // The group will be created in the parent group of the current menuitem
+  if (!dynamic_cast<Menu_Item_Node*>(tree.current)) {
+    return;
+  }
+  Menu_Item_Node *q = static_cast<Menu_Item_Node*>(tree.current);
+  Node *qq = tree.current->parent;
+  if (!qq || !(dynamic_cast<Menu_Manager_Node*>(qq) || dynamic_cast<Submenu_Node*>(qq))) {
+    fluid_message("Can't create a new submenu here.");
+    return;
+  }
+  undo.checkpoint();
+  undo.suspend();
+  Widget_Node *n = (Widget_Node*)(q->make(FL_SUBMENU, Strategy::AFTER_CURRENT));
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != n->level || t == n || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Node *nxt = t->remove();
+    t->add(n, Strategy::AS_LAST_CHILD);
+    t = nxt;
+  }
+  widget_browser->rebuild();
+  undo.resume();
+  set_modflag(1);
+}
+
+void Project::ungroup_selected_nodes() {
+  if (!tree.current) {
+    fluid_message("No widgets selected.");
+    return;
+  }
+  if (!tree.current->is_widget()) {
+    fluid_message("Only widgets and menu items can be ungrouped.");
+    return;
+  }
+  if (dynamic_cast<Menu_Item_Node*>(tree.current)) {
+    ungroup_selected_menu_items();
+  } else {
+    ungroup_selected_widgets();
+  }
+}
+
+void Project::ungroup_selected_widgets() {
+  Widget_Node *q = static_cast<Widget_Node*>(tree.current);
+  int q_level = q->level;
+  Node *qq = tree.current->parent;
+  while (qq && !qq->is_true_widget()) qq = qq->parent;
+  if (!qq || !dynamic_cast<Group_Node*>(qq)) {
+    fluid_message("Only widgets inside a group can be ungrouped.");
+    return;
+  }
+  undo.checkpoint();
+  undo.suspend();
+  tree.current = qq;
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != q_level || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Node *nxt = t->remove();
+    t->insert(qq);
+    t = nxt;
+  }
+  if (!qq->next || (qq->next->level <= qq->level)) {
+    qq->remove();
+    delete qq;   // qq has no children that need to be delete
+  }
+  tree.current = q;
+  widget_browser->rebuild();
+  undo.resume();
+  set_modflag(1);
+}
+
+void Project::ungroup_selected_menu_items() {
+  Node *qq = tree.current->parent;
+  Widget_Node *q = static_cast<Widget_Node*>(tree.current);
+  int q_level = q->level;
+  if (!qq || !dynamic_cast<Submenu_Node*>(qq)) {
+    fluid_message("Only menu items inside a submenu can be ungrouped.");
+    return;
+  }
+  undo.checkpoint();
+  undo.suspend();
+  tree.current = qq;
+  for (Node *t = qq->next; t && (t->level > qq->level);) {
+    if (t->level != q_level || !t->selected) {
+      t = t->next;
+      continue;
+    }
+    Node *nxt = t->remove();
+    t->insert(qq);
+    t = nxt;
+  }
+  if (!qq->next || (qq->next->level <= qq->level)) {
+    qq->remove();
+    delete qq;   // qq has no children that need to be delete
+  }
+  tree.current = q;
+  widget_browser->rebuild();
+  undo.resume();
+  set_modflag(1);
+}
+
+
 /**
  Give the user the opportunity to save a project before clearing it.
 
@@ -530,5 +783,14 @@ bool Project::load_or_merge(const std::string &filename_arg) {
   }
   update_settings_dialog();
   return true;
+}
+
+void Project::redraw_all() {
+  for (Node *o: tree.all_widgets()) {
+    auto* win = dynamic_cast<Window_Node*>(o);
+    if (win) {
+      win->redraw();
+    }
+  }
 }
 

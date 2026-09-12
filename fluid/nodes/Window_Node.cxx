@@ -100,15 +100,7 @@ void i18n_type_cb(Fl_Choice *c, void *v) {
   w_settings_i18n_tab->redraw();
 }
 
-void show_grid_cb(Fl_Widget *, void *) {
-  settings_window->show();
-  w_settings_tabs->value(w_settings_layout_tab);
-}
 
-void show_settings_cb(Fl_Widget *, void *) {
-  settings_window->hotspot(settings_window);
-  settings_window->show();
-}
 
 ////////////////////////////////////////////////////////////////
 
@@ -117,7 +109,6 @@ Fl_Menu_Item window_type_menu[] = {
   {"Double",0,nullptr,(void*)(FL_DOUBLE_WINDOW)},
   {nullptr}};
 
-static int overlays_invisible;
 
 // The following Fl_Widget is used to simulate the windows.  It has
 // an overlay for the fluid ui, and special-cases the FL_NO_BOX.
@@ -274,6 +265,13 @@ bool Window_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
   return true;
 }
 
+void Window_Node::redraw() {
+  Overlay_Window *w = (Overlay_Window *)o;
+  if (w->shown()) {
+    w->redraw_overlay();
+    w->redraw();
+  }
+}
 
 /**
  Make and add a new Window node.
@@ -452,7 +450,7 @@ void Window_Node::newdx() {
     dy = 0;
   }
 
-  if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
+  if (Fluid.show_guides_ && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
     Node *selection = nullptr; // special power for the first selected widget
     for (Node *q=next; q && q->level>level; q = q->next) {
       if (q->selected && q->is_true_widget()) {
@@ -630,7 +628,7 @@ void Window_Node::draw_overlay() {
     int y = y1; int b = my; if (y > b) {y = my; b = y1;}
     fl_rect(x,y,r-x,b-y);
   }
-  if (overlays_invisible && !drag) return;
+  if (Fluid.overlays_invisible_ && !drag) return;
 
   if (Fluid.show_restricted) {
     draw_out_of_bounds();
@@ -650,14 +648,14 @@ void Window_Node::draw_overlay() {
       Widget_Node* myo = (Widget_Node*)q;
       int x,y,r,t;
       newposition(myo,x,y,r,t);
-      if (Fluid.show_guides) {
+      if (Fluid.show_guides_) {
         // If we are in a drag operation, and the parent is a grid, show the grid overlay
         if (drag && q->parent && dynamic_cast<Grid_Node*>(q->parent)) {
           Fl_Grid_Proxy *grid = ((Fl_Grid_Proxy*)((Grid_Node*)q->parent)->o);
           grid->draw_overlay();
         }
       }
-      if (!Fluid.show_guides || !drag || numselected != 1) {
+      if (!Fluid.show_guides_ || !drag || numselected != 1) {
         if (Flex_Node::parent_is_flex(q) && Flex_Node::is_fixed(q)) {
           Fl_Flex *flex = ((Fl_Flex*)((Flex_Node*)q->parent)->o);
           Fl_Widget *wgt = myo->o;
@@ -707,7 +705,7 @@ void Window_Node::draw_overlay() {
   fl_rectf(mysr-5,myst-5,5,5);
   fl_rectf(mysx,myst-5,5,5);
 
-  if (Fluid.show_guides && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
+  if (Fluid.show_guides_ && (drag & (FD_DRAG|FD_TOP|FD_LEFT|FD_BOTTOM|FD_RIGHT))) {
     fluid::app::Snap_Data data = { dx, dy, sx, sy, sr, st, drag, 4, 4, dx, dy, (Widget_Node*)selection, this};
     fluid::app::Snap_Action::draw_all(data);
   }
@@ -715,9 +713,9 @@ void Window_Node::draw_overlay() {
 
 // Calculate new bounding box of selected widgets:
 void Window_Node::fix_overlay() {
-  Fluid.overlay_item->label("Hide O&verlays");
+  Fluid.gui.menu_item_overlay->label("Hide O&verlays");
   if (overlay_button) overlay_button->label("Hide &Overlays");
-  overlays_invisible = 0;
+  Fluid.overlays_invisible_ = 0;
   recalc = 1;
   ((Overlay_Window *)(this->o))->redraw_overlay();
 }
@@ -748,79 +746,14 @@ void redraw_overlays() {
     if (dynamic_cast<Window_Node*>(o)) ((Window_Node*)o)->fix_overlay();
 }
 
-void toggle_overlays(Fl_Widget *,void *) {
-  overlays_invisible = !overlays_invisible;
-
-  if (overlays_invisible) {
-    Fluid.overlay_item->label("Show O&verlays");
-    if (overlay_button) overlay_button->label("Show &Overlays");
-  } else {
-    Fluid.overlay_item->label("Hide O&verlays");
-    if (overlay_button) overlay_button->label("Hide &Overlays");
-  }
-
-  for (Node *o=Fluid.proj.tree.first; o; o=o->next)
-    if (dynamic_cast<Window_Node*>(o)) {
-      Widget_Node* w = (Widget_Node*)o;
-      ((Overlay_Window*)(w->o))->redraw_overlay();
-    }
-}
-
-/**
- \brief User changes settings to show positioning guides in layout editor overlay.
- This is called from the main menu and from the check button in the Settings
- dialog.
- */
-void toggle_guides(Fl_Widget *,void *) {
-  Fluid.show_guides = !Fluid.show_guides;
-  Fluid.preferences.set("Fluid.show_guides", Fluid.show_guides);
-
-  if (Fluid.show_guides)
-    Fluid.guides_item->label("Hide Guides");
-  else
-    Fluid.guides_item->label("Show Guides");
-  if (guides_button)
-    guides_button->value(Fluid.show_guides);
-
-  for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (dynamic_cast<Window_Node*>(o)) {
-      Widget_Node* w = (Widget_Node*)o;
-      ((Overlay_Window*)(w->o))->redraw_overlay();
-    }
-  }
-}
-
 /**
  \brief User changes settings to show positioning guides in layout editor overlay.
  This is called from the check button in the Settings dialog.
  */
 void toggle_guides_cb(Fl_Check_Button *o, void *v) {
-  toggle_guides(nullptr, nullptr);
+  Fluid.toggle_guides();
 }
 
-/**
- \brief User changes settings to show overlapping and out of bounds widgets.
- This is called from the main menu and from the check button in the Settings
- dialog.
- */
-void toggle_restricted(Fl_Widget *,void *) {
-  Fluid.show_restricted = !Fluid.show_restricted;
-  Fluid.preferences.set("Fluid.show_restricted", Fluid.show_restricted);
-
-  if (Fluid.show_restricted)
-    Fluid.restricted_item->label("Hide Restricted");
-  else
-    Fluid.restricted_item->label("Show Restricted");
-  if (restricted_button)
-    restricted_button->value(Fluid.show_restricted);
-
-  for (Node *o=Fluid.proj.tree.first; o; o=o->next) {
-    if (dynamic_cast<Window_Node*>(o)) {
-      Widget_Node* w = (Widget_Node*)o;
-      ((Overlay_Window*)(w->o))->redraw_overlay();
-    }
-  }
-}
 
 /**
  \brief User changes settings to show low contrast groups with a ghosted outline.
@@ -834,14 +767,6 @@ void toggle_ghosted_outline_cb(Fl_Check_Button *,void *) {
       ((Overlay_Window*)(w->o))->redraw();
     }
   }
-}
-
-/**
- \brief User changes settings to show overlapping and out of bounds widgets.
- This is called from the check button in the Settings dialog.
- */
-void toggle_restricted_cb(Fl_Check_Button *o, void *v) {
-  toggle_restricted(nullptr, nullptr);
 }
 
 extern void select(Node *,int);
@@ -1227,15 +1152,15 @@ int Window_Node::handle(int event) {
       return 1;
 
     case 'o':
-        toggle_overlays(nullptr, nullptr);
-      break;
+      Fluid.toggle_overlays();
+      return 1;
 
     default:
       return 0;
     }}
 
   case FL_SHORTCUT: {
-    const Fl_Menu_Item* m = Fluid.main_menu->test_shortcut();
+    const Fl_Menu_Item* m = Fluid.gui.app_menu_bar->menu()->test_shortcut();
     if (m && m->callback()) m->do_callback(this->o);
     return (m != nullptr);}
 

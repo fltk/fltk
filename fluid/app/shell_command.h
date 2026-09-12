@@ -14,8 +14,8 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#ifndef _FLUID_SHELL_COMMAND_H
-#define _FLUID_SHELL_COMMAND_H
+#ifndef FLUID_APP_SHELL_COMMAND_H
+#define FLUID_APP_SHELL_COMMAND_H
 
 #include "Fluid.h"
 
@@ -132,9 +132,6 @@ class Fd_Shell_Command_List
 {
 public:
   std::vector<std::unique_ptr<Fd_Shell_Command>> list;
-  // Fd_Shell_Command **list = nullptr;
-  // int list_size = 0;
-  // int list_capacity = 0;
   Fl_Menu_Item *shell_menu_ = nullptr;
 
   public:
@@ -158,11 +155,10 @@ public:
   void update_settings_dialog();
 
   static Fl_Menu_Item default_menu[];
-  static void menu_marker(Fl_Widget*, void*);
   static void export_selected();
   static void import_from_file();
 };
 
 extern Fd_Shell_Command_List *g_shell_config;
 
-#endif // _FLUID_SHELL_COMMAND_H
+#endif // FLUID_APP_SHELL_COMMAND_H

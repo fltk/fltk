@@ -104,12 +104,6 @@ struct TextSpan2 {
 
 int storestring(const std::string& n, std::string& p, int nostrip=0);
 
-void select_all_cb(Fl_Widget *,void *);
-void select_none_cb(Fl_Widget *,void *);
-void earlier_cb(Fl_Widget*,void*);
-void later_cb(Fl_Widget*,void*);
-
-
 /**
  \brief Base class for all entries in Fluid's project tree.
 

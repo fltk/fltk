@@ -1,0 +1,510 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.050020
+use_FL_COMMAND
+utf8_in_src
+header_name {.h}
+code_name {.cxx}
+include_guard {}
+preprocessor {\#include "Fluid.h"} {use 4
+}
+
+preprocessor {\#include "Project.h"} {use 4
+}
+
+preprocessor {\#include "app/templates.h"} {use 4
+}
+
+preprocessor {\#include "proj/mergeback.h"} {use 4
+}
+
+preprocessor {\#include "panels/codeview_panel.h"} {use 4
+}
+
+preprocessor {\#include "panels/settings_panel.h"} {use 4
+}
+
+preprocessor {\#include "proj/Node_Alignment.h"} {use 4
+}
+
+preprocessor {\#include "nodes/factory.h"} {use 4
+}
+
+preprocessor {\#include "widgets/App_Menu_Bar.h"} {use 3
+}
+
+preprocessor {\#define W Fl_Widget*} {use 4
+}
+
+preprocessor {\#define U void*} {use 4
+}
+
+class GUI {open
+} {
+  Function {open_history_cb(Fl_Widget *, void *v)} {open return_type {static void}
+  } {
+    code {Fluid.open_project_file(std::string((const char*)v));} {}
+  }
+  Function {align_nodes_cb(Fl_Widget *, void *v)} {open return_type {static void}
+  } {
+    code {int how = fl_long(v);
+align_selected_nodes(how);} {}
+  }
+  Function {build()} {open
+  } {
+    code {if (app_window)
+  return app_window;} {}
+    Fl_Window app_window {
+      label Fluid open
+      xywh {555 510 330 450} type Double resizable
+      code3 {Fluid.main_window = o;} visible
+    } {
+      Fl_Menu_Bar app_menu_bar {open
+        xywh {0 0 330 25}
+        class {fluid::widget::App_Menu_Bar}
+      } {
+        Submenu {} {
+          label {&File} open
+          xywh {0 0 100 20}
+        } {
+          MenuItem {} {
+            label {&New}
+            callback {[](W,U) { Fluid.user_new_project(); }}
+            xywh {0 0 100 20} shortcut 0x40006e
+          }
+          MenuItem {} {
+            label {&Open...}
+            callback {[](W,U) { Fluid.open_project_file(); }}
+            xywh {0 0 100 20} shortcut 0x40006f
+          }
+          MenuItem {} {
+            label {&Insert...}
+            callback {[](W,U) { Fluid.proj.load_or_merge(std::string{}); }}
+            xywh {0 0 100 20} shortcut 0x400069 divider
+          }
+          MenuItem menu_item_save {
+            label {&Save}
+            callback {[](W,U) { Fluid.proj.save(); }}
+            xywh {0 0 100 20} shortcut 0x400073
+          }
+          MenuItem {} {
+            label {Save &As...}
+            callback {[](W,U) { Fluid.proj.save(fluid::Project::SaveOption::ASK_FOR_FILENAME); }}
+            xywh {0 0 100 20} shortcut 0x410073
+          }
+          MenuItem {} {
+            label {Sa&ve A Copy...}
+            callback {[](W,U) { Fluid.proj.save(fluid::Project::SaveOption::SAVE_COPY); }}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {&Revert...}
+            callback {[](W,U) { Fluid.proj.revert(); }}
+            xywh {0 0 100 20} divider
+          }
+          MenuItem {} {
+            label {New &From Template...}
+            callback {[](W,U) { Fluid.new_project_from_template(); }}
+            xywh {0 0 100 20} shortcut 0x41006e
+          }
+          MenuItem {} {
+            label {Save As &Template}
+            callback {[](W,U) { fluid::app::save_template(); }}
+            xywh {0 0 100 20} divider
+          }
+          MenuItem {} {
+            label {&Print...}
+            callback {[](W,U) { Fluid.print_snapshots(); }}
+            xywh {0 0 100 20} shortcut 0x400070
+          }
+          MenuItem {} {
+            label {Write &Code}
+            callback {[](W,U) { Fluid.write_code_files(); }}
+            xywh {0 0 100 20} shortcut 0x410063
+          }
+          MenuItem menu_item_mergeback {
+            label {MergeBack Code}
+            callback {[](W,U) { mergeback_code_files(Fluid.proj, fluid::proj::Mergeback::CHATTY); }}
+            xywh {0 0 100 20} shortcut 0x41006d
+          }
+          MenuItem {} {
+            label {&Write Strings}
+            callback {[](W,U) { Fluid.proj.write_strings(); }}
+            xywh {0 0 100 20} shortcut 0x410077 divider
+          }
+          MenuItem menu_item_history {
+            user_data {Fluid.history.abspath[0]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400031
+            code3 {o->label(Fluid.history.relpath[0]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[1]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400032
+            code3 {o->label(Fluid.history.relpath[1]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[2]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400033
+            code3 {o->label(Fluid.history.relpath[2]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[3]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400034
+            code3 {o->label(Fluid.history.relpath[3]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[4]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400035
+            code3 {o->label(Fluid.history.relpath[4]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[5]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400036
+            code3 {o->label(Fluid.history.relpath[5]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[6]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400037
+            code3 {o->label(Fluid.history.relpath[6]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[7]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400038
+            code3 {o->label(Fluid.history.relpath[7]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[8]}
+            callback open_history_cb
+            xywh {0 0 100 20} shortcut 0x400039
+            code3 {o->label(Fluid.history.relpath[8]);}
+          }
+          MenuItem {} {
+            user_data {Fluid.history.abspath[9]}
+            callback open_history_cb
+            xywh {0 0 100 20} divider
+            code3 {o->label(Fluid.history.relpath[9]);}
+          }
+          MenuItem {} {
+            label {&Quit}
+            callback {[](W,U) { Fluid.quit(); }}
+            xywh {0 0 100 20} shortcut 0x400071
+          }
+        }
+        Submenu {} {
+          label {&Edit} open
+          xywh {0 0 100 20}
+        } {
+          MenuItem {} {
+            label {&Undo}
+            callback {[](W,U) { Fluid.proj.undo.undo(); }}
+            xywh {0 0 100 20} shortcut 0x40007a
+          }
+          MenuItem {} {
+            label {&Redo}
+            callback {[](W,U) { Fluid.proj.undo.redo(); }}
+            xywh {0 0 100 20} shortcut 0x41007a divider
+          }
+          MenuItem {} {
+            label {C&ut}
+            callback {[](W,U) { Fluid.cut_selected(); }}
+            xywh {0 0 100 20} shortcut 0x400078
+          }
+          MenuItem {} {
+            label {&Copy}
+            callback {[](W,U) { Fluid.copy_selected(); }}
+            xywh {0 0 100 20} shortcut 0x400063
+          }
+          MenuItem {} {
+            label {&Paste}
+            callback {[](W,U) { Fluid.paste_from_clipboard(); }}
+            xywh {0 0 100 20} shortcut 0x400076
+          }
+          MenuItem {} {
+            label {Dup&licate}
+            callback {[](W,U) { Fluid.duplicate_selected(); }}
+            xywh {0 0 100 20} shortcut 0x400075
+          }
+          MenuItem {} {
+            label {&Delete}
+            callback {[](W,U) { Fluid.delete_selected(); }}
+            xywh {0 0 100 20} shortcut 0xffff
+          }
+          MenuItem {} {
+            label {Select &All}
+            callback {[](W,U) { Fluid.proj.select_all(); }}
+            xywh {0 0 100 20} shortcut 0x400061
+          }
+          MenuItem {} {
+            label {Select &None}
+            callback {[](W,U) { Fluid.proj.select_none(); }}
+            xywh {0 0 100 20} shortcut 0x410061 divider
+          }
+          MenuItem {} {
+            label {Pr&operties...}
+            callback {[](W,U) { Fluid.edit_selected(); }}
+            xywh {0 0 100 20} shortcut 0xffbe
+          }
+          MenuItem {} {
+            label {&Sort}
+            callback {[](W,U) { Fluid.sort_selected(); }}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {&Earlier}
+            callback {[](W,U) { Fluid.proj.move_selected_earlier(); }}
+            xywh {0 0 100 20} shortcut 0xffbf
+          }
+          MenuItem {} {
+            label {&Later}
+            callback {[](W,U) { Fluid.proj.move_selected_later(); }}
+            xywh {0 0 100 20} shortcut 0xffc0
+          }
+          MenuItem {} {
+            label {&Group}
+            callback {[](W,U) { Fluid.proj.group_selected_nodes(); }}
+            xywh {0 0 100 20} shortcut 0xffc4
+          }
+          MenuItem {} {
+            label {Ung&roup}
+            callback {[](W,U) { Fluid.proj.ungroup_selected_nodes(); }}
+            xywh {0 0 100 20} shortcut 0xffc5 divider
+          }
+          MenuItem menu_item_overlay {
+            label {Hide O&verlays}
+            callback {[](W,U) { Fluid.toggle_overlays(); }}
+            xywh {0 0 100 20} shortcut 0x41006f
+          }
+          MenuItem menu_item_guides {
+            label {Hide Guides}
+            callback {[](W,U) { Fluid.toggle_guides(); }}
+            xywh {0 0 100 20} shortcut 0x410067
+          }
+          MenuItem menu_item_restricted {
+            label {Hide Restricted}
+            callback {[](W,U) { Fluid.toggle_restricted_areas(); }}
+            xywh {0 0 100 20} shortcut 0x410072
+          }
+          MenuItem menu_item_widgetbin {
+            label {Show Widget &Bin}
+            callback {[](W,U) { Fluid.toggle_widget_bin(); }}
+            xywh {0 0 100 20} shortcut 0x80062
+          }
+          MenuItem menu_item_codeview {
+            label {Show Code View}
+            callback {[](W,U) { codeview_toggle_visibility(); }}
+            xywh {0 0 100 20} shortcut 0x80063 divider
+          }
+          MenuItem {} {
+            label {Settings...}
+            callback {[](W,U) { settings_window->show(); }}
+            xywh {0 0 100 20} shortcut 0x80070
+          }
+        }
+        MenuItem submenu_new_nodes {
+          label {&New}
+          xywh {0 0 100 20}
+          code3 {o->user_data((void*)New_Menu);
+o->flags |= FL_SUBMENU_POINTER;}
+        }
+        Submenu {} {
+          label {&Layout} open
+          xywh {0 0 100 20}
+        } {
+          Submenu {} {
+            label {&Align} open
+            xywh {0 0 100 20}
+          } {
+            MenuItem {} {
+              label {&Left}
+              user_data 10 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Center}
+              user_data 11 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Right}
+              user_data 12 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Top}
+              user_data 13 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Middle}
+              user_data 14 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Bottom}
+              user_data 15 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+          }
+          Submenu {} {
+            label {&Space Evenly} open
+            xywh {0 0 100 20}
+          } {
+            MenuItem {} {
+              label {&Across}
+              user_data 20 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Down}
+              user_data 21 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+          }
+          Submenu {} {
+            label {&Make Same Size} open
+            xywh {0 0 100 20}
+          } {
+            MenuItem {} {
+              label {&Width}
+              user_data 30 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Height}
+              user_data 31 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Both}
+              user_data 32 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+          }
+          Submenu {} {
+            label {&Center In Group} open
+            xywh {0 0 100 20}
+          } {
+            MenuItem {} {
+              label {&Horizontal}
+              user_data 40 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+            MenuItem {} {
+              label {&Vertical}
+              user_data 41 user_data_type long
+              callback align_nodes_cb
+              xywh {0 0 100 20}
+            }
+          }
+          MenuItem {} {
+            label {Interactive Resize}
+            callback {[](W w,U) {
+  Fl_Menu_* menu = static_cast<Fl_Menu_*>(w);
+  Fluid.proj.tree.allow_layout = menu->mvalue()->value();
+}}
+            xywh {0 0 100 20} type Toggle divider
+          }
+          MenuItem {} {
+            label {&Grid and Size Settings...}
+            callback {[](W,U) {
+  settings_window->show();
+  w_settings_tabs->value(w_settings_layout_tab);
+}}
+            xywh {0 0 100 20} shortcut 0x400067 divider
+          }
+          MenuItem submenu_layout_suites {
+            label Presets selected
+            xywh {0 0 100 20}
+            code3 {o->user_data((void*)main_layout_submenu_);
+o->flags |= FL_SUBMENU_POINTER;}
+          }
+          MenuItem menu_item_layout_presets {
+            label Application
+            callback {[](W,U) {
+  Fluid.layout_list.current_preset(0);
+  Fluid.layout_list.update_dialogs();
+}}
+            xywh {0 0 100 20} type Radio
+          }
+          MenuItem {} {
+            label Dialog
+            callback {[](W,U) {
+  Fluid.layout_list.current_preset(1);
+  Fluid.layout_list.update_dialogs();
+}}
+            xywh {0 0 100 20} type Radio
+          }
+          MenuItem {} {
+            label Toolbox
+            callback {[](W,U) {
+  Fluid.layout_list.current_preset(2);
+  Fluid.layout_list.update_dialogs();
+}}
+            xywh {0 0 100 20} type Radio
+          }
+        }
+        MenuItem submenu_shell {
+          label {&Shell}
+          xywh {0 0 100 20}
+          code3 {o->user_data((void*)Fd_Shell_Command_List::default_menu);
+o->flags |= FL_SUBMENU_POINTER;}
+        }
+        Submenu {} {
+          label {&Help} open
+          xywh {0 0 100 20}
+        } {
+          MenuItem {} {
+            label {&Rapid Development with Fluid...}
+            callback {[](W,U) { Fluid.show_help("fluid.html"); }}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {&FLTK Programmers Manual...}
+            callback {[](W,U) { Fluid.show_help("index.html"); }}
+            xywh {0 0 100 20}
+          }
+          MenuItem {} {
+            label {&About Fluid...}
+            callback {[](W,U) { Fluid.about(); }}
+            xywh {0 0 100 20}
+          }
+        }
+      }
+      Fl_Browser node_browser {
+        tooltip {Double-click to view or change an item.} xywh {0 25 330 425} box FLAT_BOX resizable
+        code0 {\#include "widgets/Node_Browser.h"}
+        code3 {widget_browser = o;}
+        class {fluid::widget::Node_Browser}
+      }
+    }
+  }
+  Function {show()} {open return_type void
+  } {
+    code {if (!app_window)
+  build();
+app_window->show();} {}
+  }
+  Function {GUI()} {open
+  } {
+    code {app_window = nullptr;} {}
+  }
+}

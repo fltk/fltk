@@ -26,6 +26,7 @@
 
 void group_cb(Fl_Widget *, void *);
 void ungroup_cb(Fl_Widget *, void *);
+void fix_group_size(Node *tt);
 
 // ---- Group_Node -------------------------------------------------- MARK: -
 

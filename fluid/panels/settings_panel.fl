@@ -213,7 +213,7 @@ Function {make_settings_window()} {uid 5023 open
       xywh {10 10 340 530} selection_color 12 labelsize 12 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {uid 3530
-        label General open selected
+        label General open
         scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 resizable
       } {
         Fl_Group {} {uid 22d1
@@ -327,11 +327,11 @@ use_external_editor_button->value(Fluid.use_external_editor);}
           label {Show Positioning Guides}
           callback toggle_guides_cb
           tooltip {show guides that help to position and resize widgets and enable snapping} xywh {130 306 210 20} down_box DOWN_BOX labelsize 12
-          code3 {o->value(Fluid.show_guides);}
+          code3 {o->value(Fluid.show_guides_);}
         }
         Fl_Check_Button restricted_button {uid ee5a
           label {Show Restricted Areas}
-          callback toggle_restricted_cb
+          callback {[](Fl_Widget*, void*) { Fluid.toggle_restricted_areas(); }} selected
           tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {130 326 210 20} down_box DOWN_BOX labelsize 12
           code3 {o->value(Fluid.show_restricted);}
         }

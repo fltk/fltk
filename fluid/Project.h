@@ -120,6 +120,19 @@ public: // Methods
 
   void set_modflag(int mf, int mfc = -1);
 
+  void select_all();
+  void select_none();
+  void move_selected_earlier();
+  void move_selected_later();
+
+  void group_selected_nodes();
+  void group_selected_widgets();
+  void group_selected_menu_items();
+
+  void ungroup_selected_nodes();
+  void ungroup_selected_widgets();
+  void ungroup_selected_menu_items();
+
   /// Options for save(), mutually exclusive by nature.
   enum class SaveOption {
     NORMAL,            ///< Save using the current filename, or ask if none is set.
@@ -129,7 +142,9 @@ public: // Methods
   void save(SaveOption option = SaveOption::NORMAL);
   void revert();
   bool confirm_clear();
-  bool load_or_merge(const std::string &filename_arg);
+  bool load_or_merge(const std::string &filename_arg = "");
+
+  void redraw_all();
 };
 
 } // namespace fluid

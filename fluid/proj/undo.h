@@ -79,11 +79,6 @@ public:
   void redo();
   // Undo menu callback
   void undo();
-
-  // Redo menu callback
-  static void redo_cb(Fl_Widget *, void *);
-  // Undo menu callback
-  static void undo_cb(Fl_Widget *, void *);
 };
 
 } // namespace fluid

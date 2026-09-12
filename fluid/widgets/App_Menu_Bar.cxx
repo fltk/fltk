@@ -43,13 +43,11 @@ App_Menu_Bar::App_Menu_Bar(int X, int Y, int W, int H, const char *L)
  */
 int App_Menu_Bar::handle(int event)
 {
-  Fl_Menu_Item *mi = nullptr;
   if (event == FL_BEFORE_MENU) {
-    mi = (Fl_Menu_Item*)find_item(mergeback_cb);
-    if (mi && Fluid.proj.write_mergeback_data)
-      mi->show();
+    if (Fluid.proj.write_mergeback_data)
+      GUI::menu_item_mergeback->show();
     else
-      mi->hide();
+      GUI::menu_item_mergeback->hide();
     return 1;
   } else {
     return Fl_Menu_Bar::handle(event);

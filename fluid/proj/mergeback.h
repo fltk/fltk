@@ -105,6 +105,7 @@ extern int merge_back(Project &proj, const std::string &s, const std::string &p,
 
 extern void start_auto_mergeback();
 extern void mergeback_on_load();
+extern int mergeback_code_files(fluid::Project &proj, fluid::proj::Mergeback::Feedback feedback);
 
 
 #endif // FLUID_PROJ_MERGEBACK_H

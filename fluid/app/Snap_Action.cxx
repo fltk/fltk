@@ -104,15 +104,8 @@ Layout_Preset *fluid::app::default_layout_preset = &fltk_app;
 /**
  \brief The two built-in layout suites, "FLTK" and "Grid".
 
- This is a function-local static (construct-on-first-use) rather than a
- plain file-scope array. Layout_List is a member of the global Fluid
- object, defined in a different translation unit (Fluid.cxx); C++ gives no
- guarantee about relative initialization order across translation units,
- so a plain static array here could still be in its zero-initialized
- state (all-null Layout_Suite entries) at the point Layout_List's own
- constructor runs and tries to use it. A function-local static is
- guaranteed to be fully constructed the first time this function is
- called, regardless of global static-initialization order.
+ This is a function-local static (construct-on-first-use). Layout_List is a
+ member of the global Fluid object.
  */
 static Layout_Suite *builtin_suites() {
   static Layout_Suite suites[] = {
@@ -137,23 +130,11 @@ static Fl_Menu_Item static_choice_menu[] = {
 
 // ---- Callbacks ------------------------------------------------------ MARK: -
 
-void layout_suite_marker(Fl_Widget *, void *) {
-  // intentionally left empty
-}
-
 void select_layout_suite_cb(Fl_Widget *, void *user_data) {
   int index = (int)(fl_intptr_t)user_data;
   assert(index >= 0);
   assert(index < (int)Fluid.layout_list.list_.size());
   Fluid.layout_list.current_suite(index);
-  Fluid.layout_list.update_dialogs();
-}
-
-void select_layout_preset_cb(Fl_Widget *, void *user_data) {
-  int index = (int)(fl_intptr_t)user_data;
-  assert(index >= 0);
-  assert(index < 3);
-  Fluid.layout_list.current_preset(index);
   Fluid.layout_list.update_dialogs();
 }
 
@@ -665,15 +646,6 @@ Layout_List::Layout_List()
   current_preset_(0)
 {
   // Copy the two built-in suites; give each its own owned menu_label
-  // instead of aliasing builtin_suites()'s buffer, which lives for the
-  // whole program and must never be passed to ::free() (e.g. by a later
-  // rename). main_menu_/choice_menu_ keep aliasing the static arrays
-  // above (whose labels already come from builtin_suites(), so they
-  // agree with list_'s content); grow_menus() replaces them with owned
-  // copies lazily, the first time add() is called -- deliberately not
-  // here, since this constructor runs as part of the global Fluid
-  // object's own static initialization, before Fluid.main_menubar
-  // (which grow_menus() needs) is guaranteed to exist.
   Layout_Suite *builtin = builtin_suites();
   list_.reserve(2);
   for (int i = 0; i < 2; i++) {
@@ -703,11 +675,8 @@ Layout_List::~Layout_List() {
  Update the Setting dialog and menus to reflect the current Layout selection state.
  */
 void Layout_List::update_dialogs() {
-  static Fl_Menu_Item *preset_menu = nullptr;
-  if (!preset_menu) {
-    preset_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(select_layout_preset_cb);
-    assert(preset_menu);
-  }
+  Fl_Menu_Item *presets_menu = Fluid.gui.menu_item_layout_presets;
+
   assert(this);
   assert(current_suite_ >= 0 );
   assert(current_suite_ < (int)list_.size());
@@ -719,7 +688,7 @@ void Layout_List::update_dialogs() {
     w_settings_layout_tab->do_callback(w_settings_layout_tab, LOAD);
     layout_choice->redraw();
   }
-  preset_menu[current_preset_].setonly(preset_menu);
+  presets_menu[current_preset_].setonly(presets_menu);
   main_menu_[current_suite_].setonly(main_menu_);
 }
 
@@ -900,10 +869,9 @@ void Layout_List::current_preset(int ix) {
  element construction, and destruction correctly on its own); only the
  plain-C Fl_Menu_Item arrays that mirror it still need manual reallocation.
  */
-void Layout_List::grow_menus(int old_n, int new_n) {
-  static Fl_Menu_Item *suite_menu = nullptr;
-  if (!suite_menu)
-    suite_menu = (Fl_Menu_Item*)Fluid.main_menubar->find_item(layout_suite_marker);
+void Layout_List::grow_menus(int old_n, int new_n)
+{
+  Fl_Menu_Item *suite_menu = Fluid.gui.submenu_layout_suites;
 
   int i;
 

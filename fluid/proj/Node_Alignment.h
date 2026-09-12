@@ -19,6 +19,6 @@
 
 class Fl_Widget;
 
-void align_widget_cb(Fl_Widget *, long);
+void align_selected_nodes(int how);
 
 #endif // _FLUID_ALIGN_WIDGET_H

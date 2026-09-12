@@ -67,7 +67,13 @@ int Args::load(int argc,char **argv) {
     "  -mb=info      report MergeBack changes, but do not apply them\n"
     "  -mb=ask       ask before applying MergeBack changes\n"
     "  -mb=apply     apply MergeBack changes automatically\n"
-    "  -d            enable internal debugging\n";
+    "  -d            enable internal debugging\n"
+    "FLTK Options:\n"
+    " -bg color\n"
+    " -fg color\n"
+    " -scheme scheme\n"
+    " -scaling_factor (0.25...4.0)\n"
+    ;
     const char *app_name = nullptr;
     if ( (argc > 0) && argv[0] && argv[0][0] )
       app_name = fl_filename_name(argv[0]);

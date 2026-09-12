@@ -22,6 +22,7 @@
 #include "app/history.h"
 #include "app/Snap_Action.h"
 #include "tools/filename.h"
+#include "panels/main_panel.h"
 
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Item.H>
@@ -30,12 +31,6 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
-
-constexpr int BROWSERWIDTH = 300;
-constexpr int BROWSERHEIGHT = 500;
-constexpr int WINWIDTH = 300;
-constexpr int MENUHEIGHT = 25;
-constexpr int WINHEIGHT = (BROWSERHEIGHT+MENUHEIGHT);
 
 // ---- types
 
@@ -106,6 +101,8 @@ class Application {
   void run_batch(const std::string& filename);
 
 public: // Member Variables
+  /// Main Application Window
+  GUI gui;
   /// Application wide preferences
   Fl_Preferences preferences;
   /// Project history.
@@ -119,12 +116,14 @@ public: // Member Variables
 
   // TODO: make this into a class: app::Settings
   /// Show guides in the design window when positioning widgets, saved in app preferences.
-  int show_guides { 1 };
+  int show_guides_ = 1;
   /// Show areas of restricted use in overlay plane.
   /// Restricted areas are widget that overlap each other, widgets that are outside
   /// of their parent's bounds (except children of Scroll groups), and areas
   /// within an Fl_Tile that are not covered by children.
   int show_restricted { 1 };
+
+  int overlays_invisible_ { 0 };
   /// Show a ghosted outline for groups that have very little contrast.
   /// This makes groups with NO_BOX or FLAT_BOX better editable.
   int show_ghosted_outline { 1 };
@@ -141,16 +140,7 @@ public: // Member Variables
 
   // TODO: make this into a class: app::GUI
   Fl_Window *main_window { nullptr };
-  static Fl_Menu_Item main_menu[];
-  fluid::widget::App_Menu_Bar *main_menubar { nullptr };
-  Fl_Menu_Item *save_item { nullptr };
-  Fl_Menu_Item *history_item { nullptr };
-  Fl_Menu_Item *widgetbin_item { nullptr };
-  Fl_Menu_Item *codeview_item { nullptr };
-  Fl_Menu_Item *overlay_item { nullptr };
   Fl_Button *overlay_button { nullptr };
-  Fl_Menu_Item *guides_item { nullptr };
-  Fl_Menu_Item *restricted_item { nullptr };
   /// Offset in pixels when adding widgets from an .fl file.
   int pasteoffset { 0 };
   int ipasteoffset { 0 };
@@ -178,8 +168,10 @@ public: // Methods
 
   // Clear the current project and create a new, empty one.
   void new_project();
+  // User wants to clear the project.
+  void user_new_project();
   // Open a file chooser and load an exiting project file.
-  bool open_project_file(const std::string &filename_arg);
+  bool open_project_file(const std::string &filename_arg = "");
   // Open the template browser and load a new file from templates.
   bool new_project_from_template();
   // Open the dialog to allow the user to print the current window.
@@ -224,6 +216,18 @@ public: // Methods
   // Return true if all error message must go to the console
   // Return false if error messages should be shown in a dialog box.
   bool console_mode() const;
+
+  void show_restricted_areas();
+  void hide_restricted_areas();
+  void toggle_restricted_areas();
+
+  void show_guides();
+  void hide_guides();
+  void toggle_guides();
+
+  void show_overlays();
+  void hide_overlays();
+  void toggle_overlays();
 
 #ifdef __APPLE__
   static void apple_open_cb(const char *c);

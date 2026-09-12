@@ -80,8 +80,6 @@ char *Undo::filename(int level) {
 
 // Redo menu callback
 void Undo::redo() {
-  // int undo_item = main_menubar->find_index(undo_cb);
-  // int redo_item = main_menubar->find_index(redo_cb);
   once_type_ = OnceType::ALWAYS;
 
   if (current_ >= last_) {
@@ -117,15 +115,13 @@ void Undo::redo() {
   proj_.update_settings_dialog();
 
   // Update undo/redo menu items...
-  // if (current_ >= last_) main_menu[redo_item].deactivate();
-  // main_menu[undo_item].activate();
+  // if (current_ >= last_) gui.menu_main[redo_item].deactivate();
+  // gui.menu_main[undo_item].activate();
   resume();
 }
 
 // Undo menu callback
 void Undo::undo() {
-  // int undo_item = main_menubar->find_index(undo_cb);
-  // int redo_item = main_menubar->find_index(redo_cb);
   once_type_ = OnceType::ALWAYS;
 
   if (current_ <= 0) {
@@ -170,8 +166,8 @@ void Undo::undo() {
   proj_.set_modflag(current_ != save_);
 
   // Update undo/redo menu items...
-  // if (current_ <= 0) main_menu[undo_item].deactivate();
-  // main_menu[redo_item].activate();
+  // if (current_ <= 0) gui.menu_main[undo_item].deactivate();
+  // gui.menu_main[redo_item].activate();
   widget_browser->rebuild();
   proj_.update_settings_dialog();
   resume();
@@ -205,8 +201,6 @@ void Undo::checkpoint() {
   // Don't checkpoint if suspend() has been called...
   if (paused_) return;
 
-  // int undo_item = main_menubar->find_index(undo_cb);
-  // int redo_item = main_menubar->find_index(redo_cb);
   once_type_ = OnceType::ALWAYS;
 
   // Save the current UI to a checkpoint file...
@@ -227,14 +221,12 @@ void Undo::checkpoint() {
   if (current_ > max_) max_ = current_;
 
   // Enable the Undo and disable the Redo menu items...
-  // main_menu[undo_item].activate();
-  // main_menu[redo_item].deactivate();
+  // gui.menu_main[undo_item].activate();
+  // gui.menu_main[redo_item].deactivate();
 }
 
 // Clear undo buffer
 void Undo::clear() {
-  // int undo_item = main_menubar->find_index(undo_cb);
-  // int redo_item = main_menubar->find_index(redo_cb);
   // Remove old checkpoint files...
   for (int i = 0; i <= max_; i ++) {
     fl_unlink(filename(i));
@@ -246,8 +238,8 @@ void Undo::clear() {
   else save_ = 0;
 
   // Disable the Undo and Redo menu items...
-  // main_menu[undo_item].deactivate();
-  // main_menu[redo_item].deactivate();
+  // gui.menu_main[undo_item].deactivate();
+  // gui.menu_main[redo_item].deactivate();
 }
 
 // Resume undo checkpoints
@@ -260,10 +252,3 @@ void Undo::suspend() {
   paused_++;
 }
 
-void Undo::undo_cb(Fl_Widget *, void *) {
-  Fluid.proj.undo.undo();
-}
-
-void Undo::redo_cb(Fl_Widget *, void *) {
-  Fluid.proj.undo.redo();
-}

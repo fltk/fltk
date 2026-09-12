@@ -223,7 +223,6 @@ void codeview_defer_update() {
 void codeview_toggle_visibility() {
   if (!codeview_panel) {
       make_codeview();
-      codeview_panel->callback((Fl_Callback*)toggle_codeview_cb);
       Fl_Preferences svp(Fluid.preferences, "codeview");
       int autorefresh;
       svp.get("autorefresh", autorefresh, 1);
@@ -241,10 +240,10 @@ void codeview_toggle_visibility() {
 
     if (codeview_panel->visible()) {
       codeview_panel->hide();
-      Fluid.codeview_item->label("Show Code View");
+      Fluid.gui.menu_item_codeview->label("Show Code View");
     } else {
       codeview_panel->show();
-      Fluid.codeview_item->label("Hide Code View");
+      Fluid.gui.menu_item_codeview->label("Hide Code View");
       update_codeview_cb(0,0);
     }
 }
@@ -371,7 +370,7 @@ static void cb_cv_code_choice_w(Fl_Choice* o, void*) {
   update_codeview_position();
 }
 
-Fl_Menu_Item menu_cv_code_choice_w[] = {
+Fl_Menu_Item menu_cv_code_choice_w[6] = {
   { "prolog", 0, nullptr, (void*)(0), 16, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
   { "static data", 0, nullptr, (void*)(1), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
   { "instantiate", 0, nullptr, (void*)(2), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0 },
@@ -383,7 +382,9 @@ Fl_Menu_Item menu_cv_code_choice_w[] = {
 Fl_Double_Window* make_codeview() {
   { auto* o = codeview_panel = new Fl_Double_Window(520, 515, "Code View");
     (void)o;
-    codeview_panel->callback((Fl_Callback*)toggle_codeview_cb);
+    codeview_panel->callback(
+      [](Fl_Widget*,void*) { codeview_toggle_visibility(); }
+    );
     codeview_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { auto* o = cv_tab = new Fl_Tabs(10, 10, 500, 440);
       (void)o;
@@ -551,7 +552,9 @@ Fl_Double_Window* make_codeview() {
       { auto* o = new Fl_Button(460, 485, 50, 20, "Close");
         (void)o;
         o->labelsize(11);
-        o->callback((Fl_Callback*)toggle_codeview_b_cb);
+        o->callback(
+          [](Fl_Widget*,void*) { codeview_toggle_visibility(); }
+        );
       } // Fl_Button* o
       cv_settings_row->end();
     } // Fl_Group* cv_settings_row

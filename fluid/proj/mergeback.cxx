@@ -769,9 +769,6 @@ int mergeback_code_files(Project &proj, Mergeback::Feedback feedback)
   return c;
 }
 
-void mergeback_cb(Fl_Widget *, void *) {
-  mergeback_code_files(Fluid.proj, Mergeback::CHATTY);
-}
 
 void mergeback_on_load() {
   mergeback_code_files(Fluid.proj, Mergeback::QUIET);

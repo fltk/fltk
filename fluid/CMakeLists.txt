@@ -117,7 +117,6 @@ set(CPPFILES
   app/args.cxx
   app/Snap_Action.cxx
   app/history.cxx
-  app/Menu.cxx
   app/shell_command.cxx
   app/templates.cxx
   io/Code_Writer.cxx
@@ -141,13 +140,14 @@ set(CPPFILES
   panels/about_panel.cxx
   panels/codeview_panel.cxx
   panels/function_panel.cxx
+  panels/main_panel.cxx
   panels/settings_panel.cxx
   panels/template_panel.cxx
   panels/widget_panel.cxx
   panels/widget_panel_callbacks.cxx
   panels/widget_panel/Grid_Tab.cxx
   panels/widget_panel/Grid_Child_Tab.cxx
-  proj/align_widget.cxx
+  proj/Node_Alignment.cxx
   proj/i18n.cxx
   proj/Image_Asset.cxx
   proj/Image_Asset_Map.cxx
@@ -177,7 +177,6 @@ set(HEADERFILES
   app/args.h
   app/Snap_Action.h
   app/history.h
-  app/Menu.h
   app/shell_command.h
   app/templates.h
   io/Code_Writer.h
@@ -201,12 +200,13 @@ set(HEADERFILES
   panels/about_panel.h
   panels/codeview_panel.h
   panels/function_panel.h
+  panels/main_panel.h
   panels/settings_panel.h
   panels/template_panel.h
   panels/widget_panel.h
   panels/widget_panel/Grid_Tab.h
   panels/widget_panel/Grid_Child_Tab.h
-  proj/align_widget.h
+  proj/Node_Alignment.h
   proj/Image_Asset.h
   proj/Image_Asset_Map.h
   proj/mergeback.h

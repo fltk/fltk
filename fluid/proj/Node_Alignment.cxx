@@ -14,7 +14,7 @@
 //     https://www.fltk.org/bugs.php
 //
 
-#include "proj/align_widget.h"
+#include "proj/Node_Alignment.h"
 
 #include "Fluid.h"
 #include "proj/undo.h"
@@ -31,10 +31,9 @@
 #define BREAK_ON_FIRST break
 //#define BREAK_ON_FIRST
 
-void align_widget_cb(Fl_Widget*, void *user_data)
-{
+
+void align_selected_nodes(int how) {
   const int max = 32768, min = -32768;
-  int how = (int)(fl_intptr_t)(user_data);
   int left, right, top, bot, wdt, hgt, n;
   int changed = 0;
   switch ( how )

@@ -215,7 +215,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   } else if (fl_match(s, "fg", 2) || fl_match(s, "foreground", 10)) {
     fl_fg = v;
 
-  } else if (fl_match(s, "scaling", 2) || fl_match(s, "scaling_factor", 14)) {
+  } else if (fl_match(s, "scaling", 7) || fl_match(s, "scaling_factor", 14)) {
     float f = (float)atof(v);
     if ((f == 0.0f) && (v[0] < '0' || v[0] > '9')) // invalid number
       f = 1.0f; // default to 1.0

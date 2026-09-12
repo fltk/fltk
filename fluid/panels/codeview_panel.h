@@ -27,7 +27,6 @@ void update_codeview_timer(void*);
 void codeview_defer_update();
 void codeview_toggle_visibility();
 #include <FL/Fl_Double_Window.H>
-extern void toggle_codeview_cb(Fl_Double_Window*, void*);
 extern Fl_Double_Window* codeview_panel;
 #include <FL/Fl_Tabs.H>
 extern Fl_Tabs* cv_tab;
@@ -51,9 +50,8 @@ extern Fl_Light_Button* cv_autorefresh;
 extern Fl_Light_Button* cv_autoposition;
 #include <FL/Fl_Choice.H>
 extern Fl_Choice* cv_code_choice_w;
-extern void toggle_codeview_b_cb(Fl_Button*, void*);
 Fl_Double_Window* make_codeview();
-extern Fl_Menu_Item menu_cv_code_choice_w[];
+extern Fl_Menu_Item menu_cv_code_choice_w[6];
 #endif // codeview_panel_h
 
 //

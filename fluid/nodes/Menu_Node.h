@@ -69,6 +69,7 @@ public:
   Widget_Node* _make() override {return nullptr;}
   std::string menu_name(fluid::io::Code_Writer& f, int& i);
   int flags();
+  int count_items() const;
   void write_static(fluid::io::Code_Writer& f) override;
   void write_item(fluid::io::Code_Writer& f);
   void write_code1(fluid::io::Code_Writer& f) override;
