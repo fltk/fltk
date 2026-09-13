@@ -1112,9 +1112,9 @@ void Application::make_main_window() {
     gui.app_menu_bar->global();
     fill_in_New_Menu();
   }
-  gui.show();
 
   if (!batch_mode) {
+    gui.show();
     history.load();
     g_shell_config = new Fd_Shell_Command_List;
     widget_browser->load_prefs();
