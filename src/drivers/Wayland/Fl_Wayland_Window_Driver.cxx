@@ -452,6 +452,31 @@ static void destroy_surface_caution_pointer_focus(struct wl_surface *surface,
 }
 
 
+static void titlebar_surface_map_record(struct wld_window *xid) {
+  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+  static bool have_gtk_shell_gestures = scr_driver->seat->gtk_shell &&
+    (gtk_shell1_get_version(scr_driver->seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
+  if (have_gtk_shell_gestures) {
+    struct wl_surface *titlebar_surf = fl_libdecor_get_titlebar_surface(xid->frame);
+    if (titlebar_surf) {
+      Fl_Wayland_Window_Driver::titlebar_surface_map[titlebar_surf] = xid;
+    }
+  }
+}
+
+
+static void titlebar_surface_map_erase(struct wld_window *xid) {
+  auto item = Fl_Wayland_Window_Driver::titlebar_surface_map.begin();
+  while (item != Fl_Wayland_Window_Driver::titlebar_surface_map.end()) {
+    if (item->second == xid) {
+      Fl_Wayland_Window_Driver::titlebar_surface_map.erase(item);
+      break;
+    }
+    item++;
+  }
+}
+
+
 void Fl_Wayland_Window_Driver::hide() {
   if (pWindow == Fl_Screen_Driver::transient_scale_parent) {
     // Delete also the running transient scale window
@@ -481,14 +506,7 @@ void Fl_Wayland_Window_Driver::hide() {
     }
 #endif
     if (wld_win->kind == DECORATED) {
-      auto item = titlebar_surface_map.begin();
-      while (item != titlebar_surface_map.end()) {
-        if (item->second == wld_win) {
-          titlebar_surface_map.erase(item);
-          break;
-        }
-        item++;
-      }
+      titlebar_surface_map_erase(wld_win);
       libdecor_frame_unref(wld_win->frame);
       wld_win->frame = NULL;
       wld_win->xdg_surface = NULL;
@@ -1040,14 +1058,9 @@ static void handle_configure(struct libdecor_frame *frame,
     window->fl_win->clear_damage();
   }
   if (is_2nd_run) driver->force_position(0);
-  if (is_1st_run) { // memorize wl_surface of the GTK3 titlebar, if any
-    Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-    static bool using_GTK3 = scr_driver->seat->gtk_shell &&
-      (gtk_shell1_get_version(scr_driver->seat->gtk_shell) >= GTK_SURFACE1_TITLEBAR_GESTURE_SINCE_VERSION);
-    if (using_GTK3) {
-      struct wl_surface *titlebar_surf = fl_libdecor_get_titlebar_surface(window->frame);
-      if (titlebar_surf) Fl_Wayland_Window_Driver::titlebar_surface_map[titlebar_surf] = window;
-    }
+  if ((window_state & LIBDECOR_WINDOW_STATE_ACTIVE) &&
+      !(window_state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
+    titlebar_surface_map_record(window); // memorize wl_surface of the GTK3 titlebar, if any
   }
 }
 
@@ -1791,17 +1804,18 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
 void Fl_Wayland_Window_Driver::use_border() {
   if (!shown() || pWindow->parent()) return;
   if (!xdg_toplevel()) pWindow->wait_for_expose(); // useful for border(0) just after show()
-  struct libdecor_frame *frame = fl_wl_xid(pWindow)->frame;
-  if (frame && Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::KWIN) {
-    if (fl_wl_xid(pWindow)->kind == DECORATED) {
-      libdecor_frame_set_visibility(frame, pWindow->border());
+  struct wld_window *xid = fl_wl_xid(pWindow);
+  if (xid->kind == DECORATED) {
+    libdecor_frame_set_visibility(xid->frame, pWindow->border());
+    if (pWindow->border()) {
+      titlebar_surface_map_record(xid);
     } else {
-      pWindow->hide();
-      pWindow->show();
+      titlebar_surface_map_erase(xid);
     }
     pWindow->redraw();
   } else {
-    Fl_Window_Driver::use_border();
+    pWindow->hide();
+    pWindow->show();
   }
 }
 
@@ -1851,14 +1865,19 @@ void Fl_Wayland_Window_Driver::fullscreen_on() {
 
 
 void Fl_Wayland_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
-  pWindow->hide();
+  struct wld_window *xid = fl_wl_xid(pWindow);
   pWindow->_clear_fullscreen();
-  // avoid being called with W=H=0 in suboptimal scenario of #1299
-  if (!W) W = w();
-  if (!H) H = h();
-  pWindow->resize(X, Y, W, H);
-  if (previous_border_) { pWindow->border(1); previous_border_ = false; }
-  pWindow->show();
+  if (xid && (xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
+      xdg_toplevel_unset_fullscreen(xdg_toplevel());
+  } else {
+    pWindow->hide();
+    // avoid being called with W=H=0 in suboptimal scenario of #1299
+    if (!W) W = w();
+    if (!H) H = h();
+    pWindow->resize(X, Y, W, H);
+    if (previous_border_) { pWindow->border(1); previous_border_ = false; }
+    pWindow->show();
+  }
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
