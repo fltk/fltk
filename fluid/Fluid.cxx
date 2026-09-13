@@ -15,6 +15,7 @@
 //
 
 #include "Fluid.h"
+#include "main.h" // for FLUID_CONFIG_CONSOLE
 
 #include "Project.h"
 #include "fluid_icon.h"
