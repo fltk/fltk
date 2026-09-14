@@ -1300,6 +1300,10 @@ static bool remove_xid_vector(Window xid) {
   return false;
 }
 
+// Generate FL_APP_ACTIVATE and FL_APP_DEACTIVATE events
+static bool app_has_active_window = false;
+
+
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
@@ -2120,6 +2124,27 @@ int fl_handle(const XEvent& thisevent)
   } // ButtonRelease
 
   case PropertyNotify:
+    if (Fl_X11_Screen_Driver::ewmh_supported()) {
+      unsigned long *data = 0;
+      unsigned long nitems_return;
+      Window win = xid;
+      if (Success == get_xwinprop(RootWindow(fl_display, fl_screen), fl_NET_ACTIVE_WINDOW, 1,
+                                  &nitems_return, &data)) {
+        win = ((Window*) data)[0];
+        XFree(data);
+      }
+      if ( (win ? fl_find(win) : NULL) != NULL) {
+        if (!app_has_active_window) {
+          app_has_active_window = true;
+          Fl::handle(FL_APP_ACTIVATE, NULL);
+        }
+      } else {
+        if (app_has_active_window) {
+          app_has_active_window = false;
+          Fl::handle(FL_APP_DEACTIVATE, NULL);
+        }
+      }
+    }
     if (xevent.xproperty.atom == fl_NET_WM_STATE) {
       int fullscreen_state = 0;
       int maximize_state = 0;
