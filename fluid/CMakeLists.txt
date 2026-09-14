@@ -253,11 +253,6 @@ make_target(fluid TRUE "${MAIN_FILES}" fluid-lib fluid TRUE)
 # This is done for all Windows targets, even if cross-compiling.
 
 if(WIN32)
-  set_source_files_properties(
-    ${FLTK_SOURCE_DIR}/fluid/fluid.cxx
-    ${FLTK_SOURCE_DIR}/fluid/app/args.cxx
-    PROPERTIES COMPILE_DEFINITIONS "FLUID_CMD=1"
-    )
   make_target(fluid-cmd FALSE "${MAIN_FILES}" fluid-lib fluid-cmd TRUE)
   set(FLTK_FLUID_EXECUTABLE fltk::fluid-cmd)
 else()
