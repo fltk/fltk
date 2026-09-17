@@ -188,7 +188,7 @@ Atom fl_XdndFinished;
 Atom fl_XdndURIList;
 static Atom fl_Xatextplainutf;
 static Atom fl_Xatextplainutf2;         // STR#2930
-static Atom fl_Xatextplain;
+Atom fl_Xatextplain;
 static Atom fl_XaText;
 static Atom fl_XaCompoundText;
 Atom fl_XaUtf8String;

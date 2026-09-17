@@ -36,6 +36,7 @@ extern Atom fl_XdndActionCopy;
 extern Atom fl_XdndFinished;
 extern Atom fl_XdndURIList;
 extern Atom fl_XaUtf8String;
+extern Atom fl_Xatextplain;
 
 extern char fl_i_own_selection[2];
 extern char *fl_selection_buffer[2];
@@ -148,9 +149,9 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
           fl_sendClientMessage(target_window, fl_XdndEnter, source_window, dndversion<<24,
                                fl_XdndURIList, fl_XaUtf8String, XA_STRING);
         } else {
-          // Send plain text...
+          // Send plain text as "text/plain" (required by Firefox) and "UTF8_STRING"
           fl_sendClientMessage(target_window, fl_XdndEnter, source_window, dndversion<<24,
-                               fl_XaUtf8String, XA_STRING, 0);
+                               fl_Xatextplain, fl_XaUtf8String, XA_STRING);
         }
       }
     }
