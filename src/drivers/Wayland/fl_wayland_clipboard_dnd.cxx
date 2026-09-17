@@ -247,7 +247,10 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
     wl_data_device_manager_create_data_source(scr_driver->seat->data_device_manager);
   // we transmit the adequate value of index in fl_selection_buffer[index]
   wl_data_source_add_listener(source, &data_source_listener, (void*)0);
+  // Firefox seems to require mime-type "text/plain" when doing text DnD both ways;
+  // therefore offer both mime-types.
   wl_data_source_offer(source, wld_plain_text_clipboard);
+  wl_data_source_offer(source, "text/plain");
   wl_data_source_set_actions(source, WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
   struct Fl_Wayland_Graphics_Driver::wld_buffer *off = NULL;
   int s = 1;
@@ -286,15 +289,18 @@ struct compare_utf8 { // used as key_comp member of following map object
 
 // map: for each clipboard mime-type FLTK has interest in, give FLTK clipboard type and priority.
 // A mime-type with higher priority for same FLTK clipboard type is preferred.
+// Two mime-types are given the same priority. The effect is that if a data offer proposes
+// both of them, the first one proposed will be selected by the data offer receiver.
+// That's key for DnD between FLTK and Firefox to be successful.
 typedef struct { const char * const fltk_type; int priority; } type_prio_struct;
 static std::map<const char * const, type_prio_struct, compare_utf8> clipboard_mimetypes_map  {
 //  mime-type                  FLTK-clipboard-type        priority
   {"image/png",               {Fl::clipboard_image,       1} },
   {"image/bmp",               {Fl::clipboard_image,       2} },
-  {"text/plain",              {Fl::clipboard_plain_text,  1} },
-  {"text/uri-list",           {Fl::clipboard_plain_text,  2} },
-  {"UTF8_STRING",             {Fl::clipboard_plain_text,  3} },
-  {wld_plain_text_clipboard,  {Fl::clipboard_plain_text,  4} },
+  {"text/uri-list",           {Fl::clipboard_plain_text,  1} },
+  {"UTF8_STRING",             {Fl::clipboard_plain_text,  2} },
+  {"text/plain",              {Fl::clipboard_plain_text,  3} },
+  {wld_plain_text_clipboard,  {Fl::clipboard_plain_text,  3} },
 };
 
 // map: for each FLTK-clipboard-type, give current preferred mime-type and priority
@@ -383,12 +389,12 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 
 // Gets from the system the clipboard or dnd text and puts it in fl_selection_buffer[1]
 // which is enlarged if necessary.
-static void get_clipboard_or_dragged_text(struct wl_data_offer *offer) {
+static void get_clipboard_or_dragged_text(struct wl_data_offer *offer, const char *type = NULL) {
   int fds[2];
   char *from;
   if (pipe(fds)) return;
   // preferred mime-type for the text clipboard type
-  const char *type = clipboard_kinds_map[Fl::clipboard_plain_text].mime_type;
+  if (!type) type = clipboard_kinds_map[Fl::clipboard_plain_text].mime_type;
   wl_data_offer_receive(offer, type, fds[1]);
   close(fds[1]);
   wl_display_flush(Fl_Wayland_Screen_Driver::wl_display);
@@ -657,7 +663,7 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
   // otherwise get the compositor to return it:
   if (!fl_selection_offer) return;
   if (type == Fl::clipboard_plain_text && clipboard_contains(Fl::clipboard_plain_text)) {
-    get_clipboard_or_dragged_text(fl_selection_offer);
+    get_clipboard_or_dragged_text(fl_selection_offer, wld_plain_text_clipboard);
     Fl::e_text = fl_selection_buffer[1];
     Fl::e_length = fl_selection_length[1];
     receiver.handle(FL_PASTE);
