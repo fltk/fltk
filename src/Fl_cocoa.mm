@@ -2229,7 +2229,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
   if (!gc || fl_mac_os_version >= 101600) {
     // bitmap context-related functions (e.g., CGBitmapContextGetBytesPerRow) can't be used here with macOS 11.0 "Big Sur"
-    static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+    static CGColorSpaceRef cspace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
     int W = [self frame].size.width, H = [self frame].size.height;
     if (r) { W *= 2; H *= 2; }
     aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 0, cspace, kCGImageAlphaPremultipliedFirst|kCGBitmapByteOrder32Host);
