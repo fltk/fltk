@@ -31,7 +31,7 @@
 namespace fluid {
 
 namespace app {
-  class Layout_Preset;
+  struct Layout_Preset;
   extern Layout_Preset *default_layout_preset;
 } // namespace app
 
