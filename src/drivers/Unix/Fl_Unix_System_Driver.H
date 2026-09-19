@@ -47,7 +47,7 @@ public:
   double wait(double time_to_wait) FL_OVERRIDE;
   int ready() FL_OVERRIDE;
   static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *return_size);
-  static Fl_RGB_Image *own_bmp_to_RGB(char *bmp);
+  static Fl_RGB_Image *own_bmp_to_RGB(const char *bmp);
   static void read_int(uchar *c, int& i);
 };
 
