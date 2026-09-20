@@ -25,7 +25,6 @@
 #  include "Fl_Wayland_Window_Driver.H"
 #  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
-#  include "../../flstring.h" // includes <string.h>
 
 #  include <errno.h>
 #  include <stdio.h>
@@ -657,10 +656,8 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
 
   if (clipboard >= 2)
     clipboard = 1; // Only on X11 do multiple clipboards make sense.
-  {
-    std::string tmp_s(stuff, stuff + len);
-    selection_string[clipboard] = tmp_s;
-  }
+  selection_string[clipboard].clear();
+  selection_string[clipboard].insert(selection_string[clipboard].begin(), stuff, stuff + len);
   fl_i_own_selection[clipboard] = 1;
   fl_selection_type[clipboard] = Fl::clipboard_plain_text;
   if (clipboard == 1) {
@@ -679,15 +676,13 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
 
 
 // takes a raw RGB image and puts it in the copy/paste buffer
-void Fl_Wayland_Screen_Driver::copy_image(const unsigned char *data, int W, int H){
+void Fl_Wayland_Screen_Driver::copy_image(const unsigned char *data, int W, int H) {
   if (!data || W <= 0 || H <= 0) return;
-  {
-    int l;
-    char *stuff = (char*)Fl_Unix_System_Driver::create_bmp(data, W, H, &l);
-    std::string tmp_s(stuff, stuff + l);
-    delete[] stuff;
-    selection_string[1] = tmp_s;
-  }
+  int l;
+  char *stuff = (char*)Fl_Unix_System_Driver::create_bmp(data, W, H, &l);
+  selection_string[1].clear();
+  selection_string[1].insert(selection_string[1].begin(), stuff, stuff + l);
+  delete[] stuff;
   fl_i_own_selection[1] = 1;
   fl_selection_type[1] = Fl::clipboard_image;
   if (seat->data_source) wl_data_source_destroy(seat->data_source);
