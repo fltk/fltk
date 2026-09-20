@@ -20,6 +20,7 @@
 #ifndef Fl_PNG_Image_H
 #define Fl_PNG_Image_H
 #  include "Fl_Image.H"
+#  include <FL/Fl_Plugin.H>
 
 /**
   The Fl_PNG_Image class supports loading, caching,
@@ -43,5 +44,27 @@ private:
 FL_EXPORT int fl_write_png(const char *filename, Fl_RGB_Image *img);
 FL_EXPORT int fl_write_png(const char *filename, const char *pixels, int w, int h, int d=3, int ld=0);
 FL_EXPORT int fl_write_png(const char *filename, const unsigned char *pixels, int w, int h, int d=3, int ld=0);
+
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
+
+/** Allows using Fl_PNG_Image inside libfltk without usage of libfltk forcing link to libfltk_images. */
+class Fl_Load_PNG_Plugin : public Fl_Plugin {
+private:
+  virtual const char *klass() { return "loadpng.fltk.org"; }
+  virtual const char *name() = 0;
+protected:
+  Fl_Load_PNG_Plugin(const char *pluginName)  : Fl_Plugin(klass(), pluginName) { }
+public:
+  /** Construct an Fl_PNG_Image from a block of memory beginning at data and of given size. */
+  virtual void *png_load_from_memory(const char *data, int size) = 0;
+};
+
+/**
+ \endcond
+ */
 
 #endif

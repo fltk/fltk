@@ -247,3 +247,20 @@ void Fl_PNG_Image::load_png_(const char *name_png, int offset, const unsigned ch
   delete fp;
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
+
+
+class Fl_Load_PNG_Plugin_Impl : public Fl_Load_PNG_Plugin {
+public:
+  Fl_Load_PNG_Plugin_Impl() : Fl_Load_PNG_Plugin(name()) { }
+  const char *name() override { return "implementation.loadpng.fltk.org"; }
+  void *png_load_from_memory(const char *data, int size) override {
+    Fl_PNG_Image *png = new Fl_PNG_Image(NULL, (const uchar *)data, size);
+    if (png->fail()) {
+      delete png;
+      return NULL;
+    }
+    return png;
+  }
+};
+
+static Fl_Load_PNG_Plugin_Impl Image_Plugin_Impl;

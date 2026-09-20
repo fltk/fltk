@@ -19,7 +19,7 @@
 #  include <FL/Fl.H>
 #  include <FL/platform.H>
 #  include <FL/Fl_Window.H>
-#  include <FL/Fl_Shared_Image.H>
+#  include <FL/Fl_PNG_Image.H>
 #  include <FL/Fl_Image_Surface.H>
 #  include "Fl_Wayland_Screen_Driver.H"
 #  include "Fl_Wayland_Window_Driver.H"
@@ -389,7 +389,6 @@ static void data_device_handle_selection(void *data, struct wl_data_device *data
 // which is enlarged if necessary.
 static void get_clipboard_or_dragged_text(struct wl_data_offer *offer, const char *type = NULL) {
   int fds[2];
-  char *from;
   if (pipe(fds)) return;
   // preferred mime-type for the text clipboard type
   if (!type) type = clipboard_kinds_map[Fl::clipboard_plain_text].mime_type;
@@ -551,31 +550,22 @@ static int get_clipboard_image(struct wl_data_offer *offer) {
   close(fds[1]);
   wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
   if (strcmp(type, "image/png") == 0) {
-    char tmp_fname[21];
-    Fl_Shared_Image *shared = 0;
-    strcpy(tmp_fname, "/tmp/clipboardXXXXXX");
-    int fd = mkstemp(tmp_fname);
-    if (fd >= 0) {
-      while (true) {
-        char buf[10000];
-        ssize_t n = read(fds[0], buf, sizeof(buf));
-        if (n <= 0) break;
-        n = write(fd, buf, n);
-      }
-      close(fd);
-      shared = Fl_Shared_Image::get(tmp_fname);
-      fl_unlink(tmp_fname);
+    std::string png_data;
+    while (true) {
+      char buf[10000];
+      ssize_t n = read(fds[0], buf, sizeof(buf));
+      if (n <= 0) break;
+      png_data.insert(png_data.end(), buf, buf + n);
     }
     close(fds[0]);
-    if (!shared) return 1;
-    int ld = shared->ld() ? shared->ld() : shared->w() * shared->d();
-    uchar *rgb = new uchar[shared->w() * shared->h() * shared->d()];
-    memcpy(rgb, shared->data()[0], ld * shared->h() );
-    Fl_RGB_Image *image = new Fl_RGB_Image(rgb, shared->w(), shared->h(), shared->d(),
-                                           shared->ld());
-    shared->release();
-    image->alloc_array = 1;
-    Fl::e_clipboard_data = (void*)image;
+    static Fl_Load_PNG_Plugin *png_plugin = NULL;
+    if (!png_plugin) {
+      Fl_Plugin_Manager pm("loadpng.fltk.org");
+      png_plugin = (Fl_Load_PNG_Plugin*)pm.plugin("implementation.loadpng.fltk.org");
+      if (!png_plugin) return 1;
+    }
+    Fl::e_clipboard_data = png_plugin->png_load_from_memory(png_data.c_str(), (int)png_data.length());
+    if (!Fl::e_clipboard_data) return 1;
   } else { // process image/bmp
     uchar buf[54];
     size_t rest = 1;
