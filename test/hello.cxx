@@ -18,18 +18,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 
-#include <FL/Fl_Plugin.H>
-class Test : public Fl_Plugin {
-public:
-  Test()
-  : Fl_Plugin("fltk::drivers", "SDL3")
-  {
-    int x = 0;
-  }
-};
-
-Test test;
-
 int main(int argc, char **argv) {
   Fl_Window *window = new Fl_Window(340, 180);
   Fl_Box *box = new Fl_Box(20, 40, 300, 100, "Hello, World!");
