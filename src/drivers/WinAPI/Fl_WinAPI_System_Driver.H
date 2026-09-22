@@ -1,7 +1,7 @@
 //
 // Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -113,7 +113,6 @@ public:
   void remove_fd(int, int when) FL_OVERRIDE;
   void remove_fd(int) FL_OVERRIDE;
   void gettime(time_t *sec, int *usec) FL_OVERRIDE;
-  char* strdup(const char *s) FL_OVERRIDE { return ::_strdup(s); }
   void lock_ring() FL_OVERRIDE;
   void unlock_ring() FL_OVERRIDE;
   double wait(double time_to_wait) FL_OVERRIDE;

@@ -1,7 +1,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -515,6 +515,18 @@ enum Fl_Callback_Reason {
                                         // correct for XFree86
 #define FL_SCROLL_LOCK  0x00800000      ///< The scroll lock is on
                                         // correct for XFree86
+
+// To allow compile time initialisation of menus, this must not be moved into the System Driver.
+#if defined(__APPLE__) &&!defined(FLTK_USE_X11)
+#define FL_COMMAND FL_META
+#define FL_CONTROL FL_CTRL
+#else
+#define FL_COMMAND FL_CTRL
+#define FL_CONTROL FL_META
+#endif
+constexpr FL_EXPORT int fl_command_modifier() { return FL_COMMAND; }
+constexpr FL_EXPORT int fl_control_modifier() { return FL_CONTROL; }
+
 // Mouse buttons
 
 #define FL_BUTTON1      0x01000000        ///< Mouse button 1 is pushed (L)

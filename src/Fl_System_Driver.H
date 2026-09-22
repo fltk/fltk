@@ -2,7 +2,7 @@
 // A base class for platform specific system calls
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -78,8 +78,12 @@ public:
 
 public:
   virtual ~Fl_System_Driver();
-  static int command_key;
-  static int control_key;
+
+  // To save initialisation time, don't make these virtual.
+  static const char *shift_name() { return fl_local_shift; }
+  static const char *meta_name() { return fl_local_meta; }
+  static const char *alt_name() { return fl_local_alt; }
+  static const char *control_name() { return fl_local_ctrl; }
 
   // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *) { return 0; }
@@ -102,8 +106,6 @@ public:
   virtual int open(const char* /*f*/, int /*oflags*/, int /*pmode*/) {return -1;}
 
   // implement these to support cross-platform string operations
-  virtual char *strdup(const char *) {return NULL;}
-
   // Note: the default implementation ignores the 'binary' argument.
   // Some platforms (notably Windows) may use this argument.
   virtual int open_ext(const char* f, int /*binary*/, int oflags, int pmode) {
@@ -222,11 +224,6 @@ public:
   virtual void open_callback(void (*)(const char *));
   // The default implementation may be enough.
   virtual void gettime(time_t *sec, int *usec);
-  // The default implementation of the next 4 functions may be enough.
-  virtual const char *shift_name() { return "Shift"; }
-  virtual const char *meta_name() { return "Meta"; }
-  virtual const char *alt_name() { return "Alt"; }
-  virtual const char *control_name() { return "Ctrl"; }
   virtual Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() { return NULL; }
   virtual void lock_ring() {}
   virtual void unlock_ring() {}

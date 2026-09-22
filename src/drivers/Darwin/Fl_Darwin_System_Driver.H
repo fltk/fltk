@@ -2,7 +2,7 @@
 // Definition of Apple Darwin system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2021 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -72,10 +72,6 @@ public:
   void remove_fd(int, int when) FL_OVERRIDE;
   void remove_fd(int) FL_OVERRIDE;
   void open_callback(void (*)(const char *)) FL_OVERRIDE;
-  const char *shift_name() FL_OVERRIDE;
-  const char *meta_name() FL_OVERRIDE;
-  const char *alt_name() FL_OVERRIDE;
-  const char *control_name() FL_OVERRIDE;
   Fl_Sys_Menu_Bar_Driver *sys_menu_bar_driver() FL_OVERRIDE;
   double wait(double time_to_wait) FL_OVERRIDE;
   int ready() FL_OVERRIDE;
