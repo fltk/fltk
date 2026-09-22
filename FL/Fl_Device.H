@@ -31,6 +31,21 @@ class Fl_Widget;
 class Fl_Image_Surface;
 class Fl_Image;
 
+
+class FL_EXPORT Fl_Driver_Plugin : public Fl_Plugin {
+public:
+  int priotity_;
+
+  Fl_Driver_Plugin(const char* klass, const char* name, int priority)
+  : Fl_Plugin(klass, name), priotity_(priority)
+  { }
+  virtual ~Fl_Driver_Plugin() {}
+  int priority() const { return priotity_; }
+
+  static constexpr const char* kGrapicsDriverClass = "fltk/graphics_driver";
+};
+
+
 /**
  A drawing surface that's susceptible to receive graphical output.
  Any FLTK application has at any time a current drawing surface to which all drawing requests are directed.

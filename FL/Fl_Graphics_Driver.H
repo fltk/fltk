@@ -372,6 +372,16 @@ public:
   virtual void delete_bitmask(fl_uintptr_t bm);
 };
 
+class FL_EXPORT Fl_Graphics_Driver_Plugin : public Fl_Driver_Plugin {
+  using create_cb_t = Fl_Graphics_Driver* (*)();
+  create_cb_t create_cb_;
+public:
+  Fl_Graphics_Driver_Plugin(const char* name, int priority, create_cb_t create_cb)
+    : Fl_Driver_Plugin(Fl_Graphics_Driver_Plugin::kGrapicsDriverClass, name, priority), create_cb_(create_cb) {}
+  ~Fl_Graphics_Driver_Plugin() override {}
+  Fl_Graphics_Driver* create() { return create_cb_ ? create_cb_() : nullptr; }
+};
+
 #endif // FL_GRAPHICS_DRIVER_H
 
 /**
