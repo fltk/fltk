@@ -95,7 +95,6 @@ static Fl_Window *fl_dnd_target_window = 0;
 static wl_surface *fl_dnd_target_surface = 0;
 static bool doing_dnd = false; // true when DnD is in action
 static wl_surface *dnd_icon = NULL; // non null when DnD uses text as cursor
-static wl_cursor* save_cursor = NULL; // non null when DnD uses "dnd-copy" cursor
 
 
 static void data_source_handle_cancelled(void *data, struct wl_data_source *source) {
@@ -117,11 +116,6 @@ static void data_source_handle_cancelled(void *data, struct wl_data_source *sour
   }
   fl_i_own_selection[1] = 0;
   if (data == 0) { // at end of DnD
-    if (save_cursor) {
-      scr_driver->default_cursor(save_cursor);
-      scr_driver->set_cursor();
-      save_cursor = NULL;
-    }
     if (fl_dnd_target_window) {
       Fl::handle(FL_RELEASE, fl_dnd_target_window);
       fl_dnd_target_window = 0;
@@ -239,10 +233,7 @@ static struct Fl_Wayland_Graphics_Driver::wld_buffer *offscreen_from_text(const 
 
 
 int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
-  Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-
-  struct wl_data_source *source =
-    wl_data_device_manager_create_data_source(scr_driver->seat->data_device_manager);
+  struct wl_data_source *source = wl_data_device_manager_create_data_source(seat->data_device_manager);
   // we transmit the adequate value of index in selection_string[index]
   wl_data_source_add_listener(source, &data_source_listener, (void*)0);
   // Firefox seems to require mime-type "text/plain" when doing text DnD both ways;
@@ -252,30 +243,21 @@ int Fl_Wayland_Screen_Driver::dnd(int use_selection) {
   wl_data_source_set_actions(source, WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
   struct Fl_Wayland_Graphics_Driver::wld_buffer *off = NULL;
   int s = 1;
-  if (use_selection) {
-    // use the text as dragging icon
+  if (use_selection) { // use the text as dragging icon
     Fl_Widget *current = Fl::pushed() ? Fl::pushed() : Fl::first_window();
     s = Fl_Wayland_Window_Driver::driver(current->top_window())->wld_scale();
-    off = (struct Fl_Wayland_Graphics_Driver::wld_buffer *)offscreen_from_text(selection_string[0].c_str(), s);
-    dnd_icon = wl_compositor_create_surface(scr_driver->wl_compositor);
+    off = (struct Fl_Wayland_Graphics_Driver::wld_buffer *)
+                  offscreen_from_text(selection_string[0].c_str(), s);
+    dnd_icon = wl_compositor_create_surface(wl_compositor);
   } else dnd_icon = NULL;
   doing_dnd = true;
-  wl_data_device_start_drag(scr_driver->seat->data_device, source,
-                            scr_driver->seat->pointer_focus, dnd_icon,
-                            scr_driver->seat->serial);
+  wl_data_device_start_drag(seat->data_device, source, seat->pointer_focus, dnd_icon, seat->serial);
   if (use_selection) {
     wl_surface_attach(dnd_icon, off->wl_buffer, 0, 0);
     wl_surface_set_buffer_scale(dnd_icon, s);
     wl_surface_damage(dnd_icon, 0, 0, 10000, 10000);
     wl_surface_commit(dnd_icon);
     wl_surface_set_user_data(dnd_icon, off);
-  } else {
-    static struct wl_cursor *dnd_cursor = scr_driver->cache_cursor("dnd-copy");
-    if (dnd_cursor) {
-      save_cursor = scr_driver->default_cursor();
-      scr_driver->default_cursor(dnd_cursor);
-      scr_driver->set_cursor();
-    } else save_cursor = NULL;
   }
   return 1;
 }
