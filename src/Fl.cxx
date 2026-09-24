@@ -2621,10 +2621,20 @@ int Fl::system(const char *command) {
 
 // Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
-FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();
-FL_EXPORT const char* fl_local_meta  = Fl::system_driver()->meta_name();
-FL_EXPORT const char* fl_local_alt   = Fl::system_driver()->alt_name();
-FL_EXPORT const char* fl_local_ctrl  = Fl::system_driver()->control_name();
+// Note: To be able to defer creating the driver, we no longer provide virtual
+//    calls into the System driver for key names (since 1.5.0). System Driver
+//    may still override the names when instantiated.
+#if defined(__APPLE__) &&!defined(FLTK_USE_X11)
+FL_EXPORT const char* fl_local_shift = "⇧\\"; // "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
+FL_EXPORT const char* fl_local_meta  = "⌘\\"; // "\xe2\x8c\x98\\"; // U+2318 (place of interest sign)
+FL_EXPORT const char* fl_local_alt   = "⌥\\"; // "\xe2\x8c\xa5\\"; // U+2325 (option key)
+FL_EXPORT const char* fl_local_ctrl  = "⌃\\"; // "\xe2\x8c\x83\\"; // U+2303 (up arrowhead)
+#else
+FL_EXPORT const char* fl_local_shift = "Shift";
+FL_EXPORT const char* fl_local_meta  = "Meta";
+FL_EXPORT const char* fl_local_alt   = "Alt";
+FL_EXPORT const char* fl_local_ctrl  = "Ctrl";
+#endif
 
 /**
   Convert Windows commandline arguments to UTF-8.

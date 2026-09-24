@@ -1,7 +1,7 @@
 /*
  * Platform agnostic string portability functions for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 2020 by Bill Spitzak and others.
+ * Copyright 2020-2026 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,13 @@
     - WinAPI: _strdup()
  */
 char *fl_strdup(const char *s) {
-  return Fl::system_driver()->strdup(s);
+  // Note: don't move this into Fl_System_Driver, as it needs to be available
+  // at initialisation time before the system driver is loaded.
+#  if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+  return ::_strdup(s);
+#  else
+  return ::strdup(s);
+#  endif
 }
 
 /*

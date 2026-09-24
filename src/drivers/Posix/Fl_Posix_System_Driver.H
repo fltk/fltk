@@ -2,7 +2,7 @@
 // Definition of POSIX system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2022 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -81,7 +81,6 @@ public:
   const char *home_directory_name() FL_OVERRIDE { return ::getenv("HOME"); }
   int dot_file_hidden() FL_OVERRIDE {return 1;}
   void gettime(time_t *sec, int *usec) FL_OVERRIDE;
-  char* strdup(const char *s) FL_OVERRIDE {return ::strdup(s);}
   int close_fd(int fd) FL_OVERRIDE;
 #if defined(HAVE_PTHREAD)
   void lock_ring() FL_OVERRIDE;

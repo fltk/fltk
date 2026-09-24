@@ -35,23 +35,8 @@
 #include <sys/stat.h>
 
 
-const char *Fl_Darwin_System_Driver::shift_name() {
-  return "⇧\\"; // "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
-}
-const char *Fl_Darwin_System_Driver::meta_name() {
-  return "⌘\\"; // "\xe2\x8c\x98\\"; // U+2318 (place of interest sign)
-}
-const char *Fl_Darwin_System_Driver::alt_name() {
-  return "⌥\\"; // "\xe2\x8c\xa5\\"; // U+2325 (option key)
-}
-const char *Fl_Darwin_System_Driver::control_name() {
-  return "⌃\\"; // "\xe2\x8c\x83\\"; // U+2303 (up arrowhead)
-}
-
 Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() : Fl_Posix_System_Driver() {
   if (fl_mac_os_version == 0) fl_mac_os_version = calc_mac_os_version();
-  command_key = FL_META;
-  control_key = FL_CTRL;
 }
 
 int Fl_Darwin_System_Driver::single_arg(const char *arg) {

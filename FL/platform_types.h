@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2023 by Bill Spitzak and others.
+ * Copyright 2016-2026 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -129,12 +129,6 @@ typedef  unsigned __int64 FL_SOCKET;    /* *FIXME* - FL_SOCKET (see above) */
 # else
 typedef  int FL_SOCKET;
 # endif
-
-#include <FL/Fl_Export.H>
-extern FL_EXPORT int fl_command_modifier();
-extern FL_EXPORT int fl_control_modifier();
-#  define FL_COMMAND    fl_command_modifier()
-#  define FL_CONTROL    fl_control_modifier()
 
 #endif /* FL_PLATFORM_TYPES_H */
 

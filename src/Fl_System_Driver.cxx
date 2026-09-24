@@ -1,7 +1,7 @@
 //
 // A base class for platform specific system calls.
 //
-// Copyright 1998-2025 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -33,26 +33,8 @@
 #include <time.h>
 
 
-int Fl_System_Driver::command_key = 0;
-int Fl_System_Driver::control_key = 0;
-
-
-int fl_command_modifier() {
-  if (!Fl_System_Driver::command_key) Fl::system_driver();
-  return Fl_System_Driver::command_key;
-}
-
-
-int fl_control_modifier() {
-  if (!Fl_System_Driver::control_key) Fl::system_driver();
-  return Fl_System_Driver::control_key;
-}
-
-
 Fl_System_Driver::Fl_System_Driver()
 {
-  command_key = FL_CTRL;
-  control_key = FL_META;
 }
 
 Fl_System_Driver::~Fl_System_Driver()
