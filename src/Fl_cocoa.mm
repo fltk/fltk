@@ -124,6 +124,7 @@ static NSString *fl_filenames_pboard_type =
 static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
 typedef void (*open_cb_f_type)(const char *);
+static open_cb_f_type open_cb = NULL;
 static Fl_Window *starting_moved_window = NULL; // the moved window which brings its subwins with it
 
 enum { FLTKBreakLoopEvent = 1, FLTKDataReadyEvent };
@@ -1462,7 +1463,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 @interface FLAppDelegate : NSObject <NSApplicationDelegate>
 {
   @public
-  open_cb_f_type open_cb;
   TSMDocumentID currentDoc;
 }
 - (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app;
@@ -1663,7 +1663,6 @@ static void attempt_close_all_windows() {
 
 
 static void drain_dropped_files_list() {
-  open_cb_f_type open_cb = ((FLAppDelegate*)[NSApp delegate])->open_cb;
   if (!open_cb) {
     [dropped_files_list removeAllObjects];
     [dropped_files_list release];
@@ -1685,8 +1684,8 @@ static void drain_dropped_files_list() {
  * Install an open documents event handler...
  */
 void Fl_Darwin_System_Driver::open_callback(void (*cb)(const char *)) {
+  open_cb = cb;
   fl_open_display();
-  ((FLAppDelegate*)[NSApp delegate])->open_cb = cb;
 }
 
 @implementation FLApplication
