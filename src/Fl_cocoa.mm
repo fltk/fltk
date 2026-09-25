@@ -1653,6 +1653,8 @@ static void attempt_close_all_windows() {
   if (open_cb) {
     fl_lock_function();
     (*open_cb)([filename UTF8String]);
+    // Kludge to avoid opening of the 1st window being delayed by several seconds
+    [[NSApp keyWindow] makeKeyAndOrderFront:self];
     Fl::flush(); // useful for AppleScript that does not break the event loop
     fl_unlock_function();
     return YES;
