@@ -643,7 +643,7 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr, bool anim/*=false*/)
 
       int CodeSize = rdr.read_byte(); // LZW initial Code Size (increases...)
       CHECK_ERROR
-      if (CodeSize < 2 || CodeSize > 8) { // though invalid, other decoders accept an use it
+      if (CodeSize < 2 || CodeSize > 8) { // though invalid, other decoders accept and use it
         Fl::warning("Fl_GIF_Image: %s invalid LZW-initial code size %d.\n", rdr.name(), CodeSize);
       }
       CodeSize++;
@@ -656,6 +656,8 @@ void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr, bool anim/*=false*/)
         Fl::warning("%s does not have a color table, using default.\n", rdr.name());
         BitsPerPixel = CodeSize - 1;
         ColorMapSize = 1 << BitsPerPixel;
+        // If LZW inital Code Size was not [2,8] ColorMapSize is out of bounds
+        if (ColorMapSize < 2 || ColorMapSize > 256) ColorMapSize = 2; // invalid: use minimum
         CMap.Red[0] = CMap.Green[0] = CMap.Blue[0] = 0;    // black
         CMap.Red[1] = CMap.Green[1] = CMap.Blue[1] = 255;  // white
         for (int i = 2; i < ColorMapSize; i++) {
