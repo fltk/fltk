@@ -215,26 +215,118 @@ void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
   s->first = 0;
 }
 
-const char *Fl_GDI_Graphics_Driver::load_font(const char *filename,
-                                             const unsigned char *data, size_t size) {
-  char family[128], psname[128];
-  int style = font_file_info(data, size, family, psname, sizeof(family));
-  if (style < 0) return NULL;
-  if (filename) {
-    unsigned len = (unsigned)strlen(filename);
-    unsigned wn = fl_utf8toUtf16(filename, len, NULL, 0) + 1;
-    unsigned short *wname = new unsigned short[wn];
-    fl_utf8toUtf16(filename, len, wname, wn);
-    int n = AddFontResourceExW((LPCWSTR)wname, FR_PRIVATE, 0);
-    delete[] wname;
-    if (n == 0) return NULL;
-  } else {
-    DWORD n = 0;
-    if (!AddFontMemResourceEx((PVOID)data, (DWORD)size, NULL, &n)) return NULL;
+static unsigned sfnt16(const unsigned char *p) { return (p[0] << 8) | p[1]; }
+
+static unsigned sfnt32(const unsigned char *p) {
+  return ((unsigned)p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+}
+
+static void put16(unsigned char *p, unsigned v) { p[0] = (unsigned char)(v >> 8); p[1] = (unsigned char)v; }
+
+static void put32(unsigned char *p, unsigned v) { put16(p, v >> 16); put16(p + 2, v); }
+
+// sum of big endian 32 bit words, len must be a multiple of 4
+static unsigned sfnt_checksum(const unsigned char *p, size_t len) {
+  unsigned sum = 0;
+  for (size_t i = 0; i < len; i += 4) sum += sfnt32(p + i);
+  return sum;
+}
+
+struct Sfnt_Table {
+  char tag[4];
+  const unsigned char *data;
+  unsigned len;
+};
+
+static int sfnt_table_cmp(const void *a, const void *b) { return memcmp(a, b, 4); }
+
+/* GDI selects fonts by family name and style only, but the faces of a font
+ collection or installed fonts may have the same family name and style. So build
+ a standalone copy of the face at offset `off` whose only name is `family`.
+ Returns a buffer allocated with malloc().
+ */
+static unsigned char *make_unique_font(const unsigned char *data, size_t size, size_t off,
+                                       const char *family, size_t *font_size) {
+  // new 'name' table: family (ID 1), subfamily (ID 2), full name (ID 4), PostScript name (ID 6)
+  unsigned short wfamily[LF_FACESIZE];
+  unsigned wn = fl_utf8toUtf16(family, (unsigned)strlen(family), wfamily, LF_FACESIZE);
+  if (wn >= LF_FACESIZE) wn = LF_FACESIZE - 1;
+  static const char regular[] = "Regular";
+  unsigned name_len = 6 + 4 * 12 + 2 * wn + 2 * 7;
+  unsigned char *name = (unsigned char *)calloc(1, name_len);
+  put16(name + 2, 4);          // number of records
+  put16(name + 4, 6 + 4 * 12); // offset of the strings
+  static const unsigned ids[4] = { 1, 2, 4, 6 };
+  for (int i = 0; i < 4; i++) {
+    unsigned char *r = name + 6 + 12 * i;
+    put16(r, 3); put16(r + 2, 1); put16(r + 4, 0x409); put16(r + 6, ids[i]); // Windows, Unicode, US English
+    put16(r + 8, ids[i] == 2 ? 14 : 2 * wn);  // length
+    put16(r + 10, ids[i] == 2 ? 2 * wn : 0);  // offset
   }
-  // GDI selects the style by weight and italic flag, so use the FLTK prefix
+  unsigned char *str = name + 6 + 4 * 12;
+  for (unsigned i = 0; i < wn; i++) put16(str + 2 * i, wfamily[i]);
+  for (unsigned i = 0; i < 7; i++) put16(str + 2 * wn + 2 * i, regular[i]);
+  // copy all other tables of the face, except the now invalid digital signature
+  unsigned n = sfnt16(data + off + 4), nt = 0;
+  Sfnt_Table *t = new Sfnt_Table[n + 1];
+  for (unsigned i = 0; i < n; i++) {
+    const unsigned char *r = data + off + 12 + 16 * i;
+    size_t toff = sfnt32(r + 8), tlen = sfnt32(r + 12);
+    if (!memcmp(r, "name", 4) || !memcmp(r, "DSIG", 4) || toff > size || tlen > size - toff) continue;
+    memcpy(t[nt].tag, r, 4);
+    t[nt].data = data + toff;
+    t[nt++].len = (unsigned)tlen;
+  }
+  memcpy(t[nt].tag, "name", 4);
+  t[nt].data = name;
+  t[nt++].len = name_len;
+  qsort(t, nt, sizeof(Sfnt_Table), sfnt_table_cmp);
+  size_t total = 12 + 16 * nt;
+  for (unsigned i = 0; i < nt; i++) total += (t[i].len + 3) & ~3u;
+  unsigned char *font = (unsigned char *)calloc(1, total);
+  unsigned sel = 0; // log2 of the largest power of 2 <= nt
+  while ((2u << sel) <= nt) sel++;
+  memcpy(font, data + off, 4); // sfnt version
+  put16(font + 4, nt); put16(font + 6, 16 << sel); put16(font + 8, sel); put16(font + 10, 16 * nt - (16 << sel));
+  size_t pos = 12 + 16 * nt, head = 0;
+  for (unsigned i = 0; i < nt; i++) {
+    unsigned char *r = font + 12 + 16 * i;
+    memcpy(font + pos, t[i].data, t[i].len);
+    if (!memcmp(t[i].tag, "head", 4) && t[i].len >= 12) {
+      head = pos;
+      put32(font + pos + 8, 0); // checkSumAdjustment, set below
+    }
+    memcpy(r, t[i].tag, 4);
+    put32(r + 4, sfnt_checksum(font + pos, (t[i].len + 3) & ~3u));
+    put32(r + 8, (unsigned)pos);
+    put32(r + 12, t[i].len);
+    pos += (t[i].len + 3) & ~3u;
+  }
+  if (head) put32(font + head + 8, 0xB1B0AFBA - sfnt_checksum(font, total));
+  delete[] t;
+  free(name);
+  *font_size = total;
+  return font;
+}
+
+const char *Fl_GDI_Graphics_Driver::load_font(const char *filename,
+                                             const unsigned char *data, size_t size, int face) {
+  char psname[128], family[LF_FACESIZE];
+  int off = font_file_info(data, size, face, psname, sizeof(psname));
+  if (off < 0) return NULL;
+  // unique family name "PostScriptName#n", limited to 31 characters by GDI
+  static int count = 0;
+  char suffix[16];
+  snprintf(suffix, sizeof(suffix), "#%d", ++count);
+  snprintf(family, sizeof(family), "%.*s%s", (int)(LF_FACESIZE - 1 - strlen(suffix)), psname, suffix);
+  size_t font_size;
+  unsigned char *font = make_unique_font(data, size, off, family, &font_size);
+  DWORD n = 0;
+  HANDLE h = AddFontMemResourceEx(font, (DWORD)font_size, NULL, &n); // copies the font
+  free(font);
+  if (!h) return NULL;
   char *name = (char *)malloc(strlen(family) + 2);
-  name[0] = " BIP"[style];
+  name[0] = ' '; // regular style, the face has its own family
   strcpy(name + 1, family);
   return name;
 }

@@ -1476,12 +1476,12 @@ Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize f
 #endif // USE_PANGO
 
 extern const char *fl_fontconfig_load_font(const char *filename, const unsigned char *data,
-                                           size_t size, bool pango_name);
+                                           size_t size, int face, bool pango_name);
 
 const char *Fl_Xlib_Graphics_Driver::load_font(const char *filename,
-                                               const unsigned char *data, size_t size) {
+                                               const unsigned char *data, size_t size, int face) {
 #if USE_PANGO
-  const char *name = fl_fontconfig_load_font(filename, data, size, true);
+  const char *name = fl_fontconfig_load_font(filename, data, size, face, true);
   if (name && pfmap_) { // Pango caches the fonts it found, make it look again
 #  if PANGO_VERSION_CHECK(1,38,0)
     pango_fc_font_map_config_changed(PANGO_FC_FONT_MAP(pfmap_));
@@ -1491,7 +1491,7 @@ const char *Fl_Xlib_Graphics_Driver::load_font(const char *filename,
   }
   return name;
 #else
-  return fl_fontconfig_load_font(filename, data, size, false);
+  return fl_fontconfig_load_font(filename, data, size, face, false);
 #endif
 }
 

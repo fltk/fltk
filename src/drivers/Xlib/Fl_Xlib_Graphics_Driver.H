@@ -217,7 +217,8 @@ protected:
   const char *font_name(int num) FL_OVERRIDE;
   void font_name(int num, const char *name) FL_OVERRIDE;
 #if USE_XFT
-  const char *load_font(const char *filename, const unsigned char *data, size_t size) FL_OVERRIDE;
+  const char *load_font(const char *filename, const unsigned char *data, size_t size,
+                        int face) FL_OVERRIDE;
 #endif
   Fl_Font set_fonts(const char* xstarname) FL_OVERRIDE;
 };

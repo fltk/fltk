@@ -181,7 +181,8 @@ public:
   Fl_Font set_fonts(const char* pattern_name) FL_OVERRIDE;
   const char *font_name(int num) FL_OVERRIDE;
   void font_name(int num, const char *name) FL_OVERRIDE;
-  const char *load_font(const char *filename, const unsigned char *data, size_t size) FL_OVERRIDE;
+  const char *load_font(const char *filename, const unsigned char *data, size_t size,
+                        int face) FL_OVERRIDE;
   const char* get_font_name(Fl_Font fnum, int* ap) FL_OVERRIDE;
   int get_font_sizes(Fl_Font fnum, int*& sizep) FL_OVERRIDE;
   Fl_Region XRectangleRegion(int x, int y, int w, int h) FL_OVERRIDE;

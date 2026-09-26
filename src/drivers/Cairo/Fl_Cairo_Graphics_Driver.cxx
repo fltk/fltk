@@ -1113,11 +1113,11 @@ void Fl_Cairo_Graphics_Driver::font_name(int num, const char *name) {
 
 
 extern const char *fl_fontconfig_load_font(const char *filename, const unsigned char *data,
-                                           size_t size, bool pango_name);
+                                           size_t size, int face, bool pango_name);
 
 const char *Fl_Cairo_Graphics_Driver::load_font(const char *filename,
-                                                const unsigned char *data, size_t size) {
-  return fl_fontconfig_load_font(filename, data, size, true);
+                                                const unsigned char *data, size_t size, int face) {
+  return fl_fontconfig_load_font(filename, data, size, face, true);
 }
 
 

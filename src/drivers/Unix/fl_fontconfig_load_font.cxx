@@ -60,20 +60,35 @@ static bool add_font_data(const unsigned char *data, size_t size) {
   return true;
 }
 
-/* Makes a font available to fontconfig and returns its FLTK name, or NULL.
- With \p pango_name, the name is in Pango format ("Family, Bold Italic"),
- otherwise it is the family name with the FLTK style prefix.
+/* Makes a face of a font available to fontconfig and returns its FLTK name, or NULL.
+ The face gets a unique additional family name ("PostScriptName#n"), so that it
+ is selected exactly, even if other faces or installed fonts have the same family
+ name and style. With \p pango_name, the name is in Pango format ("Name,"),
+ otherwise it has the FLTK style prefix (" Name").
  */
 const char *fl_fontconfig_load_font(const char *filename, const unsigned char *data,
-                                    size_t size, bool pango_name) {
-  char family[128], psname[128];
-  int style = Fl_Graphics_Driver::font_file_info(data, size, family, psname, sizeof(family));
-  if (style < 0) return NULL;
+                                    size_t size, int face, bool pango_name) {
+  char psname[128];
+  if (Fl_Graphics_Driver::font_file_info(data, size, face, psname, sizeof(psname)) < 0)
+    return NULL;
+  FcFontSet *set = FcConfigGetFonts(NULL, FcSetApplication);
+  int first = set ? set->nfont : 0;
   if (filename) {
     if (!FcConfigAppFontAddFile(NULL, (const FcChar8 *)filename)) return NULL;
   } else if (!add_font_data(data, size)) {
     return NULL;
   }
+  static int count = 0;
+  std::string family = std::string(psname) + "#" + std::to_string(++count);
+  // the new faces were appended to the application font set
+  bool found = false;
+  set = FcConfigGetFonts(NULL, FcSetApplication);
+  for (int i = first; set && i < set->nfont && !found; i++) {
+    int index;
+    if (FcPatternGetInteger(set->fonts[i], FC_INDEX, 0, &index) == FcResultMatch && index == face)
+      found = FcPatternAddString(set->fonts[i], FC_FAMILY, (const FcChar8 *)family.c_str());
+  }
+  if (!found) return NULL;
 #if USE_PANGO
   // Pango caches the fonts it found, make it look again
   PangoFontMap *fontmap = pango_cairo_font_map_get_default();
@@ -85,13 +100,7 @@ const char *fl_fontconfig_load_font(const char *filename, const unsigned char *d
 #  endif
   }
 #endif
-  std::string name;
-  if (pango_name) { // the comma keeps Pango from parsing words of the family name as style
-    name = std::string(family) + ",";
-    if (style & FL_BOLD) name += " Bold";
-    if (style & FL_ITALIC) name += " Italic";
-  } else {
-    name = std::string(1, " BIP"[style]) + family;
-  }
+  // the comma keeps Pango from reading words of the name as style
+  std::string name = pango_name ? family + "," : " " + family;
   return fl_strdup(name.c_str());
 }

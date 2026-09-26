@@ -758,13 +758,18 @@ const char *Fl_Graphics_Driver::font_name(int num) {return NULL;}
 void Fl_Graphics_Driver::font_name(int num, const char *name) {}
 
 /** Support for Fl::load_font().
- Makes all faces of a TrueType or OpenType font available to this process.
+ Makes a face of a TrueType or OpenType font available to this process.
+ The returned name must select exactly this face, identified by its PostScript
+ name (see font_file_info()), so that all platforms use the same face of a font
+ collection, and it must not replace other fonts that have the same names.
  \param filename path of the font file, or NULL if the font comes from memory
  \param data, size the content of the font file
- \return a new copy of the name that Fl::set_font() needs to select the first face
- of the font on this platform, or NULL if the font could not be loaded
+ \param face index of the face in a font collection (.ttc), 0 for other fonts
+ \return a new copy of the name that Fl::set_font() needs to select the face
+ on this platform, or NULL if the font could not be loaded
  */
-const char *Fl_Graphics_Driver::load_font(const char *filename, const unsigned char *data, size_t size) {
+const char *Fl_Graphics_Driver::load_font(const char *filename, const unsigned char *data,
+                                          size_t size, int face) {
   return NULL;
 }
 
@@ -812,49 +817,40 @@ static void sfnt_name(const unsigned char *t, size_t tlen, unsigned id, char *bu
   *out = 0;
 }
 
-/** Reads the names and style of a TrueType or OpenType font file.
- For a font collection (.ttc), the first face is used.
+/** Finds a face of a TrueType or OpenType font and reads its PostScript name.
  \param data, size the content of the font file
- \param[out] family the legacy family name (name ID 1), as used by GDI and fontconfig
- \param[out] psname the PostScript name (name ID 6), as used by CoreText
- \param len size of both output buffers
- \return a combination of FL_BOLD and FL_ITALIC, or -1 if the data is not a usable font
+ \param face index of the face in a font collection (.ttc), 0 for other fonts
+ \param[out] psname the PostScript name (name ID 6) of the face, which is unique
+ for each face, or the full name (name ID 4) if the font has no PostScript name
+ \param len size of \p psname
+ \return the offset of the table directory of the face in \p data,
+ or -1 if the data is not a usable font or has no such face
  */
-int Fl_Graphics_Driver::font_file_info(const unsigned char *data, size_t size,
-                                       char *family, char *psname, int len) {
-  family[0] = psname[0] = 0;
-  if (!data || size < 12) return -1;
+int Fl_Graphics_Driver::font_file_info(const unsigned char *data, size_t size, int face,
+                                       char *psname, int len) {
+  psname[0] = 0;
+  if (!data || size < 12 || face < 0) return -1;
   size_t off = 0;
   if (!memcmp(data, "ttcf", 4)) {
-    if (size < 16) return -1;
-    off = sfnt32(data + 12);
+    if ((unsigned)face >= sfnt32(data + 8) || 16 + 4 * (size_t)face > size) return -1;
+    off = sfnt32(data + 12 + 4 * face);
     if (off > size - 12) return -1;
+  } else if (face != 0) {
+    return -1;
   }
   unsigned version = sfnt32(data + off);
   if (version != 0x00010000 && memcmp(data + off, "OTTO", 4) && memcmp(data + off, "true", 4))
     return -1;
   unsigned ntables = sfnt16(data + off + 4);
-  int os2_style = -1, head_style = 0;
+  if (off + 12 + 16 * (size_t)ntables > size) return -1;
   for (unsigned i = 0; i < ntables; i++) {
     const unsigned char *r = data + off + 12 + 16 * i;
-    if (off + 12 + 16 * (i + 1) > size) return -1;
     size_t toff = sfnt32(r + 8), tlen = sfnt32(r + 12);
-    if (toff > size || tlen > size - toff) continue;
-    const unsigned char *t = data + toff;
-    if (!memcmp(r, "name", 4)) {
-      sfnt_name(t, tlen, 1, family, len);
-      sfnt_name(t, tlen, 6, psname, len);
-    } else if (!memcmp(r, "OS/2", 4) && tlen >= 64) {
-      unsigned fs = sfnt16(t + 62); // fsSelection: bit 0 italic, bit 5 bold, bit 9 oblique
-      os2_style = ((fs & 0x20) ? FL_BOLD : 0) | ((fs & 0x201) ? FL_ITALIC : 0);
-    } else if (!memcmp(r, "head", 4) && tlen >= 46) {
-      unsigned ms = sfnt16(t + 44); // macStyle: bit 0 bold, bit 1 italic
-      head_style = ((ms & 1) ? FL_BOLD : 0) | ((ms & 2) ? FL_ITALIC : 0);
-    }
+    if (memcmp(r, "name", 4) || toff > size || tlen > size - toff) continue;
+    sfnt_name(data + toff, tlen, 6, psname, len);
+    if (!psname[0]) sfnt_name(data + toff, tlen, 4, psname, len);
   }
-  if (!family[0]) return -1;
-  if (!psname[0]) strlcpy(psname, family, len);
-  return os2_style >= 0 ? os2_style : head_style;
+  return psname[0] ? (int)off : -1;
 }
 
 /** Support function for fl_overlay_rect() and scaled GUI.*/
