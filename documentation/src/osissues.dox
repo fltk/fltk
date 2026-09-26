@@ -938,33 +938,6 @@ internally in the same way.
 
 \subsection osissues_mac_files Mac File System Specifics
 
-\par Resource Forks (OS X pre 10.6)
-
-FLTK does not access the resource fork of an application.
-However, a minimal resource fork must be created for OS X
-applications. Starting with OS X 10.6, resource forks are
-no longer needed.
-
-<CENTER>
-<TABLE WIDTH="80%" BORDER="1" BGCOLOR="#cccccc" CELLPADDING="5">
-<TR><TD><B>Caution (OS X 10.2 and older):</B>
-
-When using UNIX commands to copy or move executables, OS X
-will NOT copy any resource forks! For copying and moving use
-CpMac and MvMac respectively. For creating a tar archive, all
-executables need to be stripped from their Resource Fork before
-packing, e.g. "DeRez fluid > fluid.r". After unpacking the
-Resource Fork needs to be reattached, e.g. "Rez fluid.r -o
-fluid".
-</TD></TR></TABLE>
-</CENTER>
-
-It is advisable to use the Finder for moving and copying and
-Mac archiving tools like Sit for distribution as they will
-handle the Resource Fork correctly.
-
-\par Mac File Paths
-
 FLTK uses UTF-8-encoded UNIX-style filenames and paths.
 
 \sa  group_macosx
