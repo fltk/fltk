@@ -39,6 +39,7 @@ static const Fl_Font FL_PIXEL = FL_FREE_FONT;
 static const Fl_Font FL_CUSTOM = FL_FREE_FONT + 4;
 
 static Fl_Box *custom_box = NULL;
+static Fl_Box *custom_box2 = NULL;
 
 // Shows the sample text in `font` if it was loaded, or an error message
 static void add_sample(int y, const char *title, Fl_Font font, bool loaded) {
@@ -70,6 +71,16 @@ static void load_cb(Fl_Widget *, void *) {
   custom_box->labelfont(FL_CUSTOM);
   custom_box->labelcolor(FL_FOREGROUND_COLOR);
   custom_box->window()->redraw();
+  if (Fl::load_font(FL_CUSTOM+1, chooser.filename(), 1) < 0) {
+    custom_box2->label("(no second face in file)");
+    custom_box2->labelfont(0);
+    custom_box2->labelcolor(FL_INACTIVE_COLOR);
+  } else {
+    custom_box2->label(sample);
+    custom_box2->labelfont(FL_CUSTOM+1);
+    custom_box2->labelcolor(FL_FOREGROUND_COLOR);
+    custom_box2->window()->redraw();
+  }
 }
 
 int main(int argc, char **argv) {
@@ -82,7 +93,7 @@ int main(int argc, char **argv) {
   bool bold_italic = Fl::load_font(FL_PIXEL + FL_BOLD_ITALIC,
                                    FONT_DIR "/FLTKPixel-BoldItalic.ttf") >= 0;
 
-  Fl_Double_Window *win = new Fl_Double_Window(800, 290, "Fl::load_font()");
+  Fl_Double_Window *win = new Fl_Double_Window(800, 320, "Fl::load_font()");
   add_sample(10, "Regular, from memory:", FL_PIXEL, regular);
   add_sample(50, "Bold, from file:", FL_PIXEL + FL_BOLD, bold);
   add_sample(90, "Italic, from file:", FL_PIXEL + FL_ITALIC, italic);
@@ -94,8 +105,12 @@ int main(int argc, char **argv) {
   custom_box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   custom_box->labelsize(20);
   custom_box->labelcolor(FL_INACTIVE_COLOR);
+  custom_box2 = new Fl_Box(190, 225, 600, 40);
+  custom_box2->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  custom_box2->labelsize(20);
+  custom_box2->labelcolor(FL_INACTIVE_COLOR);
 
-  Fl_Box *note = new Fl_Box(20, 240, 770, 40,
+  Fl_Box *note = new Fl_Box(20, 260, 770, 40,
     "Fonts loaded with Fl::load_font() are only visible to this application.");
   note->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   note->labelsize(12);
