@@ -110,7 +110,7 @@ const char *Fl_Xlib_Graphics_Driver::font_name(int num) {
 #endif
 }
 
-void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
+void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name, int weight, int style, bool legacy) {
 #if USE_XFT
 #  if USE_PANGO
   init_built_in_fonts();
@@ -124,6 +124,8 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
     Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts) + num;
 #endif
   if (s->name) {
+    s->weight = weight;
+    s->style = style;
     if (!strcmp(s->name, name)) {s->name = name; return;}
 #if !USE_XFT
     if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
@@ -137,6 +139,10 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
   s->fontname[0] = 0;
 #if !USE_XFT
   s->xlist = 0;
+#else
+  s->weight = weight;
+  s->style = style;
+  s->legacy = legacy;
 #endif
   s->first = 0;
 }

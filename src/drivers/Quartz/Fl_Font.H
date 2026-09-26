@@ -29,7 +29,7 @@
 
 class Fl_Quartz_Font_Descriptor : public Fl_Font_Descriptor {
 public:
-  Fl_Quartz_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  Fl_Quartz_Font_Descriptor(const char* fontname, Fl_Fontsize size, int weight, int style);
   virtual FL_EXPORT ~Fl_Quartz_Font_Descriptor();
   CTFontRef fontref;
   // the unicode span is divided in 512 blocks of 128 characters

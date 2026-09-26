@@ -384,7 +384,7 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 #ifndef FL_DOXYGEN
 
-Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name) : Fl_Font_Descriptor(name, 0) {
+Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name) : Fl_Font_Descriptor(name, 0, 0, 0) {
   font = XCreateUtf8FontStruct(fl_display, name);
   if (!font) {
     Fl::warning("bad font: %s", name);
