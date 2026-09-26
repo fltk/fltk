@@ -72,6 +72,70 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
 }
 
 /**
+  Loads a TrueType or OpenType font file and assigns it to a font number.
+
+  The font is available to this application only and remains loaded until the
+  application exits. The style of the font (regular, bold, italic, or bold italic)
+  is read from the font file. To use a font family with the FLTK font attributes
+  FL_BOLD and FL_ITALIC, load each style into the matching font number:
+  \code
+    Fl::load_font(FL_FREE_FONT,                  "MyFont-Regular.ttf");
+    Fl::load_font(FL_FREE_FONT + FL_BOLD,        "MyFont-Bold.ttf");
+    Fl::load_font(FL_FREE_FONT + FL_ITALIC,      "MyFont-Italic.ttf");
+    Fl::load_font(FL_FREE_FONT + FL_BOLD_ITALIC, "MyFont-BoldItalic.ttf");
+  \endcode
+  If the file is a font collection (.ttc), its first face is assigned to \p fnum.
+
+  This is not supported by X11 builds that use neither Xft nor Pango, and
+  loading fonts from memory requires macOS 10.8 or later.
+
+  \param fnum The font number to be assigned the new face
+  \param filename The UTF-8 encoded path of the font file
+  \return \p fnum, or -1 if the font could not be loaded
+  \see Fl::load_font(Fl_Font, const unsigned char *, size_t)
+  \since 1.5.0
+*/
+Fl_Font Fl::load_font(Fl_Font fnum, const char *filename) {
+  FILE *f = filename ? fl_fopen(filename, "rb") : NULL;
+  if (!f) return -1;
+  unsigned char *data = NULL;
+  long size = -1;
+  if (fseek(f, 0, SEEK_END) == 0) size = ftell(f);
+  if (size > 0 && fseek(f, 0, SEEK_SET) == 0) {
+    data = (unsigned char *)malloc(size);
+    if (data && fread(data, 1, size, f) != (size_t)size) { free(data); data = NULL; }
+  }
+  fclose(f);
+  if (!data) return -1;
+  const char *name = Fl_Graphics_Driver::default_driver().load_font(filename, data, size);
+  free(data);
+  if (!name) return -1;
+  Fl::set_font(fnum, name);
+  return fnum;
+}
+
+/**
+  Loads a TrueType or OpenType font from memory and assigns it to a font number.
+
+  Use this function to load a font that is compiled into the application, for
+  instance with the Data node in FLUID. The data is copied, so the buffer can be
+  released when this function returns.
+
+  \param fnum The font number to be assigned the new face
+  \param data The content of a TrueType or OpenType font file
+  \param size The size of \p data in bytes
+  \return \p fnum, or -1 if the font could not be loaded
+  \see Fl::load_font(Fl_Font, const char *) for details
+  \since 1.5.0
+*/
+Fl_Font Fl::load_font(Fl_Font fnum, const unsigned char *data, size_t size) {
+  const char *name = Fl_Graphics_Driver::default_driver().load_font(NULL, data, size);
+  if (!name) return -1;
+  Fl::set_font(fnum, name);
+  return fnum;
+}
+
+/**
     Gets the string for this face.  This string is different for each
     face. Under X this value is passed to XListFonts to get all the sizes
     of this face.

@@ -215,6 +215,30 @@ void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
   s->first = 0;
 }
 
+const char *Fl_GDI_Graphics_Driver::load_font(const char *filename,
+                                             const unsigned char *data, size_t size) {
+  char family[128], psname[128];
+  int style = font_file_info(data, size, family, psname, sizeof(family));
+  if (style < 0) return NULL;
+  if (filename) {
+    unsigned len = (unsigned)strlen(filename);
+    unsigned wn = fl_utf8toUtf16(filename, len, NULL, 0) + 1;
+    unsigned short *wname = new unsigned short[wn];
+    fl_utf8toUtf16(filename, len, wname, wn);
+    int n = AddFontResourceExW((LPCWSTR)wname, FR_PRIVATE, 0);
+    delete[] wname;
+    if (n == 0) return NULL;
+  } else {
+    DWORD n = 0;
+    if (!AddFontMemResourceEx((PVOID)data, (DWORD)size, NULL, &n)) return NULL;
+  }
+  // GDI selects the style by weight and italic flag, so use the FLTK prefix
+  char *name = (char *)malloc(strlen(family) + 2);
+  name[0] = " BIP"[style];
+  strcpy(name + 1, family);
+  return name;
+}
+
 
 static int fl_angle_ = 0;
 // Unicode string buffer

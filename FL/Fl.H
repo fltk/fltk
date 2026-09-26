@@ -634,6 +634,8 @@ FL_EXPORT extern const char* get_font_name(Fl_Font, int* attributes = 0);
 FL_EXPORT extern int get_font_sizes(Fl_Font, int*& sizep);
 FL_EXPORT extern void set_font(Fl_Font, const char*);
 FL_EXPORT extern void set_font(Fl_Font, Fl_Font);
+FL_EXPORT extern Fl_Font load_font(Fl_Font fnum, const char *filename);
+FL_EXPORT extern Fl_Font load_font(Fl_Font fnum, const unsigned char *data, size_t size);
 
 /**
   FLTK will open the display, and add every fonts on the server to the

@@ -23,6 +23,7 @@
 
 #include "Fl_Cairo_Graphics_Driver.H"
 #include "../../Fl_Screen_Driver.H"
+#include "../../flstring.h" // strlcpy()
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_utf8.h>
@@ -1111,15 +1112,27 @@ void Fl_Cairo_Graphics_Driver::font_name(int num, const char *name) {
 }
 
 
+extern const char *fl_fontconfig_load_font(const char *filename, const unsigned char *data,
+                                           size_t size, bool pango_name);
+
+const char *Fl_Cairo_Graphics_Driver::load_font(const char *filename,
+                                                const unsigned char *data, size_t size) {
+  return fl_fontconfig_load_font(filename, data, size, true);
+}
+
+
 // turn a stored font name into a pretty name:
 #define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
 
 const char* Fl_Cairo_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
-    strcpy(f->fontname, f->name); // to check
     const char* thisFont = f->name;
     if (!thisFont || !*thisFont) {if (ap) *ap = 0; return "";}
+    strlcpy(f->fontname, f->name, ENDOFBUFFER);
+    // remove the comma of "Family, Style" names made by Fl::load_font()
+    char *comma = strrchr(f->fontname, ',');
+    if (comma && (comma[1] == ' ' || comma[1] == 0)) memmove(comma, comma + 1, strlen(comma));
     int type = 0;
     if (strstr(f->name, "Bold")) type |= FL_BOLD;
     if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;

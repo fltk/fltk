@@ -263,6 +263,44 @@ void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
 }
 
 
+const char *Fl_Quartz_Graphics_Driver::load_font(const char *filename,
+                                                 const unsigned char *data, size_t size) {
+  char family[128], psname[128];
+  if (font_file_info(data, size, family, psname, sizeof(psname)) < 0) return NULL;
+  CFErrorRef error = NULL;
+  bool ok = false;
+  if (filename) {
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8*)filename,
+                                                           strlen(filename), false);
+    if (url) {
+      ok = CTFontManagerRegisterFontsForURL(url, kCTFontManagerScopeProcess, &error);
+      CFRelease(url);
+    }
+  } else if (fl_mac_os_version >= 100800) {
+    CFDataRef cfdata = CFDataCreate(NULL, data, size);
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData(cfdata);
+    CGFontRef cgfont = CGFontCreateWithDataProvider(provider);
+    if (cgfont) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+      // deprecated in macOS 15, but CTFontManagerRegisterFontDescriptors() rejects
+      // fonts that don't come from a file
+      ok = CTFontManagerRegisterGraphicsFont(cgfont, &error);
+#pragma clang diagnostic pop
+      CFRelease(cgfont);
+    }
+    CGDataProviderRelease(provider);
+    CFRelease(cfdata);
+  }
+  if (error) {
+    if (CFErrorGetCode(error) == kCTFontManagerErrorAlreadyRegistered) ok = true;
+    CFRelease(error);
+  }
+  return ok ? fl_strdup(psname) : NULL;
+}
+
+
 Fl_Fontdesc* Fl_Quartz_Graphics_Driver::calc_fl_fonts(void)
 {
   return  built_in_table_PS;
