@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_string_functions.h>
+#include <string>
 
 // This function fills in the FLTK font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
@@ -240,46 +241,76 @@ struct Sfnt_Table {
 
 static int sfnt_table_cmp(const void *a, const void *b) { return memcmp(a, b, 4); }
 
+// Appends `n` UTF-16 characters to `out` as UTF-16BE, or as ASCII for Macintosh names
+static void put_name(std::string &out, const unsigned short *w, unsigned n, bool mac) {
+  for (unsigned i = 0; i < n; i++) {
+    if (mac) out += (char)(w[i] < 0x80 ? w[i] : '?');
+    else { out += (char)(w[i] >> 8); out += (char)w[i]; }
+  }
+}
+
+/* Copies the 'name' table `t` of length `tlen`, replacing the family (ID 1) and full
+ name (ID 4) with `family`, and the subfamily (ID 2) with "Regular". The typographic
+ and WWS family names (IDs 16, 17, 21, 22) are removed. All other names are kept,
+ because GDI rejects fonts that miss some of them.
+ */
+static std::string rename_font(const unsigned char *t, size_t tlen, const char *family) {
+  unsigned short wfamily[LF_FACESIZE];
+  unsigned wn = fl_utf8toUtf16(family, (unsigned)strlen(family), wfamily, LF_FACESIZE);
+  if (wn >= LF_FACESIZE) wn = LF_FACESIZE - 1;
+  static const unsigned short regular[] = { 'R', 'e', 'g', 'u', 'l', 'a', 'r' };
+  std::string records, strings;
+  unsigned count = tlen >= 6 ? sfnt16(t + 2) : 0, storage = tlen >= 6 ? sfnt16(t + 4) : 0, nrec = 0;
+  for (unsigned i = 0; i < count && 6 + 12 * (i + 1) <= tlen; i++) {
+    const unsigned char *r = t + 6 + 12 * i;
+    unsigned platform = sfnt16(r), lang = sfnt16(r + 4), id = sfnt16(r + 6);
+    unsigned len = sfnt16(r + 8), off = storage + sfnt16(r + 10);
+    if (id == 16 || id == 17 || id == 21 || id == 22) continue;
+    if (platform > 3 || platform == 2 || lang >= 0x8000 || off + len > tlen) continue;
+    size_t start = strings.size();
+    bool mac = (platform == 1);
+    if (id == 1 || id == 4) put_name(strings, wfamily, wn, mac);
+    else if (id == 2) put_name(strings, regular, 7, mac);
+    else strings.append((const char *)t + off, len);
+    char rec[12];
+    memcpy(rec, r, 8); // platform, encoding, language, name ID
+    put16((unsigned char *)rec + 8, (unsigned)(strings.size() - start));
+    put16((unsigned char *)rec + 10, (unsigned)start);
+    records.append(rec, 12);
+    nrec++;
+  }
+  unsigned char head[6] = { 0, 0 }; // format 0
+  put16(head + 2, nrec);
+  put16(head + 4, 6 + 12 * nrec);
+  return std::string((const char *)head, 6) + records + strings;
+}
+
 /* GDI selects fonts by family name and style only, but the faces of a font
  collection or installed fonts may have the same family name and style. So build
- a standalone copy of the face at offset `off` whose only name is `family`.
+ a standalone copy of the face at offset `off` whose family is `family`.
  Returns a buffer allocated with malloc().
  */
 static unsigned char *make_unique_font(const unsigned char *data, size_t size, size_t off,
                                        const char *family, size_t *font_size) {
-  // new 'name' table: family (ID 1), subfamily (ID 2), full name (ID 4), PostScript name (ID 6)
-  unsigned short wfamily[LF_FACESIZE];
-  unsigned wn = fl_utf8toUtf16(family, (unsigned)strlen(family), wfamily, LF_FACESIZE);
-  if (wn >= LF_FACESIZE) wn = LF_FACESIZE - 1;
-  static const char regular[] = "Regular";
-  unsigned name_len = 6 + 4 * 12 + 2 * wn + 2 * 7;
-  unsigned char *name = (unsigned char *)calloc(1, name_len);
-  put16(name + 2, 4);          // number of records
-  put16(name + 4, 6 + 4 * 12); // offset of the strings
-  static const unsigned ids[4] = { 1, 2, 4, 6 };
-  for (int i = 0; i < 4; i++) {
-    unsigned char *r = name + 6 + 12 * i;
-    put16(r, 3); put16(r + 2, 1); put16(r + 4, 0x409); put16(r + 6, ids[i]); // Windows, Unicode, US English
-    put16(r + 8, ids[i] == 2 ? 14 : 2 * wn);  // length
-    put16(r + 10, ids[i] == 2 ? 2 * wn : 0);  // offset
-  }
-  unsigned char *str = name + 6 + 4 * 12;
-  for (unsigned i = 0; i < wn; i++) put16(str + 2 * i, wfamily[i]);
-  for (unsigned i = 0; i < 7; i++) put16(str + 2 * wn + 2 * i, regular[i]);
+  std::string name;
   // copy all other tables of the face, except the now invalid digital signature
   unsigned n = sfnt16(data + off + 4), nt = 0;
   Sfnt_Table *t = new Sfnt_Table[n + 1];
   for (unsigned i = 0; i < n; i++) {
     const unsigned char *r = data + off + 12 + 16 * i;
     size_t toff = sfnt32(r + 8), tlen = sfnt32(r + 12);
-    if (!memcmp(r, "name", 4) || !memcmp(r, "DSIG", 4) || toff > size || tlen > size - toff) continue;
+    if (!memcmp(r, "DSIG", 4) || toff > size || tlen > size - toff) continue;
+    if (!memcmp(r, "name", 4)) {
+      name = rename_font(data + toff, tlen, family);
+      continue;
+    }
     memcpy(t[nt].tag, r, 4);
     t[nt].data = data + toff;
     t[nt++].len = (unsigned)tlen;
   }
   memcpy(t[nt].tag, "name", 4);
-  t[nt].data = name;
-  t[nt++].len = name_len;
+  t[nt].data = (const unsigned char *)name.data();
+  t[nt++].len = (unsigned)name.size();
   qsort(t, nt, sizeof(Sfnt_Table), sfnt_table_cmp);
   size_t total = 12 + 16 * nt;
   for (unsigned i = 0; i < nt; i++) total += (t[i].len + 3) & ~3u;
@@ -304,7 +335,6 @@ static unsigned char *make_unique_font(const unsigned char *data, size_t size, s
   }
   if (head) put32(font + head + 8, 0xB1B0AFBA - sfnt_checksum(font, total));
   delete[] t;
-  free(name);
   *font_size = total;
   return font;
 }
