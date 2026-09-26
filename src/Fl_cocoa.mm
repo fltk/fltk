@@ -48,6 +48,7 @@ extern "C" {
 #include <string.h>
 #include <pwd.h>
 #include <utility> // std::swap()
+#include <string>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7 || \
     MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_7
@@ -1727,11 +1728,6 @@ void Fl_Darwin_System_Driver::open_callback(void (*cb)(const char *)) {
 }
 @end
 
-/* Prototype of undocumented function needed to support Mac OS 10.2 or earlier
- extern "C" {
-  OSErr CPSEnableForegroundOperation(ProcessSerialNumber*, UInt32, UInt32, UInt32, UInt32);
-}
-*/
 
 static BOOL is_bundled() {
   static int value = 2;
@@ -1754,9 +1750,6 @@ static void foreground_and_activate() {
   if ( !is_bundled() ) { // only transform the application type for unbundled apps
     ProcessSerialNumber cur_psn = { 0, kCurrentProcess };
     TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication); // needs Mac OS 10.3
-    /* support of Mac OS 10.2 or earlier used this undocumented call instead
-     err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
-     */
   }
   [NSApp activateIgnoringOtherApps:YES];
 }
@@ -2627,25 +2620,13 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 }
 
 + (void)prepareEtext:(NSString*)aString {
-  // fills Fl::e_text with UTF-8 encoded aString using an adequate memory allocation
-  static char *received_utf8 = NULL;
-  static int lreceived = 0;
-  char *p = (char*)[aString UTF8String];
-  if (p == nullptr) p = (char*)"";
-  int l = (int)strlen(p);
-  if (l > 0) {
-    if (lreceived == 0) {
-      received_utf8 = (char*)malloc(l + 1);
-      lreceived = l;
-    }
-    else if (l > lreceived) {
-      received_utf8 = (char*)realloc(received_utf8, l + 1);
-      lreceived = l;
-    }
-    strcpy(received_utf8, p);
-    Fl::e_text = received_utf8;
-  }
-  Fl::e_length = l;
+  // fills Fl::e_text with UTF-8 encoded aString
+  static std::string received_string;
+  const char *p = [aString UTF8String];
+  if (p == nullptr) p = "";
+  received_string = p;
+  Fl::e_text = (char*)received_string.c_str();
+  Fl::e_length = received_string.length();
 }
 
 + (void)concatEtext:(NSString*)aString {
