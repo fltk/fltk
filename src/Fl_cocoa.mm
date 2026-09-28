@@ -3524,9 +3524,7 @@ Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
 ////////////////////////////////////////////////////////////////
 
 // clipboard variables definitions :
-char *fl_selection_buffer[2] = {NULL, NULL};
-int fl_selection_length[2] = {0, 0};
-static int fl_selection_buffer_length[2];
+static std::string selection_string[2];
 
 extern void fl_trigger_clipboard_notify(int source);
 
@@ -3539,13 +3537,6 @@ static void clipboard_check(void)
   fl_trigger_clipboard_notify(1);
 }
 
-static void resize_selection_buffer(int len, int clipboard) {
-  if (len <= fl_selection_buffer_length[clipboard])
-    return;
-  delete[] fl_selection_buffer[clipboard];
-  fl_selection_buffer[clipboard] = new char[len+100];
-  fl_selection_buffer_length[clipboard] = len+100;
-}
 
 /*
  * create a selection
@@ -3558,12 +3549,10 @@ void Fl_Cocoa_Screen_Driver::copy(const char *stuff, int len, int clipboard, con
   if (clipboard >= 2)
     clipboard = 1; // Only on X11 do multiple clipboards make sense.
 
-  resize_selection_buffer(len+1, clipboard);
-  memcpy(fl_selection_buffer[clipboard], stuff, len);
-  fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
-  fl_selection_length[clipboard] = len;
+  selection_string[clipboard].clear();
+  selection_string[clipboard].insert(selection_string[clipboard].begin(), stuff, stuff + len);
   if (clipboard) {
-    CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[1], len);
+    CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)selection_string[1].c_str(), selection_string[1].length());
     if (text==NULL) return; // there was a pb creating the object, abort.
     NSPasteboard *clip = [NSPasteboard generalPasteboard];
     [clip declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
@@ -3572,9 +3561,8 @@ void Fl_Cocoa_Screen_Driver::copy(const char *stuff, int len, int clipboard, con
   }
 }
 
-static int get_plain_text_from_clipboard(int clipboard)
+static void get_plain_text_from_clipboard(int clipboard)
 {
-  NSInteger length = 0;
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:NSPasteboardTypeString, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
   if (found) {
@@ -3590,23 +3578,20 @@ static int get_plain_text_from_clipboard(int clipboard)
                                   kCFStringEncodingUnicode : kCFStringEncodingMacRoman), false);
         aux_c = fl_strdup([auxstring UTF8String]);
         [auxstring release];
-        len = strlen(aux_c) + 1;
+        len = strlen(aux_c);
+      } else {
+        len = [data length];
+        aux_c = (char*)malloc(len + 1);
+        [data getBytes:aux_c length:len];
+        aux_c[len] = 0;
       }
-      else len = [data length] + 1;
-      resize_selection_buffer((int)len, clipboard);
-      if (![found isEqualToString:NSPasteboardTypeString]) {
-        strcpy(fl_selection_buffer[clipboard], aux_c);
-        free(aux_c);
-      }
-      else {
-        [data getBytes:fl_selection_buffer[clipboard] length:[data length]];
-      }
-      fl_selection_buffer[clipboard][len - 1] = 0;
-      length = Fl_Screen_Driver::convert_crlf(fl_selection_buffer[clipboard], len - 1); // turn all \r characters into \n:
+      len = Fl_Screen_Driver::convert_crlf(aux_c, len); // turn all \r characters into \n:
+      aux_c[len] = 0;
+      selection_string[clipboard] = aux_c;
+      free(aux_c);
       Fl::e_clipboard_type = Fl::clipboard_plain_text;
     }
   }
-  return (int)length;
 }
 
 static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
@@ -3655,7 +3640,7 @@ void Fl_Cocoa_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const cha
   if (clipboard) {
     Fl::e_clipboard_type = "";
     if (strcmp(type, Fl::clipboard_plain_text) == 0) {
-      fl_selection_length[1] = get_plain_text_from_clipboard(1);
+      get_plain_text_from_clipboard(1);
     }
     else if (strcmp(type, Fl::clipboard_image) == 0) {
       Fl::e_clipboard_data = get_image_from_clipboard(&receiver);
@@ -3670,11 +3655,11 @@ void Fl_Cocoa_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const cha
       return;
     }
     else
-      fl_selection_length[1] = 0;
+      selection_string[1].clear();
   }
-  Fl::e_text = fl_selection_buffer[clipboard];
-  Fl::e_length = fl_selection_length[clipboard];
+  Fl::e_length = selection_string[clipboard].length();
   if (!Fl::e_length) Fl::e_text = (char *)"";
+  else Fl::e_text = (char*)selection_string[clipboard].c_str();
   receiver.handle(FL_PASTE);
 }
 
@@ -4022,7 +4007,7 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
 
 int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
 {
-  CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[0], fl_selection_length[0]);
+  CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)selection_string[0].c_str(), selection_string[0].length());
   if (text==NULL) return false;
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init];
@@ -4034,8 +4019,7 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   int width, height;
   NSImage *image;
   if (use_selection) {
-    fl_selection_buffer[0][ fl_selection_length[0] ] = 0;
-    image = imageFromText(fl_selection_buffer[0], &width, &height);
+    image = imageFromText(selection_string[0].c_str(), &width, &height);
   } else {
     image = defaultDragImage(&width, &height);
   }
