@@ -483,6 +483,8 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core, int angle) {
+  static bool fc_init_done = false;
+  if (!fc_init_done) fc_init_done = FcInit();
   // Check: does it look like we have been passed an old-school XLFD fontname?
   bool is_xlfd = false;
   int hyphen_count = 0;
