@@ -74,6 +74,9 @@ extern "C" {
 static locale_t c_locale = NULL;
 #endif
 
+Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
+  return new Fl_Unix_System_Driver();
+}
 
 int Fl_Unix_System_Driver::clocale_vprintf(FILE *output, const char *format, va_list args) {
 #if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700

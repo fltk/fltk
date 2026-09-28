@@ -58,12 +58,6 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 }
 
 
-Fl_System_Driver *Fl_System_Driver::newSystemDriver()
-{
-  return new Fl_Unix_System_Driver();
-}
-
-
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
   return new Fl_X11_Window_Driver(w);

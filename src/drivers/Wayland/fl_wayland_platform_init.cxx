@@ -91,11 +91,6 @@ static bool attempt_wayland() {
 #endif // FLTK_USE_X11
 
 
-Fl_System_Driver *Fl_System_Driver::newSystemDriver() {
-  return new Fl_Unix_System_Driver();
-}
-
-
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() {
 #ifdef FLTK_USE_X11
   if (!attempt_wayland()) return new Fl_X11_Cairo_Graphics_Driver();
