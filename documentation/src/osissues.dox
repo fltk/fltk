@@ -1040,6 +1040,10 @@ that doesn't contain a libdecor plug-in, FLTK uses its built-in plug-in to draw 
 That is the most common situation, until libdecor plug-in's become available
 for popular UNIX desktops.
 
+\subsection osissues_wayland_double Fl_Double_Window
+
+Under Wayland, windows are natively double-buffered. Therefore Wayland-FLTK handles Fl_Window and
+Fl_Double_Window internally the same way.
 
 \htmlonly
 <hr>
