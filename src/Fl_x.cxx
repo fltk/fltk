@@ -688,10 +688,7 @@ int Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
 ////////////////////////////////////////////////////////////////
 // Code used for paste and DnD into the program:
 
-char *fl_selection_buffer[2];
-int fl_selection_length[2];
 const char * fl_selection_type[2];
-int fl_selection_buffer_length[2];
 char fl_i_own_selection[2] = {0,0};
 
 
@@ -703,11 +700,11 @@ void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
       // Notice that the text is clobbered if set_selection is
       // called in response to FL_PASTE!
       // However, for now, we only paste text in this function
-      Fl::e_text = fl_selection_buffer[clipboard];
-      Fl::e_length = fl_selection_length[clipboard];
+      Fl::e_text = (char*)selection_string[clipboard].c_str();
+      Fl::e_length = selection_string[clipboard].length();
       if (!Fl::e_text) Fl::e_text = (char *)"";
     } else if (clipboard == 1 && type == Fl::clipboard_image && fl_selection_type[1] == type) {
-      Fl::e_clipboard_data = Fl_Unix_System_Driver::own_bmp_to_RGB(fl_selection_buffer[1]);
+      Fl::e_clipboard_data = Fl_Unix_System_Driver::own_bmp_to_RGB(selection_string[1].c_str());
       Fl::e_clipboard_type = Fl::clipboard_image;
     } else return;
     int retval = receiver.handle(FL_PASTE);
@@ -838,14 +835,8 @@ void Fl_X11_Screen_Driver::copy(const char *stuff, int len, int clipboard, const
     clipboard = 0;              // ... and then to selection buffer: fall through
   }
 
-  if (len+1 > fl_selection_buffer_length[clipboard]) {
-    delete[] fl_selection_buffer[clipboard];
-    fl_selection_buffer[clipboard] = new char[len+100];
-    fl_selection_buffer_length[clipboard] = len+100;
-  }
-  memcpy(fl_selection_buffer[clipboard], stuff, len);
-  fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
-  fl_selection_length[clipboard] = len;
+  selection_string[clipboard].clear();
+  selection_string[clipboard].insert(selection_string[clipboard].begin(), stuff, stuff + len);
   fl_i_own_selection[clipboard] = 1;
   fl_selection_type[clipboard] = Fl::clipboard_plain_text;
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
@@ -856,9 +847,11 @@ void Fl_X11_Screen_Driver::copy(const char *stuff, int len, int clipboard, const
 // takes a raw RGB image and puts it in the copy/paste buffer
 void Fl_X11_Screen_Driver::copy_image(const unsigned char *data, int W, int H, int clipboard){
   if (!data || W <= 0 || H <= 0) return;
-  delete[] fl_selection_buffer[clipboard];
-  fl_selection_buffer[clipboard] = (char *) Fl_Unix_System_Driver::create_bmp(data,W,H,&fl_selection_length[clipboard]);
-  fl_selection_buffer_length[clipboard] = fl_selection_length[clipboard];
+  selection_string[clipboard].clear();
+  int len;
+  uchar *bmp = Fl_Unix_System_Driver::create_bmp(data, W, H, &len);
+  selection_string[clipboard].insert(selection_string[clipboard].begin(), bmp, bmp + len);
+  delete[] bmp;
   fl_i_own_selection[clipboard] = 1;
   fl_selection_type[clipboard] = Fl::clipboard_image;
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
@@ -1555,7 +1548,7 @@ int fl_handle(const XEvent& thisevent)
         XChangeProperty(fl_display, e.requestor, e.property,
                         XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
       } else {
-        if (fl_selection_length[clipboard]) { // data available
+        if (Fl_X11_Screen_Driver::selection_string[clipboard].length()) { // data available
           if (e.target == fl_XaUtf8String ||
               e.target == XA_STRING ||
               e.target == fl_XaCompoundText ||
@@ -1569,8 +1562,8 @@ int fl_handle(const XEvent& thisevent)
             if (e.target != XA_STRING) e.target = fl_XaUtf8String;
             XChangeProperty(fl_display, e.requestor, e.property,
                             e.target, 8, 0,
-                            (unsigned char *)fl_selection_buffer[clipboard],
-                            fl_selection_length[clipboard]);
+                            (unsigned char *)Fl_X11_Screen_Driver::selection_string[clipboard].c_str(),
+                            Fl_X11_Screen_Driver::selection_string[clipboard].length());
           }
         } else { // no data available
           e.property = 0;
@@ -1582,11 +1575,11 @@ int fl_handle(const XEvent& thisevent)
         XChangeProperty(fl_display, e.requestor, e.property,
                         XA_ATOM, atom_bits, 0, (unsigned char*)a, 1);
       } else {
-        if (e.target == fl_XaImageBmp && fl_selection_length[clipboard]) {
+        if (e.target == fl_XaImageBmp && Fl_X11_Screen_Driver::selection_string[clipboard].length()) {
             XChangeProperty(fl_display, e.requestor, e.property,
                             e.target, 8, 0,
-                            (unsigned char *)fl_selection_buffer[clipboard],
-                            fl_selection_length[clipboard]);
+                            (unsigned char *)Fl_X11_Screen_Driver::selection_string[clipboard].c_str(),
+                            Fl_X11_Screen_Driver::selection_string[clipboard].length());
         } else {
           e.property = 0;
         }

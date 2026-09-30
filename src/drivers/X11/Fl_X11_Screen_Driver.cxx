@@ -70,6 +70,8 @@ char Fl_X11_Screen_Driver::fl_is_over_the_spot = 0;
 
 Window Fl_X11_Screen_Driver::xim_win = 0;
 
+std::string Fl_X11_Screen_Driver::selection_string[2] = {"", ""};
+
 Fl_X11_Screen_Driver::Fl_X11_Screen_Driver() : Fl_Unix_Screen_Driver() {
   // X11 screen driver does not use a key table
   key_table = NULL;

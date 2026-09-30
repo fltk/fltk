@@ -39,7 +39,6 @@ extern Atom fl_XaUtf8String;
 extern Atom fl_Xatextplain;
 
 extern char fl_i_own_selection[2];
-extern char *fl_selection_buffer[2];
 
 extern void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d0,
@@ -134,17 +133,18 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
         // contains at least one CR LF, then we flag the data as
         // both a URI list (MIME media type "text/uri-list") and
         // plain text.  Otherwise, we just say it is plain text.
-        if ((!strncmp(fl_selection_buffer[0], "file:///", 8) ||
-             !strncmp(fl_selection_buffer[0], "ftp://", 6) ||
-             !strncmp(fl_selection_buffer[0], "http://", 7) ||
-             !strncmp(fl_selection_buffer[0], "https://", 8) ||
-             !strncmp(fl_selection_buffer[0], "ipp://", 6) ||
-             !strncmp(fl_selection_buffer[0], "ldap:", 5) ||
-             !strncmp(fl_selection_buffer[0], "mailto:", 7) ||
-             !strncmp(fl_selection_buffer[0], "news:", 5) ||
-             !strncmp(fl_selection_buffer[0], "smb://", 6)) &&
-            !strchr(fl_selection_buffer[0], ' ') &&
-            strstr(fl_selection_buffer[0], "\r\n")) {
+        const char *p = selection_string[0].c_str();
+        if ((!strncmp(p, "file:///", 8) ||
+             !strncmp(p, "ftp://", 6) ||
+             !strncmp(p, "http://", 7) ||
+             !strncmp(p, "https://", 8) ||
+             !strncmp(p, "ipp://", 6) ||
+             !strncmp(p, "ldap:", 5) ||
+             !strncmp(p, "mailto:", 7) ||
+             !strncmp(p, "news:", 5) ||
+             !strncmp(p, "smb://", 6)) &&
+            !strchr(p, ' ') &&
+            strstr(p, "\r\n")) {
           // Send file/URI list...
           fl_sendClientMessage(target_window, fl_XdndEnter, source_window, dndversion<<24,
                                fl_XdndURIList, fl_XaUtf8String, XA_STRING);

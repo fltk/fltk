@@ -121,6 +121,7 @@ public:
   static XIM xim_im;
   static XIC xim_ic;
   static Window xim_win;
+  static std::string selection_string[2]; // stores clipboard and DnD data
   static void new_ic();
   static void xim_activate(Window xid);
   static void xim_deactivate(void);
