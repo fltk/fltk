@@ -905,6 +905,19 @@ if(UNIX AND FLTK_USE_WAYLAND)
     list(APPEND SHARED_FILES "tablet-protocol.c")
   endif()
 
+  if(HAVE_PRIMARY_SELECTION)
+    set(INFILE ${PROTOCOLS}/unstable/primary-selection/primary-selection-unstable-v1.xml)
+    add_custom_command(
+      OUTPUT primary-selection-protocol.c primary-selection-client-protocol.h
+      COMMAND wayland-scanner private-code  ${INFILE} primary-selection-protocol.c
+      COMMAND wayland-scanner client-header ${INFILE} primary-selection-client-protocol.h
+      DEPENDS ${INFILE}
+      VERBATIM
+    )
+    list(APPEND STATIC_FILES "primary-selection-protocol.c")
+    list(APPEND SHARED_FILES "primary-selection-protocol.c")
+  endif()
+
   if(STOP_REQUIRED)
     message(FATAL_ERROR "*** Terminating: one or more required file(s) were not found. ***")
   endif()

@@ -25,6 +25,9 @@
 #  include "Fl_Wayland_Window_Driver.H"
 #  include "../Unix/Fl_Unix_System_Driver.H"
 #  include "Fl_Wayland_Graphics_Driver.H"
+#if HAVE_PRIMARY_SELECTION
+#  include "primary-selection-client-protocol.h"
+#endif
 
 #  include <errno.h>
 #  include <stdio.h>
@@ -55,7 +58,7 @@ struct data_source_write_struct {
   const char *from;
 };
 
-void write_data_source_cb(FL_SOCKET fd, data_source_write_struct *data) {
+static void write_data_source_cb(FL_SOCKET fd, data_source_write_struct *data) {
   while (data->rest) {
     ssize_t n = write(fd, data->from, data->rest);
     if (n == -1) {
@@ -581,9 +584,101 @@ static int get_clipboard_image(struct wl_data_offer *offer) {
 }
 
 
+#if HAVE_PRIMARY_SELECTION
+
+static struct zwp_primary_selection_offer_v1 *primary_selection_offer = NULL;
+
+static void primary_selection_source_handle_send(void *data,
+                                                 struct zwp_primary_selection_source_v1 *source,
+                                                 const char *mime_type, int fd) {
+  data_source_write_struct *write_data = new data_source_write_struct;
+  write_data->rest = selection_string[0].length();
+  write_data->from = selection_string[0].c_str();
+  Fl::add_fd(fd, FL_WRITE, (Fl_FD_Handler)write_data_source_cb, write_data);
+}
+
+static void primary_selection_source_handle_cancelled(void *, struct zwp_primary_selection_source_v1 *);
+
+static const struct zwp_primary_selection_source_v1_listener primary_selection_source_listener = {
+  .send = primary_selection_source_handle_send,
+  .cancelled = primary_selection_source_handle_cancelled
+};
+
+static void primary_selection_source_handle_cancelled(void *data,
+                                                      struct zwp_primary_selection_source_v1 *source) {
+}
+
+
+static void primary_selection_offer_handle_offer(void *data,
+                                                 struct zwp_primary_selection_offer_v1 *offer,
+                                                 const char *mime) {
+}
+
+static const struct zwp_primary_selection_offer_v1_listener primary_selection_offer_listener = {
+  .offer = primary_selection_offer_handle_offer
+};
+
+
+static void primary_selection_device_handle_data_offer(void *data,
+                                                 struct zwp_primary_selection_device_v1 *device,
+                                                 struct zwp_primary_selection_offer_v1 *offer) {
+  zwp_primary_selection_offer_v1_add_listener(offer, &primary_selection_offer_listener, NULL);
+}
+
+static void primary_selection_device_handle_selection(void *data,
+                                                      struct zwp_primary_selection_device_v1 *device,
+                                                      struct zwp_primary_selection_offer_v1 *offer) {
+  if (primary_selection_offer) zwp_primary_selection_offer_v1_destroy(primary_selection_offer);
+  primary_selection_offer = offer;
+}
+
+static const struct zwp_primary_selection_device_v1_listener primary_selection_device_listener = {
+  .data_offer  = primary_selection_device_handle_data_offer,
+  .selection = primary_selection_device_handle_selection
+};
+
+static std::string tmp_selection_string;
+
+static void read_fd_cb(FL_SOCKET fd, bool *p_finished) {
+  char buffer[1000];
+  int l = read(fd, buffer, sizeof(buffer));
+  if (l > 0) tmp_selection_string.insert(tmp_selection_string.end(), buffer, buffer + l);
+  else {
+    close(fd);
+    Fl::remove_fd(fd, FL_READ);
+    *p_finished = true;
+  }
+}
+
+
+static void paste_primary_selection_offer() {
+  int fds[2];
+  pipe(fds);
+  zwp_primary_selection_offer_v1_receive(primary_selection_offer, wld_plain_text_clipboard, fds[1]);
+  close(fds[1]);
+  tmp_selection_string.clear();
+  bool finished = false;
+  Fl::add_fd(fds[0], FL_READ, (Fl_FD_Handler)read_fd_cb, &finished);
+  while (!finished) Fl::wait();
+  selection_string[0] = tmp_selection_string;
+  tmp_selection_string.clear();
+}
+
+
+/* called after both the primary-selection protocol and the seat have been received */
+void Fl_Wayland_Screen_Driver::primary_selection_init() {
+  seat->primary_selection_device = zwp_primary_selection_device_manager_v1_get_device(seat->primary_selection_device_manager, seat->wl_seat);
+  zwp_primary_selection_device_v1_add_listener(seat->primary_selection_device, &primary_selection_device_listener, &primary_selection_offer);
+  seat->primary_selection_source = zwp_primary_selection_device_manager_v1_create_source(seat->primary_selection_device_manager);
+  zwp_primary_selection_source_v1_add_listener(seat->primary_selection_source, &primary_selection_source_listener, seat);
+}
+
+#endif // HAVE_PRIMARY_SELECTION
+
+
 void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
-  if (clipboard != 1) return;
-  if (fl_i_own_selection[1]) {
+  if (clipboard > 1) return;
+  if (clipboard == 1 && fl_i_own_selection[1]) {
     // We already have it, do it quickly without compositor.
     if (type == Fl::clipboard_plain_text && fl_selection_type[1] == type) {
       Fl::e_text = (char*)selection_string[1].c_str();
@@ -596,6 +691,18 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
     return;
   }
   // otherwise get the compositor to return it:
+  if (clipboard == 0) {
+#if HAVE_PRIMARY_SELECTION
+    if (primary_selection_offer) {
+      paste_primary_selection_offer();
+      Fl::e_text = (char*)selection_string[0].c_str();
+      Fl::e_length = selection_string[0].length();
+      fl_selection_type[0] = Fl::clipboard_plain_text;
+      receiver.handle(FL_PASTE);
+    }
+#endif
+    return;
+  }
   if (!fl_selection_offer) return;
   if (type == Fl::clipboard_plain_text && clipboard_contains(Fl::clipboard_plain_text)) {
     get_clipboard_or_dragged_text(fl_selection_offer, wld_plain_text_clipboard);
@@ -643,6 +750,11 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
                                  seat->data_source,
                                  seat->keyboard_enter_serial);
 //fprintf(stderr, "wl_data_device_set_selection len=%d to %d\n", len, clipboard);
+#if HAVE_PRIMARY_SELECTION
+  } else if (seat->primary_selection_device_manager) {
+    zwp_primary_selection_source_v1_offer(seat->primary_selection_source, wld_plain_text_clipboard);
+    zwp_primary_selection_device_v1_set_selection(seat->primary_selection_device, seat->primary_selection_source, seat->serial);
+#endif // HAVE_PRIMARY_SELECTION
   }
 }
 

@@ -101,8 +101,8 @@ beginning with \c wl_, \c xkb_ or \c libdecor_ and belong to the \c libwayland-c
 \c libwayland-cursor.so, \c libxkbcommon.so and \c libdecor.so shared libraries.
 FLTK calls also several other functions which operate other used Wayland protocols.
 These have names beginning with \c xdg_, \c zwp_text_input_v3, \c zxdg_toplevel_decoration_,
-\c gtk_shell1_, \c gtk_surface1_, \c wp_cursor_shape_, \c xdg_activation_ and
-\c zwp_tablet_v2.
+\c gtk_shell1_, \c gtk_surface1_, \c wp_cursor_shape_, \c xdg_activation_,
+\c zwp_tablet_v2 and \c zwp_primary_selection_.
 FLTK never writes itself to the socket; this is done inside the functions just mentioned.
 - Compositor to client: the callback function \c wld_socket_callback() runs when there are
 data to read in the socket; it calls \c libdecor_dispatch() which reads available data from
@@ -166,6 +166,7 @@ Similar operations are performed for FLTK to use protocols
 <a href=https://wayland.app/protocols/xdg-decoration-unstable-v1>XDG decoration</a>,
 <a href=https://wayland.app/protocols/cursor-shape-v1>Cursor shape</a>,
 <a href=https://wayland.app/protocols/text-input-unstable-v3>Text input</a>,
+<a href=https://wayland.app/protocols/primary-selection-unstable-v1>Primary selection</a>,
 <a href=https://wayland.app/protocols/gtk-shell>GTK Shell</a>
 and <a href=https://wayland.app/protocols/tablet-v2>Tablet</a>.
 
@@ -343,6 +344,7 @@ Here is the list of the \c interface value for all protocols and system features
   zwp_text_input_manager_v3          | interface with Text Input Methods
   zxdg_decoration_manager_v1         | select between CSD and SSD modes
   zwp_tablet_manager_v2              | support of graphics tablets
+  zwp_primary_selection_device_manager_v1 | middle-click paste of current selection
 
 Wayland compositors typically support several other protocols (e.g., \c zxdg_output_manager_v1)
 that FLTK does not use.
@@ -1269,20 +1271,28 @@ given in \c libdecor-gtk.c or \c libdecor-cairo.c such as type <tt>struct border
 \section wayland-clipboard Copy/Paste/Drag-n-Drop
 
 FLTK follows the procedure that is very well described in item "Wayland clipboard and drag &
-drop" of the \ref wayland-doc. All corresponding source code is in file
-\c src/drivers/Wayland/fl_wayland_clipboard_dnd.cxx.
+drop" of the \ref wayland-doc.
+FLTK also implements the 'Primary selection' Wayland protocol to allow middle-click pasting
+of the current text selection.
+All corresponding source code is in file \c src/drivers/Wayland/fl_wayland_clipboard_dnd.cxx.
 
 This part of the \ref wayland-seat "Fl_Wayland_Screen_Driver::seat" record stores pointers to
-Wayland objects used for clipboard and D-n-D operations:
+Wayland objects used for clipboard, Drag-n-Drop and middle-click-paste operations:
 \code
   struct wl_data_device_manager *data_device_manager;
   struct wl_data_device *data_device;
   struct wl_data_source *data_source;
+#if HAVE_PRIMARY_SELECTION
+  struct zwp_primary_selection_device_manager_v1 *primary_selection_device_manager;
+  struct zwp_primary_selection_device_v1 *primary_selection_device;
+  struct zwp_primary_selection_source_v1 *primary_selection_source;
+#endif
 \endcode
 
 FLTK can copy or paste plain UTF-8 text or image data to/from the clipboard. Images are copied to the
 clipboard as \c image/bmp mime type. Images in \c image/bmp or \c image/png mime types from the
-clipboard can be pasted to FLTK apps.
+clipboard can be pasted to FLTK apps. It can also middle-click paste the current text selection
+of the current app or any other running app.
 
 Files dropped are received one pathname per line, with no \c '\\n' after the last pathname.
 

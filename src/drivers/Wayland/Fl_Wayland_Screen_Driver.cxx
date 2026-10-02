@@ -47,6 +47,9 @@
 #  include "tablet-client-protocol.h"
 #  include "Fl_Wayland_Pen_Driver.H"
 #endif
+#if HAVE_PRIMARY_SELECTION
+#  include "primary-selection-client-protocol.h"
+#endif
 #include <assert.h>
 #include <sys/mman.h>
 #include <poll.h>
@@ -1321,6 +1324,9 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
       wl_data_device_add_listener(scr_driver->seat->data_device,
                                   Fl_Wayland_Screen_Driver::p_data_device_listener, NULL);
     }
+#if HAVE_PRIMARY_SELECTION
+    if (scr_driver->seat->primary_selection_device_manager) scr_driver->primary_selection_init();
+#endif
 
   } else if (strcmp(interface, wl_data_device_manager_interface.name) == 0) {
     if (!scr_driver->seat) scr_driver->seat =
@@ -1431,6 +1437,15 @@ static void registry_handle_global(void *user_data, struct wl_registry *wl_regis
               wl_registry, id, &zwp_tablet_manager_v2_interface, 1);
       fl_wayland_tablet_set_manager(tm);
 #endif
+#if HAVE_PRIMARY_SELECTION
+  } else if (strcmp(interface, zwp_primary_selection_device_manager_v1_interface.name) == 0) {
+    bool seat_known = (scr_driver->seat && scr_driver->seat->wl_seat);
+    if (!scr_driver->seat) scr_driver->seat = (struct Fl_Wayland_Screen_Driver::seat*)calloc(1,
+                                              sizeof(struct Fl_Wayland_Screen_Driver::seat));
+    scr_driver->seat->primary_selection_device_manager = (struct zwp_primary_selection_device_manager_v1 *)
+      wl_registry_bind(wl_registry, id, &zwp_primary_selection_device_manager_v1_interface, 1);
+    if (seat_known) scr_driver->primary_selection_init();
+#endif // HAVE_PRIMARY_SELECTION
   }
 }
 
@@ -1653,6 +1668,21 @@ void Fl_Wayland_Screen_Driver::close_display() {
 #if FLTK_HAVE_PEN_SUPPORT
   fl_wayland_tablet_cleanup();
 #endif
+#if HAVE_PRIMARY_SELECTION
+  if (seat->primary_selection_device_manager) {
+    if (seat->primary_selection_source)
+      zwp_primary_selection_source_v1_destroy(seat->primary_selection_source);
+    if (seat->primary_selection_device) {
+      struct zwp_primary_selection_offer_v1 *primary_selection_offer =
+        *(struct zwp_primary_selection_offer_v1 **)
+        zwp_primary_selection_device_v1_get_user_data(seat->primary_selection_device);
+      if (primary_selection_offer)
+        zwp_primary_selection_offer_v1_destroy(primary_selection_offer);
+      zwp_primary_selection_device_v1_destroy(seat->primary_selection_device);
+    }
+    zwp_primary_selection_device_manager_v1_destroy(seat->primary_selection_device_manager);
+  }
+#endif // HAVE_PRIMARY_SELECTION
   wl_seat_destroy(seat->wl_seat); seat->wl_seat = NULL;
   if (seat->name) free(seat->name);
   free(seat); seat = NULL;

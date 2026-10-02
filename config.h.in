@@ -363,3 +363,9 @@
  */
 
 #cmakedefine01 HAVE_XDG_ACTIVATION
+
+/*
+ * Can we use the "primary-selection" Wayland protocol?
+ */
+
+#cmakedefine01 HAVE_PRIMARY_SELECTION

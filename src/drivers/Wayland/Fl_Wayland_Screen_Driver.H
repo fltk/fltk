@@ -57,6 +57,11 @@ public:
     struct wl_data_device_manager *data_device_manager;
     struct wl_data_device *data_device;
     struct wl_data_source *data_source;
+#if HAVE_PRIMARY_SELECTION
+    struct zwp_primary_selection_device_manager_v1 *primary_selection_device_manager;
+    struct zwp_primary_selection_device_v1 *primary_selection_device;
+    struct zwp_primary_selection_source_v1 *primary_selection_source;
+#endif
     struct xkb_state *xkb_state;
     struct xkb_context *xkb_context;
     struct xkb_keymap *xkb_keymap;
@@ -190,6 +195,9 @@ public:
   struct wl_seat *get_wl_seat();
   char  *get_seat_name();
   struct xkb_keymap *get_xkb_keymap();
+#if HAVE_PRIMARY_SELECTION
+  void primary_selection_init();
+#endif
 };
 
 
