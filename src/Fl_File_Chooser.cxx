@@ -107,8 +107,7 @@ void Fl_File_Chooser::cb_okButton_i(Fl_Return_Button*, void*) {
   hide();
 
   // Do any callback that is registered...
-  if (callback_)
-    (*callback_)(this, data_);
+  do_callback();
 }
 void Fl_File_Chooser::cb_okButton(Fl_Return_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_okButton_i(o,v);
@@ -170,23 +169,28 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
     prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
   }
   Fl_Group *prev_current = Fl_Group::current();
-  { window = new Fl_Double_Window(490, 380, "Choose File");
+  { auto* o = window = new Fl_Double_Window(490, 380, "Choose File");
+    (void)o;
     window->callback((Fl_Callback*)cb_window, (void*)(this));
-    { Fl_Group* o = new Fl_Group(10, 10, 470, 25);
-      { showChoice = new Fl_Choice(65, 10, 215, 25, "Show:");
+    { auto* o = new Fl_Group(10, 10, 470, 25);
+      (void)o;
+      { auto* o = showChoice = new Fl_Choice(65, 10, 215, 25, "Show:");
+        (void)o;
         showChoice->down_box(FL_BORDER_BOX);
         showChoice->labelfont(1);
         showChoice->callback((Fl_Callback*)cb_showChoice);
         Fl_Group::current()->resizable(showChoice);
         showChoice->label(show_label);
       } // Fl_Choice* showChoice
-      { favoritesButton = new Fl_Menu_Button(290, 10, 155, 25, "Favorites");
+      { auto* o = favoritesButton = new Fl_Menu_Button(290, 10, 155, 25, "Favorites");
+        (void)o;
         favoritesButton->down_box(FL_BORDER_BOX);
         favoritesButton->callback((Fl_Callback*)cb_favoritesButton);
         favoritesButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
         favoritesButton->label(favorites_label);
       } // Fl_Menu_Button* favoritesButton
-      { Fl_Button* o = newButton = new Fl_Button(455, 10, 25, 25);
+      { auto* o = newButton = new Fl_Button(455, 10, 25, 25);
+        (void)o;
         newButton->image( image_new() );
         newButton->labelsize(8);
         newButton->callback((Fl_Callback*)cb_newButton);
@@ -194,15 +198,18 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
       } // Fl_Button* newButton
       o->end();
     } // Fl_Group* o
-    { Fl_Tile* o = new Fl_Tile(10, 45, 470, 225);
+    { auto* o = new Fl_Tile(10, 45, 470, 225);
+      (void)o;
       o->callback((Fl_Callback*)cb_);
-      { fileList = new Fl_File_Browser(10, 45, 295, 225);
+      { auto* o = fileList = new Fl_File_Browser(10, 45, 295, 225);
+        (void)o;
         fileList->type(2);
         fileList->box(FL_DOWN_BOX);
         fileList->callback((Fl_Callback*)cb_fileList);
         fileList->window()->hotspot(fileList);
       } // Fl_File_Browser* fileList
-      { errorBox = new Fl_Box(10, 45, 295, 225, "dynamic error display");
+      { auto* o = errorBox = new Fl_Box(10, 45, 295, 225, "dynamic error display");
+        (void)o;
         errorBox->box(FL_DOWN_BOX);
         errorBox->color(FL_BACKGROUND2_COLOR);
         errorBox->labelsize(18);
@@ -210,7 +217,8 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
         errorBox->align(Fl_Align(133|FL_ALIGN_INSIDE));
         errorBox->hide();
       } // Fl_Box* errorBox
-      { previewBox = new Fl_Box(305, 45, 175, 225, "?");
+      { auto* o = previewBox = new Fl_Box(305, 45, 175, 225, "?");
+        (void)o;
         previewBox->box(FL_DOWN_BOX);
         previewBox->labelsize(100);
         previewBox->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
@@ -218,47 +226,58 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
       o->end();
       Fl_Group::current()->resizable(o);
     } // Fl_Tile* o
-    { Fl_Group* o = new Fl_Group(10, 275, 470, 95);
-      { Fl_Group* o = new Fl_Group(10, 275, 470, 20);
-        { previewButton = new Fl_Check_Button(10, 275, 105, 20, "Preview");
+    { auto* o = new Fl_Group(10, 275, 470, 95);
+      (void)o;
+      { auto* o = new Fl_Group(10, 275, 470, 20);
+        (void)o;
+        { auto* o = previewButton = new Fl_Check_Button(10, 275, 105, 20, "Preview");
+          (void)o;
           previewButton->shortcut(FL_ALT|'p');
           previewButton->down_box(FL_DOWN_BOX);
           previewButton->value(1);
           previewButton->callback((Fl_Callback*)cb_previewButton);
           previewButton->label(preview_label);
         } // Fl_Check_Button* previewButton
-        { showHiddenButton = new Fl_Check_Button(115, 275, 140, 20, "Show hidden files");
+        { auto* o = showHiddenButton = new Fl_Check_Button(115, 275, 140, 20, "Show hidden files");
+          (void)o;
           showHiddenButton->down_box(FL_DOWN_BOX);
           showHiddenButton->callback((Fl_Callback*)cb_showHiddenButton);
           showHiddenButton->label(hidden_label);
         } // Fl_Check_Button* showHiddenButton
-        { Fl_Box* o = new Fl_Box(255, 275, 225, 20);
+        { auto* o = new Fl_Box(255, 275, 225, 20);
+          (void)o;
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         o->end();
       } // Fl_Group* o
-      { fileName = new Fl_File_Input(115, 300, 365, 35);
+      { auto* o = fileName = new Fl_File_Input(115, 300, 365, 35);
+        (void)o;
         fileName->labelfont(1);
         fileName->callback((Fl_Callback*)cb_fileName);
         fileName->when(FL_WHEN_ENTER_KEY);
         Fl_Group::current()->resizable(fileName);
         fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
       } // Fl_File_Input* fileName
-      { Fl_Box* o = new Fl_Box(10, 310, 105, 25, "Filename:");
+      { auto* o = new Fl_Box(10, 310, 105, 25, "Filename:");
+        (void)o;
         o->labelfont(1);
         o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
         o->label(filename_label);
       } // Fl_Box* o
-      { Fl_Group* o = new Fl_Group(10, 345, 470, 25);
-        { okButton = new Fl_Return_Button(313, 345, 85, 25, "OK");
+      { auto* o = new Fl_Group(10, 345, 470, 25);
+        (void)o;
+        { auto* o = okButton = new Fl_Return_Button(313, 345, 85, 25, "OK");
+          (void)o;
           okButton->callback((Fl_Callback*)cb_okButton);
           okButton->label(fl_ok);
         } // Fl_Return_Button* okButton
-        { Fl_Button* o = cancelButton = new Fl_Button(408, 345, 72, 25, "Cancel");
+        { auto* o = cancelButton = new Fl_Button(408, 345, 72, 25, "Cancel");
+          (void)o;
           cancelButton->callback((Fl_Callback*)cb_cancelButton);
           o->label(fl_cancel);
         } // Fl_Button* cancelButton
-        { Fl_Box* o = new Fl_Box(10, 345, 30, 25);
+        { auto* o = new Fl_Box(10, 345, 30, 25);
+          (void)o;
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o
         o->end();
@@ -269,37 +288,47 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
     if (title) window->label(title);
     window->end();
   } // Fl_Double_Window* window
-  { favWindow = new Fl_Double_Window(355, 150, "Manage Favorites");
+  { auto* o = favWindow = new Fl_Double_Window(355, 150, "Manage Favorites");
+    (void)o;
     favWindow->user_data((void*)(this));
-    { favList = new Fl_File_Browser(10, 10, 300, 95);
+    { auto* o = favList = new Fl_File_Browser(10, 10, 300, 95);
+      (void)o;
       favList->type(2);
       favList->callback((Fl_Callback*)cb_favList);
       Fl_Group::current()->resizable(favList);
     } // Fl_File_Browser* favList
-    { Fl_Group* o = new Fl_Group(320, 10, 25, 95);
-      { favUpButton = new Fl_Button(320, 10, 25, 25, "@8>");
+    { auto* o = new Fl_Group(320, 10, 25, 95);
+      (void)o;
+      { auto* o = favUpButton = new Fl_Button(320, 10, 25, 25, "@8>");
+        (void)o;
         favUpButton->callback((Fl_Callback*)cb_favUpButton);
       } // Fl_Button* favUpButton
-      { favDeleteButton = new Fl_Button(320, 45, 25, 25, "X");
+      { auto* o = favDeleteButton = new Fl_Button(320, 45, 25, 25, "X");
+        (void)o;
         favDeleteButton->labelfont(1);
         favDeleteButton->callback((Fl_Callback*)cb_favDeleteButton);
         Fl_Group::current()->resizable(favDeleteButton);
       } // Fl_Button* favDeleteButton
-      { favDownButton = new Fl_Button(320, 80, 25, 25, "@2>");
+      { auto* o = favDownButton = new Fl_Button(320, 80, 25, 25, "@2>");
+        (void)o;
         favDownButton->callback((Fl_Callback*)cb_favDownButton);
       } // Fl_Button* favDownButton
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(10, 113, 335, 29);
-      { favCancelButton = new Fl_Button(273, 115, 72, 25, "Cancel");
+    { auto* o = new Fl_Group(10, 113, 335, 29);
+      (void)o;
+      { auto* o = favCancelButton = new Fl_Button(273, 115, 72, 25, "Cancel");
+        (void)o;
         favCancelButton->callback((Fl_Callback*)cb_favCancelButton);
         favCancelButton->label(fl_cancel);
       } // Fl_Button* favCancelButton
-      { favOkButton = new Fl_Return_Button(181, 115, 79, 25, "Save");
+      { auto* o = favOkButton = new Fl_Return_Button(181, 115, 79, 25, "Save");
+        (void)o;
         favOkButton->callback((Fl_Callback*)cb_favOkButton);
         favOkButton->label(save_label);
       } // Fl_Return_Button* favOkButton
-      { Fl_Box* o = new Fl_Box(10, 115, 161, 25);
+      { auto* o = new Fl_Box(10, 115, 161, 25);
+        (void)o;
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
@@ -309,8 +338,6 @@ Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int 
     favWindow->label(manage_favorites_label);
     favWindow->end();
   } // Fl_Double_Window* favWindow
-  callback_ = 0;
-  data_ = 0;
   directory_[0] = 0;
   window->size_range(window->w(), window->h());
   type(type_val);
@@ -330,11 +357,6 @@ Fl_File_Chooser::~Fl_File_Chooser() {
   if(ext_group)window->remove(ext_group);
   delete window;
   delete favWindow;
-}
-
-void Fl_File_Chooser::callback(void (*cb)(Fl_File_Chooser *, void *), void *d ) {
-  callback_ = cb;
-  data_     = d;
 }
 
 void Fl_File_Chooser::color(Fl_Color c) {
@@ -437,14 +459,6 @@ void Fl_File_Chooser::type(int t) {
 
 int Fl_File_Chooser::type() {
   return (type_);
-}
-
-void * Fl_File_Chooser::user_data() const {
-  return (data_);
-}
-
-void Fl_File_Chooser::user_data(void *d) {
-  data_ = d;
 }
 
 int Fl_File_Chooser::visible() {

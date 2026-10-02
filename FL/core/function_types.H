@@ -74,6 +74,11 @@ typedef void (Fl_Box_Draw_Focus_F)(Fl_Boxtype bt, int x, int y, int w, int h, Fl
 */
 typedef void (*Fl_Timeout_Handler)(void *data);
 
+/**
+ Back reference to pending timeout.
+ */
+typedef unsigned int Fl_Timeout_ID;
+
 /** Signature of some wakeup callback functions passed as parameters */
 typedef void (*Fl_Awake_Handler)(void *data);
 
