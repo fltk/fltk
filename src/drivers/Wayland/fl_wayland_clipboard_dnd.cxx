@@ -606,6 +606,10 @@ static const struct zwp_primary_selection_source_v1_listener primary_selection_s
 
 static void primary_selection_source_handle_cancelled(void *data,
                                                       struct zwp_primary_selection_source_v1 *source) {
+  zwp_primary_selection_source_v1_destroy(source);
+  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat *)data;
+  seat->primary_selection_source = zwp_primary_selection_device_manager_v1_create_source(seat->primary_selection_device_manager);
+  zwp_primary_selection_source_v1_add_listener(seat->primary_selection_source, &primary_selection_source_listener, seat);
 }
 
 
