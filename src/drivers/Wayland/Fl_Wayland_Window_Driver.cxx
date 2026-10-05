@@ -956,11 +956,6 @@ static void handle_configure(struct libdecor_frame *frame,
   }
   if (!libdecor_configuration_get_window_state(configuration, &window_state))
     window_state = LIBDECOR_WINDOW_STATE_NONE;
-  if ((window->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) &&
-      !(window_state & LIBDECOR_WINDOW_STATE_FULLSCREEN) && !window->fl_win->border()) {
-    // necessary so Mutter correctly positions borderless window back from fullscreen
-    window->fl_win->redraw();
-  }
   window->state = window_state;
 
   // Weston, KWin, and some old versions of Mutter, on purpose, don't set the

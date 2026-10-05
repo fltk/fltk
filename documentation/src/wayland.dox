@@ -1353,20 +1353,17 @@ For example, \c Fl_Wayland_Window_Driver::flush() needs to call
 
 <h3>Throttling GL window redraws</h3>
 Although no documentation covering this subject was found, the EGL library internally
-uses \c wl_callback objects to throttle GL window redraws, and FLTK needs not interfere with
-these operations. Nevertheless FLTK creates and uses \c wl_callback objects for GL windows in 2 cases:
-- when a decorated GL window is being interactively resized.
-Function \c Fl_Wayland_Gl_Window_Driver::resize() creates a \c wl_callback object,
-assigns it to xid->frame_cb and calls \c wl_callback_add_listener() before calling
-\c wl_egl_window_resize(). This allows the mechanism described above that prevents surfaces from
-being resized too frequently to operate with decorated \c Fl_GL_Window's too.
-- when a GL subwindow is being refreshed by \c Fl_Wayland_Gl_Window_Driver::swap_buffers().
-FLTK checks that \c xid->frame_cb is NULL and if so creates a \c wl_callback calling
-\c wl_surface_frame() before calling \c eglSwapBuffers(). This is useful if the GL subwindow
-becomes entirely out from the screen area. In that case, the Mutter compositor stops signaling
-that the subwindow is ready for new commits which FLTK detects because \c xid->frame_cb remains
-non-NULL. If the subwindow eventually re-appears partially on-screen, \c xid->frame_cb
-becomes NULL and FLTK calls \c eglSwapBuffers() to redraw the GL scene.
+uses \c wl_callback objects to throttle GL window redraws, and FLTK has no access to
+these operations.
+
+Nevertheless FLTK creates and uses \c wl_callback objects for GL windows
+in function \c Fl_Wayland_Gl_Window_Driver::swap_buffers(), the unique
+function in FLTK to trigger the redraw of a GL scene via a call to \c eglSwapBuffers().
+FLTK checks the window's \c xid->frame_cb is NULL before
+calling \c eglSwapBuffers(). This prevents FLTK from blocking in \c eglSwapBuffers()
+when \c Fl_Wayland_Gl_Window_Driver::swap_buffers() calls arrive more rapidly
+than the system can update its display, or when a GL subwindow disappears entirely
+from the display or becomes hidden behind another window.
 
 
 \section wayland-type FLTK-defined, Wayland-specific types

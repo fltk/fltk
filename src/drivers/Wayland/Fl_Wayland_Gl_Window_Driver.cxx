@@ -360,19 +360,13 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
   }
 
   if (egl_surface) {
-    Fl_Window *parent = pWindow->parent() ? pWindow->window() : NULL;
-    struct wld_window *parent_xid = parent ? fl_wl_xid(parent) : NULL;
-    if (parent_xid) { // issue #967
-      struct wld_window *xid = fl_wl_xid(pWindow);
-      if (xid->frame_cb) {
-        need_swap = true;
-        return;
-      }
-      if (!parent_xid->frame_cb) {
-        xid->frame_cb = wl_surface_frame(xid->wl_surface);
-        wl_callback_add_listener(xid->frame_cb, &surface_frame_listener, this);
-      }
+    struct wld_window *xid = fl_wl_xid(pWindow);
+    if (xid->frame_cb) {
+      need_swap = true;
+      return;
     }
+    xid->frame_cb = wl_surface_frame(xid->wl_surface);
+    wl_callback_add_listener(xid->frame_cb, &surface_frame_listener, this);
     eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, egl_surface);
     need_swap = false;
   }
@@ -424,14 +418,8 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   int W2, H2;
   wl_egl_window_get_attached_size(egl_window, &W2, &H2);
   if (W2 != W || H2 != H) {
-    struct wld_window *xid = fl_wl_xid(pWindow);
-    if (xid->kind == Fl_Wayland_Window_Driver::DECORATED && !xid->frame_cb) {
-      xid->frame_cb = wl_surface_frame(xid->wl_surface);
-      wl_callback_add_listener(xid->frame_cb,
-                               Fl_Wayland_Graphics_Driver::p_surface_frame_listener, xid);
-    }
     wl_egl_window_resize(egl_window, W, H, 0, 0);
-    wl_surface_set_buffer_scale(xid->wl_surface, s);
+    wl_surface_set_buffer_scale(fl_wl_xid(pWindow)->wl_surface, s);
   }
   /* CONTROL_LEAKING_SUB_GL_WINDOWS
   if (Fl_Wayland_Window_Driver::driver(pWindow)->subRect()) {
