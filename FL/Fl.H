@@ -396,10 +396,10 @@ FL_EXPORT extern void grab(Fl_Window*); // platform dependent
    - 1: clipboard
    - 2: both
 
-  The selection buffer exists only on the X11 platform and is used for middle-mouse
+  The selection buffer exists only on the Linux/Unix platform (X11 or Wayland) and is used for middle-mouse
   pastes and for drag-and-drop selections. The clipboard is used for traditional
   copy/cut/paste operations. On all other platforms the selection buffer
-  (\p destination = 0) is mapped to the clipboard, i.e. on platforms other than X11
+  (\p destination = 0) is mapped to the clipboard, i.e. on platforms other than X11 or Wayland
   all \p destinations are equivalent and the data is always copied to the clipboard.
 
   \note Please see Fl::selection_to_clipboard() to enable duplication of the

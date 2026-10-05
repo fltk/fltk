@@ -735,15 +735,14 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
 
 void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
                                     const char *type) {
-#if HAVE_PRIMARY_SELECTION
-  if (seat->primary_selection_device_manager && clipboard == 0 && (!stuff || len <= 0)) {
-    zwp_primary_selection_device_v1_set_selection(seat->primary_selection_device, NULL, seat->serial);
-  }
-#endif
   if (!stuff || len < 0) return;
+  if (clipboard == 0 && Fl::selection_to_clipboard())
+    clipboard = 2;
+  if (clipboard >= 2) {
+    copy(stuff, len, 1, type);  // copy to clipboard first (this is a recursion!)
+    clipboard = 0;              // ... and then to selection buffer: fall through
+  }
 
-  if (clipboard >= 2)
-    clipboard = 1; // Only on X11 do multiple clipboards make sense.
   selection_string[clipboard].clear();
   selection_string[clipboard].insert(selection_string[clipboard].begin(), stuff, stuff + len);
   fl_i_own_selection[clipboard] = 1;
