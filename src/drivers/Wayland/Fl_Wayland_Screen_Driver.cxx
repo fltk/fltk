@@ -1747,7 +1747,6 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
                                              int& Wworkarea, int& Hworkarea) {
   if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::unspecified) {
     Wfullscreen = 0;
-    Fl::warning("Wayland compositor unknown");
     return false;
   }
   bool found_workarea = false;

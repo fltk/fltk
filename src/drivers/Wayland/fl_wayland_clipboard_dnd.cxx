@@ -607,9 +607,7 @@ static const struct zwp_primary_selection_source_v1_listener primary_selection_s
 static void primary_selection_source_handle_cancelled(void *data,
                                                       struct zwp_primary_selection_source_v1 *source) {
   zwp_primary_selection_source_v1_destroy(source);
-  struct Fl_Wayland_Screen_Driver::seat *seat = (struct Fl_Wayland_Screen_Driver::seat *)data;
-  seat->primary_selection_source = zwp_primary_selection_device_manager_v1_create_source(seat->primary_selection_device_manager);
-  zwp_primary_selection_source_v1_add_listener(seat->primary_selection_source, &primary_selection_source_listener, seat);
+  ((struct Fl_Wayland_Screen_Driver *)data)->primary_selection_init();
 }
 
 
@@ -671,10 +669,12 @@ static void paste_primary_selection_offer() {
 
 /* called after both the primary-selection protocol and the seat have been received */
 void Fl_Wayland_Screen_Driver::primary_selection_init() {
-  seat->primary_selection_device = zwp_primary_selection_device_manager_v1_get_device(seat->primary_selection_device_manager, seat->wl_seat);
-  zwp_primary_selection_device_v1_add_listener(seat->primary_selection_device, &primary_selection_device_listener, &primary_selection_offer);
+  if (!seat->primary_selection_device) {
+    seat->primary_selection_device = zwp_primary_selection_device_manager_v1_get_device(seat->primary_selection_device_manager, seat->wl_seat);
+    zwp_primary_selection_device_v1_add_listener(seat->primary_selection_device, &primary_selection_device_listener, &primary_selection_offer);
+  }
   seat->primary_selection_source = zwp_primary_selection_device_manager_v1_create_source(seat->primary_selection_device_manager);
-  zwp_primary_selection_source_v1_add_listener(seat->primary_selection_source, &primary_selection_source_listener, seat);
+  zwp_primary_selection_source_v1_add_listener(seat->primary_selection_source, &primary_selection_source_listener, this);
 }
 
 #endif // HAVE_PRIMARY_SELECTION
@@ -735,6 +735,11 @@ void Fl_Wayland_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const c
 
 void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
                                     const char *type) {
+#if HAVE_PRIMARY_SELECTION
+  if (seat->primary_selection_device_manager && clipboard == 0 && (!stuff || len <= 0)) {
+    zwp_primary_selection_device_v1_set_selection(seat->primary_selection_device, NULL, seat->serial);
+  }
+#endif
   if (!stuff || len < 0) return;
 
   if (clipboard >= 2)
@@ -756,6 +761,8 @@ void Fl_Wayland_Screen_Driver::copy(const char *stuff, int len, int clipboard,
 //fprintf(stderr, "wl_data_device_set_selection len=%d to %d\n", len, clipboard);
 #if HAVE_PRIMARY_SELECTION
   } else if (seat->primary_selection_device_manager) {
+    zwp_primary_selection_device_v1_set_selection(seat->primary_selection_device, NULL, seat->serial);
+    wl_display_roundtrip(wl_display);
     zwp_primary_selection_source_v1_offer(seat->primary_selection_source, wld_plain_text_clipboard);
     zwp_primary_selection_device_v1_set_selection(seat->primary_selection_device, seat->primary_selection_source, seat->serial);
 #endif // HAVE_PRIMARY_SELECTION
