@@ -283,6 +283,53 @@ typedef struct {
   int    mwidth, mheight;
 } XRRScreenSize;
 typedef XRRScreenSize* (*XRRSizes_type)(Display *dpy, int screen, int *nsizes);
+typedef struct {
+  Atom name;
+  Bool primary, automatic;
+  int noutput;
+  int x, y, width, height;
+  int mwidth, mheight;
+  XID *outputs;
+} XRRMonitorInfo;
+typedef Status (*XRRQueryVersion_type)(Display*, int*, int*);
+typedef XRRMonitorInfo* (*XRRGetMonitors_type)(Display*, Window, Bool, int*);
+typedef void (*XRRFreeMonitors_type)(XRRMonitorInfo*);
+
+// Get size in pixels and mm of the primary (or first) monitor.
+// Unlike XRRSizes(), XRRGetMonitors() does not make the X server
+// re-probe all outputs. Returns 0 if RandR 1.5 is not available.
+static int primary_monitor_size(int &w, int &h, int &mmw, int &mmh) {
+  static XRRGetMonitors_type XRRGetMonitors_f = NULL;
+  static XRRFreeMonitors_type XRRFreeMonitors_f = NULL;
+  static int tried = 0;
+  if (!tried) {
+    tried = 1;
+    void *lib = Fl_Posix_System_Driver::dlopen_or_dlsym("libXrandr");
+    XRRQueryVersion_type XRRQueryVersion_f = lib ?
+      (XRRQueryVersion_type)dlsym(lib, "XRRQueryVersion") : NULL;
+    int major = 0, minor = 0;
+    if (XRRQueryVersion_f && XRRQueryVersion_f(fl_display, &major, &minor) &&
+        (major > 1 || (major == 1 && minor >= 5))) {
+      XRRGetMonitors_f = (XRRGetMonitors_type)dlsym(lib, "XRRGetMonitors");
+      XRRFreeMonitors_f = (XRRFreeMonitors_type)dlsym(lib, "XRRFreeMonitors");
+    }
+  }
+  if (!XRRGetMonitors_f || !XRRFreeMonitors_f) return 0;
+  int n = 0;
+  Window root = RootWindow(fl_display, fl_screen);
+  XRRMonitorInfo *m = XRRGetMonitors_f(fl_display, root, True, &n);
+  if (!m) return 0;
+  int p = 0;
+  for (int i = 0; i < n; i++) {
+    if (m[i].primary) { p = i; break; }
+  }
+  if (n > 0) {
+    w = m[p].width; h = m[p].height;
+    mmw = m[p].mwidth; mmh = m[p].mheight;
+  }
+  XRRFreeMonitors_f(m);
+  return n > 0;
+}
 #endif // USE_XRANDR
 
 void Fl_X11_Screen_Driver::init() {
@@ -293,11 +340,18 @@ void Fl_X11_Screen_Driver::init() {
 
 #if USE_XRANDR
 
+  int w = 0, h = 0, mmw = 0, mmh = 0;
+  if (primary_monitor_size(w, h, mmw, mmh) && mmw > 0 && mmh > 0) {
+    dpih = w*25.4f/mmw;
+    dpiv = h*25.4f/mmh;
+    dpi_by_randr = 1;
+  }
+
   static XRRSizes_type XRRSizes_f = NULL;
-  if (!XRRSizes_f) {
+  if (!dpi_by_randr && !XRRSizes_f) {
     XRRSizes_f = (XRRSizes_type)Fl_Posix_System_Driver::dlopen_or_dlsym("libXrandr", "XRRSizes");
   }
-  if (XRRSizes_f) {
+  if (!dpi_by_randr && XRRSizes_f) { // RandR < 1.5
     int nscreens;
     XRRScreenSize *ssize = XRRSizes_f(fl_display, fl_screen, &nscreens);
 
