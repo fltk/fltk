@@ -1068,8 +1068,7 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   if (pWindow->fullscreen_active()) {
     if (xid->kind == DECORATED) {
-      while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN) ||
-             !(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+      while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
         libdecor_dispatch(scr_driver->libdecor_context, 0);
       }
     } else if (xid->kind == UNFRAMED) {
