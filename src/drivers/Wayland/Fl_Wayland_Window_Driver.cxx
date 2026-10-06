@@ -1066,23 +1066,14 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
   struct wld_window * xid = fl_wl_xid(pWindow);
   if (!xid) return;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
-  if (pWindow->fullscreen_active()) {
-    if (xid->kind == DECORATED) {
-      while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
-        libdecor_dispatch(scr_driver->libdecor_context, 0);
-      }
-    } else if (xid->kind == UNFRAMED) {
-      wl_display_roundtrip(Fl_Wayland_Screen_Driver::wl_display);
-    }
-  } else if (xid->kind == DECORATED) {
-    // necessary for the windowfocus demo program with recent Wayland versions
-    if (!(xid->state & LIBDECOR_WINDOW_STATE_ACTIVE)) {
+  // Compositors differ in the order of appearance of events "fullscreen-state" and "entered-output".
+  if (pWindow->fullscreen_active() && xid->kind == DECORATED) {
+    while (!(xid->state & LIBDECOR_WINDOW_STATE_FULLSCREEN)) {
       libdecor_dispatch(scr_driver->libdecor_context, 0);
     }
-  } else {
-     while (!wl_list_length(&xid->outputs))
-       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
   }
+  while (!wl_list_length(&xid->outputs))
+    libdecor_dispatch(scr_driver->libdecor_context, 0);
 }
 
 
