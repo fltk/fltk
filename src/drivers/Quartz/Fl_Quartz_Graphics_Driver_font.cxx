@@ -35,6 +35,16 @@ static int fl_free_font = FL_FREE_FONT;
 
 static CFMutableDictionaryRef attributes = NULL;
 
+// Faces loaded with Fl::load_font(): unique name ("PostScriptName#n") -> CTFontDescriptorRef
+static CFMutableDictionaryRef loaded_fonts = NULL;
+
+// Creates a font from a loaded face, or from an installed font
+static CTFontRef create_font(CFStringRef name, CGFloat size) {
+  CTFontDescriptorRef desc = loaded_fonts ?
+    (CTFontDescriptorRef)CFDictionaryGetValue(loaded_fonts, name) : NULL;
+  return desc ? CTFontCreateWithFontDescriptor(desc, size, NULL) : CTFontCreateWithName(name, size, NULL);
+}
+
 static Fl_Fontdesc built_in_table_PS[] = { // PostScript font names preferred when Mac OS ≥ 10.5
   {"ArialMT"},
   {"Arial-BoldMT"},
@@ -230,7 +240,7 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
 
 void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
   CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
-  CTFontRef ctfont = cfname ? CTFontCreateWithName(cfname, 0, NULL) : NULL;
+  CTFontRef ctfont = cfname ? create_font(cfname, 0) : NULL;
   if (cfname) { CFRelease(cfname); cfname = NULL; }
   if (ctfont) {
     cfname = CTFontCopyFullName(ctfont);
@@ -263,6 +273,66 @@ void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
 }
 
 
+const char *Fl_Quartz_Graphics_Driver::load_font(const char *filename,
+                                                 const unsigned char *data, size_t size, int face) {
+  char psname[128];
+  if (font_file_info(data, size, face, psname, sizeof(psname)) < 0) return NULL;
+  // CoreText can't register fonts from memory, so keep the descriptors of loaded faces
+  CFArrayRef descs = NULL;
+  if (filename) {
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8*)filename,
+                                                           strlen(filename), false);
+    if (url) {
+      descs = CTFontManagerCreateFontDescriptorsFromURL(url);
+      CFRelease(url);
+    }
+  } else {
+    CFDataRef cfdata = CFDataCreate(NULL, data, size);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+    if (fl_mac_os_version >= 101300) {
+      descs = CTFontManagerCreateFontDescriptorsFromData(cfdata);
+    } else { // only the first face of a collection
+      CTFontDescriptorRef desc = CTFontManagerCreateFontDescriptorFromData(cfdata);
+      if (desc) {
+        descs = CFArrayCreate(NULL, (const void **)&desc, 1, &kCFTypeArrayCallBacks);
+        CFRelease(desc);
+      }
+    }
+#pragma clang diagnostic pop
+    CFRelease(cfdata);
+  }
+  if (!descs) return NULL;
+  // select the face by its PostScript name, like the other platforms do
+  CFStringRef key = CFStringCreateWithCString(NULL, psname, kCFStringEncodingUTF8);
+  CTFontDescriptorRef found = NULL;
+  for (CFIndex i = 0; key && !found && i < CFArrayGetCount(descs); i++) {
+    CTFontDescriptorRef desc = (CTFontDescriptorRef)CFArrayGetValueAtIndex(descs, i);
+    CFStringRef name = (CFStringRef)CTFontDescriptorCopyAttribute(desc, kCTFontNameAttribute);
+    if (name) {
+      if (CFEqual(name, key)) found = desc;
+      CFRelease(name);
+    }
+  }
+  if (key) CFRelease(key);
+  char *name = NULL;
+  if (found) { // a unique name, so that loaded faces don't replace other fonts
+    static int count = 0;
+    char unique[160];
+    snprintf(unique, sizeof(unique), "%s#%d", psname, ++count);
+    CFStringRef ukey = CFStringCreateWithCString(NULL, unique, kCFStringEncodingUTF8);
+    if (!loaded_fonts)
+      loaded_fonts = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks,
+                                               &kCFTypeDictionaryValueCallBacks);
+    CFDictionarySetValue(loaded_fonts, ukey, found);
+    CFRelease(ukey);
+    name = fl_strdup(unique);
+  }
+  CFRelease(descs);
+  return name;
+}
+
+
 Fl_Fontdesc* Fl_Quartz_Graphics_Driver::calc_fl_fonts(void)
 {
   return  built_in_table_PS;
@@ -273,7 +343,7 @@ void Fl_Quartz_Graphics_Driver::descriptor_init(const char* name,
                                                       Fl_Fontsize size, Fl_Quartz_Font_Descriptor *d)
 {
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
-  d->fontref = CTFontCreateWithName(str, size, NULL);
+  d->fontref = create_font(str, size);
   CGGlyph glyph[2];
   const UniChar A[2]={'W','.'};
   CTFontGetGlyphsForCharacters(d->fontref, A, glyph, 2);
@@ -285,7 +355,7 @@ void Fl_Quartz_Graphics_Driver::descriptor_init(const char* name,
     // slightly rescale fixed-width fonts so the character width has an integral value
     CFRelease(d->fontref);
     CGFloat fsize = size / ( w/floor(w + 0.5) );
-    d->fontref = CTFontCreateWithName(str, fsize, NULL);
+    d->fontref = create_font(str, fsize);
     w = CTFontGetAdvancesForGlyphs(d->fontref, kCTFontOrientationHorizontal, glyph, NULL, 1);
   }
   CFRelease(str);

@@ -29,6 +29,7 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
   Other Changes
 
   - Added "placeholder" text field to Fl_Input_ based widgets
+  - New Fl::load_font() loads TrueType and OpenType fonts from files or from memory
   - Removed autotools (configure/make) support
   - Requires C++11 or higher
 

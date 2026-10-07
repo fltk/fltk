@@ -151,6 +151,8 @@ protected:
   const char* get_font_name(Fl_Font fnum, int* ap) FL_OVERRIDE;
   const char *font_name(int num) FL_OVERRIDE;
   void font_name(int num, const char *name) FL_OVERRIDE;
+  const char *load_font(const char *filename, const unsigned char *data, size_t size,
+                        int face) FL_OVERRIDE;
   void global_gc() FL_OVERRIDE;
   void overlay_rect(int x, int y, int w , int h) FL_OVERRIDE;
   void cache_size(Fl_Image *img, int &width, int &height) FL_OVERRIDE;
