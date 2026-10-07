@@ -19,6 +19,7 @@
 #define _src_Fl_Timeout_h_
 
 #include <FL/Fl.H>
+#include <FL/Fl_Callback_Interface.H>
 
 #define FL_TIMEOUT_DEBUG 0        // 1 = include debugging features, 0 = no
 
@@ -53,21 +54,17 @@
   - Fl::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **data_return)
 
 */
-class Fl_Timeout {
+class Fl_Timeout : public Fl_Simple_Callback_Interface<Fl_Timeout> {
 
 protected:
 
   Fl_Timeout *next;             // ** Link to next timeout
-  Fl_Timeout_Handler callback;  // the user's callback
-  void *data;                   // the user's callback data
   double time;                  // delay until timeout
   int skip;                     // skip "new" (inserted) timers (issue #450)
 
   // constructor
   Fl_Timeout() {
     next = 0;
-    callback = 0;
-    data = 0;
     time = 0;
     skip = 0;
   }
@@ -75,8 +72,55 @@ protected:
   // destructor
   ~Fl_Timeout() = default;
 
-  // get a new timer entry from the pool or allocate a new one
-  static Fl_Timeout *get(double time, Fl_Timeout_Handler cb, void *data);
+  /**
+    Get an Fl_Timeout instance for further handling.
+
+    The timer object will be initialized with the input parameters
+    as given by Fl::add_timeout() or Fl::repeat_timeout().
+
+    Fl_Timeout objects are maintained in three queues:
+    - active timer queue
+    - list (stack, i.e. LIFO) of currently executing timer callbacks
+    - free timer entries.
+
+    When the FLTK program is launched all queues are empty. Whenever
+    a new timer object is required the get() method is called and a timer
+    object is either found in the queue of free timer entries or a new
+    timer object is created (operator new).
+
+    Active timer entries are inserted into the "active timer queue" until
+    they expire and their callback is called.
+
+    Before the callback is called the timer entry is inserted into the list
+    of current timers, i.e. it becomes the Fl_Timeout::current() timeout.
+    This can be used in Fl::repeat_timeout() to find out if and how long the
+    current timeout has been delayed.
+
+    When a timer is no longer used it is popped from the \p current list
+    and inserted into the "free timer" list so it can be reused later.
+
+    Timer queue entries are never returned to the system, there's no garbage
+    collection. The total number of timer objects is determined by the
+    largest number of concurrently active timers.
+
+    \param[in]  time  requested delta time
+    \param[in]  cb    timer callback
+    \param[in]  data  userdata for timer callback
+
+    \return  Fl_Timeout*  Timer entry
+
+    \see Fl::add_timeout(), Fl::repeat_timeout()
+  */
+  template<typename... Args>
+  static Fl_Timeout *get(double time, Args&&... args)
+  {
+    Fl_Timeout *t = get();
+    t->delay(time);
+    t->callback(std::forward<Args>(args)...); // unpack the arguments
+    return t;
+  }
+
+  static Fl_Timeout *get();
 
   // insert this timer into the active timer queue, sorted by expiration time
   void insert();
@@ -105,8 +149,56 @@ public:
 
   // Add or remove timeouts
 
-  static void add_timeout(double time, Fl_Timeout_Handler cb, void *data);
-  static void repeat_timeout(double time, Fl_Timeout_Handler cb, void *data);
+  /**
+  Adds a one-shot timeout callback.
+
+  The callback function \p cb will be called by Fl::wait() at \p time seconds
+  after this function is called.
+
+  \param[in]  time    delta time in seconds until the timer expires
+  \param[in]  cb      callback function
+  \param[in]  data    optional user data (default: \p NULL)
+
+  Implements:
+
+      void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
+
+  \see Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
+  */
+  template<typename... Args>
+  static void add_timeout(double time, Args&&... args) {
+    elapse_timeouts();
+    Fl_Timeout *t = get(time, std::forward<Args>(args)...);
+    t->insert();
+  }
+
+  /**
+    Repeats a timeout callback from the expiration of the previous timeout,
+    allowing for more accurate timing.
+
+    \param[in]  time    delta time in seconds until the timer expires
+    \param[in]  cb      callback function
+    \param[in]  data    optional user data (default: \p NULL)
+
+    Implements:
+
+        void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
+
+    \see Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
+  */
+  template<typename... Args>
+  static void repeat_timeout(double time, Args&&... args) {
+    elapse_timeouts();
+    Fl_Timeout *t = (Fl_Timeout *)get(time, std::forward<Args>(args)...);
+    Fl_Timeout *cur = current_timeout;
+    if (cur) {
+      t->time += cur->time;   // was: missed_timeout_by (always <= 0.0)
+      if (t->time < 0.0)
+        t->time = 0.001;      // at least 1 ms
+    }
+    t->insert();
+  }
+
   static void remove_timeout(Fl_Timeout_Handler cb, void *data);
   static int remove_next_timeout(Fl_Timeout_Handler cb, void *data = NULL, void **data_return = NULL);
   static std::vector<Fl::TimeoutData> timeout_list();
