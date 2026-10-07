@@ -2067,6 +2067,15 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name) {
 }
 
 /**
+ \brief Return the name of a plugin by index.
+ */
+const char *Fl_Plugin_Manager::name(int index) {
+  if ((index<0) || (index>=plugins())) return nullptr;
+  Fl_Preferences pin(this, index);
+  return pin.name();
+}
+
+/**
  \brief This function adds a new plugin to the database.
 
  There is no need to call this function explicitly. Every Fl_Plugin constructor
