@@ -172,7 +172,7 @@ struct wld_window {
   int floating_width;
   int floating_height;
   int state;
-  bool covered; // specially for Mutter and issue #878
+  bool covered; // specially for Mutter in version < 50.5 and issue #878
 };
 
 
