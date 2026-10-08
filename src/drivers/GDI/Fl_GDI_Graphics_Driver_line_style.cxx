@@ -78,10 +78,10 @@ void Fl_GDIplus_Graphics_Driver::line_style(int style, int width, char* dashes) 
   else if(!dashes || !*dashes)
     pen_->SetDashStyle(Gdiplus::DashStyleSolid);
 
-  if (style & FL_CAP_ROUND ) {
+  if ( (style & 0x300) == FL_CAP_ROUND ) {
     pen_->SetStartCap(Gdiplus::LineCapRound);
     pen_->SetEndCap(Gdiplus::LineCapRound);
-  } else if (style & FL_CAP_SQUARE ) {
+  } else if ( (style & 0x300) == FL_CAP_SQUARE ) {
     pen_->SetStartCap(Gdiplus::LineCapSquare);
     pen_->SetEndCap(Gdiplus::LineCapSquare);
   } else {
