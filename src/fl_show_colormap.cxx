@@ -131,7 +131,7 @@ extern char fl_override_redirect; // hack for menus
 #endif
 Fl_Color ColorMenu::run() {
   if (which > 255) {
-    position(Fl::event_x_root()-w()/2, Fl::event_y_root()-y()/2);
+    position(Fl::event_x_root()-w()/2, Fl::event_y_root()-h()/2);
   } else {
     position(Fl::event_x_root()-(initial%8)*BOXSIZE-BOXSIZE/2-BORDER,
              Fl::event_y_root()-(initial/8)*BOXSIZE-BOXSIZE/2-BORDER);
