@@ -54,8 +54,7 @@ void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, int width, char* das
     Fl::error("fl_line_style(): Could not create GDI pen object.");
     return;
   }
-  HPEN oldpen = (HPEN)SelectObject(gc_, newpen);
-  DeleteObject(oldpen);
+  SelectObject(gc_, newpen);
   DeleteObject(fl_current_xmap->pen);
   fl_current_xmap->pen = newpen;
   style_ = style;
