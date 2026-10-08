@@ -29,7 +29,7 @@
 
 
 void Fl_Xlib_Graphics_Driver::end_points() {
-  if (n>1) XDrawPoints(fl_display, fl_window, gc_, short_point, n, 0);
+  if (n >= 1) XDrawPoints(fl_display, fl_window, gc_, short_point, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_line() {
