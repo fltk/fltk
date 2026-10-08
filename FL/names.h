@@ -152,7 +152,7 @@ const char * const fl_fontnames[] =
   \return C++ symbol of font index as a string
 */
 inline std::string fl_fontname_str(int font) {
-  if ((font < 0) || (font >= FL_ZAPF_DINGBATS)) {
+  if ((font < 0) || (font >= FL_FREE_FONT)) {
     return "FL_FONT_" + std::to_string(font);
   } else {
     return fl_fontnames[font];
