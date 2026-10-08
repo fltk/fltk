@@ -138,6 +138,8 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   bg_r = bg_g = bg_b = 255;
   clip_ = NULL;
   scale_x = scale_y = 1.;
+  angle = 0;
+  left_margin = top_margin = 0;
 #endif
   ps_filename_ = NULL;
   nPages = 0;
