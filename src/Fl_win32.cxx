@@ -1115,7 +1115,7 @@ static const struct {
   {VK_TAB,      FL_Tab},
   {VK_CLEAR,    FL_KP+'5',      0xff0b/*XK_Clear*/},
   {VK_RETURN,   FL_Enter,       FL_KP_Enter},
-  {VK_SHIFT,    FL_Shift_L,     FL_Shift_R},
+  {VK_SHIFT,    FL_Shift_L/*,     FL_Shift_R*/},
   {VK_CONTROL,  FL_Control_L,   FL_Control_R},
   {VK_MENU,     FL_Alt_L,       FL_Alt_R},
   {VK_PAUSE,    FL_Pause},
@@ -1546,6 +1546,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       case WM_SYSKEYUP:
         // save the keysym until we figure out the characters:
         Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam, lParam & (1 << 24));
+        if (wParam == VK_SHIFT) {
+          // both L and R shift keys have same wParam but differ in lParam
+          UINT scancode = (lParam >> 16) & 0xFF;
+          UINT lr = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX);
+          Fl::e_keysym = Fl::e_original_keysym = (lr == VK_LSHIFT ? FL_Shift_L : FL_Shift_R);
+        }
         // Kludge to allow recognizing ctrl+'-' on keyboards with digits in uppercase positions (e.g. French)
         if (Fl::e_keysym == '6' && (VkKeyScanA('-') & 0xff) == '6') {
           Fl::e_keysym = '-';
