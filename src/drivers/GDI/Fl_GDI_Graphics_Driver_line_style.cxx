@@ -89,9 +89,9 @@ void Fl_GDIplus_Graphics_Driver::line_style(int style, int width, char* dashes) 
     pen_->SetEndCap(Gdiplus::LineCapFlat);
   }
 
-  if (style & FL_JOIN_MITER ) {
+  if ( (style & 0x3000) == FL_JOIN_MITER ) {
     pen_->SetLineJoin(Gdiplus::LineJoinMiter);
-  } else if (style & FL_JOIN_BEVEL ) {
+  } else if ( (style & 0x3000) == FL_JOIN_BEVEL ) {
     pen_->SetLineJoin(Gdiplus::LineJoinBevel);
   } else {
     pen_->SetLineJoin(Gdiplus::LineJoinRound);
