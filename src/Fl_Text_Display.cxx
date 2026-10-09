@@ -79,6 +79,7 @@ static int countlines( const char *string );
 
 /* The variables below are used in a timer event to allow smooth
  scrolling of the text area when the pointer has left the area. */
+static Fl_Text_Display *scrolling_widget = NULL;
 static int scroll_direction = 0;
 static int scroll_amount = 0;
 static int scroll_y = 0;
@@ -211,9 +212,12 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
 */
 
 Fl_Text_Display::~Fl_Text_Display() {
-  if (scroll_direction) {
-    Fl::remove_timeout(scroll_timer_cb, this);
-    scroll_direction = 0;
+  if (scrolling_widget == this) {
+    scrolling_widget = NULL;
+    if (scroll_direction) {
+      Fl::remove_timeout(scroll_timer_cb, this);
+      scroll_direction = 0;
+    }
   }
   if (mBuffer) {
     mBuffer->remove_modify_callback(buffer_modified_cb, this);
@@ -4302,6 +4306,7 @@ int Fl_Text_Display::handle(int event) {
       int X = Fl::event_x(), Y = Fl::event_y(), pos = insert_position();
       // if we leave the text_area, we start a timer event
       // that will take care of scrolling and selecting
+      scrolling_widget = this;
       if (Y < text_area.y) {
         scroll_x = X;
         scroll_amount = (Y - text_area.y) / 5 - 1;
@@ -4335,6 +4340,7 @@ int Fl_Text_Display::handle(int event) {
           Fl::remove_timeout(scroll_timer_cb, this);
           scroll_direction = 0;
         }
+        scrolling_widget = NULL;
         pos = xy_to_position(X, Y, CURSOR_POS);
       }
       fl_text_drag_me(pos, this);
@@ -4354,6 +4360,7 @@ int Fl_Text_Display::handle(int event) {
         dragType = DRAG_CHAR;
       } else {
         dragging = 0;
+        if (scrolling_widget == this) scrolling_widget = NULL;
         if (scroll_direction) {
           Fl::remove_timeout(scroll_timer_cb, this);
           scroll_direction = 0;
