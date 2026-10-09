@@ -554,15 +554,15 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 
   /* Insert the new text (toPos now corresponds to the start of the gap) */
   if (fromEnd <= fromBuf->mGapStart) {
-    memcpy(&mBuf[toPos], &fromBuf->mBuf[fromStart], copiedLength);
+    memmove(&mBuf[toPos], &fromBuf->mBuf[fromStart], copiedLength);
   } else if (fromStart >= fromBuf->mGapStart) {
-    memcpy(&mBuf[toPos],
+    memmove(&mBuf[toPos],
            &fromBuf->mBuf[fromStart + (fromBuf->mGapEnd - fromBuf->mGapStart)],
            copiedLength);
   } else {
     int part1Length = fromBuf->mGapStart - fromStart;
-    memcpy(&mBuf[toPos], &fromBuf->mBuf[fromStart], part1Length);
-    memcpy(&mBuf[toPos + part1Length],
+    memmove(&mBuf[toPos], &fromBuf->mBuf[fromStart], part1Length);
+    memmove(&mBuf[toPos + part1Length],
            &fromBuf->mBuf[fromBuf->mGapEnd], copiedLength - part1Length);
   }
   mGapStart += copiedLength;

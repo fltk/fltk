@@ -324,7 +324,7 @@ public:
 
   /**
    Copies text from another Fl_Text_Buffer to this one.
-   \param fromBuf source text buffer, may be the same as this
+   \param fromBuf source text buffer, may be the same as \p this
    \param fromStart byte offset into buffer
    \param fromEnd byte offset into buffer
    \param toPos destination byte offset into buffer
