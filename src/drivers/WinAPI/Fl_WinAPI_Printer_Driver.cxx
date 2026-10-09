@@ -109,7 +109,7 @@ public:
 LPSTR Fl_PDF_GDI_File_Surface::pdf_printer_name_ = _strdup("Microsoft Print to PDF");
 
 Fl_PDF_GDI_File_Surface::Fl_PDF_GDI_File_Surface() {
-  driver(new Fl_GDI_Graphics_Driver());
+  driver(new Fl_GDI_Printer_Graphics_Driver());
   doc_fname = NULL;
 }
 
