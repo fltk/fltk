@@ -421,6 +421,7 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int bits_length, int W, int H, int
   } else {
     array = NULL;
     data(NULL, 0);
+    w(0); h(0);
     ld(ERR_MEMORY_ACCESS);
   }
 }
