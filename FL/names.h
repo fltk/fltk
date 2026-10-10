@@ -192,7 +192,7 @@ const char * const fl_callback_reason_names[] =
   \return C++ symbol of reason as a string
 */
 inline std::string fl_callback_reason_str(int reason) {
-  if ((reason < 0) || (reason >= sizeof(fl_callback_reason_names) / sizeof(const char *)) ||
+  if ((reason < 0) || (reason >= int(sizeof(fl_callback_reason_names) / sizeof(const char *))) ||
       (fl_callback_reason_names[reason] == nullptr)) {
     return "FL_REASON_" + std::to_string(reason);
   } else {
