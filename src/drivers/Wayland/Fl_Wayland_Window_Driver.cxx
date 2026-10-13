@@ -1099,7 +1099,8 @@ void Fl_Wayland_Window_Driver::wait_for_expose()
       libdecor_dispatch(scr_driver->libdecor_context, 0);
     }
   }
-  while (!wl_list_length(&xid->outputs))
+  while (Fl_Wayland_Screen_Driver::compositor != Fl_Wayland_Screen_Driver::OWL &&
+         !wl_list_length(&xid->outputs))
     libdecor_dispatch(scr_driver->libdecor_context, 0);
 }
 
