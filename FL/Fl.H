@@ -51,6 +51,7 @@
 
 #include <string.h> // FIXME: Fl::is_scheme(): strcmp needs string.h
 #include <vector>
+#include <functional>
 
 class Fl_Widget;
 class Fl_Window;
@@ -244,6 +245,12 @@ FL_EXPORT extern void remove_timeout(Fl_Timeout_Handler cb, void *data = 0);
 FL_EXPORT extern int remove_next_timeout(Fl_Timeout_Handler cb, void *data = 0, void **data_return = 0);
 typedef struct { double t; Fl_Timeout_Handler cb; void *data; } TimeoutData;
 FL_EXPORT extern std::vector<TimeoutData> timeout_list();
+
+FL_EXPORT extern Fl_Timeout_ID add_timeout(double t, std::function<void()> cb);
+FL_EXPORT extern Fl_Timeout_ID repeat_timeout(double t, std::function<void()> cb);
+FL_EXPORT extern int  has_timeout(Fl_Timeout_ID id);
+FL_EXPORT extern void remove_timeout(Fl_Timeout_ID id);
+
 
 FL_EXPORT extern void add_check(Fl_Timeout_Handler, void* = 0);
 FL_EXPORT extern int  has_check(Fl_Timeout_Handler, void* = 0);
