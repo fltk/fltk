@@ -209,6 +209,7 @@ static Atom fl_NET_WM_FULLSCREEN_MONITORS;
 Atom fl_NET_WORKAREA;
 static Atom fl_NET_WM_ICON;
 static Atom fl_NET_ACTIVE_WINDOW;
+Atom fl_NET_FRAME_EXTENTS;
 
 /*
   Debug: translate Atom (number) to name: enable (1) if used below
@@ -609,6 +610,7 @@ void open_display_i(Display* d) {
   fl_NET_WORKAREA       = XInternAtom(d, "_NET_WORKAREA",       0);
   fl_NET_WM_ICON        = XInternAtom(d, "_NET_WM_ICON",        0);
   fl_NET_ACTIVE_WINDOW  = XInternAtom(d, "_NET_ACTIVE_WINDOW",  0);
+  fl_NET_FRAME_EXTENTS  = XInternAtom(d, "_NET_FRAME_EXTENTS",  0);
 
   if (sizeof(Atom) < 4)
     atom_bits = sizeof(Atom) * 8;

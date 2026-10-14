@@ -39,6 +39,7 @@
 #define ShapeSet                        0
 
 Window fl_window;
+extern Atom fl_NET_FRAME_EXTENTS;
 
 
 Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
@@ -78,18 +79,35 @@ bool Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   h = win->h();
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) return false;
   Window root, parent, *children;
+  Window xid = Fl_X::flx(win)->xid;
   unsigned n = 0;
-  Status status = XQueryTree(fl_display, Fl_X::flx(win)->xid, &root, &parent, &children, &n);
+  Status status = XQueryTree(fl_display, xid, &root, &parent, &children, &n);
   if (status != 0 && n) XFree(children);
   // when compiz is used, root and parent are the same window
-  // and I don't know where to find the window decoration
-  if (status == 0 || root == parent) return false;
+  // use _NET_FRAME_EXTENTS to get the size of the window decoration
+  if (status == 0 || root == parent) {
+    unsigned long *data = 0;
+    unsigned long nitems;
+    unsigned long bytes_after;
+    Atom actual;
+    int format;
+    int retval = XGetWindowProperty(fl_display, xid, fl_NET_FRAME_EXTENTS, 0, 4,
+                     False, AnyPropertyType, &actual, &format,
+                                    &nitems, &bytes_after, (unsigned char**)&data);
+    if (Success == retval && nitems == 4) {
+      float s = Fl::screen_driver()->scale(screen_num());
+      w += (data[0] + data[1]) / s;
+      h += (data[2] + data[3]) / s;
+      XFree(data);
+      return true;
+    } else return false;
+  }
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
   // sometimes, very wide window borders are reported
   // ignore them all:
   XWindowAttributes w_attributes;
-  XGetWindowAttributes(fl_display, Fl_X::flx(win)->xid, &w_attributes);
+  XGetWindowAttributes(fl_display, xid, &w_attributes);
   bool true_sides = false;
   if (attributes.width - w_attributes.width >= 20) {
     attributes.height -= (attributes.width - w_attributes.width);
