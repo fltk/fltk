@@ -1771,9 +1771,9 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output *o
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
     Wworkarea = data.W * output->wld_scale;
     Hworkarea = data.H * output->wld_scale;
-    if (Wworkarea == Wfullscreen && Hworkarea < Hfullscreen && Hworkarea > Hfullscreen - (50 * output->wld_scale))
+    if (Hworkarea < Hfullscreen && Hworkarea > Hfullscreen - (50 * output->wld_scale))
       found_workarea = true;
-    if (Hworkarea == Hfullscreen && Wworkarea < Wfullscreen && Wworkarea > Wfullscreen - (50 * output->wld_scale))
+    if (Wworkarea < Wfullscreen && Wworkarea > Wfullscreen - (50 * output->wld_scale))
       found_workarea = true;
   } else {
     Wworkarea = Wfullscreen;
