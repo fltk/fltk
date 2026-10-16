@@ -571,14 +571,13 @@ public:
    added by the window manager.
 
    Same as h() if applied to a subwindow, or if window is not yet mapped.
-   \note Under X11, FLTK is able to compute the size of window titlebars and borders
-   only if these decoration elements are strictly X11-based. When that's not the case,
-   decorated_h() returns the same value as h() and decorated_w() as w(), and FLTK
-   cannot access window decorations.
+   \note Under X11, the call to this member functions decorated_h() and decorated_w()
+   should not be done immediately after a call to Fl_Window::show(); it may be necessary
+   to call Fl_Window::wait_for_expose() in between for decorated_h() and decorated_w() to
+   return  correct values.
 
    \note Under X11 again, the values returned by decorated_h() and decorated_w()
-   may not be reliable <b> during a resize operation</b>. The size of decoration elements
-   of a window is best computed when the window is first mapped.
+   may not be reliable <b> during a resize operation</b>.
    */
   int decorated_h() const;
 
