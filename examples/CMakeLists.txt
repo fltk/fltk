@@ -41,6 +41,7 @@ set(SIMPLE_SOURCES
   howto-drag-and-drop
   howto-draw-an-x
   howto-flex-simple
+  howto-load-fonts
   howto-menu-with-images
   howto-parse-args
   howto-remap-numpad-keyboard-keys
@@ -115,6 +116,9 @@ set(OPENGL_SOURCES
 foreach(src ${SIMPLE_SOURCES})
   fl_create_example(${src} ${src}.cxx fltk::fltk)
 endforeach(src)
+
+# let howto-load-fonts find its font files from any working directory
+target_compile_definitions(howto-load-fonts PRIVATE FONT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/fonts")
 
 ############################################################
 # create FLUID example programs
