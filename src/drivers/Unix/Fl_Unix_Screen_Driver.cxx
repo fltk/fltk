@@ -17,6 +17,9 @@
 #include <config.h>
 #include <sys/time.h>
 #include "Fl_Unix_Screen_Driver.H"
+#include "Fl_Unix_System_Driver.H"
+#include <FL/Fl_Drag_Data.H>
+#include <FL/Fl_Image.H>
 
 #if USE_POLL
 pollfd *Fl_Unix_Screen_Driver::pollfds = NULL;
@@ -98,4 +101,69 @@ int Fl_Unix_Screen_Driver::poll_or_select() {
   fdt[2] = fdsets[2];
   return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
 #  endif
+}
+
+
+// Returns the pixels of img as packed RGB, composited over white
+static unsigned char *packed_rgb(const Fl_RGB_Image *img) {
+  int w = img->data_w(), h = img->data_h(), d = img->d();
+  int ld = img->ld() ? img->ld() : w * d;
+  unsigned char *rgb = new unsigned char[w * h * 3];
+  unsigned char *q = rgb;
+  for (int y = 0; y < h; y++) {
+    const unsigned char *p = img->array + y * ld;
+    for (int x = 0; x < w; x++, p += d) {
+      unsigned r, g, b, a;
+      if (d < 3) { r = g = b = p[0]; a = (d == 2 ? p[1] : 255); }
+      else { r = p[0]; g = p[1]; b = p[2]; a = (d == 4 ? p[3] : 255); }
+      *q++ = (unsigned char)((r * a + 255 * (255 - a)) / 255);
+      *q++ = (unsigned char)((g * a + 255 * (255 - a)) / 255);
+      *q++ = (unsigned char)((b * a + 255 * (255 - a)) / 255);
+    }
+  }
+  return rgb;
+}
+
+
+/* Describes the content of an Fl_Drag_Data object as MIME types for XDND and Wayland.
+ Promised files are written to a temporary directory first because neither protocol
+ supports file promises in a portable way.
+ */
+void Fl_Unix_Screen_Driver::dnd_offers(Fl_Drag_Data *data, Dnd_Offers &offers,
+                                       std::string &local_text) {
+  offers.clear();
+  local_text.clear();
+  data->write_promises_to_temp_dir();
+  std::string uri_list, paths;
+  for (int i = 0; i < data->file_count(); i++) {
+    const char *path = data->file_path(i);
+    if (!path) continue; // a promise that could not be written
+    uri_list += encode_file_uri(path);
+    uri_list += "\r\n";
+    if (!paths.empty()) paths += '\n';
+    paths += path;
+  }
+  if (!uri_list.empty()) offers.push_back(std::make_pair(std::string("text/uri-list"), uri_list));
+  if (data->has_text()) {
+    offers.push_back(std::make_pair(std::string("text/plain;charset=utf-8"), data->text()));
+    offers.push_back(std::make_pair(std::string("UTF8_STRING"), data->text()));
+    offers.push_back(std::make_pair(std::string("text/plain"), data->text()));
+  }
+  if (data->image() && data->image()->array) {
+    const Fl_RGB_Image *img = data->image();
+    unsigned char *rgb = packed_rgb(img);
+    int size;
+    unsigned char *bmp = Fl_Unix_System_Driver::create_bmp(rgb, img->data_w(), img->data_h(), &size);
+    delete[] rgb;
+    offers.push_back(std::make_pair(std::string("image/bmp"), std::string((char *)bmp, size)));
+    delete[] bmp;
+  }
+  for (int i = 0; i < data->data_count(); i++) {
+    bool known = false;
+    for (size_t j = 0; j < offers.size(); j++) {
+      if (offers[j].first == data->data_mime_type(i)) known = true;
+    }
+    if (!known) offers.push_back(std::make_pair(std::string(data->data_mime_type(i)), data->data_bytes(i)));
+  }
+  local_text = paths.empty() ? data->text() : paths;
 }

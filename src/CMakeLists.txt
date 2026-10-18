@@ -48,6 +48,7 @@ set(CPPFILES
   Fl_Device.cxx
   Fl_Dial.cxx
   Fl_Double_Window.cxx
+  Fl_Drag_Data.cxx
   Fl_File_Browser.cxx
   Fl_File_Chooser.cxx
   Fl_File_Chooser2.cxx

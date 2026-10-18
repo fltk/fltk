@@ -94,6 +94,13 @@ public:
   void get_system_colors() FL_OVERRIDE;
   const char *get_system_scheme() FL_OVERRIDE;
   int dnd(int unused) FL_OVERRIDE;
+  int dnd_data(Fl_Drag_Data *data) FL_OVERRIDE;
+  // XdndSelection targets and data of the latest drag started by Fl::dnd(Fl_Drag_Data*),
+  // empty for text drags started by Fl::dnd()
+  static std::vector<std::pair<Atom, std::string> > dnd_typed_offers;
+  // the data types of a drag started by this program while it is over a window of this program
+  static std::vector<Atom> dnd_local_types;
+  int dnd_contains(const char *type) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;
   void compose_reset() FL_OVERRIDE;
   int text_display_can_leak() const FL_OVERRIDE;
@@ -122,6 +129,7 @@ public:
   static XIC xim_ic;
   static Window xim_win;
   static std::string selection_string[2]; // stores clipboard and DnD data
+  static bool dnd_text_is_uri_list(); // true if DnD data in selection_string[0] is a list of URIs
   static void new_ic();
   static void xim_activate(Window xid);
   static void xim_deactivate(void);

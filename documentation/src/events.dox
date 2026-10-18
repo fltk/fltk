@@ -356,19 +356,74 @@ depends on the protocol used on each platform.
 \p FL_DND_* events cannot be used in widgets derived
 from Fl_Group or Fl_Window.
 
+\subsection events_fl_dnd_types Types of dropped data
+While handling \p FL_DND_ENTER, \p FL_DND_DRAG, or \p FL_DND_RELEASE, a widget
+can find out what is dragged with Fl::dnd_contains(), choose what it receives
+with Fl::dnd_request(), and choose the action with Fl::dnd_action().
+Fl::event_dnd_action() returns the action proposed by the drag source,
+which takes into account the modifier keys the user holds.
+
+The concluding \p FL_PASTE event delivers:
+- files as Fl::clipboard_files, see \ref events_fl_dnd_files,
+  Fl::dnd_file_count(), and Fl::dnd_file();
+- text as Fl::clipboard_plain_text;
+- an image as Fl::clipboard_image, only if the widget requested it with
+  Fl::dnd_request(Fl::clipboard_image). Fl::event_clipboard() then returns an
+  Fl_RGB_Image the widget owns if it returns 1 from handle(). Dropped image
+  files are delivered as files, not as images;
+- data of any other MIME type requested with Fl::dnd_request(), for example
+  "image/png". Fl::event_clipboard_type() is then the requested MIME type,
+  and Fl::event_text() and Fl::event_length() contain the data.
+
+Files that the drag source only promises, for example images dragged from
+web browsers or attachments dragged from mail programs, are written into a
+new temporary directory on macOS and Windows and delivered as Fl::clipboard_files.
+This directory is removed when the program exits: copy or move the files to
+keep them. On macOS, the FL_PASTE event follows when the source has written
+all files, which can take a moment after the drop.
+
+Fl::event_text() contains the list of files or the text, so widgets that
+only use Fl::event_text() receive dropped files as text.
+
+\code
+int My_Widget::handle(int event) {
+  switch (event) {
+    case FL_DND_ENTER:
+      if (Fl::dnd_contains(Fl::clipboard_image)) Fl::dnd_request(Fl::clipboard_image);
+      return 1;
+    case FL_DND_DRAG:
+    case FL_DND_RELEASE:
+      return 1;
+    case FL_PASTE:
+      if (Fl::event_clipboard_type() == Fl::clipboard_image) {
+        set_picture((Fl_RGB_Image *)Fl::event_clipboard()); // takes ownership
+      } else if (Fl::event_clipboard_type() == Fl::clipboard_files) {
+        for (int i = 0; i < Fl::dnd_file_count(); i++) open_file(Fl::dnd_file(i));
+      }
+      return 1;
+  }
+  return Fl_Widget::handle(event);
+}
+\endcode
+
 \subsection events_fl_dnd_files Dropped filenames
-Files are received as a list of full path and file names.
-- On some X11 platforms, files are received as a URL-encoded UTF-8 string,
-that is, non-ASCII bytes (and a few others such as space and %) are
-replaced by the 3 bytes "%XY" where XY are the byte's hexadecimal value.
-The \ref fl_decode_uri() function can be used to transform in-place
-the received string into a proper UTF-8 string. On these platforms,
-strings corresponding to dropped files are further prepended
-by <tt>file://</tt> (or other prefixes such as <tt>computer://</tt>).
-- Other X11 situations put all dropped filenames in a single line, separated by
-spaces.
-- On non-X11 platforms, including Wayland, files dropped are received one
-pathname per line, with no  <tt>'\\n'</tt> after the last pathname.
+Files are received as a list of full path and file names in UTF-8 encoding,
+one pathname per line, with no <tt>'\\n'</tt> after the last pathname.
+This is the same on all platforms.
+
+When the drag source offers a list of URIs (MIME type <tt>text/uri-list</tt>),
+as file managers do on X11 and Wayland, <tt>file:</tt> URIs are converted
+to local paths: the <tt>file://</tt> prefix and host name are removed and
+URL-encoded bytes ("%XY") are decoded. Other URIs, for example
+<tt>https://</tt> links, are delivered unchanged, one per line.
+
+\note Before FLTK 1.5, dropped files were delivered as URL-encoded
+<tt>file://</tt> URIs on some X11 platforms. Applications that remove the
+prefix and call \ref fl_decode_uri() themselves should no longer do so,
+because a path that contains a '%' character would be decoded twice.
+
+See Fl::dnd(Fl_Drag_Data*) for dragging files, images, and other data from
+an FLTK widget.
 
 \subsection events_fl_dnd_enter FL_DND_ENTER
 

@@ -9,6 +9,13 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
   - Member function int Fl::get_mouse(int&, int&) has now a return value providing the
   number of the mouse-containing screen (previously, return type was void).
   - Fix rectangle drawing for wide lines on macOS Quartz
+  - X11: dragging files to other applications works again: "text/uri-list"
+  was announced but not served, and drop targets were flooded with
+  XdndPosition messages.
+  - X11: drops from Xwayland clients (e.g. Wayland applications dropping
+  onto X11 windows under mutter) now finish properly.
+  - Windows: fix decoding of DIB images with V4/V5 headers or bit field
+  masks, and of 32-bit DIBs with unused alpha bytes, when pasting images.
 
 
   Platform Specific Fixes and Build Procedure Improvements
@@ -29,6 +36,17 @@ Changes in FLTK 1.5.0                                   Released: xxx yy 2026
   Other Changes
 
   - Added "placeholder" text field to Fl_Input_ based widgets
+  - New typed drag and drop: Fl_Drag_Data and Fl::dnd(Fl_Drag_Data*) drag
+  text, images, data of any MIME type, and any number of existing or
+  promised files, with drag images and copy/move/link actions.
+  Drop targets can check and request the dragged types with
+  Fl::dnd_contains() and Fl::dnd_request(), choose the action with
+  Fl::dnd_action(), and receive images, raw data, and files promised by
+  the drag source. See test/dnd.
+  - Dropped files are delivered as the new type Fl::clipboard_files on all
+  platforms: one decoded absolute path per line in Fl::event_text(), see
+  Fl::dnd_file_count() and Fl::dnd_file(). On X11, they were previously
+  delivered as URL-encoded "file://" URIs.
   - Removed autotools (configure/make) support
   - Requires C++11 or higher
 

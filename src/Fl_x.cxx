@@ -41,6 +41,8 @@
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
+#  include <stdarg.h>
+#  include <string>
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include "drivers/Unix/Fl_Unix_System_Driver.H"
@@ -184,6 +186,8 @@ Atom fl_XdndLeave;
 Atom fl_XdndDrop;
 Atom fl_XdndStatus;
 Atom fl_XdndActionCopy;
+Atom fl_XdndActionMove;
+Atom fl_XdndActionLink;
 Atom fl_XdndFinished;
 Atom fl_XdndURIList;
 static Atom fl_Xatextplainutf;
@@ -585,6 +589,8 @@ void open_display_i(Display* d) {
   fl_XdndDrop           = XInternAtom(d, "XdndDrop",            0);
   fl_XdndStatus         = XInternAtom(d, "XdndStatus",          0);
   fl_XdndActionCopy     = XInternAtom(d, "XdndActionCopy",      0);
+  fl_XdndActionMove     = XInternAtom(d, "XdndActionMove",      0);
+  fl_XdndActionLink     = XInternAtom(d, "XdndActionLink",      0);
   fl_XdndFinished       = XInternAtom(d, "XdndFinished",        0);
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
   fl_Xatextplainutf     = XInternAtom(d, "text/plain;charset=UTF-8",0);
@@ -705,6 +711,7 @@ void Fl_X11_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
       Fl::e_text = (char*)selection_string[clipboard].c_str();
       Fl::e_length = selection_string[clipboard].length();
       if (!Fl::e_text) Fl::e_text = (char *)"";
+      Fl::e_clipboard_type = Fl::clipboard_plain_text;
     } else if (clipboard == 1 && type == Fl::clipboard_image && fl_selection_type[1] == type) {
       Fl::e_clipboard_data = Fl_Unix_System_Driver::own_bmp_to_RGB(selection_string[1].c_str());
       Fl::e_clipboard_type = Fl::clipboard_image;
@@ -763,6 +770,95 @@ static Atom *fl_dnd_source_types; // null-terminated list of data types being su
 static Atom fl_dnd_type;
 static Atom fl_dnd_source_action;
 static Atom fl_dnd_action;
+static bool fl_dnd_over = false; // a drag of another program is over a window of this program
+
+// XdndStatus last received by a drag source of this program (see fl_dnd_x.cxx)
+Window fl_dnd_status_window = 0;
+int fl_dnd_status_accept = 0;
+Atom fl_dnd_status_action = None;
+unsigned fl_dnd_status_count = 0; // incremented for each XdndStatus received
+
+Atom fl_dnd_action_atom(int action) {
+  if (action == FL_DND_MOVE) return fl_XdndActionMove;
+  if (action == FL_DND_LINK) return fl_XdndActionLink;
+  return fl_XdndActionCopy;
+}
+
+int fl_dnd_action_from_atom(Atom a) {
+  if (a == fl_XdndActionMove) return FL_DND_MOVE;
+  if (a == fl_XdndActionLink) return FL_DND_LINK;
+  return FL_DND_COPY;
+}
+
+// Returns the best text target in avail, ignoring text/uri-list
+static Atom find_target_plain_text(Atom *avail, int na) {
+  Atom a = find_target_text(avail, na);
+  return a == fl_XaTextUriList ? 0 : a;
+}
+
+static bool has_target(Atom *avail, int na, Atom a) {
+  for (int i = 0; i < na; i++) if (avail[i] == a) return true;
+  return false;
+}
+
+int Fl_X11_Screen_Driver::dnd_contains(const char *type) {
+  Atom *avail;
+  int na;
+  if (!dnd_local_types.empty()) { // a drag of this program
+    avail = &dnd_local_types[0];
+    na = (int)dnd_local_types.size();
+  } else if (fl_dnd_over && fl_dnd_source_types) {
+    avail = fl_dnd_source_types;
+    for (na = 0; avail[na]; na++) { /* empty */ }
+  } else {
+    return 0;
+  }
+  if (!strcmp(type, Fl::clipboard_files)) return has_target(avail, na, fl_XaTextUriList);
+  if (!strcmp(type, Fl::clipboard_plain_text)) return find_target_plain_text(avail, na) != 0;
+  if (!strcmp(type, Fl::clipboard_image)) return find_target_image(avail, na) != 0;
+  Atom a = XInternAtom(fl_display, type, True);
+  return a && has_target(avail, na, a);
+}
+
+/* Prints a trace of the XDND protocol to stderr if the environment variable
+ FLTK_DND_DEBUG is set. This helps finding problems with other programs,
+ e.g. with the compositor when drag and drop runs under Xwayland.
+ */
+bool fl_dnd_trace_enabled() {
+  static int enabled = -1;
+  if (enabled < 0) enabled = (fl_getenv("FLTK_DND_DEBUG") != NULL);
+  return enabled != 0;
+}
+
+void fl_dnd_trace(const char *format, ...) {
+  if (!fl_dnd_trace_enabled()) return;
+  va_list ap;
+  va_start(ap, format);
+  fprintf(stderr, "XDND: ");
+  vfprintf(stderr, format, ap);
+  fprintf(stderr, "\n");
+  va_end(ap);
+}
+
+// Returns the name of an atom for the trace; the result is valid until the 8th next call
+const char *fl_dnd_atom_name(Atom a) {
+  static std::string names[8];
+  static int n = 0;
+  std::string &name = names[n++ % 8];
+  if (a == None) {
+    name = "None";
+  } else {
+    char *p = XGetAtomName(fl_display, a);
+    name = p ? p : "?";
+    if (p) XFree(p);
+  }
+  return name.c_str();
+}
+
+static bool is_xdnd_message(Atom a) {
+  return a == fl_XdndEnter || a == fl_XdndPosition || a == fl_XdndStatus ||
+         a == fl_XdndLeave || a == fl_XdndDrop || a == fl_XdndFinished;
+}
 
 void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d0,
@@ -781,7 +877,26 @@ void fl_sendClientMessage(Window window, Atom message,
   e.xclient.data.l[2] = (long)d2;
   e.xclient.data.l[3] = (long)d3;
   e.xclient.data.l[4] = (long)d4;
+  if (fl_dnd_trace_enabled() && is_xdnd_message(message))
+    fl_dnd_trace("send %s to 0x%lx: 0x%lx 0x%lx 0x%lx 0x%lx %s", fl_dnd_atom_name(message),
+                 window, d0, d1, d2, d3, d4 ? fl_dnd_atom_name((Atom)d4) : "0");
   XSendEvent(fl_display, window, 0, 0, &e);
+}
+
+static bool fl_dnd_dropping = false; // waiting for the data of a drop on a window of this program
+
+/* Tells the source of a drop that the drop target is done. Does nothing if this
+ has already been done.
+ */
+static void fl_dnd_send_finished(Window target, int success) {
+  fl_dnd_dropping = false;
+  if (!fl_dnd_source_window) return;
+  fl_sendClientMessage(fl_dnd_source_window,            // send to window
+                       fl_XdndFinished,                 // XdndFinished message
+                       target,                          // data.l[0] target window
+                       success ? 1 : 0,                 // data.l[1] Bit 0: 1 = success
+                       success ? fl_dnd_action : None); // data.l[2] action performed
+  fl_dnd_source_window = 0; // don't send a second time
 }
 
 
@@ -1368,6 +1483,18 @@ int fl_handle(const XEvent& thisevent)
     return 0;
 
   case SelectionNotify: {
+    // Make sure the source of a drop always gets an XdndFinished message,
+    // also when the data could not be received
+    struct Dnd_Finished_Guard {
+      bool active;
+      Window target;
+      ~Dnd_Finished_Guard() { if (active) fl_dnd_send_finished(target, 0); }
+    } dnd_guard = { fl_xevent->xselection.selection == fl_XdndSelection,
+                    fl_xevent->xselection.requestor };
+    if (dnd_guard.active)
+      fl_dnd_trace("SelectionNotify for drop: target %s, property %s",
+                   fl_dnd_atom_name(fl_xevent->xselection.target),
+                   fl_dnd_atom_name(fl_xevent->xselection.property));
     static unsigned char* sn_buffer = 0;
     if (sn_buffer) {
       free(sn_buffer); sn_buffer = 0;
@@ -1471,7 +1598,28 @@ int fl_handle(const XEvent& thisevent)
     }
     if (sn_buffer && Fl::e_clipboard_type == Fl::clipboard_plain_text) {
       sn_buffer[bytesread] = 0;
-      convert_crlf(sn_buffer, bytesread);
+      if (fl_xevent->xselection.target == fl_XaTextUriList) {
+        // deliver dropped or pasted files as on all other platforms:
+        // one decoded absolute path per line, no "file://", no trailing newline
+        std::string files = Fl_Screen_Driver::decode_uri_list((const char *)sn_buffer, bytesread);
+        bytesread = (long)files.length();
+        sn_buffer = (unsigned char *)realloc(sn_buffer, bytesread + 1);
+        memcpy(sn_buffer, files.c_str(), bytesread + 1);
+        if (fl_xevent->xselection.property == XA_SECONDARY) {
+          // a drop: if all URIs are local files, deliver them as files
+          bool all_files = !files.empty();
+          size_t i = 0;
+          while (all_files && i < files.length()) {
+            if (files[i] != '/') all_files = false;
+            size_t nl = files.find('\n', i);
+            if (nl == std::string::npos) break;
+            i = nl + 1;
+          }
+          if (all_files) Fl::e_clipboard_type = Fl::clipboard_files;
+        }
+      } else {
+        convert_crlf(sn_buffer, bytesread);
+      }
     }
     if (!fl_selection_requestor) return 0;
     if (Fl::e_clipboard_type == Fl::clipboard_image) {
@@ -1498,7 +1646,7 @@ int fl_handle(const XEvent& thisevent)
       image->alloc_array = 1;
       Fl::e_clipboard_data = (void*)image;
     }
-    else if (Fl::e_clipboard_type == Fl::clipboard_plain_text) {
+    else { // text, files, or data of a MIME type requested with Fl::dnd_request()
       Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
       Fl::e_length = bytesread;
     }
@@ -1517,13 +1665,11 @@ int fl_handle(const XEvent& thisevent)
     // since XDND protocol version 5 (see docs).
     // [FIXME: is the condition below really correct?]
 
-    if (fl_xevent->xselection.property == XA_SECONDARY && fl_dnd_source_window) {
-      fl_sendClientMessage(fl_dnd_source_window,            // send to window
-                           fl_XdndFinished,                 // XdndFinished message
-                           fl_xevent->xselection.requestor, // data.l[0] target window
-                           retval ? 1 : 0,                  // data.l[1] Bit 0: 1 = success
-                           retval ? fl_dnd_action : None);  // data.l[2] action performed
-      fl_dnd_source_window = 0; // don't send a second time
+    if (dnd_guard.active) {
+      fl_dnd_trace("drop delivered as %s, %ld bytes, widget returned %d",
+                   Fl::e_clipboard_type, bytesread, retval);
+      fl_dnd_send_finished(fl_xevent->xselection.requestor, retval);
+      dnd_guard.active = false;
     }
     return 1;
   } // SelectionNotify
@@ -1544,14 +1690,45 @@ int fl_handle(const XEvent& thisevent)
     e.target = fl_xevent->xselectionrequest.target;
     e.time = fl_xevent->xselectionrequest.time;
     e.property = fl_xevent->xselectionrequest.property;
-    if (fl_selection_type[clipboard] == Fl::clipboard_plain_text) {
+    if (e.selection == fl_XdndSelection)
+      fl_dnd_trace("SelectionRequest from 0x%lx for %s", e.requestor, fl_dnd_atom_name(e.target));
+    if (e.selection == fl_XdndSelection && !Fl_X11_Screen_Driver::dnd_typed_offers.empty()) {
+      // data of a drag started with Fl::dnd(Fl_Drag_Data*)
+      std::vector<std::pair<Atom, std::string> > &offers = Fl_X11_Screen_Driver::dnd_typed_offers;
       if (e.target == TARGETS) {
-        Atom a[3] = {fl_XaUtf8String, XA_STRING, fl_XaText};
+        std::vector<Atom> a;
+        a.push_back(TARGETS);
+        for (size_t i = 0; i < offers.size(); i++) a.push_back(offers[i].first);
         XChangeProperty(fl_display, e.requestor, e.property,
-                        XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
+                        XA_ATOM, atom_bits, 0, (unsigned char*)&a[0], (int)a.size());
+      } else {
+        size_t i;
+        for (i = 0; i < offers.size(); i++) if (offers[i].first == e.target) break;
+        if (i < offers.size()) {
+          XChangeProperty(fl_display, e.requestor, e.property, e.target, 8, 0,
+                          (unsigned char *)offers[i].second.data(), (int)offers[i].second.length());
+        } else {
+          e.property = 0;
+        }
+      }
+      XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);
+      return 1;
+    }
+    if (fl_selection_type[clipboard] == Fl::clipboard_plain_text) {
+      bool uri_list = (e.selection == fl_XdndSelection &&
+                       Fl_X11_Screen_Driver::dnd_text_is_uri_list());
+      if (e.target == TARGETS) {
+        Atom a[4] = {fl_XaUtf8String, XA_STRING, fl_XaText, fl_XaTextUriList};
+        XChangeProperty(fl_display, e.requestor, e.property,
+                        XA_ATOM, atom_bits, 0, (unsigned char*)a, uri_list ? 4 : 3);
       } else {
         if (Fl_X11_Screen_Driver::selection_string[clipboard].length()) { // data available
-          if (e.target == fl_XaUtf8String ||
+          if (uri_list && e.target == fl_XaTextUriList) {
+            XChangeProperty(fl_display, e.requestor, e.property,
+                            e.target, 8, 0,
+                            (unsigned char *)Fl_X11_Screen_Driver::selection_string[clipboard].c_str(),
+                            Fl_X11_Screen_Driver::selection_string[clipboard].length());
+          } else if (e.target == fl_XaUtf8String ||
               e.target == XA_STRING ||
               e.target == fl_XaCompoundText ||
               e.target == fl_XaText ||
@@ -1566,6 +1743,8 @@ int fl_handle(const XEvent& thisevent)
                             e.target, 8, 0,
                             (unsigned char *)Fl_X11_Screen_Driver::selection_string[clipboard].c_str(),
                             Fl_X11_Screen_Driver::selection_string[clipboard].length());
+          } else { // unsupported target
+            e.property = 0;
           }
         } else { // no data available
           e.property = 0;
@@ -1628,6 +1807,10 @@ int fl_handle(const XEvent& thisevent)
   case ClientMessage: {
     Atom message = fl_xevent->xclient.message_type;
     const long* data = fl_xevent->xclient.data.l;
+    if (fl_dnd_trace_enabled() && is_xdnd_message(message))
+      fl_dnd_trace("recv %s for 0x%lx: 0x%lx 0x%lx 0x%lx 0x%lx %s", fl_dnd_atom_name(message),
+                   fl_xevent->xclient.window, data[0], data[1], data[2], data[3],
+                   data[4] ? fl_dnd_atom_name((Atom)data[4]) : "0");
     if ((Atom)(data[0]) == WM_DELETE_WINDOW) {
       event = FL_CLOSE;
     } else if (message == fl_XdndEnter) {
@@ -1700,10 +1883,20 @@ int fl_handle(const XEvent& thisevent)
       for (dnd_sources = 0; fl_dnd_source_types[dnd_sources]; dnd_sources++) {
         // empty
       }
-      fl_dnd_type = find_target_text(fl_dnd_source_types, dnd_sources);
+      // Prefer a list of files or URIs, then text
+      fl_dnd_type = 0;
+      for (int i = 0; i < dnd_sources; i++) {
+        if (fl_dnd_source_types[i] == fl_XaTextUriList) fl_dnd_type = fl_XaTextUriList;
+      }
+      if (!fl_dnd_type)
+        fl_dnd_type = find_target_text(fl_dnd_source_types, dnd_sources);
       if (!fl_dnd_type) // not found: pick first type
         fl_dnd_type = fl_dnd_source_types[0];
 
+      fl_dnd_over = true;
+      fl_dnd_dropping = false;
+      Fl_Screen_Driver::dnd_target_reset();
+      Fl::e_dnd_action = FL_DND_COPY;
       event = FL_DND_ENTER;
       Fl::e_text = unknown;
       Fl::e_length = unknown_len;
@@ -1725,10 +1918,13 @@ int fl_handle(const XEvent& thisevent)
       }
       fl_event_time = data[3];
       fl_dnd_source_action = data[4];
-      fl_dnd_action = fl_XdndActionCopy;
+      Fl::e_dnd_action = fl_dnd_action_from_atom(fl_dnd_source_action);
       Fl::e_text = unknown;
       Fl::e_length = unknown_len;
       int accept = Fl::handle(FL_DND_DRAG, window);
+      // the source proposes one action, copying is always possible
+      fl_dnd_action = fl_dnd_action_atom(
+          Fl_Screen_Driver::dnd_target_action(Fl::e_dnd_action | FL_DND_COPY));
       fl_sendClientMessage(data[0], fl_XdndStatus,
                            fl_xevent->xclient.window,
                            accept ? 1 : 0,
@@ -1737,7 +1933,22 @@ int fl_handle(const XEvent& thisevent)
                            accept ? fl_dnd_action : None);
       return 1;
 
+    } else if (message == fl_XdndStatus) {
+      // answer of a drop target to a drag of this program
+      fl_dnd_status_window = data[0];
+      fl_dnd_status_accept = (data[1] & 1);
+      fl_dnd_status_action = data[4];
+      fl_dnd_status_count++;
+      return 1;
+
     } else if (message == fl_XdndLeave) {
+      if (fl_dnd_dropping) {
+        // Some sources (e.g. mutter for Wayland clients under Xwayland) send
+        // XdndLeave right after XdndDrop: ignore it, the source still waits
+        // for XdndFinished when the data has been received.
+        return 1;
+      }
+      fl_dnd_over = false;
       fl_dnd_source_window = 0; // don't send a finished message to it
       event = FL_DND_LEAVE;
       Fl::e_text = unknown;
@@ -1752,11 +1963,42 @@ int fl_handle(const XEvent& thisevent)
       Window to_window = fl_xevent->xclient.window;
       Fl::e_text = unknown;
       Fl::e_length = unknown_len;
-      if (Fl::handle(FL_DND_RELEASE, window)) {
+      int accepted = Fl::handle(FL_DND_RELEASE, window);
+      fl_dnd_over = false;
+      if (accepted && Fl::belowmouse()) {
         fl_selection_requestor = Fl::belowmouse();
+        // select what to request: an image if the widget asked for it, otherwise
+        // files, otherwise text, see Fl::dnd_request()
+        int na;
+        for (na = 0; fl_dnd_source_types && fl_dnd_source_types[na]; na++) { /* empty */ }
+        bool has_files = has_target(fl_dnd_source_types, na, fl_XaTextUriList);
+        Atom image = find_target_image(fl_dnd_source_types, na);
+        Atom text = find_target_plain_text(fl_dnd_source_types, na);
+        Atom raw = 0;
+        if (Fl_Screen_Driver::dnd_requests_raw()) {
+          raw = XInternAtom(fl_display, Fl_Screen_Driver::dnd_requested_type.c_str(), True);
+          if (raw && !has_target(fl_dnd_source_types, na, raw)) raw = 0;
+        }
+        const char *type = Fl_Screen_Driver::dnd_delivery_type(has_files, image != 0, text != 0,
+                                                               raw != 0);
+        Atom target = fl_dnd_type;
         Fl::e_clipboard_type = Fl::clipboard_plain_text;
+        if (raw && type == Fl_Screen_Driver::dnd_requested_type.c_str()) {
+          target = raw;
+          Fl::e_clipboard_type = type; // delivered as is, see SelectionNotify
+        } else if (type == Fl::clipboard_image) {
+          target = image;
+          Fl::e_clipboard_type = Fl::clipboard_image;
+        } else if (type == Fl::clipboard_files) {
+          target = fl_XaTextUriList;
+        } else if (type == Fl::clipboard_plain_text) {
+          target = text;
+        }
+        Fl::e_dnd_action = fl_dnd_action_from_atom(fl_dnd_action);
+        fl_dnd_trace("drop: requesting %s", fl_dnd_atom_name(target));
+        fl_dnd_dropping = true;
         XConvertSelection(fl_display, fl_XdndSelection,
-                          fl_dnd_type, XA_SECONDARY,
+                          target, XA_SECONDARY,
                           to_window, fl_event_time);
       } else {
         // Send the finished message if I refuse the drop.

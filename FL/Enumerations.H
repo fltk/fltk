@@ -349,6 +349,18 @@ enum Fl_Event { // events
   // DEV NOTE: Keep this list in sync with FL/names.h
 };
 
+/** Drag and drop actions.
+ These values can be combined with '|' to describe the actions a drag source
+ allows, see Fl_Drag_Data::actions(int).
+ \version 1.5.0
+ */
+enum Fl_Dnd_Action {
+  FL_DND_NONE = 0, ///< no action; the drag was cancelled or refused
+  FL_DND_COPY = 1, ///< the target copies the data
+  FL_DND_MOVE = 2, ///< the target moves the data; the source should delete its copy
+  FL_DND_LINK = 4  ///< the target creates a link to the data
+};
+
 /** \name When Conditions */
 /**@{*/
 /** These constants determine when a callback is performed.

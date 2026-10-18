@@ -31,8 +31,15 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Drag_Data.H>
 #include "flstring.h"
 #include <string.h> // for memchr
+#include <FL/fl_utf8.h>
+#include <stdlib.h>
+#include <vector>
+#ifndef _WIN32
+#  include <unistd.h> // getpid()
+#endif
 
 #undef min
 #undef max
@@ -834,6 +841,194 @@ size_t Fl_Screen_Driver::convert_crlf(char *s, size_t len) {
     return (dst - s);
   }
   return len;
+}
+
+
+std::string Fl_Screen_Driver::dnd_requested_type;
+int Fl_Screen_Driver::dnd_chosen_action = 0;
+
+
+void Fl_Screen_Driver::dnd_target_reset() {
+  dnd_requested_type.clear();
+  dnd_chosen_action = 0;
+}
+
+
+bool Fl_Screen_Driver::dnd_requests_raw() {
+  const std::string &r = dnd_requested_type;
+  return !r.empty() && r != Fl::clipboard_plain_text && r != Fl::clipboard_image &&
+         r != Fl::clipboard_files;
+}
+
+
+/* Selects what an FL_PASTE event delivers after a drop: the type requested with
+ Fl::dnd_request() if available, otherwise files, otherwise text.
+ A requested MIME type is returned as the requested string, which stays valid
+ until the next drag enters a window.
+ */
+const char *Fl_Screen_Driver::dnd_delivery_type(bool has_files, bool has_image, bool has_text,
+                                                bool has_raw) {
+  const std::string &r = dnd_requested_type;
+  if (has_raw && dnd_requests_raw()) return r.c_str();
+  if (has_image && r == Fl::clipboard_image) return Fl::clipboard_image;
+  if (has_text && r == Fl::clipboard_plain_text) return Fl::clipboard_plain_text;
+  if (has_files) return Fl::clipboard_files;
+  if (has_text) return Fl::clipboard_plain_text;
+  return NULL;
+}
+
+
+/* Returns the action chosen with Fl::dnd_action(), or else the proposed action
+ Fl::e_dnd_action, if allowed by the source. Otherwise returns the first allowed
+ action, or FL_DND_NONE.
+ */
+int Fl_Screen_Driver::dnd_target_action(int allowed) {
+  int a = dnd_chosen_action ? dnd_chosen_action : Fl::e_dnd_action;
+  static const int order[3] = { FL_DND_COPY, FL_DND_MOVE, FL_DND_LINK };
+  for (int i = 0; i < 3; i++) if ((a & order[i]) && (allowed & order[i])) return order[i];
+  for (int i = 0; i < 3; i++) if (allowed & order[i]) return order[i];
+  return FL_DND_NONE;
+}
+
+
+std::string Fl_Screen_Driver::dnd_make_temp_dir(const char *prefix) {
+  const char *tmp = fl_getenv("TMPDIR");
+  if (!tmp || !*tmp) tmp = fl_getenv("TEMP");
+  if (!tmp || !*tmp) tmp = fl_getenv("TMP");
+  if (!tmp || !*tmp) tmp = "/tmp";
+  std::string dir = tmp;
+  if (dir[dir.length() - 1] != '/' && dir[dir.length() - 1] != '\\') dir += '/';
+#ifdef _WIN32
+  unsigned long pid = GetCurrentProcessId();
+#else
+  unsigned long pid = (unsigned long)getpid();
+#endif
+  static int seq = 0;
+  for (int tries = 0; tries < 100; tries++) {
+    char name[100];
+    snprintf(name, sizeof(name), "%s-%lu-%d", prefix, pid, ++seq);
+    if (fl_mkdir((dir + name).c_str(), 0700) == 0) return dir + name;
+  }
+  return std::string();
+}
+
+
+static std::vector<std::string> paths_to_remove;
+
+static void remove_paths() {
+  // files and subdirectories were registered after their directory
+  for (size_t i = paths_to_remove.size(); i > 0; i--) {
+    const char *p = paths_to_remove[i - 1].c_str();
+    if (fl_unlink(p) != 0) fl_rmdir(p);
+  }
+  paths_to_remove.clear();
+}
+
+void Fl_Screen_Driver::dnd_remove_at_exit(const std::string &path) {
+  if (paths_to_remove.empty()) atexit(remove_paths);
+  paths_to_remove.push_back(path);
+}
+
+
+/* Fallback for platforms without typed drag and drop:
+ drags the text, or the list of file paths as text if there is no text.
+ */
+int Fl_Screen_Driver::dnd_data(Fl_Drag_Data *data) {
+  std::string s;
+  if (data->has_text()) {
+    s = data->text();
+  } else if (data->file_count()) {
+    data->write_promises_to_temp_dir();
+    for (int i = 0; i < data->file_count(); i++) {
+      if (!data->file_path(i)) continue;
+      if (!s.empty()) s += '\n';
+      s += data->file_path(i);
+    }
+  }
+  int ret = 0;
+  if (!s.empty()) {
+    Fl::copy(s.c_str(), (int)s.length(), 0);
+    ret = dnd(0);
+  }
+  data->do_callback(ret ? FL_DND_COPY : FL_DND_NONE);
+  delete data;
+  return ret;
+}
+
+
+static int hex_value(char c) {
+  if (c >= '0' && c <= '9') return c - '0';
+  if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+  if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+  return -1;
+}
+
+
+/* Convert a text/uri-list (RFC 2483) into the format FLTK uses for dropped files.
+ Lines are separated by "\r\n" or "\n". Comment lines starting with '#' and empty
+ lines are skipped. URIs with the "file:" scheme are turned into absolute local
+ paths: the scheme and host name are removed and %XY sequences are decoded.
+ Other URIs are kept verbatim. The result has one entry per line and no
+ trailing newline.
+ */
+std::string Fl_Screen_Driver::decode_uri_list(const char *list, size_t len) {
+  std::string result;
+  const char *end = (const char *)memchr(list, 0, len); // some sources include the trailing nul
+  if (!end) end = list + len;
+  const char *p = list;
+  while (p < end) {
+    const char *eol = (const char *)memchr(p, '\n', end - p);
+    if (!eol) eol = end;
+    const char *e = eol;
+    while (e > p && e[-1] == '\r') e--;
+    const char *s = p;
+    p = eol + 1;
+    if (s == e || *s == '#') continue;
+    std::string entry;
+    if (e - s > 5 && strncmp(s, "file:", 5) == 0) {
+      s += 5;
+      if (e - s > 2 && s[0] == '/' && s[1] == '/') {
+        // skip the authority ("localhost" or a host name), keep the path's leading '/'
+        s = (const char *)memchr(s + 2, '/', e - (s + 2));
+        if (!s) continue;
+      }
+      while (s < e) {
+        int h, l;
+        if (*s == '%' && e - s > 2 && (h = hex_value(s[1])) >= 0 && (l = hex_value(s[2])) >= 0) {
+          entry += char((h << 4) | l);
+          s += 3;
+        } else {
+          entry += *s++;
+        }
+      }
+    } else {
+      entry.assign(s, e - s);
+    }
+    if (!result.empty()) result += '\n';
+    result += entry;
+  }
+  return result;
+}
+
+
+/* Convert an absolute local path into a file:// URI.
+ All bytes except unreserved URI characters and '/' are percent-encoded.
+ */
+std::string Fl_Screen_Driver::encode_file_uri(const char *path) {
+  static const char hex[] = "0123456789ABCDEF";
+  std::string uri = "file://";
+  for (const unsigned char *s = (const unsigned char *)path; *s; s++) {
+    unsigned char c = *s;
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') ||
+        c == '/' || c == '-' || c == '.' || c == '_' || c == '~') {
+      uri += char(c);
+    } else {
+      uri += '%';
+      uri += hex[c >> 4];
+      uri += hex[c & 15];
+    }
+  }
+  return uri;
 }
 
 

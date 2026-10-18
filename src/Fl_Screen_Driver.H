@@ -26,6 +26,7 @@
 #include <FL/fl_types.h>
 #include <FL/Fl.H> // for Fl_Timeout_Handler
 #include <FL/Fl_Text_Editor.H>
+#include <string>
 
 namespace Fl {
 // Initialize screen driver and details of available screens.
@@ -45,6 +46,7 @@ extern void init_screens();     // recompute screen number and dimensions
 
 class Fl_Window;
 class Fl_RGB_Image;
+class Fl_Drag_Data;
 class Fl_Group;
 class Fl_Input;
 class Fl_System_Driver;
@@ -166,6 +168,29 @@ public:
   // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
   // the selected text during the D&D operation
   virtual int dnd(int use_selection = 0) { (void)use_selection; return 0; }
+  // implement to support typed drag and drop; takes ownership of data
+  virtual int dnd_data(Fl_Drag_Data *data);
+  // implement to support Fl::dnd_contains() for the drag in progress over an FLTK window
+  virtual int dnd_contains(const char * /*type*/) { return 0; }
+  // drop target state, see Fl::dnd_request() and Fl::dnd_action()
+  static std::string dnd_requested_type;
+  static int dnd_chosen_action; // 0 if the widget didn't choose
+  // call when a drag enters a window of this program, before sending FL_DND_ENTER
+  static void dnd_target_reset();
+  // true if the widget requested a MIME type that is not one of FLTK's types
+  static bool dnd_requests_raw();
+  // returns the FLTK type to deliver when data is dropped, NULL if none is available;
+  // has_raw tells if the requested MIME type is available, see dnd_requests_raw()
+  static const char *dnd_delivery_type(bool has_files, bool has_image, bool has_text,
+                                       bool has_raw = false);
+  // returns the one action to perform, given the actions the source allows
+  static int dnd_target_action(int allowed);
+  // creates a new empty directory "<prefix>-<pid>-<n>" in the temporary directory;
+  // returns its path, or an empty string on error
+  static std::string dnd_make_temp_dir(const char *prefix);
+  // removes a file or a directory (which must then be empty) when the program exits;
+  // register directories before the files they contain
+  static void dnd_remove_at_exit(const std::string &path);
   // null means no platform-specific key bindings for Fl_Text_Editor
   Fl_Text_Editor::Key_Binding *text_editor_extra_key_bindings;
   // default implementation may be enough
@@ -206,6 +231,10 @@ public:
   static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                  Fl_RGB_Image *full_img);
   static size_t convert_crlf(char *s, size_t len);
+  // convert a text/uri-list (RFC 2483) to FLTK's dropped-files format
+  static std::string decode_uri_list(const char *list, size_t len);
+  // convert an absolute local path to a percent-encoded file:// URI
+  static std::string encode_file_uri(const char *path);
   // optional platform-specific key handling for Fl_Input widget
   // the default implementation may be enough
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);

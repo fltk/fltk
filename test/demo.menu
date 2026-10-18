@@ -80,6 +80,7 @@
 	@o:Input Choice:input_choice
 	@o:Preferences:preferences
 	@o:Threading:threads
+	@o:Drag and Drop:dnd
 	@o:XForms Emulation:forms
 	@o:Colors and Fonts...:@of
 		@of:X Color\nBrowser:colbrowser rgb.txt

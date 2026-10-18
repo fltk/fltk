@@ -30,6 +30,8 @@
 
 #include <stdlib.h>
 #include "flstring.h"
+#include <string>
+#include <vector>
 
 #if defined(DEBUG) || defined(DEBUG_WATCH)
 #  include <stdio.h>
@@ -70,6 +72,7 @@ float           Fl::e_dy_f = 0.0f;
 char            *Fl::e_text = (char *)"";
 int             Fl::e_length;
 const char      *Fl::e_clipboard_type = "";
+int              Fl::e_dnd_action = FL_DND_COPY;
 void            *Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
@@ -93,6 +96,7 @@ Fl_Window       *Fl::modal_;       // topmost modal() window
 
 char const * const Fl::clipboard_plain_text = "text/plain";
 char const * const Fl::clipboard_image = "image";
+char const * const Fl::clipboard_files = "files";
 
 /**
   Copies selections on X11 directly to the clipboard if enabled.
@@ -2314,6 +2318,144 @@ int Fl::draw_GL_text_with_textures() {
 int Fl::dnd()
 {
   return Fl::screen_driver()->dnd();
+}
+
+/**
+  Initiates a drag and drop operation offering the data described by \p data.
+
+  Call this from the handle() method of a widget in response to an FL_DRAG
+  event. The data can contain text, images, data of any MIME type, and any
+  number of existing or promised files. The drop target picks the
+  representation it understands.
+
+  This function takes ownership of \p data and deletes it when the drag
+  and drop operation has ended. On some platforms (macOS, Wayland) this
+  function returns before the operation ends; use Fl_Drag_Data::callback()
+  to learn when and how the drag ended.
+
+  \param[in] data  the dragged data, allocated with \c new
+  \return 1 if the drag operation was started, 0 otherwise
+
+  \see Fl_Drag_Data
+  \version 1.5.0
+*/
+int Fl::dnd(Fl_Drag_Data *data)
+{
+  if (!data) return 0;
+  return Fl::screen_driver()->dnd_data(data);
+}
+
+/**
+  Returns non-zero if the data dragged over a widget contains data of the given type.
+
+  Call this while handling FL_DND_ENTER, FL_DND_DRAG, or FL_DND_RELEASE to decide
+  whether to accept the drop.
+
+  \param[in] type  Fl::clipboard_plain_text, Fl::clipboard_image,
+          Fl::clipboard_files, or a MIME type such as "image/png"
+  \note Some platforms (X11, Wayland) can only tell that a list of URIs is
+          offered: Fl::dnd_contains(Fl::clipboard_files) also returns non-zero
+          when a web link is dragged.
+  \see Fl::dnd_request()
+  \version 1.5.0
+*/
+int Fl::dnd_contains(const char *type)
+{
+  if (!type) return 0;
+  return Fl::screen_driver()->dnd_contains(type);
+}
+
+/**
+  Requests the type of data a widget receives when the dragged data is dropped.
+
+  Call this while handling FL_DND_ENTER, FL_DND_DRAG, or FL_DND_RELEASE.
+  Without a request, or if the requested type is not available, dropped files are
+  delivered as Fl::clipboard_files, and otherwise text is delivered as
+  Fl::clipboard_plain_text.
+  If Fl::clipboard_image is requested and an image is available, the FL_PASTE
+  event delivers it as described for Fl::paste(Fl_Widget&, int, const char*):
+  Fl::event_clipboard() returns an Fl_RGB_Image that the widget owns if it
+  returns 1 from handle().
+
+  \note On X11 and Wayland, dropped images are usually PNG data. To decode them,
+  the program must be linked with the fltk_images library and call
+  fl_register_images(), as for pasting images from the clipboard. If the image
+  can't be decoded, the widget receives no FL_PASTE event.
+
+  Any other MIME type, for example "application/pdf" or "image/png", can also be
+  requested. If the drag offers it, Fl::event_clipboard_type() is the requested
+  MIME type, and Fl::event_text() and Fl::event_length() contain the data,
+  which can contain nul bytes. Use strcmp() to compare the type.
+
+  \param[in] type  Fl::clipboard_plain_text, Fl::clipboard_image, Fl::clipboard_files,
+          or a MIME type
+  \version 1.5.0
+*/
+void Fl::dnd_request(const char *type)
+{
+  Fl_Screen_Driver::dnd_requested_type = type ? type : "";
+}
+
+/**
+  Chooses the drag and drop action a widget performs if the data is dropped on it.
+
+  Call this while handling FL_DND_ENTER, FL_DND_DRAG, or FL_DND_RELEASE. Without a
+  choice, or if the drag source doesn't allow the chosen action, the action
+  proposed by the source is used, see Fl::event_dnd_action().
+
+  \param[in] action  FL_DND_COPY, FL_DND_MOVE, or FL_DND_LINK
+  \version 1.5.0
+*/
+void Fl::dnd_action(int action)
+{
+  Fl_Screen_Driver::dnd_chosen_action = action;
+}
+
+static std::vector<std::string> dnd_files;
+static std::string dnd_files_text;
+
+static void split_dnd_files() {
+  std::string text;
+  if (Fl::e_clipboard_type == Fl::clipboard_files && Fl::e_text)
+    text.assign(Fl::e_text, Fl::e_length);
+  if (text == dnd_files_text) return; // already split
+  dnd_files_text = text;
+  dnd_files.clear();
+  size_t start = 0;
+  while (start < text.length()) {
+    size_t end = text.find('\n', start);
+    if (end == std::string::npos) end = text.length();
+    if (end > start) dnd_files.push_back(text.substr(start, end - start));
+    start = end + 1;
+  }
+}
+
+/**
+  Returns the number of files dropped onto a widget.
+
+  This is valid during an FL_PASTE event of type Fl::clipboard_files and returns 0 otherwise.
+  \see Fl::dnd_file(int)
+  \version 1.5.0
+*/
+int Fl::dnd_file_count()
+{
+  split_dnd_files();
+  return (int)dnd_files.size();
+}
+
+/**
+  Returns the absolute path of a file dropped onto a widget, in UTF-8 encoding.
+
+  This is valid during an FL_PASTE event of type Fl::clipboard_files.
+  \param[in] i  index of the file, from 0 to Fl::dnd_file_count() - 1
+  \return the path, or NULL if \p i is out of range
+  \version 1.5.0
+*/
+const char *Fl::dnd_file(int i)
+{
+  split_dnd_files();
+  if (i < 0 || i >= (int)dnd_files.size()) return NULL;
+  return dnd_files[i].c_str();
 }
 
 int Fl::event_key(int k) {

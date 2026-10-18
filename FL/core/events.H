@@ -65,6 +65,7 @@ FL_EXPORT extern int                e_length;           ///< Length of text in e
 // Clipboard data (for paste events)
 FL_EXPORT extern void*              e_clipboard_data;   ///< Pasted data pointer
 FL_EXPORT extern const char*        e_clipboard_type;   ///< Type of pasted data
+FL_EXPORT extern int                e_dnd_action;       ///< Proposed or performed drag and drop action
 
 // Event handling infrastructure
 FL_EXPORT extern Fl_Event_Dispatch  e_dispatch;         ///< Custom event dispatcher
@@ -394,15 +395,37 @@ FL_EXPORT extern char const * const clipboard_plain_text;
  */
 FL_EXPORT extern char const * const clipboard_image;
 
+/** Denotes a list of files.
+ This is the type of the FL_PASTE event that delivers files dropped onto a widget.
+ Fl::event_text() contains the absolute paths of the files in UTF-8 encoding,
+ one per line, without a newline after the last path.
+ \see Fl::dnd_file_count(), Fl::dnd_file()
+ \version 1.5.0
+ */
+FL_EXPORT extern char const * const clipboard_files;
+
 /** During an FL_PASTE event of non-textual data, returns a pointer to the pasted data.
  The returned data is an Fl_RGB_Image * when the result of Fl::event_clipboard_type() is Fl::clipboard_image.
  */
 FL_EXPORT inline void *event_clipboard()        { return e_clipboard_data; }
 
 /** Returns the type of the pasted data during an FL_PASTE event.
- This type can be Fl::clipboard_plain_text or Fl::clipboard_image.
+ This type can be Fl::clipboard_plain_text, Fl::clipboard_image, or
+ Fl::clipboard_files (for files dropped onto a widget).
  */
 FL_EXPORT inline const char *event_clipboard_type() { return e_clipboard_type; }
+
+/** Returns the drag and drop action proposed by the drag source.
+ This is valid during FL_DND_ENTER, FL_DND_DRAG, and FL_DND_RELEASE events,
+ and during the FL_PASTE event that follows a drop. It is one of FL_DND_COPY,
+ FL_DND_MOVE, and FL_DND_LINK, and takes into account the modifier keys the
+ user holds, following the conventions of the platform. During FL_PASTE, it is
+ the action that was performed. If it is FL_DND_MOVE, the receiving widget is
+ responsible for moving dropped files; the source deletes moved text or data.
+ \see Fl::dnd_action(int)
+ \version 1.5.0
+ */
+FL_EXPORT inline int event_dnd_action() { return e_dnd_action; }
 
 
 //
