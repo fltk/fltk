@@ -571,9 +571,9 @@ public:
    added by the window manager.
 
    Same as h() if applied to a subwindow, or if window is not yet mapped.
-   \note Under X11, the call to this member functions decorated_h() and decorated_w()
-   should not be done immediately after a call to Fl_Window::show(); it may be necessary
-   to call Fl_Window::wait_for_expose() in between for decorated_h() and decorated_w() to
+   \note Under X11, member functions decorated_h() and decorated_w()
+   should not be called immediately after a call to Fl_Window::show(); it may be necessary
+   to call Fl_Window::wait_for_expose() in between for them to
    return  correct values.
 
    \note Under X11 again, the values returned by decorated_h() and decorated_w()
