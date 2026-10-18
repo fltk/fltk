@@ -31,6 +31,9 @@ extern "C" {
 #include <FL/fl_draw.H>
 #include <FL/Fl_Rect.H>
 #include <FL/fl_string_functions.h>
+#include <FL/Fl_Drag_Data.H>
+#include <FL/Fl_Widget_Tracker.H>
+#include <FL/filename.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
@@ -49,6 +52,7 @@ extern "C" {
 #include <pwd.h>
 #include <utility> // std::swap()
 #include <string>
+#include <memory> // std::shared_ptr
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7 || \
     MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_7
@@ -2066,6 +2070,169 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
 
 Fl_Window *fl_dnd_target_window = 0;
 
+// State of a drag started with Fl::dnd(Fl_Drag_Data*). It is shared by the dragging
+// session and by the file promise providers, which may be asked to write their file
+// after the session has ended. When the last reference is gone, the callback of
+// the Fl_Drag_Data object runs and the object is deleted.
+struct FLDragState {
+  Fl_Drag_Data *data;
+  int action;
+  FLDragState(Fl_Drag_Data *d) : data(d), action(FL_DND_NONE) {}
+  ~FLDragState() {
+    data->do_callback(action);
+    delete data;
+  }
+};
+typedef std::shared_ptr<FLDragState> FLDragStateRef;
+static FLDragStateRef current_drag_state; // the dragging session in progress, if any
+
+static Fl_RGB_Image* get_image_from_pasteboard(NSPasteboard *clip);
+static NSString *uti_from_mime_type(const char *mime_type, const char *file_name);
+
+// The pasteboard of the drag in progress over a window of this program, if any
+static NSPasteboard *fl_dnd_pasteboard = nil;
+// The operation answered to the drag in progress over a window of this program
+static NSDragOperation fl_dnd_operation = NSDragOperationNone;
+static NSArray *fl_dnd_image_types() {
+  return [NSArray arrayWithObjects:NSPasteboardTypeTIFF, NSPasteboardTypePNG, NSPasteboardTypePDF, nil];
+}
+static NSArray *fl_dnd_text_types() {
+  return [NSArray arrayWithObjects:NSPasteboardTypeString, @"public.utf16-plain-text", nil];
+}
+
+// Sets the pasteboard and the proposed action of a drag entering or moving
+// over a window of this program
+static void fl_dnd_update(id <NSDraggingInfo> sender) {
+  NSPasteboard *pb = [sender draggingPasteboard];
+  if (pb != fl_dnd_pasteboard) {
+    [fl_dnd_pasteboard release];
+    fl_dnd_pasteboard = [pb retain];
+  }
+  // the mask takes into account the modifier keys: Option = copy, Command = move,
+  // Control+Option = link
+  NSDragOperation mask = [sender draggingSourceOperationMask];
+  if (mask & NSDragOperationCopy) Fl::e_dnd_action = FL_DND_COPY;
+  else if (mask & (NSDragOperationMove | NSDragOperationGeneric)) Fl::e_dnd_action = FL_DND_MOVE;
+  else if (mask & NSDragOperationLink) Fl::e_dnd_action = FL_DND_LINK;
+  else Fl::e_dnd_action = FL_DND_NONE;
+}
+
+// Returns the operation to answer if the widget below the mouse accepts the drag
+static NSDragOperation fl_dnd_answer(id <NSDraggingInfo> sender, int accepted) {
+  if (!accepted) return (fl_dnd_operation = NSDragOperationNone);
+  NSDragOperation mask = [sender draggingSourceOperationMask];
+  int allowed = 0;
+  if (mask & NSDragOperationCopy) allowed |= FL_DND_COPY;
+  if (mask & (NSDragOperationMove | NSDragOperationGeneric)) allowed |= FL_DND_MOVE;
+  if (mask & NSDragOperationLink) allowed |= FL_DND_LINK;
+  switch (Fl_Screen_Driver::dnd_target_action(allowed)) {
+    case FL_DND_COPY: fl_dnd_operation = NSDragOperationCopy; break;
+    case FL_DND_MOVE: fl_dnd_operation = (mask & NSDragOperationMove) ? NSDragOperationMove
+                                                                        : NSDragOperationGeneric; break;
+    case FL_DND_LINK: fl_dnd_operation = NSDragOperationLink; break;
+    default: fl_dnd_operation = NSDragOperationNone; break;
+  }
+  return fl_dnd_operation;
+}
+
+static void fl_dnd_clear() {
+  [fl_dnd_pasteboard release];
+  fl_dnd_pasteboard = nil;
+}
+
+// pasteboard types of files promised by the drag source (e.g. Mail, Photos, Safari)
+static NSArray *fl_dnd_promise_types() {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  if (fl_mac_os_version >= 101200) return [NSFilePromiseReceiver readableDraggedTypes];
+#endif
+  return [NSArray array];
+}
+
+static bool fl_dnd_has_files(NSPasteboard *pb) {
+  if ([[pb types] containsObject:fl_filenames_pboard_type]) return true;
+  return [pb availableTypeFromArray:fl_dnd_promise_types()] != nil;
+}
+
+// Files promised by the source of a drop, which are received asynchronously
+struct FLPromisedDrop {
+  Fl_Widget_Tracker *widget; // the widget the files were dropped on
+  std::vector<std::string> files;
+  int pending; // number of files not received yet
+  int action;
+};
+
+// Delivers the received files of a drop to the widget in an FL_PASTE event
+static void fl_deliver_promised_drop(void *v) {
+  FLPromisedDrop *d = (FLPromisedDrop *)v;
+  if (d->widget->exists() && !d->files.empty()) {
+    std::string list;
+    for (size_t i = 0; i < d->files.size(); i++) {
+      if (i) list += '\n';
+      list += d->files[i];
+    }
+    Fl::e_text = (char *)list.c_str();
+    Fl::e_length = (int)list.length();
+    Fl::e_clipboard_type = Fl::clipboard_files;
+    Fl::e_dnd_action = d->action;
+    int old_event = Fl::e_number;
+    d->widget->widget()->handle(Fl::e_number = FL_PASTE);
+    Fl::e_number = old_event;
+    Fl::e_text = (char *)"";
+    Fl::e_length = 0;
+  }
+  d->files.clear(); // files that arrive later are delivered in another FL_PASTE event
+  if (d->pending <= 0) {
+    delete d->widget;
+    delete d;
+  }
+}
+
+/* Asks the source of a drop to write its promised files into a new temporary
+ directory, which is removed when the program exits. The files are delivered to
+ the widget when they have all been received. Returns false if nothing is promised.
+ */
+static bool fl_receive_promised_files(NSPasteboard *pb, Fl_Widget *widget, int action) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  if (fl_mac_os_version < 101200) return false;
+  NSArray *receivers = [pb readObjectsForClasses:[NSArray arrayWithObject:[NSFilePromiseReceiver class]]
+                                         options:nil];
+  if ([receivers count] == 0) return false;
+  std::string dir = Fl_Screen_Driver::dnd_make_temp_dir("fltk-dnd-received");
+  if (dir.empty()) return false;
+  Fl_Screen_Driver::dnd_remove_at_exit(dir);
+  FLPromisedDrop *d = new FLPromisedDrop;
+  d->widget = new Fl_Widget_Tracker(widget);
+  d->pending = 0;
+  d->action = action;
+  for (NSFilePromiseReceiver *r in receivers) {
+    NSUInteger n = [[r fileNames] count];
+    d->pending += (n ? (int)n : 1);
+  }
+  NSURL *destination = [NSURL fileURLWithPath:[NSString stringWithUTF8String:dir.c_str()]
+                                  isDirectory:YES];
+  for (NSFilePromiseReceiver *r in receivers) {
+    [r receivePromisedFilesAtDestination:destination
+                                 options:[NSDictionary dictionary]
+                          operationQueue:[NSOperationQueue mainQueue]
+                                  reader:^(NSURL *fileURL, NSError *errorOrNil) {
+      if (!errorOrNil && fileURL) {
+        std::string path = [fileURL fileSystemRepresentation];
+        Fl_Screen_Driver::dnd_remove_at_exit(path);
+        d->files.push_back(path);
+      }
+      if (d->pending > 0) d->pending--;
+      // deliver when all files are there, or 1 second after the last file if
+      // the source announced more files than it delivers
+      Fl::remove_timeout(fl_deliver_promised_drop, d);
+      Fl::add_timeout(d->pending == 0 ? 0.0 : 1.0, fl_deliver_promised_drop, d);
+    }];
+  }
+  return true;
+#else
+  return false;
+#endif
+}
+
 static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mininame) {
   CFStringRef title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
   if(!title) { // fallback when name contains malformed UTF-8
@@ -2512,11 +2679,14 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
+  Fl_Screen_Driver::dnd_target_reset();
+  fl_dnd_update(sender);
   int ret = Fl::handle( FL_DND_ENTER, target );
+  NSDragOperation op = fl_dnd_answer(sender, ret);
   Fl_Cocoa_Screen_Driver::breakMacEventLoop();
   fl_unlock_function();
   Fl::flush();
-  return ret ? NSDragOperationCopy : NSDragOperationNone;
+  return op;
 }
 - (NSDragOperation)draggingUpdated:(id < NSDraggingInfo >)sender
 {
@@ -2524,32 +2694,92 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
+  fl_dnd_update(sender);
   int ret = Fl::handle( FL_DND_DRAG, target );
+  NSDragOperation op = fl_dnd_answer(sender, ret);
   Fl_Cocoa_Screen_Driver::breakMacEventLoop();
   fl_unlock_function();
   // if the DND started in the same application, Fl::dnd() will not return until
   // the DND operation is finished. The call below causes the drop indicator
   // to be drawn correctly (a full event handling would be better...)
   Fl::flush();
-  return ret ? NSDragOperationCopy : NSDragOperationNone;
+  return op;
 }
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
 {
   static char *DragData = NULL;
   fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
-  if ( !Fl::handle( FL_DND_RELEASE, target ) ) {
+  update_e_xy_and_e_xy_root([self window]);
+  fl_dnd_update(sender);
+  if ( !Fl::handle( FL_DND_RELEASE, target ) || !Fl::belowmouse() ) {
+    fl_dnd_clear();
     Fl_Cocoa_Screen_Driver::breakMacEventLoop();
     fl_unlock_function();
     return NO;
   }
-  NSPasteboard *pboard;
-  // NSDragOperation sourceDragMask;
-  // sourceDragMask = [sender draggingSourceOperationMask];
-  pboard = [sender draggingPasteboard];
-  update_e_xy_and_e_xy_root([self window]);
+  NSPasteboard *pboard = [sender draggingPasteboard];
+  bool has_files = fl_dnd_has_files(pboard);
+  bool has_image = ([pboard availableTypeFromArray:fl_dnd_image_types()] != nil);
+  bool has_text = [[pboard types] containsObject:NSPasteboardTypeString];
+  NSString *raw_uti = nil;
+  if (Fl_Screen_Driver::dnd_requests_raw()) {
+    raw_uti = uti_from_mime_type(Fl_Screen_Driver::dnd_requested_type.c_str(), NULL);
+    if (![[pboard types] containsObject:raw_uti]) raw_uti = nil;
+  }
+  const char *type = Fl_Screen_Driver::dnd_delivery_type(has_files, has_image, has_text,
+                                                         raw_uti != nil);
+  // the action performed is the one answered to the last draggingUpdated: message
+  if (fl_dnd_operation & (NSDragOperationMove | NSDragOperationGeneric)) Fl::e_dnd_action = FL_DND_MOVE;
+  else if (fl_dnd_operation & NSDragOperationLink) Fl::e_dnd_action = FL_DND_LINK;
+  else Fl::e_dnd_action = FL_DND_COPY;
+  fl_dnd_clear();
   if (DragData) { free(DragData); DragData = NULL; }
-  if ([[pboard types] containsObject:fl_filenames_pboard_type]) {
+  int old_event = Fl::e_number;
+  if (type == Fl::clipboard_image) {
+    Fl_RGB_Image *image = get_image_from_pasteboard(pboard);
+    if (image) {
+      Fl::e_clipboard_data = image;
+      Fl::e_clipboard_type = Fl::clipboard_image;
+      Fl::e_text = (char *)"";
+      Fl::e_length = 0;
+      if (!Fl::belowmouse()->handle(Fl::e_number = FL_PASTE)) delete image;
+      Fl::e_number = old_event;
+      Fl::e_clipboard_data = NULL;
+    }
+    fl_dnd_target_window = NULL;
+    Fl_Cocoa_Screen_Driver::breakMacEventLoop();
+    fl_unlock_function();
+    return image ? YES : NO;
+  }
+  if (type && raw_uti && type == Fl_Screen_Driver::dnd_requested_type.c_str()) {
+    // data of the MIME type requested with Fl::dnd_request()
+    NSData *data = [pboard dataForType:raw_uti];
+    DragData = (char *)malloc([data length] + 1);
+    [data getBytes:DragData length:[data length]];
+    DragData[[data length]] = 0;
+    Fl::e_text = DragData;
+    Fl::e_length = (int)[data length];
+    Fl::e_clipboard_type = type;
+    Fl::belowmouse()->handle(Fl::e_number = FL_PASTE);
+    Fl::e_number = old_event;
+    free(DragData); DragData = NULL;
+    Fl::e_text = NULL;
+    Fl::e_length = 0;
+    fl_dnd_target_window = NULL;
+    Fl_Cocoa_Screen_Driver::breakMacEventLoop();
+    fl_unlock_function();
+    return YES;
+  }
+  if (type == Fl::clipboard_files && ![[pboard types] containsObject:fl_filenames_pboard_type]) {
+    // promised files: received asynchronously, then delivered to the widget
+    bool ok = fl_receive_promised_files(pboard, Fl::belowmouse(), Fl::e_dnd_action);
+    fl_dnd_target_window = NULL;
+    Fl_Cocoa_Screen_Driver::breakMacEventLoop();
+    fl_unlock_function();
+    return ok ? YES : NO;
+  }
+  if (type == Fl::clipboard_files) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
     if (fl_mac_os_version >= 101300) {
       NSArray *a = [pboard readObjectsForClasses:[NSArray arrayWithObject:[NSURL class]]
@@ -2557,6 +2787,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
       NSEnumerator *enumerator = [a objectEnumerator];
       NSURL *url;
       while ((url = (NSURL*)[enumerator nextObject]) != nil) {
+        if (![url isFileURL]) continue;
         const char *p = [url fileSystemRepresentation]; // 10.9
         if (!DragData) {
           DragData = strdup(p);
@@ -2568,6 +2799,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
           DragData = drag2;
         }
       }
+      if (!DragData) DragData = strdup("");
     } else
 #endif
     {
@@ -2580,12 +2812,12 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
       CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
       CFRelease(all);
     }
-  } else if ([[pboard types] containsObject:NSPasteboardTypeString]) {
+  } else if (type == Fl::clipboard_plain_text) {
     NSData *data = [pboard dataForType:NSPasteboardTypeString];
     DragData = (char *)malloc([data length] + 1);
     [data getBytes:DragData length:[data length]];
     DragData[([data length])] = 0;
-    Fl_Screen_Driver::convert_crlf(DragData, strlen(DragData));
+    DragData[Fl_Screen_Driver::convert_crlf(DragData, strlen(DragData))] = 0;
   }
   else {
     Fl_Cocoa_Screen_Driver::breakMacEventLoop();
@@ -2594,7 +2826,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   }
   Fl::e_text = DragData;
   Fl::e_length = (int)strlen(DragData);
-  int old_event = Fl::e_number;
+  Fl::e_clipboard_type = type;
   Fl::belowmouse()->handle(Fl::e_number = FL_PASTE);
   Fl::e_number = old_event;
   if (DragData) { free(DragData); DragData = NULL; }
@@ -2612,6 +2844,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
     fl_dnd_target_window = 0;
   }
+  fl_dnd_clear();
   fl_unlock_function();
 }
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
@@ -2813,11 +3046,25 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
-  return NSDragOperationCopy;
+  if (!current_drag_state) return NSDragOperationCopy;
+  int actions = current_drag_state->data->actions();
+  NSDragOperation mask = NSDragOperationNone;
+  if (actions & FL_DND_COPY) mask |= NSDragOperationCopy;
+  if (actions & FL_DND_MOVE) mask |= NSDragOperationMove;
+  if (actions & FL_DND_LINK) mask |= NSDragOperationLink;
+  return mask;
 }
 - (void)draggingSession:(NSDraggingSession *)session
            endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
 {
+  if (current_drag_state) {
+    int action = FL_DND_NONE;
+    if (operation & NSDragOperationMove) action = FL_DND_MOVE;
+    else if (operation & (NSDragOperationCopy | NSDragOperationGeneric)) action = FL_DND_COPY;
+    else if (operation & NSDragOperationLink) action = FL_DND_LINK;
+    current_drag_state->action = action;
+    current_drag_state.reset(); // promise providers may still hold a reference
+  }
   Fl_Widget *w = Fl::pushed();
   if ( w ) {
     int old_event = Fl::e_number;
@@ -2991,8 +3238,11 @@ void Fl_Cocoa_Window_Driver::makeWindow()
     this->y( round((main_screen_height - crect.origin.y)/s) - w->h() );
   }
   // Install DnD handlers
-  [myview registerForDraggedTypes:[NSArray arrayWithObjects:NSPasteboardTypeString,
-                                   fl_filenames_pboard_type, nil]];
+  NSMutableArray *dragged_types = [NSMutableArray arrayWithObjects:NSPasteboardTypeString,
+                                   fl_filenames_pboard_type, NSPasteboardTypeTIFF,
+                                   NSPasteboardTypePNG, NSPasteboardTypePDF, nil];
+  [dragged_types addObjectsFromArray:fl_dnd_promise_types()];
+  [myview registerForDraggedTypes:dragged_types];
 
   if (pWindow->get_size_range(NULL, NULL, NULL, NULL, NULL, NULL, NULL)) size_range();
 
@@ -3594,11 +3844,12 @@ static void get_plain_text_from_clipboard(int clipboard)
   }
 }
 
-static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
+// Returns an image from the clipboard or from the pasteboard of a drag operation
+static Fl_RGB_Image* get_image_from_pasteboard(NSPasteboard *clip)
 {
-  NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
-  NSArray  *possible = [NSArray arrayWithObjects:NSPasteboardTypePDF, NSPasteboardTypeTIFF, PICT_pasteboard_type, nil];
+  NSArray  *possible = [NSArray arrayWithObjects:NSPasteboardTypePDF, NSPasteboardTypeTIFF,
+                        NSPasteboardTypePNG, PICT_pasteboard_type, nil];
   NSString *found = nil;
   NSUInteger rank;
   for (NSUInteger i = 0; (!found) && i < [possible count]; i++) {
@@ -3613,7 +3864,7 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
   NSData *data = [clip dataForType:found];
   if (!data) return NULL;
   NSBitmapImageRep *bitmap = nil;
-  if ([found isEqualToString:NSPasteboardTypeTIFF]) {
+  if ([found isEqualToString:NSPasteboardTypeTIFF] || [found isEqualToString:NSPasteboardTypePNG]) {
     bitmap = [[NSBitmapImageRep alloc] initWithData:data];
   }
   else if ([found isEqualToString:NSPasteboardTypePDF] || [found isEqualToString:PICT_pasteboard_type]) {
@@ -3643,7 +3894,7 @@ void Fl_Cocoa_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const cha
       get_plain_text_from_clipboard(1);
     }
     else if (strcmp(type, Fl::clipboard_image) == 0) {
-      Fl::e_clipboard_data = get_image_from_clipboard(&receiver);
+      Fl::e_clipboard_data = get_image_from_pasteboard([NSPasteboard generalPasteboard]);
       if (Fl::e_clipboard_data) {
         int done = receiver.handle(FL_PASTE);
         Fl::e_clipboard_type = "";
@@ -4037,6 +4288,295 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   [localPool release];
   return true;
 }
+
+// ---- Typed drag and drop with Fl::dnd(Fl_Drag_Data*) ----
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#  define NSBitmapImageFileTypePNG NSPNGFileType
+#  define NSBitmapFormatAlphaNonpremultiplied NSAlphaNonpremultipliedBitmapFormat
+#endif
+
+// Returns the Uniform Type Identifier for a MIME type, or else for the extension of a file name
+static NSString *uti_from_mime_type(const char *mime_type, const char *file_name) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  CFStringRef uti = NULL;
+  if (mime_type && *mime_type) {
+    CFStringRef mime = CFStringCreateWithCString(NULL, mime_type, kCFStringEncodingUTF8);
+    if (mime) {
+      uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mime, NULL);
+      CFRelease(mime);
+    }
+  }
+  const char *ext = file_name ? fl_filename_ext(file_name) : "";
+  if ((!uti || UTTypeIsDynamic(uti)) && *ext) {
+    CFStringRef cfext = CFStringCreateWithCString(NULL, ext + 1, kCFStringEncodingUTF8);
+    if (cfext) {
+      CFStringRef uti2 = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, cfext, NULL);
+      CFRelease(cfext);
+      if (uti2 && (!uti || !UTTypeIsDynamic(uti2))) {
+        if (uti) CFRelease(uti);
+        uti = uti2;
+      } else if (uti2) CFRelease(uti2);
+    }
+  }
+#pragma clang diagnostic pop
+  if (!uti) return @"public.data";
+  return [(NSString *)uti autorelease];
+}
+
+int Fl_Cocoa_Screen_Driver::dnd_contains(const char *type) {
+  if (!fl_dnd_pasteboard) return 0;
+  NSArray *types;
+  if (!strcmp(type, Fl::clipboard_files)) return fl_dnd_has_files(fl_dnd_pasteboard);
+  else if (!strcmp(type, Fl::clipboard_plain_text)) types = fl_dnd_text_types();
+  else if (!strcmp(type, Fl::clipboard_image)) types = fl_dnd_image_types();
+  else types = [NSArray arrayWithObject:uti_from_mime_type(type, NULL)];
+  return [fl_dnd_pasteboard availableTypeFromArray:types] != nil;
+}
+
+// Returns an autoreleased bitmap with the pixels of img as non-premultiplied RGBA
+static NSBitmapImageRep *bitmap_from_image(const Fl_RGB_Image *img) {
+  int w = img->data_w(), h = img->data_h(), d = img->d();
+  int ld = img->ld() ? img->ld() : w * d;
+  if (w <= 0 || h <= 0 || d < 1 || d > 4 || !img->array) return nil;
+  NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                                  pixelsWide:w
+                                                                  pixelsHigh:h
+                                                               bitsPerSample:8
+                                                             samplesPerPixel:4
+                                                                    hasAlpha:YES
+                                                                    isPlanar:NO
+                                                              colorSpaceName:NSDeviceRGBColorSpace
+                                                                bitmapFormat:NSBitmapFormatAlphaNonpremultiplied
+                                                                 bytesPerRow:w * 4
+                                                                bitsPerPixel:32];
+  if (!rep) return nil;
+  for (int y = 0; y < h; y++) {
+    const uchar *src = img->array + y * ld;
+    unsigned char *dst = [rep bitmapData] + y * [rep bytesPerRow];
+    for (int x = 0; x < w; x++, src += d, dst += 4) {
+      switch (d) {
+        case 1: dst[0] = dst[1] = dst[2] = src[0]; dst[3] = 255; break;
+        case 2: dst[0] = dst[1] = dst[2] = src[0]; dst[3] = src[1]; break;
+        case 3: dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = 255; break;
+        default: memcpy(dst, src, 4); break;
+      }
+    }
+  }
+  [rep setSize:NSMakeSize(img->w(), img->h())];
+  return [rep autorelease];
+}
+
+// Returns an autoreleased image showing img with a size of img->w() x img->h() FLTK units
+static NSImage *nsimage_from_image(const Fl_RGB_Image *img, float scale) {
+  NSBitmapImageRep *rep = bitmap_from_image(img);
+  if (!rep) return nil;
+  NSSize size = NSMakeSize(img->w() * scale, img->h() * scale);
+  [rep setSize:size];
+  NSImage *image = [[[NSImage alloc] initWithSize:size] autorelease];
+  [image addRepresentation:rep];
+  return image;
+}
+
+// Collects the text, image, and raw data representations of a drag
+static void collect_representations(Fl_Drag_Data *data, NSMutableArray *types,
+                                    NSMutableDictionary *values) {
+  if (data->has_text()) {
+    [types addObject:NSPasteboardTypeString];
+    [values setObject:[NSData dataWithBytes:data->text().data() length:data->text().length()]
+               forKey:NSPasteboardTypeString];
+  }
+  if (data->image()) {
+    NSBitmapImageRep *rep = bitmap_from_image(data->image());
+    NSData *png = [rep representationUsingType:NSBitmapImageFileTypePNG
+                                    properties:[NSDictionary dictionary]];
+    if (png) {
+      [types addObject:NSPasteboardTypePNG];
+      [values setObject:png forKey:NSPasteboardTypePNG];
+    }
+    NSData *tiff = [rep TIFFRepresentation];
+    if (tiff) {
+      [types addObject:NSPasteboardTypeTIFF];
+      [values setObject:tiff forKey:NSPasteboardTypeTIFF];
+    }
+  }
+  for (int i = 0; i < data->data_count(); i++) {
+    NSString *uti = uti_from_mime_type(data->data_mime_type(i), NULL);
+    if ([values objectForKey:uti]) continue; // the first representation of a type wins
+    [types addObject:uti];
+    [values setObject:[NSData dataWithBytes:data->data_bytes(i).data()
+                                     length:data->data_bytes(i).length()]
+               forKey:uti];
+  }
+}
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+
+// A promised file of an Fl_Drag_Data object. The first promise of a drag also
+// carries the text, image, and data representations of the drag.
+@interface FLFilePromiseProvider : NSFilePromiseProvider <NSFilePromiseProviderDelegate> {
+  FLDragStateRef *state;
+  int index;
+  NSArray *extra_types;
+  NSDictionary *extra_values;
+}
+- (id)initWithState:(const FLDragStateRef &)s index:(int)i fileType:(NSString *)uti
+              types:(NSArray *)types values:(NSDictionary *)values;
+@end
+
+@implementation FLFilePromiseProvider
+- (id)initWithState:(const FLDragStateRef &)s index:(int)i fileType:(NSString *)uti
+              types:(NSArray *)types values:(NSDictionary *)values {
+  self = [super initWithFileType:uti delegate:self];
+  if (self) {
+    state = new FLDragStateRef(s);
+    index = i;
+    extra_types = [types retain];
+    extra_values = [values retain];
+  }
+  return self;
+}
+- (void)dealloc {
+  delete state; // may run the callback of the Fl_Drag_Data object
+  [extra_types release];
+  [extra_values release];
+  [super dealloc];
+}
+- (NSString *)filePromiseProvider:(NSFilePromiseProvider *)provider fileNameForType:(NSString *)fileType {
+  return [NSString stringWithUTF8String:(*state)->data->file_name(index)];
+}
+- (void)filePromiseProvider:(NSFilePromiseProvider *)provider writePromiseToURL:(NSURL *)url
+          completionHandler:(void (^)(NSError *errorOrNil))completionHandler {
+  fl_lock_function();
+  int err = (*state)->data->write_file(index, [url fileSystemRepresentation]);
+  fl_unlock_function();
+  completionHandler(err ? [NSError errorWithDomain:NSCocoaErrorDomain
+                                              code:NSFileWriteUnknownError
+                                          userInfo:nil] : nil);
+}
+- (NSOperationQueue *)operationQueueForFilePromiseProvider:(NSFilePromiseProvider *)provider {
+  return [NSOperationQueue mainQueue]; // FLTK callbacks must run in the main thread
+}
+- (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
+  NSArray *types = [super writableTypesForPasteboard:pasteboard];
+  return extra_types ? [types arrayByAddingObjectsFromArray:extra_types] : types;
+}
+- (id)pasteboardPropertyListForType:(NSString *)type {
+  id value = [extra_values objectForKey:type];
+  return value ? value : [super pasteboardPropertyListForType:type];
+}
+@end
+
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+
+
+int Fl_Cocoa_Screen_Driver::dnd_data(Fl_Drag_Data *data)
+{
+  // from now on, data is deleted when the last reference to state is gone
+  FLDragStateRef state(new FLDragState(data));
+  Fl_Widget *w = Fl::pushed();
+  Fl_Window *win = w ? w->top_window() : Fl::first_window();
+  NSEvent *theEvent = [NSApp currentEvent];
+  if (!win || !fl_mac_xid(win) || !theEvent || current_drag_state) return 0;
+
+  bool use_promises = false;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  use_promises = (fl_mac_os_version >= 101200);
+#endif
+  if (!use_promises) data->write_promises_to_temp_dir();
+
+  NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+  FLView *myview = (FLView*)[fl_mac_xid(win) contentView];
+  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
+  NSMutableArray *types = [NSMutableArray array];
+  NSMutableDictionary *values = [NSMutableDictionary dictionary];
+  collect_representations(data, types, values);
+
+  NSMutableArray *items = [NSMutableArray array];
+  NSMutableArray *icons = [NSMutableArray array];
+  const CGFloat icon_size = 48;
+  for (int i = 0; i < data->file_count(); i++) {
+    bool first = ([items count] == 0);
+    id<NSPasteboardWriting> writer = nil;
+    NSImage *icon = nil;
+    if (data->file_path(i)) { // an existing file, or a promise written to a temporary file
+      NSString *path = [NSString stringWithUTF8String:data->file_path(i)];
+      NSPasteboardItem *item = [[[NSPasteboardItem alloc] init] autorelease];
+      [item setString:[[NSURL fileURLWithPath:path] absoluteString] forType:@"public.file-url"];
+      if (first) for (NSString *t in types) [item setData:[values objectForKey:t] forType:t];
+      writer = item;
+      icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
+    }
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+    else if (use_promises) {
+      NSString *uti = uti_from_mime_type(data->file_mime_type(i), data->file_name(i));
+      writer = [[[FLFilePromiseProvider alloc] initWithState:state index:i fileType:uti
+                                                       types:(first ? types : nil)
+                                                      values:(first ? values : nil)] autorelease];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+      icon = [[NSWorkspace sharedWorkspace] iconForFileType:uti];
+#pragma clang diagnostic pop
+    }
+#endif
+    if (!writer) continue; // a promise that could not be written
+    [icon setSize:NSMakeSize(icon_size, icon_size)];
+    [items addObject:[[[NSDraggingItem alloc] initWithPasteboardWriter:writer] autorelease]];
+    [icons addObject:(icon ? icon : [NSNull null])];
+  }
+  if ([items count] == 0 && [types count] > 0) { // no files: one item with all representations
+    NSPasteboardItem *item = [[[NSPasteboardItem alloc] init] autorelease];
+    for (NSString *t in types) [item setData:[values objectForKey:t] forType:t];
+    NSImage *icon = nil;
+    int width, height;
+    if (data->image()) {
+      const Fl_RGB_Image *img = data->image();
+      float f = s;
+      int m = (img->w() > img->h() ? img->w() : img->h());
+      if (m * f > 128) f = 128.f / m; // show a thumbnail of large images
+      icon = nsimage_from_image(img, f);
+    } else if (data->has_text()) {
+      icon = imageFromText(data->text().c_str(), &width, &height);
+    }
+    if (!icon) icon = defaultDragImage(&width, &height);
+    [items addObject:[[[NSDraggingItem alloc] initWithPasteboardWriter:item] autorelease]];
+    [icons addObject:icon];
+  }
+  if ([items count] == 0) {
+    [localPool release];
+    return 0;
+  }
+
+  // position the drag images: the first one at the hot spot or centered under the
+  // mouse pointer, the others slightly shifted
+  NSPoint pt = [theEvent locationInWindow];
+  for (NSUInteger k = 0; k < [items count]; k++) {
+    NSImage *image = nil;
+    NSPoint hot;
+    if (k == 0 && data->drag_image()) {
+      image = nsimage_from_image(data->drag_image(), s);
+      hot = NSMakePoint(data->drag_image_hot_x() * s, data->drag_image_hot_y() * s);
+    }
+    if (!image) {
+      id icon = [icons objectAtIndex:k];
+      int width, height;
+      image = (icon == [NSNull null] ? defaultDragImage(&width, &height) : (NSImage *)icon);
+      hot = NSMakePoint([image size].width / 2, [image size].height / 2);
+    }
+    NSSize size = [image size];
+    NSRect r = NSMakeRect(pt.x - hot.x + 8 * k, pt.y - (size.height - hot.y) - 8 * k,
+                          size.width, size.height);
+    [[items objectAtIndex:k] setDraggingFrame:r contents:image];
+  }
+
+  current_drag_state = state;
+  NSDraggingSession *session = [myview beginDraggingSessionWithItems:items event:theEvent source:myview];
+  if (!session) current_drag_state.reset();
+  [localPool release];
+  return session ? 1 : 0;
+}
+
 
 // rescales an NSBitmapImageRep (and also rewrites it with integer pixels)
 static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float scale)

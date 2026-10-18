@@ -148,6 +148,8 @@ public:
   void get_system_colors() FL_OVERRIDE;
   // this one is in fl_wayland_clipboard_dnd.cxx
   int dnd(int unused) FL_OVERRIDE;
+  int dnd_data(Fl_Drag_Data *data) FL_OVERRIDE;
+  int dnd_contains(const char *type) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;
   void compose_reset() FL_OVERRIDE;
   Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,

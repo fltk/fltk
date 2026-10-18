@@ -83,6 +83,8 @@ public:
   static void insertion_point_location(int x, int y, int height);
   static int insertion_point_location(int *px, int *py, int *pheight);
   int dnd(int use_selection) FL_OVERRIDE;
+  int dnd_data(Fl_Drag_Data *data) FL_OVERRIDE;
+  int dnd_contains(const char *type) FL_OVERRIDE;
   int compose(int &del) FL_OVERRIDE;
   int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input) FL_OVERRIDE;
   int get_mouse(int &x, int &y) FL_OVERRIDE;

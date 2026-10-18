@@ -779,6 +779,103 @@ void Fl_WinAPI_Screen_Driver::copy(const char *stuff, int len, int clipboard, co
 }
 
 // Call this when a "paste" operation happens:
+// Converts a packed DIB, from the clipboard or from a drag and drop operation, into an image.
+// Supports BITMAPINFOHEADER, BITMAPV4HEADER, and BITMAPV5HEADER (CF_DIBV5).
+Fl_RGB_Image *fl_image_from_dib(LPBITMAPINFO lpBI) {
+  const BITMAPINFOHEADER &bih = lpBI->bmiHeader;
+  int width = bih.biWidth;   // bitmap width & height
+  int height = bih.biHeight; // is < 0 for top-down DIB
+  if (width <= 0 || height == 0) return NULL;
+  // the pixel data follow the header, the color masks, and the color table
+  const uchar *bits = (const uchar *)lpBI + bih.biSize;
+  DWORD masks[4] = { 0, 0, 0, 0 }; // red, green, blue, alpha
+  if (bih.biSize >= sizeof(BITMAPV4HEADER)) { // the masks are part of the header
+    memcpy(masks, &((const BITMAPV4HEADER *)&bih)->bV4RedMask, sizeof(masks));
+  } else if (bih.biCompression == BI_BITFIELDS) { // the masks follow the header
+    memcpy(masks, bits, 3 * sizeof(DWORD));
+    bits += 3 * sizeof(DWORD);
+  }
+  DWORD colors = bih.biClrUsed ? bih.biClrUsed : (bih.biBitCount <= 8 ? (1u << bih.biBitCount) : 0);
+  bits += colors * sizeof(RGBQUAD);
+  bool standard_masks = (bih.biCompression == BI_RGB) ||
+    (masks[0] == 0x00FF0000 && masks[1] == 0x0000FF00 && masks[2] == 0x000000FF);
+  uchar *rgb = NULL;
+  int depth;
+  if ((bih.biBitCount == 24 && bih.biCompression == BI_RGB) ||
+      (bih.biBitCount == 32 && standard_masks &&
+       (bih.biCompression == BI_RGB || bih.biCompression == BI_BITFIELDS))) {
+    // direct use of the DIB data if it's RGB or RGBA
+    depth = bih.biBitCount / 8;              // 3 or 4
+    int linewidth = (depth == 3) ? 4 * ((3 * width + 3) / 4) : 4 * width; // row length, multiple of 4 bytes
+    rgb = new uchar[width * abs(height) * depth]; // will hold the image data
+    uchar *p = rgb;
+    bool has_alpha = false;
+    for (int y = 0; y < abs(height); y++) {
+      // the first row of a bottom-up DIB is the last one in memory
+      const uchar *r = bits + (height > 0 ? height - 1 - y : y) * linewidth;
+      for (int j = 0; j < width; j++) { // BGR is in DIB, we want RGB
+        *p++ = r[2];
+        *p++ = r[1];
+        *p++ = r[0];
+        if (depth == 4) {
+          *p++ = r[3];
+          if (r[3]) has_alpha = true;
+        }
+        r += depth;
+      }
+    }
+    if (depth == 4 && !has_alpha) {
+      // the 4th byte of 32-bit DIBs is often unused: make the image opaque
+      for (int i = 3; i < width * abs(height) * 4; i += 4) rgb[i] = 255;
+    }
+  } else { // the system will decode a complex DIB
+    Fl_Image_Surface *surf = new Fl_Image_Surface(width, abs(height));
+    Fl_Surface_Device::push_current(surf);
+    SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, abs(height), 0, 0, 0, abs(height),
+                      bits, lpBI, DIB_RGB_COLORS);
+    rgb = fl_read_image(NULL, 0, 0, width, abs(height));
+    depth = 3;
+    Fl_Surface_Device::pop_current();
+    delete surf;
+  }
+  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, abs(height), depth); // create new image from pixel data
+  image->alloc_array = 1;
+  return image;
+}
+
+// Converts an enhanced metafile into an image, using the scaling of the screen of window win
+Fl_RGB_Image *fl_image_from_emf(HENHMETAFILE h, Fl_Window *win) {
+  int width, height;
+  ENHMETAHEADER header;
+  GetEnhMetaFileHeader((HENHMETAFILE)h, sizeof(header), &header); // get structure containing metafile dimensions
+  width = (header.rclFrame.right - header.rclFrame.left + 1);     // in .01 mm units
+  height = (header.rclFrame.bottom - header.rclFrame.top + 1);
+  HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
+  int hmm = GetDeviceCaps(hdc, HORZSIZE);
+  int hdots = GetDeviceCaps(hdc, HORZRES);
+  ReleaseDC(NULL, hdc);
+  float factor = (100.f * hmm) / hdots;
+  float scaling = Fl::screen_driver()->scale((win ? Fl_Window_Driver::driver(win)->screen_num() : 0));
+  if (!Fl_Window::current()) {
+    Fl_GDI_Graphics_Driver *d = (Fl_GDI_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
+    d->scale(scaling);// may run early at app startup before Fl_Window::make_current() scales d
+  }
+  width = int(width / (scaling * factor)); // convert to screen pixel unit
+  height = int(height / (scaling * factor));
+  RECT rect = {0, 0, width, height};
+  Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
+  Fl_Surface_Device::push_current(surf);
+  fl_color(FL_WHITE);             // draw white background
+  fl_rectf(0, 0, width, height);
+  rect.right = LONG(rect.right * scaling);          // apply scaling to the metafile draw operation
+  rect.bottom = LONG(rect.bottom * scaling);
+  PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
+  Fl_RGB_Image *image = surf->image();
+  Fl_Surface_Device::pop_current();
+  delete surf;
+  return image;
+}
+
 void Fl_WinAPI_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (!clipboard || (fl_i_own_selection[clipboard] && strcmp(type, Fl::clipboard_plain_text) == 0)) {
     // We already have it, do it quickly without window server.
@@ -833,89 +930,14 @@ void Fl_WinAPI_Screen_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
         Fl::e_text = 0;
       }
     } else if (strcmp(type, Fl::clipboard_image) == 0) { // we want an image from clipboard
-      uchar *rgb = NULL;
       Fl_RGB_Image *image = NULL;
-      int width = 0, height = 0, depth = 0;
       if ((h = GetClipboardData(CF_DIB))) { // if there's a DIB in clipboard
-        LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
-        width = lpBI->bmiHeader.biWidth; // bitmap width & height
-        height = lpBI->bmiHeader.biHeight; // is < 0 for top-down DIB
-        if ((lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) &&
-            lpBI->bmiHeader.biCompression == BI_RGB &&
-            lpBI->bmiHeader.biClrUsed == 0) {      // direct use of the DIB data if it's RGB or RGBA
-          int linewidth;                           // row length
-          depth = lpBI->bmiHeader.biBitCount / 8;  // 3 or 4
-          if (depth == 3)
-            linewidth = 4 * ((3 * width + 3) / 4); // row length: series of groups of 3 bytes, rounded to multiple of 4 bytes
-          else
-            linewidth = 4 * width;
-          rgb = new uchar[width * abs(height) * depth]; // will hold the image data
-          uchar *p = rgb, *r, rr, gg, bb;
-          int step = (height > 0 ? -1 : +1);
-          int from = (height > 0 ? height-1 : 0);
-          int to = (height > 0 ? 0 : -height-1);
-          for (int i = from; (height > 0 ? i>=to : i <=to); i += step) {// for each row, from last to first
-            r = (uchar *)(lpBI->bmiColors) + i * linewidth; // beginning of pixel data for the ith row
-            for (int j = 0; j < width; j++) {               // for each pixel in a row
-              bb = *r++;                                    // BGR is in DIB
-              gg = *r++;
-              rr = *r++;
-              *p++ = rr; // we want RGB
-              *p++ = gg;
-              *p++ = bb;
-              if (depth == 4)
-                *p++ = *r++; // copy alpha if present
-            }
-          }
-        } else { // the system will decode a complex DIB
-          void *pDIBBits = (void *)(lpBI->bmiColors + 256);
-          if (lpBI->bmiHeader.biCompression == BI_BITFIELDS)
-            pDIBBits = (void *)(lpBI->bmiColors + 3);
-          else if (lpBI->bmiHeader.biClrUsed > 0)
-            pDIBBits = (void *)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
-          Fl_Image_Surface *surf = new Fl_Image_Surface(width, abs(height));
-          Fl_Surface_Device::push_current(surf);
-          SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, abs(height), 0, 0, 0, abs(height), pDIBBits, lpBI, DIB_RGB_COLORS);
-          rgb = fl_read_image(NULL, 0, 0, width, abs(height));
-          depth = 3;
-          Fl_Surface_Device::pop_current();
-          delete surf;
-        }
+        image = fl_image_from_dib((LPBITMAPINFO)GlobalLock(h));
         GlobalUnlock(h);
       } else if ((h = GetClipboardData(CF_ENHMETAFILE))) { // if there's an enhanced metafile in clipboard
-        ENHMETAHEADER header;
-        GetEnhMetaFileHeader((HENHMETAFILE)h, sizeof(header), &header); // get structure containing metafile dimensions
-        width = (header.rclFrame.right - header.rclFrame.left + 1);     // in .01 mm units
-        height = (header.rclFrame.bottom - header.rclFrame.top + 1);
-        HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
-        int hmm = GetDeviceCaps(hdc, HORZSIZE);
-        int hdots = GetDeviceCaps(hdc, HORZRES);
-        ReleaseDC(NULL, hdc);
-        float factor = (100.f * hmm) / hdots;
-        float scaling = Fl::screen_driver()->scale(Fl_Window_Driver::driver(receiver.top_window())->screen_num());
-        if (!Fl_Window::current()) {
-          Fl_GDI_Graphics_Driver *d = (Fl_GDI_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
-          d->scale(scaling);// may run early at app startup before Fl_Window::make_current() scales d
-        }
-        width = int(width / (scaling * factor)); // convert to screen pixel unit
-        height = int(height / (scaling * factor));
-        RECT rect = {0, 0, width, height};
-        Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
-        Fl_Surface_Device::push_current(surf);
-        fl_color(FL_WHITE);             // draw white background
-        fl_rectf(0, 0, width, height);
-        rect.right = LONG(rect.right * scaling);          // apply scaling to the metafile draw operation
-        rect.bottom = LONG(rect.bottom * scaling);
-        PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
-        image = surf->image();
-        Fl_Surface_Device::pop_current();
-        delete surf;
+        image = fl_image_from_emf((HENHMETAFILE)h, receiver.top_window());
       }
-      if (rgb || image) {
-        if (!image) {
-          image = new Fl_RGB_Image(rgb, width, abs(height), depth); // create new image from pixel data
-          image->alloc_array = 1;
-        }
+      if (image) {
         Fl::e_clipboard_data = image;
         Fl::e_clipboard_type = Fl::clipboard_image; // indicates that the paste event is for image data
         int done = receiver.handle(FL_PASTE);       // send FL_PASTE event to widget

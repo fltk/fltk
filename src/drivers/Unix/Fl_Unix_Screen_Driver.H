@@ -20,6 +20,9 @@
 
 #include <config.h>
 #include "../../Fl_Screen_Driver.H"
+#include <string>
+#include <vector>
+#include <utility>
 
 #  if USE_POLL
 
@@ -69,6 +72,11 @@ public:
   virtual int poll_or_select_with_delay(double time_to_wait);
   virtual int poll_or_select();
   virtual void *control_maximize_button(void *) { return NULL; }
+  // MIME types and data offered by a typed drag and drop operation
+  typedef std::vector<std::pair<std::string, std::string> > Dnd_Offers;
+  // fills offers with all representations of data, and local_text with
+  // what an FLTK widget of this program receives when the data is dropped
+  static void dnd_offers(Fl_Drag_Data *data, Dnd_Offers &offers, std::string &local_text);
 };
 
 #endif /* FL_UNIX_SCREEN_DRIVER_H */

@@ -54,6 +54,7 @@
 
 class Fl_Widget;
 class Fl_Window;
+class Fl_Drag_Data;
 class Fl_Image;
 struct Fl_Label;
 class Fl_Screen_Driver;
@@ -524,8 +525,16 @@ FL_EXPORT extern int clipboard_contains(const char *type);
 
   Create a selection first using:
   Fl::copy(const char *stuff, int len, 0)
+
+  \see Fl::dnd(Fl_Drag_Data*) to drag images, data of other types, and files.
 */
 FL_EXPORT extern int dnd(); // platform dependent
+FL_EXPORT extern int dnd(Fl_Drag_Data *data); // platform dependent
+FL_EXPORT extern int dnd_contains(const char *type); // platform dependent
+FL_EXPORT extern void dnd_request(const char *type);
+FL_EXPORT extern void dnd_action(int action);
+FL_EXPORT extern int dnd_file_count();
+FL_EXPORT extern const char *dnd_file(int i);
 
 // These are for back-compatibility only:
 /**  back-compatibility only: Gets the widget owning the current selection

@@ -127,6 +127,7 @@ you build FLTK, unlike those in the 'test' directory shown below.
 <td colspan=6 align=center><b>New in FLTK 1.5</b></td>
 </tr>
 <tr>
+<td> \ref examples_dnd             </td>
 <td> \ref examples_gl_image        </td>
 </tr>
 </table>
@@ -303,6 +304,17 @@ Fl_Image object, copy graphical data to the clipboard, and for print support.
 \note The clipboard.cxx program of the 'test' directory is a clipboard watching
 application that continuously displays the textual or graphical content of the system
 clipboard (a.k.a pasteboard on macOS) exercising Fl::paste().
+
+
+\subsection examples_dnd dnd
+
+\par
+The \c dnd demo shows drag and drop with Fl_Drag_Data. The boxes at the top
+can be dragged onto the desktop, a file manager, or other applications: a
+picture (as image data, PNG data, and a promised PNG file), three promised
+text files, two existing files that can be copied or moved, and text. The
+list at the bottom shows what is dropped onto it, and which data types the
+drag offers. The choice above the list selects the type of data to request.
 
 
 \subsection examples_doublebuffer doublebuffer
