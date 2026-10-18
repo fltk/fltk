@@ -265,7 +265,7 @@ int main(int argc, char **argv) {
   new Drag_Source(145, 10, 125, 130, "Three promised files", 1);
   new Drag_Source(280, 10, 125, 130, "Two real files (copy or move)", 2);
   new Drag_Source(415, 10, 135, 130, "Text", 3);
-  request_choice = new Fl_Choice(130, 145, 180, 25, "When dropped, ask for:");
+  request_choice = new Fl_Choice(200, 145, 180, 25, "When dropped, ask for:");
   request_choice->add("default (files or text)|image|image/png (raw data)|text");
   request_choice->value(0);
   Drop_Target *target = new Drop_Target(10, 175, 420, 230);
