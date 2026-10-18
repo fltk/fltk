@@ -796,15 +796,16 @@ current / selected SDK.
   10.10   | MAC_OS_X_VERSION_10_10 | 101000 | Yosemite      | 2014
   10.11   | MAC_OS_X_VERSION_10_11 | 101100 | El Capitan    | 2015
   10.12   | MAC_OS_X_VERSION_10_12 | 101200 | Sierra        | 2016
-  10.13   | MAC_OS_X_VERSION_10_13 | 101200 | High Sierra   | 2017
-  10.14   | MAC_OS_X_VERSION_10_14 | 101200 | Mojave        | 2018
-  10.15   | MAC_OS_X_VERSION_10_15 | 101200 | Catalina      | 2019
+  10.13   | MAC_OS_X_VERSION_10_13 | 101300 | High Sierra   | 2017
+  10.14   | MAC_OS_X_VERSION_10_14 | 101400 | Mojave        | 2018
+  10.15   | MAC_OS_X_VERSION_10_15 | 101500 | Catalina      | 2019
   11.0    | MAC_OS_VERSION_11_0    | 110000 | Big Sur       | 2020
   12.0    | MAC_OS_VERSION_12_0    | 120000 | Monterey      | 2021
   13.0    | MAC_OS_VERSION_13_0    | 130000 | Ventura       | 2022
   14.0    | MAC_OS_VERSION_14_0    | 140000 | Sonoma        | 2023
   15.0    | MAC_OS_VERSION_15_0    | 150000 | Sequoia       | 2024
   26.0    | MAC_OS_VERSION_26_0    | 260000 | Tahoe         | 2025
+  27.0    | MAC_OS_VERSION_27_0    | 270000 | Golden Gate   | 2026
 
 Notes:
  - The \c Value column is in decimal notation
