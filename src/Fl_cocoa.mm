@@ -3724,6 +3724,7 @@ int Fl_Cocoa_Window_Driver::set_cursor(Fl_Cursor c)
     cursor = NULL;
   }
 
+  current_cursor_ = c;
   switch (c) {
   case FL_CURSOR_ARROW:   cursor = [NSCursor arrowCursor]; break;
   case FL_CURSOR_CROSS:   cursor = [NSCursor crosshairCursor]; break;
@@ -3758,6 +3759,7 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   if ((hoty < 0) || (hoty >= image->h()))
     return 0;
 
+  current_cursor_ = FL_CURSOR_NONE;
   if (image->as_svg_image()) {
     Fl_RGB_Image *image2 = (Fl_RGB_Image*)image->copy();
     image2->normalize();

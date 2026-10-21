@@ -44,6 +44,7 @@ Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
   wait_for_expose_value = 0;
   other_xid = 0;
   screen_num_ = 0;
+  current_cursor_ = FL_CURSOR_DEFAULT;
 }
 
 

@@ -501,3 +501,16 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
 float Fl_WinAPI_Screen_Driver::base_scale(int numscreen) {
   return float(dpi[numscreen][0] / 96.);
 }
+
+
+int Fl_WinAPI_Screen_Driver::cursor_size() {
+  DWORD sizeBytes = sizeof(DWORD), result;
+  LSTATUS code = RegGetValueW(HKEY_CURRENT_USER,
+                             L"Control Panel\\Cursors",
+                             L"CursorBaseSize",
+                             RRF_RT_REG_DWORD, NULL, &result, &sizeBytes);
+  if (code != ERROR_SUCCESS) {
+    result = 32; // default value
+  }
+  return result;
+}

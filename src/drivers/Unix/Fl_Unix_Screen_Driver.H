@@ -69,6 +69,7 @@ public:
   virtual int poll_or_select_with_delay(double time_to_wait);
   virtual int poll_or_select();
   virtual void *control_maximize_button(void *) { return NULL; }
+  int cursor_size() override;
 };
 
 #endif /* FL_UNIX_SCREEN_DRIVER_H */

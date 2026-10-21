@@ -432,3 +432,21 @@ void Fl_Cocoa_Screen_Driver::set_spot(int /*font*/, int size, int X, int Y, int 
 void Fl_Cocoa_Screen_Driver::reset_spot() {
   Fl_Cocoa_Screen_Driver::reset_marked_text();
 }
+
+
+int Fl_Cocoa_Screen_Driver::cursor_size() {
+  float f = 1;
+  FILE *pipe = popen("defaults read com.apple.universalaccess mouseDriverCursorSize 2> /dev/null",
+                     "r");
+  if (pipe) {
+    char line[50], *p;
+    p = fgets(line, sizeof(line), pipe);
+    pclose(pipe);
+    if (p) {
+      sscanf(p, "%f", &f);
+      if (f < 1) f = 1;
+      else if (f > 4) f = 4;
+    }
+  }
+  return int(f * Fl_Screen_Driver::cursor_size());
+}

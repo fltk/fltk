@@ -2774,6 +2774,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
   LPSTR n;
   HCURSOR new_cursor;
 
+  current_cursor_ = c;
   if (c == FL_CURSOR_NONE)
     new_cursor = NULL;
   else {
@@ -2855,6 +2856,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
   if ((cursor != NULL) && custom_cursor)
     DestroyIcon(cursor);
 
+  current_cursor_ = FL_CURSOR_NONE;
   cursor = new_cursor;
   custom_cursor = 1;
 

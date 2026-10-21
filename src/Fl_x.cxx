@@ -3125,7 +3125,7 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
                                   var = XCreateFontCursor(fl_display, name); \
                                 } \
                                 xc = var
-
+  current_cursor_ = c;
   switch (c) {
   case FL_CURSOR_ARROW:   cache_cursor(XC_left_ptr, xc_arrow); break;
   case FL_CURSOR_CROSS:   cache_cursor(XC_tcross, xc_cross); break;
@@ -3208,6 +3208,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
       default:
         return 0;
       }
+      current_cursor_ = FL_CURSOR_NONE;
       // Alpha needs to be pre-multiplied for X11
       r = (uchar)((unsigned)r * a / 255);
       g = (uchar)((unsigned)g * a / 255);

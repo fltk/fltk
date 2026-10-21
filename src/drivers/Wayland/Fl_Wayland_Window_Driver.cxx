@@ -75,7 +75,6 @@ Fl_Window *Fl_Wayland_Window_Driver::previous_floatingtitle = NULL;
 Fl_Wayland_Window_Driver::Fl_Wayland_Window_Driver(Fl_Window *win) : Fl_Window_Driver(win)
 {
   shape_data_ = NULL;
-  standard_cursor_ = FL_CURSOR_DEFAULT;
   in_handle_configure = false;
   screen_num_ = -1;
   gl_start_support_ = NULL;
@@ -1755,8 +1754,8 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
       delete_cursor(xid->custom_cursor);
       xid->custom_cursor = NULL;
     }
+    current_cursor_ = c;
     if (c == FL_CURSOR_NONE) return 0;
-    standard_cursor_ = c;
     Fl_Wayland_Screen_Driver::do_set_cursor(scr_driver->seat, NULL, c);
     return 1;
   }
@@ -1808,7 +1807,7 @@ int Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor c) {
     delete_cursor(xid->custom_cursor);
     xid->custom_cursor = NULL;
   }
-  standard_cursor_ = c;
+  current_cursor_ = c;
   scr_driver->set_cursor();
   return 1;
 }
@@ -1910,6 +1909,7 @@ int Fl_Wayland_Window_Driver::set_cursor(const Fl_RGB_Image *rgb, int hotx, int 
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     struct wld_window *xid = (struct wld_window *)Fl_Window_Driver::xid(pWindow);
     Fl_Wayland_Screen_Driver::do_set_cursor(scr_driver->seat, xid->custom_cursor->wl_cursor);
+    current_cursor_ = FL_CURSOR_NONE;
   }
   return retval;
 }

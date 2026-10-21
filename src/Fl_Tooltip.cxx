@@ -105,6 +105,14 @@ void Fl_TooltipBox::layout() {
       oy += p->y();
     }
   }
+  // account for cursor size and kind
+  int c_size = Fl::screen_driver()->cursor_size();
+  Fl_Window *target_win = (Fl_Tooltip::current()->as_window() ?
+                           Fl_Tooltip::current()->as_window() : Fl_Tooltip::current()->window());
+  Fl_Cursor c = Fl_Window_Driver::driver(target_win)->current_cursor();
+  if (c != FL_CURSOR_ARROW && c != FL_CURSOR_DEFAULT) c_size /= 2;
+  float s = Fl::screen_scale(Fl_Tooltip::current()->top_window()->screen_num());
+  oy += (c_size - Fl::screen_driver()->Fl_Screen_Driver::cursor_size()) / s;
   screen_num(Fl_Tooltip::current()->top_window()->screen_num());
   if (Fl::screen_driver()->screen_boundaries_known()) {
     int mx, my;

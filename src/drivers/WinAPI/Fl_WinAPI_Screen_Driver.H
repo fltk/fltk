@@ -99,6 +99,7 @@ public:
   int event_key(int) FL_OVERRIDE;
   int get_key(int) FL_OVERRIDE;
   float base_scale(int numscreen) FL_OVERRIDE;
+  int cursor_size() override;
 };
 
 

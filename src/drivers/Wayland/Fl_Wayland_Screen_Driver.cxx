@@ -266,7 +266,7 @@ static void pointer_enter(void *data, struct wl_pointer *wl_pointer, uint32_t se
     fl_wl_xid(win)->custom_cursor ? fl_wl_xid(win)->custom_cursor->wl_cursor : NULL;
   seat->serial = serial;
   seat->pointer_enter_serial = serial;
-  Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor, Fl_Wayland_Window_Driver::driver(win)->standard_cursor());
+  Fl_Wayland_Screen_Driver::do_set_cursor(seat, cursor, Fl_Window_Driver::driver(win)->current_cursor());
   checkdouble(); // fix for #1383
   set_event_xy(win);
   need_leave = NULL;
@@ -509,7 +509,7 @@ static void cursor_surface_enter(void *data,
     struct wld_window *xid = fl_wl_xid(win);
     if (xid->custom_cursor) Fl_Wayland_Screen_Driver::do_set_cursor(seat, xid->custom_cursor->wl_cursor);
     else if (driver->cursor_default()) driver->set_cursor(driver->cursor_default());
-    else win->cursor(driver->standard_cursor());
+    else win->cursor(driver->current_cursor());
   }
 }
 

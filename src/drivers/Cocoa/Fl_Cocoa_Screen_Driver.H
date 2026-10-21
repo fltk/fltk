@@ -106,6 +106,7 @@ public:
   // these 2 are in Fl_get_key_mac.cxx
   int event_key(int) FL_OVERRIDE;
   int get_key(int) FL_OVERRIDE;
+  int cursor_size() override;
 private:
   float scale_;
 };

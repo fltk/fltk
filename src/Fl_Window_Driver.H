@@ -58,6 +58,7 @@ private:
 protected:
   Fl_Window *pWindow;
   int screen_num_; // number of screen where window is mapped
+  Fl_Cursor current_cursor_; // window's current custom kind
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
@@ -110,6 +111,7 @@ public:
   void show_iconic(char c) { Fl_Window::show_next_window_iconic(c); }
   void flx(Fl_X *x) { pWindow->flx_ = x; }
   Fl_Cursor cursor_default() { return pWindow->cursor_default; }
+  inline Fl_Cursor current_cursor() { return current_cursor_; }
   void destroy_double_buffer();
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
   Fl_Window *overlay() {

@@ -1039,7 +1039,7 @@ where \c XXXX is the 'gnome cursor theme' (default= Adwaita). For example, what 
 \c Fl_Wayland_Window_Driver::set_cursor(Fl_Cursor). FLTK stores in member variable
 \c default_cursor of the \ref wayland-seat "Fl_Wayland_Screen_Driver::seat" record a pointer
 to the currently used \c wl_cursor object,
-and the current \c Fl_Cursor value in member \c standard_cursor_ of the
+and the current \c Fl_Cursor value in member \c current_cursor_ of the
 \c Fl_Wayland_Window_Driver object.
 
 Finally, function do_set_cursor() of file \c Fl_Wayland_Screen_Driver.cxx makes the system pointer use

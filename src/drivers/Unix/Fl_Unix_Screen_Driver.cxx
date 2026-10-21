@@ -17,6 +17,7 @@
 #include <config.h>
 #include <sys/time.h>
 #include "Fl_Unix_Screen_Driver.H"
+#include "../Posix/Fl_Posix_System_Driver.H"
 
 #if USE_POLL
 pollfd *Fl_Unix_Screen_Driver::pollfds = NULL;
@@ -98,4 +99,45 @@ int Fl_Unix_Screen_Driver::poll_or_select() {
   fdt[2] = fdsets[2];
   return ::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t);
 #  endif
+}
+
+
+static bool get_cursor_size(int *size)
+{
+  FILE *pipe = popen("dconf read /org/gnome/desktop/interface/cursor-size 2> /dev/null", "r");
+  if (pipe) {
+    char line[50], *p;
+    p = fgets(line, sizeof(line), pipe);
+    pclose(pipe);
+    if (p) {
+      *size = 0;
+      sscanf(p, "%d", size);
+      if (*size > 5 && *size < 200) return true;
+    }
+  }
+  return false;
+}
+
+
+int Fl_Unix_Screen_Driver::cursor_size() {
+  int size;
+  static bool searched_libdecor_settings_f = false;
+  typedef bool (*get_settings_f_t)(char**, int*);
+  static get_settings_f_t get_settings_f = NULL;
+  bool got_size = false;
+
+  if (!searched_libdecor_settings_f) {
+    searched_libdecor_settings_f = true;
+    get_settings_f = (get_settings_f_t)Fl_Posix_System_Driver::dlopen_or_dlsym(NULL,
+                                                                "libdecor_get_cursor_settings");
+  }
+  if (get_settings_f) {
+    char *theme = NULL;
+    got_size = get_settings_f(&theme, &size);
+    free(theme);
+    if (!got_size) get_settings_f = NULL;
+  }
+  if (!got_size) got_size = get_cursor_size(&size);
+  if (!got_size) size = Fl_Screen_Driver::cursor_size();
+  return size;
 }

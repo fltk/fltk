@@ -252,6 +252,7 @@ public:
   virtual void reset_spot();
   virtual void set_status(int X, int Y, int W, int H);
   virtual float base_scale(int numscreen);
+  virtual int cursor_size() { return 24; }
 };
 
 #endif // !FL_SCREEN_DRIVER_H
