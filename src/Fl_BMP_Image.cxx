@@ -284,6 +284,10 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   if (colors_used == 0 && depth <= 8)
     colors_used = 1 << depth;
 
+  if (colors_used > 256) {
+    ld(ERR_FORMAT);
+    return;
+  }
   for (int i = 0; i < colors_used; i++) {
     // Read BGR color...
     colormap[i][0] = rdr.read_byte();
@@ -318,7 +322,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
     ld(ERR_FORMAT);
     return;
   }
-  array = new uchar[width * height * dstBDepth];
+  array = new uchar[(size_t)width * height * dstBDepth];
   alloc_array = 1;
 
   // Read the image data...
