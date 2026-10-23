@@ -33,6 +33,8 @@ FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver;
 #include <FL/Fl_Image_Surface.H>
 #include <FL/math.h> // for fabs(), sqrt()
 #include <FL/platform.H> // for fl_open_display()
+#include <FL/fl_utf8.h>  // for fl_utf8encode()
+#include "flstring.h"    // for strlcpy()
 #include <stdlib.h>
 
 
@@ -754,6 +756,102 @@ const char *Fl_Graphics_Driver::font_name(int num) {return NULL;}
 
 /** Support for Fl::set_font() */
 void Fl_Graphics_Driver::font_name(int num, const char *name) {}
+
+/** Support for Fl::load_font().
+ Makes a face of a TrueType or OpenType font available to this process.
+ The returned name must select exactly this face, identified by its PostScript
+ name (see font_file_info()), so that all platforms use the same face of a font
+ collection, and it must not replace other fonts that have the same names.
+ \param filename path of the font file, or NULL if the font comes from memory
+ \param data, size the content of the font file
+ \param face index of the face in a font collection (.ttc), 0 for other fonts
+ \return a new copy of the name that Fl::set_font() needs to select the face
+ on this platform, or NULL if the font could not be loaded
+ */
+const char *Fl_Graphics_Driver::load_font(const char *filename, const unsigned char *data,
+                                          size_t size, int face) {
+  return NULL;
+}
+
+static unsigned sfnt16(const unsigned char *p) { return (p[0] << 8) | p[1]; }
+
+static unsigned sfnt32(const unsigned char *p) {
+  return ((unsigned)p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+}
+
+// Copy record `id` of an sfnt 'name' table to `buf` as UTF-8.
+// Windows Unicode names are preferred (US English first), then Mac Roman.
+static void sfnt_name(const unsigned char *t, size_t tlen, unsigned id, char *buf, int len) {
+  if (tlen < 6) return;
+  unsigned count = sfnt16(t + 2), strings = sfnt16(t + 4);
+  const unsigned char *rec = NULL;
+  int best = 0;
+  for (unsigned i = 0; i < count && 6 + 12 * (i + 1) <= tlen; i++) {
+    const unsigned char *r = t + 6 + 12 * i;
+    if (sfnt16(r + 6) != id || strings + sfnt16(r + 10) + sfnt16(r + 8) > tlen) continue;
+    unsigned platform = sfnt16(r), encoding = sfnt16(r + 2);
+    int score = 0;
+    if (platform == 3 && (encoding == 1 || encoding == 10)) score = (sfnt16(r + 4) == 0x409) ? 3 : 2;
+    else if (platform == 1 && encoding == 0) score = 1;
+    if (score > best) { rec = r; best = score; }
+  }
+  if (!rec) return;
+  const unsigned char *s = t + strings + sfnt16(rec + 10);
+  unsigned n = sfnt16(rec + 8), i = 0;
+  char *out = buf;
+  while (out + 4 < buf + len) {
+    unsigned c;
+    if (best == 1) { // Mac Roman: keep ASCII only
+      if (i >= n) break;
+      c = s[i++];
+      if (c >= 0x80) c = '?';
+    } else { // UTF-16 big endian
+      if (i + 2 > n) break;
+      c = sfnt16(s + i); i += 2;
+      if (c >= 0xD800 && c < 0xDC00 && i + 2 <= n) {
+        c = 0x10000 + ((c - 0xD800) << 10) + (sfnt16(s + i) - 0xDC00); i += 2;
+      }
+    }
+    out += fl_utf8encode(c, out);
+  }
+  *out = 0;
+}
+
+/** Finds a face of a TrueType or OpenType font and reads its PostScript name.
+ \param data, size the content of the font file
+ \param face index of the face in a font collection (.ttc), 0 for other fonts
+ \param[out] psname the PostScript name (name ID 6) of the face, which is unique
+ for each face, or the full name (name ID 4) if the font has no PostScript name
+ \param len size of \p psname
+ \return the offset of the table directory of the face in \p data,
+ or -1 if the data is not a usable font or has no such face
+ */
+int Fl_Graphics_Driver::font_file_info(const unsigned char *data, size_t size, int face,
+                                       char *psname, int len) {
+  psname[0] = 0;
+  if (!data || size < 12 || face < 0) return -1;
+  size_t off = 0;
+  if (!memcmp(data, "ttcf", 4)) {
+    if ((unsigned)face >= sfnt32(data + 8) || 16 + 4 * (size_t)face > size) return -1;
+    off = sfnt32(data + 12 + 4 * face);
+    if (off > size - 12) return -1;
+  } else if (face != 0) {
+    return -1;
+  }
+  unsigned version = sfnt32(data + off);
+  if (version != 0x00010000 && memcmp(data + off, "OTTO", 4) && memcmp(data + off, "true", 4))
+    return -1;
+  unsigned ntables = sfnt16(data + off + 4);
+  if (off + 12 + 16 * (size_t)ntables > size) return -1;
+  for (unsigned i = 0; i < ntables; i++) {
+    const unsigned char *r = data + off + 12 + 16 * i;
+    size_t toff = sfnt32(r + 8), tlen = sfnt32(r + 12);
+    if (memcmp(r, "name", 4) || toff > size || tlen > size - toff) continue;
+    sfnt_name(data + toff, tlen, 6, psname, len);
+    if (!psname[0]) sfnt_name(data + toff, tlen, 4, psname, len);
+  }
+  return psname[0] ? (int)off : -1;
+}
 
 /** Support function for fl_overlay_rect() and scaled GUI.*/
 void Fl_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
