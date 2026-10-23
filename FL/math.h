@@ -40,7 +40,7 @@
 #    define M_SQRT1_2       0.70710678118654752440
 #  endif // !M_SQRT2
 
-#  if (defined(_WIN32) || defined(CRAY)) && !defined(__MINGW32__)
+#  if (defined(_WIN32) || defined(CRAY)) && !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER < 1800)
 
 inline double rint(double v) {return floor(v+.5);}
 inline double copysign(double a, double b) {return b<0 ? -a : a;}
