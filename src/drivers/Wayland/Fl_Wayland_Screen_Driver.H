@@ -175,6 +175,7 @@ public:
   void disable_im() FL_OVERRIDE;
   bool screen_boundaries_known() FL_OVERRIDE { return false; }
   float base_scale(int numscreen) FL_OVERRIDE;
+  int screen_count() override;
 
   // overridden functions from parent class Fl_Unix_Screen_Driver
   int poll_or_select_with_delay(double time_to_wait) FL_OVERRIDE;

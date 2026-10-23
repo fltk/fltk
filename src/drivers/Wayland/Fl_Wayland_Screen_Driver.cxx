@@ -2275,3 +2275,10 @@ float Fl_Wayland_Screen_Driver::base_scale(int numscreen) {
 struct wl_display *fl_wl_display() {
   return Fl_Wayland_Screen_Driver::wl_display;
 }
+
+
+int Fl_Wayland_Screen_Driver::screen_count() {
+  if (num_screens < 0)
+    init();
+  return num_screens;
+}
