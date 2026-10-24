@@ -417,7 +417,7 @@ void Fl_Wayland_Gl_Window_Driver::resize(int is_a_resize, int W, int H) {
   H = int(H * f) * s;
   int W2, H2;
   wl_egl_window_get_attached_size(egl_window, &W2, &H2);
-  if (W2 != W || H2 != H) {
+  if (is_a_resize || W2 != W || H2 != H) {
     wl_egl_window_resize(egl_window, W, H, 0, 0);
     wl_surface_set_buffer_scale(fl_wl_xid(pWindow)->wl_surface, s);
   }
