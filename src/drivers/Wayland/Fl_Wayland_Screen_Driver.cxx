@@ -1726,6 +1726,20 @@ void Fl_Wayland_Screen_Driver::close_display() {
 }
 
 
+static uint32_t is_surface_fullscreen_or_maximized(struct wl_array *states)
+{
+  uint32_t *p;
+  // Replace wl_array_for_each(p, states) rejected by C++
+  for (p = (uint32_t *)(states->data);
+       (const char *) p < ((const char *)states->data + states->size);
+       (p)++) {
+    if (*p == XDG_TOPLEVEL_STATE_FULLSCREEN) return XDG_TOPLEVEL_STATE_FULLSCREEN;
+    if (*p == XDG_TOPLEVEL_STATE_MAXIMIZED) return XDG_TOPLEVEL_STATE_MAXIMIZED;
+  }
+  return 0;
+}
+
+
 struct configure_s { int W, H; uint32_t state; };
 
 static void xdg_toplevel_configure(void *v, struct xdg_toplevel *xdg_toplevel,
@@ -1734,7 +1748,7 @@ static void xdg_toplevel_configure(void *v, struct xdg_toplevel *xdg_toplevel,
   struct configure_s *data = (struct configure_s*)v;
   data->W = width;
   data->H = height;
-  data->state = (width && height && states ? *(uint32_t *)(states->data) : 0);
+  data->state = (width && height && states ? is_surface_fullscreen_or_maximized(states) : 0);
 }
 
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {
@@ -1747,15 +1761,15 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output **
   if (Fl_Wayland_Screen_Driver::compositor == Fl_Wayland_Screen_Driver::unspecified) {
     return false;
   }
-  bool found_workarea = false;
-  int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
   Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
   int count = wl_list_length(&scr_driver->outputs);
   if (count == 0) return false;
+  bool found_workarea = false;
+  int Wfullscreen, Hfullscreen, Wworkarea, Hworkarea;
   struct wl_surface **wl_surfaces = new struct wl_surface*[count];
   struct xdg_surface **xdg_surfaces = new struct xdg_surface*[count];
   struct xdg_toplevel **xdg_toplevels = new struct xdg_toplevel*[count];
-  struct configure_s data;
+  struct configure_s *data = new struct configure_s[count];
   Fl_Wayland_Screen_Driver::output *output;
   // put one fullscreen surface on each screen, get their configured size
   int ns = 0;
@@ -1764,14 +1778,14 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output **
     wl_surface_set_opaque_region(wl_surfaces[ns], NULL);
     xdg_surfaces[ns] = xdg_wm_base_get_xdg_surface(scr_driver->xdg_wm_base, wl_surfaces[ns]);
     xdg_toplevels[ns] = xdg_surface_get_toplevel(xdg_surfaces[ns]);
-    xdg_toplevel_add_listener(xdg_toplevels[ns], &xdg_toplevel_listener, &data);
-    data = {0, 0, 0};
+    xdg_toplevel_add_listener(xdg_toplevels[ns], &xdg_toplevel_listener, &data[ns]);
+    data[ns].state = 0;
     xdg_toplevel_set_fullscreen(xdg_toplevels[ns], output->wl_output);
     wl_surface_commit(wl_surfaces[ns]); // necessary under KWin
-    while (data.state != XDG_TOPLEVEL_STATE_FULLSCREEN)
+    while (data[ns].state != XDG_TOPLEVEL_STATE_FULLSCREEN)
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-    Wfullscreen = data.W * output->wld_scale;
-    Hfullscreen = data.H * output->wld_scale;
+    Wfullscreen = data[ns].W * output->wld_scale;
+    Hfullscreen = data[ns].H * output->wld_scale;
     if (Wfullscreen && Hfullscreen) {
       output->width = Wfullscreen; // pixels
       output->height = Hfullscreen; // pixels
@@ -1788,14 +1802,14 @@ static bool compute_full_and_maximized_areas(Fl_Wayland_Screen_Driver::output **
   // for each screen, change the surface from fullscreen to maximized, other surfaces unchanged
   ns = 0;
   wl_list_for_each(output, &scr_driver->outputs, link) {
-    data = {0, 0, 0};
+    data[ns].state = 0;
     xdg_toplevel_unset_fullscreen(xdg_toplevels[ns]);
     xdg_toplevel_set_maximized(xdg_toplevels[ns]);
     wl_surface_commit(wl_surfaces[ns]);
-    while (data.state != XDG_TOPLEVEL_STATE_MAXIMIZED)
+    while (data[ns].state != XDG_TOPLEVEL_STATE_MAXIMIZED)
       wl_display_dispatch(Fl_Wayland_Screen_Driver::wl_display);
-    Wworkarea = data.W * output->wld_scale;
-    Hworkarea = data.H * output->wld_scale;
+    Wworkarea = data[ns].W * output->wld_scale;
+    Hworkarea = data[ns].H * output->wld_scale;
     if ( (Hworkarea < output->height && Hworkarea > output->height - (100 * output->wld_scale)) ||
         (Wworkarea < output->width && Wworkarea > output->width - (100 * output->wld_scale)) ) {
       found_workarea = true;
@@ -1823,6 +1837,7 @@ way_out:
   delete[] xdg_toplevels;
   delete[] xdg_surfaces;
   delete[] wl_surfaces;
+  delete[] data;
   return found_workarea;
 }
 
