@@ -18,6 +18,24 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 
+#include <FL/Fl_Graphics_Driver.H>
+#include "../src/drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
+
+class MyGraphicsDriver : public Fl_Quartz_Graphics_Driver {
+public:
+  MyGraphicsDriver()
+  : Fl_Quartz_Graphics_Driver()
+  { }
+  void color(Fl_Color c) override {
+    Fl_Quartz_Graphics_Driver::color(c+20);
+  }
+};
+
+Fl_Graphics_Driver_Plugin matts_graphics_driver_plugin(
+  "Matt's Graphics Driver", 10,
+  []() -> Fl_Graphics_Driver* { return new MyGraphicsDriver(); }
+);
+
 int main(int argc, char **argv) {
   Fl_Window *window = new Fl_Window(340, 180);
   Fl_Box *box = new Fl_Box(20, 40, 300, 100, "Hello, World!");
