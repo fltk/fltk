@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0500
+version 1.050020
 header_name {../FL/Fl_File_Chooser.H}
 code_name {.cxx}
 include_guard {}
@@ -28,10 +28,13 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include <FL/Fl_Callback_Interface.H>} {public global
+}
+
 decl {\#include <FL/fl_draw.H>} {private local
 }
 
-class FL_EXPORT Fl_File_Chooser {open
+class FL_EXPORT Fl_File_Chooser {open : {public Fl_Callback_Interface<Fl_File_Chooser>}
 } {
   decl {enum Type {
     SINGLE    = 0, ///< Select a single, existing file.
@@ -46,10 +49,6 @@ Determines the type of file chooser presented to the user.
 } public local
   }
   decl {static Fl_Preferences *prefs_;} {private local
-  }
-  decl {void (*callback_)(Fl_File_Chooser*, void *);} {private local
-  }
-  decl {void *data_;} {private local
   }
   decl {char directory_[FL_PATH_MAX];} {private local
   }
@@ -77,6 +76,8 @@ Determines the type of file chooser presented to the user.
   }
   decl {void update_preview();} {private local
   }
+  decl {bool callback_is_stdf_ = false;} {private local
+  }
   Function {Fl_File_Chooser(const char *pathname, const char *pattern, int type_val, const char *title)} {open
   } {
     code {if (!prefs_) {
@@ -87,9 +88,9 @@ Determines the type of file chooser presented to the user.
       label {Choose File}
       callback {fileName->value("");
 fileList->deselect();
-hide();} open selected
+hide();} open
       private xywh {467 276 490 380} type Double resizable
-      code0 {if (title) window->label(title);} modal visible
+      code3 {if (title) window->label(title);} modal visible
     } {
       Fl_Group {} {open
         private xywh {10 10 470 25}
@@ -98,19 +99,19 @@ hide();} open selected
           label {Show:}
           callback {showChoiceCB();} open
           private xywh {65 10 215 25} down_box BORDER_BOX labelfont 1 resizable
-          code0 {showChoice->label(show_label);}
+          code3 {showChoice->label(show_label);}
         } {}
         Fl_Menu_Button favoritesButton {
           label Favorites
           callback {favoritesButtonCB();} open
           private xywh {290 10 155 25} down_box BORDER_BOX align 20
-          code0 {favoritesButton->label(favorites_label);}
+          code3 {favoritesButton->label(favorites_label);}
         } {}
         Fl_Button newButton {
           callback {newdir();}
           image {new.xbm} compress_image 0 xywh {455 10 25 25} labelsize 8
           code0 {\#include <FL/Fl_Preferences.H>}
-          code1 {o->tooltip(new_directory_tooltip);}
+          code3 {o->tooltip(new_directory_tooltip);}
         }
       }
       Fl_Tile {} {
@@ -141,13 +142,13 @@ hide();} open selected
             label Preview
             callback {preview(previewButton->value());}
             xywh {10 275 105 20} down_box DOWN_BOX shortcut 0x80070 value 1
-            code0 {previewButton->label(preview_label);}
+            code3 {previewButton->label(preview_label);}
           }
           Fl_Check_Button showHiddenButton {
             label {Show hidden files}
             callback {showHidden(showHiddenButton->value());}
             xywh {115 275 140 20} down_box DOWN_BOX
-            code0 {showHiddenButton->label(hidden_label);}
+            code3 {showHiddenButton->label(hidden_label);}
           }
           Fl_Box {} {
             private xywh {255 275 225 20} resizable
@@ -156,12 +157,12 @@ hide();} open selected
         Fl_File_Input fileName {
           callback {fileNameCB();}
           private xywh {115 300 365 35} labelfont 1 when 8 resizable
-          code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
+          code3 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
         }
         Fl_Box {} {
           label {Filename:}
           private xywh {10 310 105 25} labelfont 1 align 24
-          code0 {o->label(filename_label);}
+          code3 {o->label(filename_label);}
         }
         Fl_Group {} {open
           private xywh {10 345 470 25}
@@ -171,11 +172,10 @@ hide();} open selected
             callback {hide();
 
 // Do any callback that is registered...
-if (callback_)
-  (*callback_)(this, data_);}
+do_callback();}
             private xywh {313 345 85 25}
             code0 {\#include <FL/fl_ask.H>}
-            code1 {okButton->label(fl_ok);}
+            code3 {okButton->label(fl_ok);}
           }
           Fl_Button cancelButton {
             label Cancel
@@ -183,7 +183,7 @@ if (callback_)
 fileList->deselect();
 hide();}
             private xywh {408 345 72 25}
-            code0 {o->label(fl_cancel);}
+            code3 {o->label(fl_cancel);}
           }
           Fl_Box {} {
             private xywh {10 345 30 25} resizable
@@ -194,7 +194,7 @@ hide();}
     Fl_Window favWindow {
       label {Manage Favorites}
       private xywh {0 0 355 150} type Double hide resizable
-      code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0}
+      code3 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0}
     } {
       Fl_File_Browser favList {
         callback {favoritesCB(favList);}
@@ -226,23 +226,21 @@ hide();}
           label Cancel
           callback {favWindow->hide();}
           private xywh {273 115 72 25}
-          code0 {favCancelButton->label(fl_cancel);}
+          code3 {favCancelButton->label(fl_cancel);}
         }
         Fl_Return_Button favOkButton {
           label Save
           callback {favoritesCB(favOkButton);}
           private xywh {181 115 79 25}
           code0 {\#include <FL/fl_ask.H>}
-          code1 {favOkButton->label(save_label);}
+          code3 {favOkButton->label(save_label);}
         }
         Fl_Box {} {
           xywh {10 115 161 25} resizable
         }
       }
     }
-    code {callback_ = 0;
-data_ = 0;
-directory_[0] = 0;
+    code {directory_[0] = 0;
 window->size_range(window->w(), window->h());
 type(type_val);
 filter(pattern);
@@ -262,11 +260,12 @@ if(ext_group)window->remove(ext_group);
 delete window;
 delete favWindow;} {}
   }
-  Function {callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0)} {return_type void
-  } {
-    code {callback_ = cb;
-data_     = d;} {}
-  }
+  Function {callback_is_stdf() const { return callback_is_stdf_; }} {open selected return_type bool
+  } {}
+  Function {set_callback_stdf() { callback_is_stdf_ = true; }} {open
+  } {}
+  Function {clear_callback_stdf() { callback_is_stdf_ = false; }} {open
+  } {}
   Function {color(Fl_Color c)} {} {
     code {fileList->color(c);} {}
   }
@@ -389,14 +388,6 @@ else
   Function {type()} {return_type int
   } {
     code {return (type_);} {}
-  }
-  Function {user_data() const} {return_type {void *}
-  } {
-    code {return (data_);} {}
-  }
-  Function {user_data(void *d)} {return_type void
-  } {
-    code {data_ = d;} {}
   }
   decl {const char *value(int f = 1);} {public local
   }
