@@ -206,14 +206,14 @@ Function {make_settings_window()} {uid 5023 open
 } {
   Fl_Window settings_window {uid 6ae5
     label {FLUID Settings} open
-    xywh {593 275 360 585} type Double align 80 resizable size_range {340 580 0 0} visible
+    xywh {0 0 360 585} type Double align 80 resizable size_range {340 580 0 0} visible
   } {
     Fl_Tabs w_settings_tabs {uid f85f
       callback {propagate_load(o, v);} open
       xywh {10 10 340 530} selection_color 12 labelsize 12 labelcolor 255 resizable
     } {
       Fl_Group w_settings_general_tab {uid 3530
-        label General open
+        label General open selected
         scale_image {36 24} image {../icons/general_64.png} compress_image 1 xywh {10 60 340 480} labelsize 12 resizable
       } {
         Fl_Group {} {uid 22d1
@@ -331,7 +331,7 @@ use_external_editor_button->value(Fluid.use_external_editor);}
         }
         Fl_Check_Button restricted_button {uid ee5a
           label {Show Restricted Areas}
-          callback {[](Fl_Widget*, void*) { Fluid.toggle_restricted_areas(); }} selected
+          callback {[](Fl_Widget*, void*) { Fluid.toggle_restricted_areas(); }}
           tooltip {show overlapping and out of bounds areas, show unfilled areas in Fl_Pack groups} xywh {130 326 210 20} down_box DOWN_BOX labelsize 12
           code3 {o->value(Fluid.show_restricted);}
         }
@@ -524,23 +524,20 @@ an include guard in header file:
         Fl_Button {} {uid f8fe
           label {+}
           callback {// Clone the current layout suite
-
-if (v == LOAD) return;
-
-std::string old_name = "Copy of ";
-old_name.append(Fluid.layout_list[Fluid.layout_list.current_suite()].name_);
+ if (v == LOAD) return;
+ std::string old_name = "Copy of ";
+old_name.append(Fluid.layout_list[Fluid.layout_list.current_suite()].name());
 const char *new_name = fl_input("Enter a name for the new layout:", old_name.c_str());
 if (new_name == nullptr)
   return;
-
-Fluid.layout_list.add(new_name);
+ Fluid.layout_list.add(new_name);
 Fluid.layout_list.update_dialogs();}
           xywh {292 78 24 24}
         }
         Fl_Menu_Button w_layout_menu {uid f3ed
           callback {if (v == LOAD) {
   fluid::app::Layout_Suite &suite = Fluid.layout_list[Fluid.layout_list.current_suite()];
-  if (suite.storage_ == fluid::Tool_Store::INTERNAL) {
+  if (suite.storage() == fluid::Tool_Store::INTERNAL) {
     w_layout_menu_rename->deactivate();
     for (int i=1; i<4; i++) w_layout_menu_storage[i]->deactivate();
     w_layout_menu_delete->deactivate();
@@ -549,7 +546,7 @@ Fluid.layout_list.update_dialogs();}
     for (int i=1; i<4; i++) w_layout_menu_storage[i]->activate();
     w_layout_menu_delete->activate();
   }
-  w_layout_menu_storage[static_cast<int>(suite.storage_)]->setonly(menu_w_layout_menu);
+  w_layout_menu_storage[static_cast<int>(suite.storage())]->setonly(menu_w_layout_menu);
 }} open
           xywh {316 78 24 24}
         } {
@@ -557,7 +554,7 @@ Fluid.layout_list.update_dialogs();}
             label {Rename...}
             callback {// Rename the current layout suite
 
-std::string old_name = Fluid.layout_list[Fluid.layout_list.current_suite()].name_;
+std::string old_name = Fluid.layout_list[Fluid.layout_list.current_suite()].name();
 const char *new_name = fl_input("Enter a new name for the layout:", old_name.c_str());
 if (new_name == nullptr)
   return;
@@ -597,8 +594,10 @@ Fluid.layout_list.update_dialogs();}
           MenuItem w_layout_menu_load {uid 3c5b
             label {Load...}
             callback {// Give the user a file chooser and load that file
-  if (Fluid.layout_list.filename_.empty()) {
-    Fluid.layout_list.filename_ = Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll";
+  if (Fluid.layout_list.filename().empty()) {
+    Fluid.layout_list.filename(
+      Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll"
+    );
   }
 
   std::string filename = fluid::io::filechooser(
@@ -606,13 +605,13 @@ Fluid.layout_list.update_dialogs();}
     fluid::io::FileChooserPath::ABSOLUTE_PATH,
     "Import Layout Settings",
     "Can't open layout file:\\n%s.",
-    Fluid.layout_list.filename_,
+    Fluid.layout_list.filename(),
     Fluid.proj.projectfile_path(),
     "Fluid Layout File\\t*.fll"
   );
   if (filename.empty()) return;
 
-  Fluid.layout_list.filename_ = filename;
+  Fluid.layout_list.filename(filename);
   Fluid.layout_list.load(filename);
   //Fluid.layout_list.current_suite(n);
   Fluid.layout_list.update_dialogs();}
@@ -621,8 +620,10 @@ Fluid.layout_list.update_dialogs();}
           MenuItem w_layout_menu_save {uid bbfa
             label {Save...}
             callback {// Give the user a file chooser with a suggested name
-  if (Fluid.layout_list.filename_.empty()) {
-    Fluid.layout_list.filename_ = Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll";
+  if (Fluid.layout_list.filename().empty()) {
+    Fluid.layout_list.filename(
+      Fluid.proj.projectfile_path() + Fluid.proj.basename() + ".fll"
+    );
   }
 
   std::string filename = fluid::io::filechooser(
@@ -630,13 +631,13 @@ Fluid.layout_list.update_dialogs();}
     fluid::io::FileChooserPath::ABSOLUTE_PATH,
     "Export Layout Settings",
     "Can't create layout file:\\n%s.",
-    Fluid.layout_list.filename_,
+    Fluid.layout_list.filename(),
     Fluid.proj.projectfile_path(),
     "Fluid Layout File\\t*.fll"
   );
   if (filename.empty()) return;
 
-  Fluid.layout_list.filename_ = filename;
+  Fluid.layout_list.filename(filename);
   Fluid.layout_list.save(filename);}
             xywh {0 0 31 20} divider
           }

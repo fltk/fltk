@@ -94,22 +94,29 @@ extern Layout_Preset *default_layout_preset;
  There are three Presets available in one Suite, marked "application",
  "dialog", and "toolbox".
  */
-class Layout_Suite {
-public:
-  Layout_Suite();
-  Layout_Suite(const std::string& name, char* menu_label,
+class Layout_Suite 
+{
+private:
+  Layout_Suite(const std::string& name, const char* menu_label,
                Layout_Preset* app_preset, Layout_Preset* dlg_preset, Layout_Preset* tool_preset,
                fluid::Tool_Store storage);
-  Layout_Suite(const Layout_Suite&) = delete;
-  Layout_Suite& operator=(const Layout_Suite&) = delete;
+
+  std::string name_;                ///< name of the suite
+  char *menu_label_;                ///< label text used in pulldown menu
+  Layout_Preset *layout_[3];        ///< presets for application, dialog, and toolbox windows
+  fluid::Tool_Store storage_;       ///< storage location (see fluid::Tool_Store::INTERNAL, etc.)
+
+public:
+
+  static const Layout_Suite& builtin(int n);
+
+  Layout_Suite();
+  Layout_Suite(const Layout_Suite&) noexcept;
+  Layout_Suite& operator=(const Layout_Suite&) noexcept;
   Layout_Suite(Layout_Suite&& other) noexcept;
   Layout_Suite& operator=(Layout_Suite&& other) noexcept;
   ~Layout_Suite();
 
-  std::string name_;                  ///< name of the suite
-  char *menu_label;             ///< label text used in pulldown menu
-  Layout_Preset *layout[3];  ///< presets for application, dialog, and toolbox windows
-  fluid::Tool_Store storage_;       ///< storage location (see fluid::Tool_Store::INTERNAL, etc.)
   void write(Fl_Preferences &prefs);
   void read(Fl_Preferences &prefs);
   void write(fluid::io::Project_Writer*);
@@ -117,7 +124,10 @@ public:
   void update_label();
   void storage(fluid::Tool_Store s) { storage_ = s; update_label(); }
   void name(const std::string& n);
-  void init();
+  const std::string& name() const { return name_; }
+  const char* menu_label() const { return menu_label_; }
+  Layout_Preset* layout(int ix) const { return layout_[ix]; }
+  fluid::Tool_Store storage() const { return storage_; }
 };
 
 
@@ -128,8 +138,9 @@ public:
  as a user preference, as part of an .fl project file, or in a separate file
  for import/export and sharing.
  */
-class Layout_List {
-public:
+class Layout_List 
+{
+private:
   Fl_Menu_Item *main_menu_;
   Fl_Menu_Item *choice_menu_;
   bool menus_are_static_;       ///< true while main_menu_/choice_menu_ still alias static arrays
@@ -137,6 +148,7 @@ public:
   int current_suite_;
   int current_preset_;
   std::string filename_;
+
 public:
   Layout_List();
   ~Layout_List();
@@ -162,7 +174,9 @@ public:
   void remove(int index);
   void remove_all(fluid::Tool_Store storage);
   Layout_Preset *at(int);
-  int size();
+  int size() { return list_.size(); }
+  const std::string &filename() const { return filename_; }
+  void filename(const std::string &in_filename) { filename_ = in_filename; }
 };
 
 /**
