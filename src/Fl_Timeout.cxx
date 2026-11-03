@@ -218,60 +218,12 @@ void Fl_Timeout::insert() {
 */
 int Fl_Timeout::has_timeout(Fl_Timeout_Handler cb, void *data) {
   for (Fl_Timeout *t = first_timeout; t; t = t->next) {
-    if (t->callback == cb && t->data == data)
+    if (t->callback_voidp() == cb && t->user_data() == data)
       return 1;
   }
   return 0;
 }
 
-/**
-  Adds a one-shot timeout callback.
-
-  The callback function \p cb will be called by Fl::wait() at \p time seconds
-  after this function is called.
-
-  \param[in]  time    delta time in seconds until the timer expires
-  \param[in]  cb      callback function
-  \param[in]  data    optional user data (default: \p NULL)
-
-  Implements:
-
-      void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
-
-  \see Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
-*/
-void Fl_Timeout::add_timeout(double time, Fl_Timeout_Handler cb, void *data) {
-  elapse_timeouts();
-  Fl_Timeout *t = get(time, cb, data);
-  t->insert();
-}
-
-/**
-  Repeats a timeout callback from the expiration of the previous timeout,
-  allowing for more accurate timing.
-
-  \param[in]  time    delta time in seconds until the timer expires
-  \param[in]  cb      callback function
-  \param[in]  data    optional user data (default: \p NULL)
-
-  Implements:
-
-      void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
-
-  \see Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
-*/
-
-void Fl_Timeout::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data) {
-  elapse_timeouts();
-  Fl_Timeout *t = (Fl_Timeout *)get(time, cb, data);
-  Fl_Timeout *cur = current_timeout;
-  if (cur) {
-    t->time += cur->time;   // was: missed_timeout_by (always <= 0.0)
-    if (t->time < 0.0)
-      t->time = 0.001;      // at least 1 ms
-  }
-  t->insert();
-}
 
 /**
   Remove a timeout callback.
@@ -291,7 +243,7 @@ void Fl_Timeout::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data) 
 void Fl_Timeout::remove_timeout(Fl_Timeout_Handler cb, void *data) {
   for (Fl_Timeout** p = &first_timeout; *p;) {
     Fl_Timeout* t = *p;
-    if (t->callback == cb && (t->data == data || !data)) {
+    if (t->callback_voidp() == cb && (t->user_data() == data || !data)) {
       *p = t->next;
       t->next = free_timeout;
       free_timeout = t;
@@ -325,11 +277,11 @@ int Fl_Timeout::remove_next_timeout(Fl_Timeout_Handler cb, void *data, void **da
   int ret = 0;
   for (Fl_Timeout** p = &first_timeout; *p;) { // scan all timeouts
     Fl_Timeout* t = *p;
-    if (t->callback == cb && (t->data == data || !data)) { // timeout matches
+    if (t->callback_voidp() == cb && (t->user_data() == data || !data)) { // timeout matches
       ret++;
       if (ret == 1) { // first timeout: remove
         if (data_return)
-          *data_return = t->data;
+          *data_return = t->user_data();
         *p = t->next;
         t->next = free_timeout;
         free_timeout = t;
@@ -348,7 +300,7 @@ std::vector<Fl::TimeoutData> Fl_Timeout::timeout_list() {
   std::vector<Fl::TimeoutData> v;
   const Fl_Timeout *t = first_timeout;
   while (t) {
-    v.push_back( { t->time, t->callback, t->data } );
+    v.push_back( { t->time, t->callback_voidp(), t->user_data() } );
     t = t->next;
   }
   return v;
@@ -430,46 +382,9 @@ Fl_Timeout *Fl_Timeout::current() {
 
 /**
   Get an Fl_Timeout instance for further handling.
-
-  The timer object will be initialized with the input parameters
-  as given by Fl::add_timeout() or Fl::repeat_timeout().
-
-  Fl_Timeout objects are maintained in three queues:
-  - active timer queue
-  - list (stack, i.e. LIFO) of currently executing timer callbacks
-  - free timer entries.
-
-  When the FLTK program is launched all queues are empty. Whenever
-  a new timer object is required the get() method is called and a timer
-  object is either found in the queue of free timer entries or a new
-  timer object is created (operator new).
-
-  Active timer entries are inserted into the "active timer queue" until
-  they expire and their callback is called.
-
-  Before the callback is called the timer entry is inserted into the list
-  of current timers, i.e. it becomes the Fl_Timeout::current() timeout.
-  This can be used in Fl::repeat_timeout() to find out if and how long the
-  current timeout has been delayed.
-
-  When a timer is no longer used it is popped from the \p current list
-  and inserted into the "free timer" list so it can be reused later.
-
-  Timer queue entries are never returned to the system, there's no garbage
-  collection. The total number of timer objects is determined by the
-  largest number of concurrently active timers.
-
-  \param[in]  time  requested delta time
-  \param[in]  cb    timer callback
-  \param[in]  data  userdata for timer callback
-
-  \return  Fl_Timeout*  Timer entry
-
-  \see Fl::add_timeout(), Fl::repeat_timeout()
 */
-
-Fl_Timeout *Fl_Timeout::get(double time, Fl_Timeout_Handler cb, void *data) {
-
+Fl_Timeout *Fl_Timeout::get()
+{
   Fl_Timeout *t = (Fl_Timeout *)free_timeout;
   if (t) {
     free_timeout = t->next;
@@ -480,12 +395,8 @@ Fl_Timeout *Fl_Timeout::get(double time, Fl_Timeout_Handler cb, void *data) {
     num_timers++;                 // DEBUG: count allocated timers
 #endif
   }
-
   t->next = 0;
   t->skip = 1;          // see do_timeouts() (issue #450)
-  t->delay(time);
-  t->callback = cb;
-  t->data = data;
   return t;
 }
 
@@ -547,7 +458,7 @@ void Fl_Timeout::do_timeouts() {
       // make this timeout the "current" timeout
       t->make_current();
       // now it is safe for the callback to do add_timeout:
-      t->callback(t->data);
+      t->do_callback();
       // release the timer entry
       t->release();
 

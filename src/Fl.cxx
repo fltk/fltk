@@ -465,6 +465,16 @@ std::vector<Fl::TimeoutData> Fl::timeout_list() {
 }
 
 
+Fl_Timeout_ID Fl::add_timeout(double t, std::function<void()> cb) {
+  Fl_Timeout::add_timeout(t, cb);
+  return 0; // TODO: ID not yet implemented
+}
+// FL_EXPORT extern Fl_Timeout_ID repeat_timeout(double t, std::function<void()> cb);
+// FL_EXPORT extern int  has_timeout(Fl_Timeout_ID id);
+// FL_EXPORT extern void remove_timeout(Fl_Timeout_ID id);
+
+
+
 ////////////////////////////////////////////////////////////////
 // Checks are just stored in a list. They are called in the reverse
 // order that they were added (this may change in the future).
