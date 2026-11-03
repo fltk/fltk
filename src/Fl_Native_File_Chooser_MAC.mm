@@ -708,6 +708,35 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
   return (retval == NSModalResponseOK ? 1 : 0);
 }
 
+
+static NSMutableArray *dim_subwins(NSWindow *key) {
+  NSMutableArray *dim_array = [[NSMutableArray alloc] initWithCapacity:2];
+  NSArray *array = [key childWindows];
+  for (int i = 0; i < [array count]; i++) {
+    NSWindow *child = (NSWindow*)[array objectAtIndex:i];
+    NSView *dimview = [[NSView alloc] initWithFrame:[[child contentView] frame]];
+    [dim_array addObject:dimview];
+    [dimview setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    dimview.wantsLayer = YES;
+    NSColor *black = [[NSColor blackColor] colorWithAlphaComponent:0.2];
+    dimview.layer.backgroundColor = [black CGColor];
+    [[child contentView] addSubview:dimview];
+  }
+  return dim_array;
+}
+
+
+static void undim_subwins(NSMutableArray *dim_array) {
+  for (int i = 0; i < [dim_array count]; i++) {
+    NSView *dim_view = (NSView*)[dim_array objectAtIndex:i];
+    [dim_view removeFromSuperview];
+    [dim_view release];
+  }
+  [dim_array removeAllObjects];
+  [dim_array release];
+}
+
+
 // POST BROWSER
 //     Internal use only.
 //     Assumes '_opts' has been initialized.
@@ -803,7 +832,9 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       [_panel setExtensionHidden:NO];
     } else createPopupAccessory(_panel, NULL, Fl_File_Chooser::show_label, 0);
   }
+  NSMutableArray *dimmed = dim_subwins(key);
   int retval = runmodal();
+  undim_subwins(dimmed);
   if (_filt_total) {
     _filt_value = (int)[popup indexOfSelectedItem];
   }
