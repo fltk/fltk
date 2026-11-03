@@ -628,6 +628,7 @@ public:
 
   void allow_expand_outside_parent();
 
+  float pixels_per_unit();
 };
 
 #endif

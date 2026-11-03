@@ -523,16 +523,6 @@ int Fl_Gl_Window::gl_plugin_linkage() {
   return fl_gl_load_plugin;
 }
 
-/** The number of pixels per FLTK unit of length for the window.
- This method dynamically adjusts its value when the GUI is rescaled or when the window
- is moved to/from displays of distinct resolutions. This method is useful, e.g., to convert,
- in a window's handle() method, the FLTK units returned by Fl::event_x() and
- Fl::event_y() to the pixel units used by the OpenGL source code.
- \version 1.3.4
- */
-float Fl_Gl_Window::pixels_per_unit() {
-  return pGlWindowDriver->pixels_per_unit();
-}
 
 /**
  \cond DriverDev

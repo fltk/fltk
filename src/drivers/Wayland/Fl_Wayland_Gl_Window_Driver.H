@@ -34,7 +34,6 @@ private:
   EGLSurface egl_surface;
   bool need_swap;
   Fl_Wayland_Gl_Window_Driver(Fl_Gl_Window *win);
-  float pixels_per_unit() FL_OVERRIDE;
   void make_current_before() FL_OVERRIDE;
   int mode_(int m, const int *a) FL_OVERRIDE;
   void swap_buffers() FL_OVERRIDE;

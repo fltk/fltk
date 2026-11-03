@@ -295,15 +295,6 @@ void Fl_Wayland_Gl_Window_Driver::make_current_before() {
 }
 
 
-float Fl_Wayland_Gl_Window_Driver::pixels_per_unit()
-{
-  int ns = pWindow->screen_num();
-  int wld_scale = (pWindow->shown() ?
-    Fl_Wayland_Window_Driver::driver(pWindow)->wld_scale() : 1);
-  return wld_scale * Fl::screen_driver()->scale(ns);
-}
-
-
 int Fl_Wayland_Gl_Window_Driver::mode_(int m, const int *a) {
   mode(m | FL_DOUBLE);
   return 1;

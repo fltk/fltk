@@ -217,7 +217,6 @@ public:
   Fl_Gl_Window* as_gl_window() override { return this; }
   Fl_Gl_Window const* as_gl_window() const override { return this; }
 
-  float pixels_per_unit();
   /** Gives the window width in OpenGL pixels.
    When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::w()
    which is expressed in FLTK units, may differ from the window width in pixels.

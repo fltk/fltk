@@ -155,6 +155,7 @@ public:
   NSImage *icon_image;
 
   fl_uintptr_t os_id() FL_OVERRIDE;
+  float pixels_per_unit() override;
 };
 
 class Fl_Cocoa_Plugin : public Fl_Plugin {

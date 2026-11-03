@@ -58,7 +58,6 @@ public:
   virtual ~Fl_Gl_Window_Driver() {}
   static Fl_Gl_Window_Driver *newGlWindowDriver(Fl_Gl_Window *w);
   static Fl_Gl_Window_Driver *global();
-  virtual float pixels_per_unit() {return 1;}
   virtual void before_show(int&) {}
   virtual void after_show() {}
   virtual void invalidate();

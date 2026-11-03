@@ -291,3 +291,10 @@ FLWindow *fl_mac_xid(const Fl_Window *win) {
 Fl_Window *fl_mac_find(FLWindow *xid) {
   return Fl_Window_Driver::find((fl_uintptr_t)xid);
 }
+
+
+float Fl_Cocoa_Window_Driver::pixels_per_unit()
+{
+  int retina = (Fl::use_high_res_GL() && Fl_X::flx(pWindow) && mapped_to_retina()) ? 2 : 1;
+  return retina * Fl::screen_driver()->scale(screen_num());
+}

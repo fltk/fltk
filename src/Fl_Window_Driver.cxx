@@ -315,6 +315,12 @@ void Fl_Window_Driver::un_maximize() {
   *no_fullscreen_h() = 0;
 }
 
+
+float Fl_Window_Driver::pixels_per_unit()
+{
+  return Fl::screen_driver()->scale(screen_num());
+}
+
 /**
  \}
  \endcond

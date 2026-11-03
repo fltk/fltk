@@ -244,11 +244,6 @@ void Fl_X11_Gl_Window_Driver::before_show(int&) {
   Fl_X::make_xid(pWindow, g->vis, g->colormap);
 }
 
-float Fl_X11_Gl_Window_Driver::pixels_per_unit()
-{
-  int ns = pWindow->screen_num();
-  return Fl::screen_driver()->scale(ns);
-}
 
 int Fl_X11_Gl_Window_Driver::mode_(int m, const int *a) {
   int oldmode = mode();

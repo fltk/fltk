@@ -291,6 +291,12 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
  The pixel size of the created graphics buffer is equal to the number of pixels
  in an area of the screen containing the current window sized at \p w,h FLTK units.
  This pixel size varies with the value of the scale factor of this screen.
+
+ When all or part of an offscreen buffer is drawn inside a window, it's necessary
+ to account for changes to the number of pixels behind one FLTK unit.
+ Function Fl_Window::pixels_per_unit() can detect such changes and function
+ fl_rescale_offscreen() can ensure the offscreen buffer follows these changes.
+ Function \p oscr_box::draw() of test program \p offscreen gives an example of how to use these two functions.
  \note Work with the fl_XXX_offscreen() functions is equivalent to work with
  an Fl_Image_Surface object, as follows :
  <table>
@@ -347,7 +353,7 @@ void fl_end_offscreen() {
  The \p ctx argument must have been created by fl_create_offscreen()
  and the calling context must not be between fl_begin_offscreen() and fl_end_offscreen().
  The graphical content of the offscreen is preserved. The current scale factor
- value is given by <tt>Fl_Graphics_Driver::default_driver().scale()</tt>.
+ value is given by <tt>win->pixels_per_unit()</tt> where \p win is the destination window of the offscreen buffer.
  \version 1.4
  */
 void fl_rescale_offscreen(Fl_Offscreen &ctx) {

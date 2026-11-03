@@ -30,7 +30,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   NSOpenGLContext *gl1ctxt; // GL1 context in addition to GL3 context
   friend Fl_Gl_Window_Driver* Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *);
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win);
-  float pixels_per_unit() FL_OVERRIDE;
   void before_show(int& need_after) FL_OVERRIDE;
   void after_show() FL_OVERRIDE;
   int mode_(int m, const int *a) FL_OVERRIDE;

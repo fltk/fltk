@@ -95,10 +95,10 @@ void oscr_box::draw()
   // then add the offscreen on top of the grey background
   if (has_oscr()) // offscreen exists
   {
-    if (scale != Fl_Graphics_Driver::default_driver().scale()) {
-      // the screen scaling factor has changed
+    if (scale != window()->pixels_per_unit()) {
+      // the screen scaling factor or the screen number has changed
       fl_rescale_offscreen(oscr);
-      scale = Fl_Graphics_Driver::default_driver().scale();
+      scale = window()->pixels_per_unit();
     }
     fl_copy_offscreen(xo, yo, wd, ht, oscr, page_x, page_y);
   }
@@ -109,7 +109,7 @@ void oscr_box::draw()
     offsc_w = offscreen_size;
     offsc_h = offscreen_size;
     oscr = fl_create_offscreen(offsc_w, offsc_h);
-    scale = Fl_Graphics_Driver::default_driver().scale();
+    scale = window()->pixels_per_unit();
   }
 } // draw method
 

@@ -1058,3 +1058,14 @@ void Fl_Window::is_maximized_(bool b) {
 void Fl_Window::allow_expand_outside_parent() {
   if (parent()) pWindowDriver->allow_expand_outside_parent();
 }
+
+/** The number of pixels per FLTK unit of length for the window.
+ This method dynamically adjusts its value when the GUI is rescaled or when the window
+ is moved to/from displays of distinct resolutions. This method is useful, for example, to convert,
+ in an Fl_Gl_Window's handle() method, the FLTK units returned by Fl::event_x() and
+ Fl::event_y() to the pixel units used by the OpenGL source code.
+ \version 1.5 (1.3.4 as a member of derived class Fl_Gl_Window)
+ */
+float Fl_Window::pixels_per_unit() {
+  return pWindowDriver->pixels_per_unit();
+}

@@ -143,6 +143,7 @@ public:
   bool process_menu_or_tooltip(struct wld_window *);
   static Fl_Window *previous_floatingtitle; // to support floating menuwindow w/ title
   void allow_expand_outside_parent() override { can_expand_outside_parent_ = true; }
+  float pixels_per_unit() override;
 };
 
 

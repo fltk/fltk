@@ -179,11 +179,11 @@ void CanvasInterface::cv_draw()
     fl_color(FL_WHITE);
     fl_rectf(0, 0, widget_->w(), widget_->h());
     fl_end_offscreen();
-    scale_ = fl_graphics_driver->scale();
+    scale_ = widget_->top_window()->pixels_per_unit();
   }
-  if (fl_graphics_driver->scale() != scale_) {
+  if (scale_ != widget_->top_window()->pixels_per_unit()) {
     fl_rescale_offscreen(offscreen_);
-    scale_ = fl_graphics_driver->scale();
+    scale_ = widget_->top_window()->pixels_per_unit();
   }
   int dx = in_window_ ? 0 : widget_->x(), dy = in_window_ ? 0 : widget_->y();
   fl_push_clip(dx, dy, widget_->w(), widget_->h());

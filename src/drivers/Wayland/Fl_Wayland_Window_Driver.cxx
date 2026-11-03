@@ -2219,14 +2219,26 @@ int Fl_Wayland_Window_Driver::wld_scale() {
     int scale = 1;
     Fl_Wayland_Screen_Driver *scr_driver = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
     Fl_Wayland_Screen_Driver::output *output;
+    int ns = 0;
     wl_list_for_each(output, &(scr_driver->outputs), link) {
-      scale = fl_max(scale, output->wld_scale);
+      if (output->wld_scale > scale) {
+        scale = output->wld_scale;
+        screen_num_ = ns; // give window putative screen_num in agreement with putative scale
+      }
+      ns++;
     }
     return scale;
   }
   struct surface_output *s_output;
   s_output = wl_container_of(xid->outputs.next, s_output, link);
   return s_output->output->wld_scale;
+}
+
+
+float Fl_Wayland_Window_Driver::pixels_per_unit()
+{
+  int d = wld_scale();
+  return d * Fl::screen_driver()->scale(screen_num());
 }
 
 
