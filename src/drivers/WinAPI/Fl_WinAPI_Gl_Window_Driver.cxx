@@ -23,6 +23,7 @@
 #include "../../Fl_Gl_Choice.H"
 #include "Fl_WinAPI_Window_Driver.H"
 #include "../GDI/Fl_Font.H"
+#include <string.h> // memset()
 extern void fl_save_dc(HWND, HDC);
 
 #ifndef GL_CURRENT_PROGRAM
@@ -59,6 +60,101 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 }
 
 
+// The pixel formats with multisampling (FL_MULTISAMPLE) are only known to
+// wglChoosePixelFormatARB() of the WGL_ARB_pixel_format and
+// WGL_ARB_multisample extensions: DescribePixelFormat() does not tell.
+#define FL_WGL_DRAW_TO_WINDOW_ARB     0x2001
+#define FL_WGL_ACCELERATION_ARB       0x2003
+#define FL_WGL_SUPPORT_OPENGL_ARB     0x2010
+#define FL_WGL_DOUBLE_BUFFER_ARB      0x2011
+#define FL_WGL_STEREO_ARB             0x2012
+#define FL_WGL_PIXEL_TYPE_ARB         0x2013
+#define FL_WGL_COLOR_BITS_ARB         0x2014
+#define FL_WGL_ALPHA_BITS_ARB         0x201B
+#define FL_WGL_ACCUM_BITS_ARB         0x201D
+#define FL_WGL_DEPTH_BITS_ARB         0x2022
+#define FL_WGL_STENCIL_BITS_ARB       0x2023
+#define FL_WGL_FULL_ACCELERATION_ARB  0x2027
+#define FL_WGL_TYPE_RGBA_ARB          0x202B
+#define FL_WGL_SAMPLE_BUFFERS_ARB     0x2041
+#define FL_WGL_SAMPLES_ARB            0x2042
+
+typedef BOOL (WINAPI *fl_wglChoosePixelFormatARB_t)(HDC, const int *, const FLOAT *,
+                                                    UINT, int *, UINT *);
+
+// The extension entry point, looked up once: wglGetProcAddress() needs a
+// current context, which a hidden window gets with a plain format meanwhile.
+static fl_wglChoosePixelFormatARB_t choose_pixel_format_arb() {
+  static fl_wglChoosePixelFormatARB_t choose = NULL;
+  static bool looked = false;
+  if (looked) return choose;
+  looked = true;
+  WNDCLASSW wc;
+  memset(&wc, 0, sizeof(wc));
+  wc.lpfnWndProc = DefWindowProcW;
+  wc.hInstance = GetModuleHandleW(NULL);
+  wc.lpszClassName = L"FLTK_Gl_Format_Probe";
+  RegisterClassW(&wc);
+  HWND wnd = CreateWindowW(wc.lpszClassName, L"", WS_POPUP, 0, 0, 1, 1,
+                           NULL, NULL, wc.hInstance, NULL);
+  if (wnd) {
+    HDC dc = GetDC(wnd);
+    PIXELFORMATDESCRIPTOR pfd;
+    memset(&pfd, 0, sizeof(pfd));
+    pfd.nSize = sizeof(pfd);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 24;
+    pfd.cDepthBits = 24;
+    int format = ChoosePixelFormat(dc, &pfd);
+    if (format && SetPixelFormat(dc, format, &pfd)) {
+      HGLRC rc = wglCreateContext(dc);
+      if (rc) {
+        HDC old_dc = wglGetCurrentDC();
+        HGLRC old_rc = wglGetCurrentContext();
+        if (wglMakeCurrent(dc, rc))
+          choose = (fl_wglChoosePixelFormatARB_t)wglGetProcAddress("wglChoosePixelFormatARB");
+        wglMakeCurrent(old_dc, old_rc);
+        wglDeleteContext(rc);
+      }
+    }
+    ReleaseDC(wnd, dc);
+    DestroyWindow(wnd);
+  }
+  UnregisterClassW(wc.lpszClassName, wc.hInstance);
+  return choose;
+}
+
+// A hardware accelerated pixel format with 4 samples per pixel for mode m,
+// as asked on the other platforms, or 0 if there is none.
+static int multisample_pixel_format(HDC gc, int m) {
+  if (m & FL_INDEX) return 0;
+  fl_wglChoosePixelFormatARB_t choose = choose_pixel_format_arb();
+  if (!choose) return 0;
+  int attribs[] = {
+    FL_WGL_DRAW_TO_WINDOW_ARB, TRUE,
+    FL_WGL_SUPPORT_OPENGL_ARB, TRUE,
+    FL_WGL_ACCELERATION_ARB, FL_WGL_FULL_ACCELERATION_ARB,
+    FL_WGL_PIXEL_TYPE_ARB, FL_WGL_TYPE_RGBA_ARB,
+    FL_WGL_COLOR_BITS_ARB, 24,
+    FL_WGL_ALPHA_BITS_ARB, (m & FL_ALPHA) ? 8 : 0,
+    FL_WGL_ACCUM_BITS_ARB, (m & FL_ACCUM) ? 1 : 0,
+    FL_WGL_DEPTH_BITS_ARB, (m & FL_DEPTH32) ? 32 : (m & FL_DEPTH) ? 24 : 0,
+    FL_WGL_STENCIL_BITS_ARB, (m & FL_STENCIL) ? 1 : 0,
+    FL_WGL_DOUBLE_BUFFER_ARB, (m & FL_DOUBLE) ? TRUE : FALSE,
+    FL_WGL_STEREO_ARB, (m & FL_STEREO) ? TRUE : FALSE,
+    FL_WGL_SAMPLE_BUFFERS_ARB, 1,
+    FL_WGL_SAMPLES_ARB, 4,
+    0
+  };
+  int format = 0;
+  UINT count = 0;
+  if (!choose(gc, attribs, NULL, 1, &format, &count) || !count) return 0;
+  return format;
+}
+
+
 Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_WinAPI_Gl_Choice *g = (Fl_WinAPI_Gl_Choice*)Fl_Gl_Window_Driver::find_begin(m, alistp);
@@ -69,7 +165,16 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
   if (!gc) gc = fl_GetDC(0);
   int pixelformat = 0;
   PIXELFORMATDESCRIPTOR chosen_pfd;
-  for (int i = 1; ; i++) {
+  // with multisampling, the format the extension gives; without it, or
+  // where it has none, the best one found below (without multisampling)
+  if (m & FL_MULTISAMPLE) {
+    pixelformat = multisample_pixel_format(gc, m);
+    if (pixelformat &&
+        !DescribePixelFormat(gc, pixelformat, sizeof(chosen_pfd), &chosen_pfd))
+      pixelformat = 0;
+  }
+  bool multisampled = (pixelformat != 0);
+  for (int i = 1; !multisampled; i++) {
     PIXELFORMATDESCRIPTOR pfd;
     if (!DescribePixelFormat(gc, i, sizeof(pfd), &pfd)) break;
     // continue if it does not satisfy our requirements:
