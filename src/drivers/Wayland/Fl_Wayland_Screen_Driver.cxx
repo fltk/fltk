@@ -670,7 +670,7 @@ static void wl_keyboard_enter(void *data, struct wl_keyboard *wl_keyboard,
 
 struct key_repeat_data_t {
   uint32_t serial;
-  Fl_Window *window;
+  Fl_Window **key_repeat_window;
 };
 
 static double key_repeat_delay = 0.5; // sec
@@ -678,8 +678,9 @@ static double key_repeat_interval = 0.05;  // sec
 
 
 static void key_repeat_timer_cb(key_repeat_data_t *key_repeat_data) {
-  if (last_keydown_serial == key_repeat_data->serial && key_repeat_interval > 0) {
-    Fl::handle(FL_KEYDOWN, key_repeat_data->window);
+  if (*key_repeat_data->key_repeat_window && last_keydown_serial == key_repeat_data->serial &&
+      key_repeat_interval > 0) {
+    Fl::handle(FL_KEYDOWN, *key_repeat_data->key_repeat_window);
     Fl::add_timeout(key_repeat_interval, (Fl_Timeout_Handler)key_repeat_timer_cb, key_repeat_data);
   }
   else delete key_repeat_data;
@@ -917,8 +918,9 @@ static void wl_keyboard_key(void *data, struct wl_keyboard *wl_keyboard,
     // but not under Ubuntu/KDE !
     key_repeat_data_t *key_repeat_data = new key_repeat_data_t;
     key_repeat_data->serial = serial;
-    key_repeat_data->window = win;
+    key_repeat_data->key_repeat_window = &seat->last_keydown_window;
     last_keydown_serial = serial;
+    seat->last_keydown_window = win;
     Fl::add_timeout(key_repeat_delay, (Fl_Timeout_Handler)key_repeat_timer_cb,
                     key_repeat_data);
   }

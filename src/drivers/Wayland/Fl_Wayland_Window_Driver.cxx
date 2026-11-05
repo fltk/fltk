@@ -531,6 +531,7 @@ void Fl_Wayland_Window_Driver::hide() {
 #endif
       destroy_surface_caution_pointer_focus(wld_win->wl_surface, scr_driver->seat);
       wld_win->wl_surface = NULL;
+      if (scr_driver->seat->last_keydown_window == pWindow) scr_driver->seat->last_keydown_window = 0;
     }
     while (!wl_list_empty(&wld_win->outputs)) { // remove from screens where it belongs
       struct surface_output *s_output;
