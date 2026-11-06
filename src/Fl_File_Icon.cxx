@@ -4,6 +4,7 @@
 // KDE icon code donated by Maarten De Boer.
 //
 // Copyright 1999-2010 by Michael Sweet.
+// Copyright 2011-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -76,7 +77,7 @@ Fl_File_Icon::Fl_File_Icon(const char *p,       /* I - Filename pattern */
   {
     num_data_   = nd;
     alloc_data_ = nd + 1;
-    data_       = (short *)calloc(sizeof(short), nd + 1);
+    data_       = (short *)calloc(nd + 1, sizeof(short));
     memcpy(data_, d, nd * sizeof(short));
   }
   else

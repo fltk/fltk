@@ -1,7 +1,7 @@
 //
 // Fl_Chart widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -350,7 +350,7 @@ Fl_Chart::Fl_Chart(int X, int Y, int W, int H, const char *L)
   textfont_ = FL_HELVETICA;
   textsize_ = 10;
   textcolor_ = FL_FOREGROUND_COLOR;
-  entries = (FL_CHART_ENTRY *)calloc(sizeof(FL_CHART_ENTRY), FL_CHART_MAX + 1);
+  entries = (FL_CHART_ENTRY *)calloc(FL_CHART_MAX + 1, sizeof(FL_CHART_ENTRY));
 }
 
 /**

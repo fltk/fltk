@@ -607,7 +607,7 @@ static const struct zwp_primary_selection_source_v1_listener primary_selection_s
 static void primary_selection_source_handle_cancelled(void *data,
                                                       struct zwp_primary_selection_source_v1 *source) {
   zwp_primary_selection_source_v1_destroy(source);
-  ((struct Fl_Wayland_Screen_Driver *)data)->primary_selection_init();
+  ((Fl_Wayland_Screen_Driver *)data)->primary_selection_init();
 }
 
 

@@ -132,8 +132,8 @@ static void fghCircleTable(double **sint,double **cost,const int n)
 
     /* Allocate memory for n samples, plus duplicate of first entry at the end */
 
-    *sint = (double *) calloc(sizeof(double), size+1);
-    *cost = (double *) calloc(sizeof(double), size+1);
+    *sint = (double *) calloc(size+1, sizeof(double));
+    *cost = (double *) calloc(size+1, sizeof(double));
 
     /* Bail out if memory allocation fails, fgError never returns */
 
@@ -599,8 +599,8 @@ void glutWireTorus( GLdouble dInnerRadius, GLdouble dOuterRadius, GLint nSides, 
   if ( nRings < 1 ) nRings = 1;
 
   /* Allocate the vertices array */
-  vertex = (double *)calloc( sizeof(double), 3 * nSides * nRings );
-  normal = (double *)calloc( sizeof(double), 3 * nSides * nRings );
+  vertex = (double *)calloc( 3 * nSides * nRings, sizeof(double) );
+  normal = (double *)calloc( 3 * nSides * nRings, sizeof(double) );
 
   glPushMatrix();
 
@@ -682,8 +682,8 @@ void glutSolidTorus( GLdouble dInnerRadius, GLdouble dOuterRadius, GLint nSides,
   nRings ++ ;
 
   /* Allocate the vertices array */
-  vertex = (double *)calloc( sizeof(double), 3 * nSides * nRings );
-  normal = (double *)calloc( sizeof(double), 3 * nSides * nRings );
+  vertex = (double *)calloc( 3 * nSides * nRings, sizeof(double) );
+  normal = (double *)calloc( 3 * nSides * nRings, sizeof(double) );
 
   glPushMatrix();
 
