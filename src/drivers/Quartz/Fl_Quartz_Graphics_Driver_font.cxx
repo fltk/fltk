@@ -201,6 +201,8 @@ double Fl_Quartz_Graphics_Driver::width(const char* txt, int n) {
   if (len1 > 0 && n > len1) { // a text with several codepoints: compute its typographical width
     CFStringRef str = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n, kCFStringEncodingUTF8, false);
     if (str) {
+      // avoid a crash if no font has been selected by user yet
+      if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
       CFDictionarySetValue(attributes, kCTFontAttributeName, valid_font_descriptor()->fontref);
       CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str, attributes);
       CFRelease(str);
