@@ -581,7 +581,10 @@ Fl_Font_Descriptor** Fl_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
 Fl_RGB_Image* Fl_Gl_Window_Driver::capture_gl_rectangle(int x, int y, int w, int h)
 {
   Fl_Gl_Window *glw = pWindow;
-  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
+  glw->make_current();
+  glw->draw();
+  if (overlay() == pWindow) glw->draw_overlay();
+
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
