@@ -30,16 +30,17 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h,
   int d = 1;
   if (!off) {
     fl_open_display();
-    Fl_Window *model_win = NULL;
-    if (high_res) model_win = Fl_Window::current();
-    if (!model_win) model_win = Fl::first_window();
-    if (high_res && model_win) {
-      d = Fl_Wayland_Window_Driver::driver(model_win)->wld_scale();
-    }
-    s = (model_win ? Fl::screen_driver()->scale(model_win->screen_num()) : 1);
-    if (d*s != 1 && high_res) {
-      w = int(w * s) * d;
-      h = int(h * s) * d;
+    if (high_res) {
+      Fl_Window *model_win = Fl_Window::current();
+      if (!model_win) model_win = Fl::first_window();
+      if (model_win) {
+        d = Fl_Wayland_Window_Driver::driver(model_win)->wld_scale();
+        s = Fl::screen_driver()->scale(model_win->screen_num());
+      }
+      if (d*s != 1) {
+        w = int(w * s) * d;
+        h = int(h * s) * d;
+      }
     }
     struct Fl_Wayland_Graphics_Driver::draw_buffer *off_ =
       (struct Fl_Wayland_Graphics_Driver::draw_buffer*)calloc(1,
