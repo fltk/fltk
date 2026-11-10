@@ -1,7 +1,7 @@
 //
 // Definition of Wayland window driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2025 by Bill Spitzak and others.
+// Copyright 2010-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -177,9 +177,7 @@ struct wld_window {
 
 class Fl_Wayland_Plugin : public Fl_Plugin {
 public:
-  Fl_Wayland_Plugin(const char *pluginName)  : Fl_Plugin(klass(), pluginName) { }
-  virtual const char *klass() { return "wayland.fltk.org"; }
-  virtual const char *name() = 0;
+  Fl_Wayland_Plugin(const char *pluginName) : Fl_Plugin("wayland.fltk.org", pluginName) { }
   virtual void do_swap(Fl_Window*) = 0;
   virtual void invalidate(Fl_Window*) = 0;
   virtual void terminate() = 0;

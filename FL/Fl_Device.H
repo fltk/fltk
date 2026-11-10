@@ -109,12 +109,7 @@ public:
 class Fl_Device_Plugin : public Fl_Plugin {
 public:
   /** \brief The constructor */
-  Fl_Device_Plugin(const char *pluginName)
-  : Fl_Plugin(klass(), pluginName) { }
-  /** \brief Returns the class name */
-  virtual const char *klass() { return "fltk:device"; }
-  /** \brief Returns the plugin name */
-  virtual const char *name() = 0;
+  Fl_Device_Plugin(const char *pluginName) : Fl_Plugin("fltk:device", pluginName) { }
   /** \brief Prints a widget */
   virtual int print(Fl_Widget* w) = 0;
   /** Captures a rectangle of a widget as an image

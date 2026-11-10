@@ -28,8 +28,7 @@
  */
 class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
 public:
-  Fl_Gl_Device_Plugin() : Fl_Device_Plugin(name()) { }
-  const char *name() FL_OVERRIDE { return "opengl.device.fltk.org"; }
+  Fl_Gl_Device_Plugin() : Fl_Device_Plugin("opengl.device.fltk.org") { }
   int print(Fl_Widget *w) FL_OVERRIDE {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;

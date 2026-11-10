@@ -366,8 +366,7 @@ void Fl_Wayland_Gl_Window_Driver::swap_buffers() {
 
 class Fl_Wayland_Gl_Plugin : public Fl_Wayland_Plugin {
 public:
-  Fl_Wayland_Gl_Plugin() : Fl_Wayland_Plugin(name()) { }
-  const char *name() FL_OVERRIDE { return "gl.wayland.fltk.org"; }
+  Fl_Wayland_Gl_Plugin() : Fl_Wayland_Plugin("gl.wayland.fltk.org") { }
   void do_swap(Fl_Window *w) FL_OVERRIDE {
     Fl_Gl_Window_Driver *gldr = Fl_Gl_Window_Driver::driver(w->as_gl_window());
     if (gldr->overlay() == w) gldr->swap_buffers();

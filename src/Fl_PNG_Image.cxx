@@ -4,7 +4,7 @@
 // Copyright 1997-2012 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
-// Copyright 2013-2022 by Bill Spitzak and others.
+// Copyright 2013-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -251,8 +251,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, int offset, const unsigned ch
 
 class Fl_Load_PNG_Plugin_Impl : public Fl_Load_PNG_Plugin {
 public:
-  Fl_Load_PNG_Plugin_Impl() : Fl_Load_PNG_Plugin(name()) { }
-  const char *name() override { return "implementation.loadpng.fltk.org"; }
+  Fl_Load_PNG_Plugin_Impl() : Fl_Load_PNG_Plugin("implementation.loadpng.fltk.org") { }
   void *png_load_from_memory(const char *data, int size) override {
     Fl_PNG_Image *png = new Fl_PNG_Image(NULL, (const uchar *)data, size);
     if (png->fail()) {

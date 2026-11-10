@@ -1,7 +1,7 @@
 //
 // Class Fl_WinAPI_Gl_Window_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2021-2022 by Bill Spitzak and others.
+// Copyright 2021-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -554,8 +554,7 @@ void Fl_WinAPI_Gl_Window_Driver::switch_back() {
 
 class Fl_WinAPI_Gl_Plugin : public Fl_WinAPI_Plugin {
 public:
-  Fl_WinAPI_Gl_Plugin() : Fl_WinAPI_Plugin(name()) { }
-  const char *name() override { return "gl.winapi.fltk.org"; }
+  Fl_WinAPI_Gl_Plugin() : Fl_WinAPI_Plugin("gl.winapi.fltk.org") { }
   void invalidate(Fl_Window *w) override {
     w->as_gl_window()->valid(0);
   }

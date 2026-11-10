@@ -1,7 +1,7 @@
 //
 // PNG image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2023 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -53,11 +53,8 @@ FL_EXPORT int fl_write_png(const char *filename, const unsigned char *pixels, in
 
 /** Allows using Fl_PNG_Image inside libfltk without usage of libfltk forcing link to libfltk_images. */
 class Fl_Load_PNG_Plugin : public Fl_Plugin {
-private:
-  virtual const char *klass() { return "loadpng.fltk.org"; }
-  virtual const char *name() = 0;
 protected:
-  Fl_Load_PNG_Plugin(const char *pluginName)  : Fl_Plugin(klass(), pluginName) { }
+  Fl_Load_PNG_Plugin(const char *pluginName) : Fl_Plugin("loadpng.fltk.org", pluginName) { }
 public:
   /** Construct an Fl_PNG_Image from a block of memory beginning at data and of given size. */
   virtual void *png_load_from_memory(const char *data, int size) = 0;
