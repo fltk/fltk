@@ -30,7 +30,8 @@ Fl_Wayland_Image_Surface_Driver::Fl_Wayland_Image_Surface_Driver(int w, int h,
   int d = 1;
   if (!off) {
     fl_open_display();
-    Fl_Window *model_win = Fl_Window::current();
+    Fl_Window *model_win = NULL;
+    if (high_res) model_win = Fl_Window::current();
     if (!model_win) model_win = Fl::first_window();
     if (high_res && model_win) {
       d = Fl_Wayland_Window_Driver::driver(model_win)->wld_scale();

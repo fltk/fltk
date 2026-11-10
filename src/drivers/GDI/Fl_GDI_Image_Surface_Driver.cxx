@@ -25,7 +25,8 @@
 
 Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
   Fl_Display_Device::display_device(); // make sure fl_graphics_driver was initialized
-  Fl_Window *model_win = Fl_Window::current();
+  Fl_Window *model_win = NULL;
+  if (high_res) model_win = Fl_Window::current();
   if (!model_win) model_win = Fl::first_window();
   float d = (model_win ? Fl::screen_driver()->scale(model_win->screen_num()) : 1);
   if (!off && d != 1 && high_res) {
