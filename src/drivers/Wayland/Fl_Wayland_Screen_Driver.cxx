@@ -1079,6 +1079,7 @@ void text_input_done(void *data, struct zwp_text_input_v3 *zwp_text_input_v3,
       }
   }
   if (pending_commit) {
+    Fl::remove_timeout((Fl_Timeout_Handler)key_repeat_timer_cb);
     send_text_to_fltk(pending_commit, false, current_surface);
     free(pending_commit); pending_commit = NULL;
   }
