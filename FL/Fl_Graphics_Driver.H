@@ -362,6 +362,8 @@ public:
   virtual unsigned font_desc_size();
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
+  virtual const char *load_font(const char *filename, const unsigned char *data, size_t size, int face);
+  static int font_file_info(const unsigned char *data, size_t size, int face, char *psname, int len);
   // Defaut implementation may be enough
   virtual void overlay_rect(int x, int y, int w , int h);
   virtual float override_scale();
