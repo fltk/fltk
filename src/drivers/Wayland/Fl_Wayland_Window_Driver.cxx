@@ -1618,7 +1618,6 @@ void Fl_Wayland_Window_Driver::makeWindow()
     new_window->configured_width = pWindow->w();
     new_window->configured_height = pWindow->h();
     if (!pWindow->as_gl_window())  {
-      parent->fl_win->wait_for_expose();
       wl_surface_commit(parent->wl_surface);
     }
     wait_for_expose_value = 0;
