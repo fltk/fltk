@@ -307,7 +307,10 @@ void Fl_Wayland_Gl_Window_Driver::surface_frame_done(void *data, struct wl_callb
   struct wld_window *window = fl_wl_xid(gl_dr->pWindow);
   window->frame_cb = NULL;
   if (gl_dr->need_swap) {
-    eglSwapBuffers(Fl_Wayland_Gl_Window_Driver::egl_display, gl_dr->egl_surface);
+    if (eglGetCurrentSurface(EGL_DRAW) != gl_dr->egl_surface) {
+      eglMakeCurrent(egl_display, gl_dr->egl_surface, gl_dr->egl_surface, (EGLContext)gl_dr->pWindow->context());
+    }
+    eglSwapBuffers(egl_display, gl_dr->egl_surface);
     gl_dr->need_swap = false;
   }
 }
