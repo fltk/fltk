@@ -172,6 +172,10 @@ static void data_source_handle_dnd_finished(void *data, struct wl_data_source *s
     //printf("Destination has accepted the drop with a copy action\n");
     break;
   }
+  // The drop is complete and the source is ours to destroy: end the DnD
+  // here, because not every compositor sends wl_data_source.cancelled
+  // after dnd_finished (KDE Plasma 6.7.5 doesn't).
+  data_source_handle_cancelled(data, source);
 }
 
 
