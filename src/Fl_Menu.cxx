@@ -1472,6 +1472,15 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     const Fl_Menu_Item* title,
     int menubar) const
 {
+  struct remember_menu_state { 
+    remember_menu_state(): old_state(menu_state), old_parent(Menu_Window::parent_), old_button(const_cast<Fl_Menu_*>(button)), old_grab(Fl::grab()) {}
+    ~remember_menu_state() { menu_state = old_state; Menu_Window::parent_ = static_cast<Fl_Window*>(old_parent.widget()); button = static_cast<Fl_Menu_*>(old_button.widget()); Fl::grab(static_cast<Fl_Window*>(old_grab.widget())); }
+    Menu_State*       old_state; 
+    Fl_Widget_Tracker old_parent; // Fl_Window*
+    Fl_Widget_Tracker old_button; // const Fl_Menu_*
+    Fl_Widget_Tracker old_grab;   // Fl_Window*
+  } auto_reset;
+
   Fl_Group::current(0); // fix possible user error...
 
   // track the Fl_Menu_ widget to make sure we notice if it gets
@@ -1515,14 +1524,12 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   if (menubar) {
     // find the initial menu
     if (!mw.handle(FL_DRAG)) {
-      Fl::grab(0);
       return 0;
     }
   }
   initial_item = pp.current_item;
   if (initial_item) {
     if (menubar && !initial_item->selectable()) { // pointing at inactive item
-      Fl::grab(0);
       return NULL;
     }
     goto STARTUP;
@@ -1625,7 +1632,6 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   while (pp.num_menus>1)
     delete pp.menu_window[--pp.num_menus];
   mw.hide();
-  Fl::grab(nullptr);
   Menu_Window::parent_ = nullptr;
   return m;
 }
