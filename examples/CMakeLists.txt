@@ -46,6 +46,7 @@ set(SIMPLE_SOURCES
   howto-remap-numpad-keyboard-keys
   howto-text-over-image-button
   menubar-add
+  menu-edit
   nativefilechooser-simple
   nativefilechooser-simple-app
   progress-simple
