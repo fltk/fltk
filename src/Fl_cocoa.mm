@@ -3307,7 +3307,7 @@ void Fl_Cocoa_Window_Driver::show() {
  */
 void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
   if (!pWindow->shown() && (X != x() || Y != y())) force_position(1);
-  if (view_resized() || !visible_r()) {
+  if (view_resized() || !visible_r() || !pWindow->shown()) {
     pWindow->Fl_Group::resize(X, Y, W, H);
     if (!pWindow->shown()) pWindow->init_sizes();
   } else if (!through_resize()) {
