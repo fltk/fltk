@@ -1172,17 +1172,20 @@ static const struct xdg_surface_listener xdg_surface_listener = {
 };
 
 
-static bool parse_states_fullscreen(struct wl_array *states)
+static bool parse_states(struct wl_array *states, uint32_t target_state)
 {
   uint32_t *p;
   // Replace wl_array_for_each(p, states) rejected by C++
   for (p = (uint32_t *)(states)->data;
       (const char *) p < ((const char *) (states)->data + (states)->size);
       (p)++) {
-    if (*p == XDG_TOPLEVEL_STATE_FULLSCREEN) return true;
+    if (*p == target_state) return true;
   }
   return false;
 }
+
+
+static bool in_mouse_resize = false; // true while performing mouse-driven window resize
 
 
 static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel,
@@ -1190,10 +1193,13 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
 {
   // runs for borderless top-level windows
   // under Weston: width & height are 0 during both calls, except if fullscreen
+  if (in_mouse_resize && !parse_states(states, XDG_TOPLEVEL_STATE_RESIZING))
+    in_mouse_resize = false;
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
   Fl_Window_Driver *dr = Fl_Window_Driver::driver(window->fl_win);
-  if (window->fl_win->fullscreen_active() && !parse_states_fullscreen(states) &&
+  if (window->fl_win->fullscreen_active() &&
+      !parse_states(states, XDG_TOPLEVEL_STATE_FULLSCREEN) &&
       dr->fullscreen_screen_top() == dr->fullscreen_screen_bottom() &&
        dr->fullscreen_screen_left() == dr->fullscreen_screen_right()) {
     struct wl_output *wl_output = NULL;
@@ -1977,9 +1983,43 @@ int Fl_Wayland_Window_Driver::set_cursor_4args(const Fl_RGB_Image *rgb, int hotx
 }
 
 
+static bool mouse_driven_resize(Fl_Window *win) {
+  int edge = 0, margin = 2 * Fl::box_dx(FL_DOWN_BOX);
+  if (Fl::event_x() >= win->w() - margin && Fl::event_y() <= margin)
+    edge = XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT;
+  else if (Fl::event_x() >= win->w() - margin && Fl::event_y() >= win->h() - margin)
+    edge = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT;
+  else if (Fl::event_x() <= margin && Fl::event_y() <= margin)
+    edge = XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT;
+  else if (Fl::event_x() <= margin && Fl::event_y() >= win->h() - margin)
+    edge = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT;
+  else if (Fl::event_x() >= win->w() - margin) edge = XDG_TOPLEVEL_RESIZE_EDGE_RIGHT;
+  else if (Fl::event_x() <= margin) edge = XDG_TOPLEVEL_RESIZE_EDGE_LEFT;
+  else if (Fl::event_y() >= win->h() - margin) edge = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM;
+  else if (Fl::event_y() <= margin) edge = XDG_TOPLEVEL_RESIZE_EDGE_TOP;
+  if (edge) {
+    // This is functional when the resize is mouse-driven.
+    Fl_Wayland_Screen_Driver *scr_dr = (Fl_Wayland_Screen_Driver*)Fl::screen_driver();
+    //printf("xdg_toplevel_resize: %dx%d edge=%d \n",win->w(),win->h(),edge);
+    in_mouse_resize = true;
+    xdg_toplevel_resize(Fl_Wayland_Window_Driver::driver(win)->xdg_toplevel(),
+                        scr_dr->seat->wl_seat, scr_dr->seat->serial, edge);
+    Fl::pushed(0); Fl::e_state = 0; // important
+    return true;
+  }
+  return false;
+}
+
+
 void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   static int depth = 0;
   struct wld_window *fl_win = fl_wl_xid(pWindow);
+
+  if (fl_win && fl_win->kind == UNFRAMED && xdg_toplevel() && Fl::e_state == FL_BUTTON1 &&
+      !in_mouse_resize) {
+    if (mouse_driven_resize(pWindow)) return;
+  }
+
   if (fl_win && fl_win->kind == DECORATED && !xdg_toplevel()) {
     pWindow->wait_for_expose();
   }
