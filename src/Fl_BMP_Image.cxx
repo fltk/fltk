@@ -341,7 +341,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
   }
 
   for (y = start_y; y != end_y; y += row_order) {
-    ptr = (uchar *)array + y * width * dstBDepth;
+    ptr = (uchar *)array + y * (size_t)width * dstBDepth;
 
     switch (depth)
     {
@@ -557,7 +557,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height, int ico_width
 
   if (havemask) {
     for (y = height - 1; y >= 0; y --) {
-      ptr = (uchar *)array + y * width * dstBDepth + 3;
+      ptr = (uchar *)array + y * (size_t)width * dstBDepth + 3;
       for (x = width, bit = 128; x > 0; x --, ptr += dstBDepth) {
         if (bit == 128) byte = rdr.read_byte();
         if (byte & bit)
