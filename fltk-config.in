@@ -271,8 +271,18 @@ else
 fi
 
 # Calculate needed libraries
+if test "$OSTYPE" = "msys" -o "$OSTYPE" = "cygwin"; then
+    # Remove "-luuid" from shared linker flags.
+    for lib in $LDLIBS; do
+        if test "$lib" != "-luuid"; then
+            LDSHAREDLIBS="$LDSHAREDLIBS $lib"
+        fi
+    done
+else
+    LDSHAREDLIBS="$LDLIBS"
+fi
 LDSTATIC="$libdir/libfltk.a $LDLIBS"
-LDLIBS="-lfltk$SHAREDSUFFIX $LDLIBS"
+LDLIBS="-lfltk$SHAREDSUFFIX $LDSHAREDLIBS"
 
 if test x$use_forms = xyes; then
     LDLIBS="-lfltk_forms$SHAREDSUFFIX $LDLIBS"
