@@ -2016,7 +2016,7 @@ void Fl_Wayland_Window_Driver::resize(int X, int Y, int W, int H) {
   struct wld_window *fl_win = fl_wl_xid(pWindow);
 
   if (fl_win && fl_win->kind == UNFRAMED && xdg_toplevel() && Fl::e_state == FL_BUTTON1 &&
-      !in_mouse_resize) {
+      !in_mouse_resize && (W != w() || H != h())) {
     if (mouse_driven_resize(pWindow)) return;
   }
 
