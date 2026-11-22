@@ -503,14 +503,30 @@ float Fl_WinAPI_Screen_Driver::base_scale(int numscreen) {
 }
 
 
+#ifndef RRF_RT_REG_DWORD
+#define RRF_RT_REG_DWORD 0x00000010
+#endif
+
 int Fl_WinAPI_Screen_Driver::cursor_size() {
-  DWORD sizeBytes = sizeof(DWORD), result;
-  LSTATUS code = RegGetValueW(HKEY_CURRENT_USER,
-                             L"Control Panel\\Cursors",
-                             L"CursorBaseSize",
-                             RRF_RT_REG_DWORD, NULL, &result, &sizeBytes);
-  if (code != ERROR_SUCCESS) {
-    result = 32; // default value
+  typedef LONG (WINAPI *RegGetValueW_t)(HKEY, LPCWSTR, LPCWSTR, DWORD,
+                                        LPDWORD, PVOID, LPDWORD);
+  static RegGetValueW_t pRegGetValueW = NULL;
+  static bool initialized = false;
+  if (!initialized) {
+    HMODULE h = GetModuleHandleW(L"advapi32.dll"); // already loaded in practice
+    if (!h) h = LoadLibraryW(L"advapi32.dll");
+    if (h) pRegGetValueW = (RegGetValueW_t)GetProcAddress(h, "RegGetValueW");
+    initialized = true;
+  }
+
+  int result = 32; // default value
+  if (pRegGetValueW) {
+    DWORD value = 0;
+    DWORD sizeBytes = sizeof(DWORD);
+    if (pRegGetValueW(HKEY_CURRENT_USER, L"Control Panel\\Cursors",
+                      L"CursorBaseSize", RRF_RT_REG_DWORD,
+                      NULL, &value, &sizeBytes) == ERROR_SUCCESS)
+      result = (int)value;
   }
   return result;
 }
