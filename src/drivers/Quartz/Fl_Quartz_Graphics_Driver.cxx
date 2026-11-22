@@ -23,6 +23,12 @@
 #include <FL/Fl_Image_Surface.H>
 
 
+Fl_Graphics_Driver_Plugin quartz_graphics_driver_plugin(
+  "Quartz Graphics Driver", 0,
+  []() -> Fl_Graphics_Driver* { return new Fl_Quartz_Graphics_Driver(); }
+);
+
+
 void Fl_Quartz_Graphics_Driver::antialias(int state) {
 }
 

@@ -29,9 +29,23 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 }
 
 
+#include <FL/Fl_Plugin.H>
+
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
-  return new Fl_Quartz_Graphics_Driver();
+  static Fl_Graphics_Driver_Plugin* best = nullptr;
+  if (best)
+    return best->create();
+
+  Fl_Plugin_Manager pm(Fl_Graphics_Driver_Plugin::kGrapicsDriverClass);
+  for (int i = 0; i < pm.plugins(); i++) {
+    Fl_Graphics_Driver_Plugin* p = static_cast<Fl_Graphics_Driver_Plugin*>(pm.plugin(i));
+    fprintf(stderr, "Found graphics driver plugin: %s with priority %d\n", pm.name(i), p->priority());
+    if (!best || p->priority() > best->priority()) {
+      best = p;
+    }
+  }
+  return best ? best->create() : nullptr;
 }
 
 
