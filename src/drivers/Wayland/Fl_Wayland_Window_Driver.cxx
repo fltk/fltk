@@ -1193,10 +1193,15 @@ static void xdg_toplevel_configure(void *data, struct xdg_toplevel *xdg_toplevel
 {
   // runs for borderless top-level windows
   // under Weston: width & height are 0 during both calls, except if fullscreen
-  if (in_mouse_resize && !parse_states(states, XDG_TOPLEVEL_STATE_RESIZING))
-    in_mouse_resize = false;
   struct wld_window *window = (struct wld_window*)data;
 //fprintf(stderr, "xdg_toplevel_configure: surface=%p size: %dx%d\n", window->wl_surface, width, height);
+  if (in_mouse_resize) {
+    if (!parse_states(states, XDG_TOPLEVEL_STATE_RESIZING)) {
+      in_mouse_resize = false;
+    } else if (window->frame_cb) {
+      return; // Throttle resizing operations arriving too fast
+    }
+  }
   Fl_Window_Driver *dr = Fl_Window_Driver::driver(window->fl_win);
   if (window->fl_win->fullscreen_active() &&
       !parse_states(states, XDG_TOPLEVEL_STATE_FULLSCREEN) &&
