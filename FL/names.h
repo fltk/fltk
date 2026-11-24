@@ -80,6 +80,12 @@ static std::map<int, const char*> fl_eventnames = {
   { FL_BEFORE_MENU, "FL_BEFORE_MENU" },
   { FL_APP_ACTIVATE, "FL_APP_ACTIVATE" },
   { FL_APP_DEACTIVATE, "FL_APP_DEACTIVATE" },
+  { FL_DOCK_ENTER, "FL_DOCK_ENTER" },
+  { FL_DOCK_DRAG, "FL_DOCK_DRAG" },
+  { FL_DOCK_RELEASE, "FL_DOCK_RELEASE" },
+  { FL_DOCK_LEAVE, "FL_DOCK_LEAVE" },
+  { FL_UNDOCK, "FL_UNDOCK" },
+
   { Fl::Pen::DETECTED, "Fl::Pen::DETECTED" },
   { Fl::Pen::CHANGED, "Fl::Pen::CHANGED" },
   { Fl::Pen::IN_RANGE, "Fl::Pen::IN_RANGE" },
