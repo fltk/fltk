@@ -162,8 +162,18 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy) {
-  x = int(x * scale()); y = int(y * scale()); w = int(w * scale()); h = int(h * scale());
-  srcx = int(srcx * scale()); srcy = int(srcy * scale());
+  if (x == srcx && y == srcy) { // useful while updating double window
+    int X = Fl_Scalable_Graphics_Driver::floor(x, scale());
+    int Y = Fl_Scalable_Graphics_Driver::floor(y, scale());
+    int W = Fl_Scalable_Graphics_Driver::floor(x + w, scale()) - X;
+    int H = Fl_Scalable_Graphics_Driver::floor(y + h, scale()) - Y;
+    x = X; y = Y; w = W; h = H;
+    srcx = x;
+    srcy = y;
+  } else {
+    x = int(x * scale()); y = int(y * scale()); w = int(w * scale()); h = int(h * scale());
+    srcx = int(srcx * scale()); srcy = int(srcy * scale());
+  }
   if (srcx < 0) {w += srcx; x -= srcx; srcx = 0;}
   if (srcy < 0) {h += srcy; y -= srcy; srcy = 0;}
   int off_width, off_height;
@@ -292,8 +302,8 @@ HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Drive
       RECT R2;
       R2.left = x;
       R2.top  = y;
-      R2.right = Fl_Scalable_Graphics_Driver::floor(rects[i].right, f) + pt.x - x + R2.left;
-      R2.bottom = Fl_Scalable_Graphics_Driver::floor(rects[i].bottom, f) + pt.y - y + R2.top;
+      R2.right = Fl_Scalable_Graphics_Driver::floor(rects[i].right, f) + pt.x;
+      R2.bottom = Fl_Scalable_Graphics_Driver::floor(rects[i].bottom, f) + pt.y;
       rects[i] = R2;
     }
     r = ExtCreateRegion(NULL, size, pdata);
