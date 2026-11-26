@@ -256,11 +256,13 @@ if(FLTK_USE_X11 AND NOT FLTK_USE_WAYLAND)
     list(APPEND DRIVER_FILES
       drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
       drivers/Cairo/Fl_X11_Cairo_Graphics_Driver.cxx
+      drivers/Unix/fl_fontconfig_load_font.cxx
     )
   else()
     if(USE_XFT)
       list(APPEND DRIVER_FILES
         drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
+        drivers/Unix/fl_fontconfig_load_font.cxx
       )
       if(USE_PANGO)
         list(APPEND DRIVER_FILES drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx)
@@ -317,6 +319,7 @@ elseif(FLTK_USE_WAYLAND)
     drivers/Wayland/fl_wayland_clipboard_dnd.cxx
     drivers/Wayland/fl_wayland_platform_init.cxx
     drivers/Cairo/Fl_Cairo_Graphics_Driver.cxx
+    drivers/Unix/fl_fontconfig_load_font.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
   )
@@ -782,6 +785,7 @@ endif(HAVE_XRENDER)
 if(USE_PANGO)
   list(APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO})
   append_optional_libs(PkgConfig::PANGOCAIRO)
+  append_optional_libs(PkgConfig::PANGOFT2) # also links fontconfig
   list(APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT})
   if(USE_PANGOXFT)
     append_optional_libs(PkgConfig::PANGOXFT)

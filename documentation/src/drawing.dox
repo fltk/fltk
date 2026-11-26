@@ -882,6 +882,19 @@ these, and FL_SYMBOL and FL_ZAPF_DINGBATS.
 Faces greater than 255 cannot be used in Fl_Widget
 labels, since Fl_Widget stores the index as a byte.
 
+Fl::set_font() assigns a font installed on the system to an index.
+Fl::load_font() assigns a TrueType or OpenType font that the application
+brings along, either as a font file or compiled into the application:
+
+\code
+#include "MyFont.h" // static const unsigned char my_font_ttf[] = { ... };
+
+Fl::load_font(FL_FREE_FONT,           my_font_ttf, sizeof(my_font_ttf));
+Fl::load_font(FL_FREE_FONT + FL_BOLD, "fonts/MyFont-Bold.ttf");
+\endcode
+
+See examples/howto-load-fonts.cxx for a complete program.
+
 One important thing to note about 'current font' is that there
 are so many paths through the GUI event handling code as widgets
 are partially or completely hidden, exposed and then re-drawn
