@@ -1,7 +1,7 @@
 //
 // Colormap color selection dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2026 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,6 +18,7 @@
 #include <FL/Fl_Single_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_show_colormap.H>
+#include "Fl_Window_Driver.H"
 #include <config.h>
 
 #define BOXSIZE 14
@@ -47,6 +48,7 @@ ColorMenu::ColorMenu(Fl_Color oldcol)
 {
   clear_border();
   set_modal();
+  Fl_Window_Driver::driver(this)->set_popup_window();
 }
 
 void ColorMenu::drawbox(Fl_Color c) {
