@@ -350,7 +350,7 @@
  makes this a convenient place to leave a note that helps you find the
  widget again later.
 
- <h3>#include</h3>
+ <h3>\#include</h3>
 
  Each line typed into this field is copied to the header file as-is. FLUID
  keeps track of every line it has already written to the header and silently
